@@ -1,0 +1,17 @@
+{
+	"manifest_version": 2,
+
+	"name": "Time is Money",
+	"description": "This extension converts prices into hours of labor.",
+	"version": "0",
+
+	"browser_action": {
+		"name": "Time is Money",
+		"icons": ["icon.png"],
+		"default_icon": "icon.png"
+	},
+	"content_scripts": [ {
+		"js": [ "jquery-1.11.0.min.js", "convert.js" ],
+		"matches": [ "http://*/*", "https://*/*"]
+	}]
+}
