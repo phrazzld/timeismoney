@@ -1,5 +1,8 @@
 chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 	var working_wage = response.wage;
+	if(isNaN(working_wage)) {
+		working_wage = 7.50;
+	}
 	$("body *").replaceText(/^\$[0-9]+(\.[0-9][0-9])?$/, convert);
 
 	// take a monetary string and return it in hours of work
