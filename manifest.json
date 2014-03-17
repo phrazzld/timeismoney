@@ -5,6 +5,10 @@
 	"description": "This extension converts prices into hours of labor.",
 	"version": "0",
 
+	"background": {"scripts": ["background.js"]},
+
+	"options_page": "options.html",
+
 	"browser_action": {
 		"name": "Time is Money",
 		"icons": ["icon.png"],
