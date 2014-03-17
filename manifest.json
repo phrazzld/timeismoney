@@ -3,7 +3,9 @@
 
 	"name": "Time is Money",
 	"description": "This extension converts prices into hours of labor.",
-	"version": "0",
+	"version": "0.9.5",
+
+	"permissions": ["tabs"],
 
 	"background": {"scripts": ["background.js"]},
 
