@@ -6,7 +6,7 @@ chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 	// very brittle; add error handling for nonmoney values
 	function convert(str) {
 		var hours = Math.ceil(parseFloat(str.substr(1)) / working_wage);
-		return hours.toString() + " hours of work (" + str + ")";
+		return hours.toString() + " hours (" + str + ")";
 	}
 });
 
