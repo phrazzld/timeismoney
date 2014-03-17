@@ -1,6 +1,8 @@
-Time is Money
+TimeIsMoney
 =============
 
-_See how many hours you have to work to afford all that crap you want._
+See how many hours you have to work to afford all that crap you want.
 
-**Time is Money** is a Chrome Web Extension I'm building to curb my Amazon window-shopping, and to put off studying for finals.
+TimeIsMoney is a Chrome Web Extension I'm building to curb my Amazon window-shopping, and to put off studying for finals.
+
+Enter your hourly wage in Options and TimeIsMoney will convert the prices you see on the web into hours you'd have to work to earn that much. Pretty simple really (even though sometimes it's a buzzkill...).
