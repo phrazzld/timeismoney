@@ -1,13 +1,31 @@
 <html>
-	<head><title>Extension Options</title></head>
+	<head>
+		<title>Extension Options</title>
+		<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css">
+	</head>
 
-	<body>
-		<div id="status"></div>
-		<h2>Time Is Money</h2>
-		<p>Save your hourly wage and see prices as workhours!</p>
-		<p>The default wage is $7.50.</p>
-		Your Hourly Wage:<input type="text" id="wage"></input>
-		<button id="save">Save</button>
+	<body style="font-family: 'Lato', sans-serif;">
+		<div id="container" style="width:600px;margin-left:auto;margin-right:auto;">
+			<div id="status"></div>
+			<h1 style="text-align:center;">Time Is Money</h1>
+			<h3 style="text-align:center;">Save your hourly wage and see prices as workhours!</h3>
+			
+			<br />
+			<form class="pure-form" style="text-align:center;">
+				<input type="text" id="wage" placeholder="7.50"></input>
+				<button id="save" class="pure-button pure-button-primary">SAVE</button>
+			</form>
+			<br />
+
+			<div id="examples" style="width:400px;margin-left:auto;margin-right:auto;">
+				<h4>For example, at $10.00/hour:</h4>
+				<blockquote><span style="background-color:#ddd;padding:5px;">$20</span> becomes <span style="background-color:#ddd;padding:5px;">2 hours ($20.00)</span> ,</blockquote>
+				<blockquote><span style="background-color:#ddd;padding:5px;">$7.99</span> becomes <span style="background-color:#ddd;padding:5px;">1 hour ($7.99)</span> ,</blockquote>
+				<blockquote><span style="background-color:#ddd;padding:5px;">$1,299.50</span> becomes <span style="background-color:#ddd;padding:5px;">130 hours ($1,299.50)</span> ,</blockquote>
+				<h4>and so on.</h4>
+			</div>
+		</div>
 	</body>
 
 	<script src="options.js"></script>
