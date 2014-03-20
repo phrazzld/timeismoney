@@ -19,17 +19,17 @@ chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 		if(hours == 0) {
 			msg = "";
 		} else if(hours == 1) {
-			msg = hours.toString() + " hour";
+			msg = hours.toString() + " hr";
 		} else {
-			msg = hours.toString() + " hours";
+			msg = hours.toString() + " hrs";
 		}
 		// add minutes to msg
 		if(minutes == 1) {
-			msg = msg + " " + minutes + " minute (" + str + ")";
+			msg = msg + " " + minutes + " min (" + str + ")";
 		} else if(minutes == 0) {
 			msg = msg + " (" + str + ")";
 		} else {
-			msg = msg + " " + minutes + " minutes (" + str + ")";
+			msg = msg + " " + minutes + " mins (" + str + ")";
 		}
 		// send msg back to replaceText fcn
 		return msg;
