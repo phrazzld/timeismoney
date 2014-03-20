@@ -6,15 +6,32 @@ chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 	$("body *").replaceText(/^\$[0-9]+(\.[0-9][0-9])?$/, convert);
 
 	// take a monetary string and return it in hours of work
-	// very brittle; add error handling for nonmoney values
 	function convert(str) {
-		var hours = Math.ceil(parseFloat(str.substr(1)) / working_wage);
-		if(hours == 1) {
-			return hours.toString() + " hour (" + str + ")";
+		// get the times right
+		var time = parseFloat(str.substr(1)) / working_wage;
+		var hours = Math.floor(time);
+		var minutes = Math.ceil(60 * (time - hours));
+
+		// add hours to msg
+		if(hours == 0) {
+			msg = "";
+		} else if(hours == 1) {
+			msg = hours.toString() + " hour";
 		} else {
-			return hours.toString() + " hours (" + str + ")";
+			msg = hours.toString() + " hours";
 		}
+		// add minutes to msg
+		if(minutes == 1) {
+			msg = msg + " " + minutes + " minute (" + str + ")";
+		} else if(minutes == 0) {
+			msg = msg + " (" + str + ")";
+		} else {
+			msg = msg + " " + minutes + " minutes (" + str + ")";
+		}
+		// send msg back to replaceText fcn
+		return msg;
 	}
+
 });
 
 // replaceText jQuery function
