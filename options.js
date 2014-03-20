@@ -4,7 +4,7 @@ function save_options() {
 		alert("What are they paying you in, Trident Layers? \nTry formatting your wage without the currency symbol, like 10.50");
 	} else {
 		localStorage.wage = select.value;
-		alert("Settings saved.");
+		alert("Wage updated.");
 	}
 }
 

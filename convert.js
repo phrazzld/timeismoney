@@ -3,11 +3,14 @@ chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 	if(isNaN(working_wage)) {
 		working_wage = 7.50;
 	}
-	$("body *").replaceText(/^\$[0-9]+(\.[0-9][0-9])?$/, convert);
+	// \s*\$[0-9]+(\.[0-9][0-9])?$
+	// /^\$[0-9]+(\.[0-9][0-9])?$/
+	$("body *").replaceText(/^\s*\$[0-9]+(\.[0-9][0-9])?$/, convert);
 
 	// take a monetary string and return it in hours of work
 	function convert(str) {
 		// get the times right
+		str = str.trim();
 		var time = parseFloat(str.substr(1)) / working_wage;
 		var hours = Math.floor(time);
 		var minutes = Math.ceil(60 * (time - hours));
