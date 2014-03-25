@@ -3,15 +3,16 @@ chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 	if(isNaN(working_wage)) {
 		working_wage = 7.50;
 	}
-	// \s*\$[0-9]+(\.[0-9][0-9])?$
-	// /^\$[0-9]+(\.[0-9][0-9])?$/
-	$("body *").replaceText(/^\s*\$[0-9]+(\.[0-9][0-9])?$/, convert);
+	// /^[,0-9\.\$]+$/
+	$("body *").replaceText(/^(\s*)?\$[0-9]+(\W[0-9]{0,3})*?(\.[0-9][0-9])?$/, convert);
 
 	// take a monetary string and return it in hours of work
 	function convert(str) {
 		// get the times right
-		str = str.trim();
-		var time = parseFloat(str.substr(1)) / working_wage;
+		new_str = str.trim();
+		new_str = new_str.replace(/[^\d.]/g, '');
+		var time = parseFloat(new_str) / working_wage;
+		if(isNaN(time)) { return str; }
 		var hours = Math.floor(time);
 		var minutes = Math.ceil(60 * (time - hours));
 
