@@ -3,12 +3,9 @@ chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 	if(isNaN(working_wage)) {
 		working_wage = 7.50;
 	}
-	// /^[,0-9\.\$]+$/
 	$("body *").replaceText(/^(\s*)?\$[0-9]+(\W[0-9]{0,3})*?(\.[0-9][0-9])?$/, convert);
 
-	// take a monetary string and return it in hours of work
 	function convert(str) {
-		// get the times right
 		new_str = str.trim();
 		new_str = new_str.replace(/[^\d.]/g, '');
 		var time = parseFloat(new_str) / working_wage;
@@ -16,7 +13,6 @@ chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 		var hours = Math.floor(time);
 		var minutes = Math.ceil(60 * (time - hours));
 
-		// add hours to msg
 		if(hours == 0) {
 			msg = "";
 		} else if(hours == 1) {
@@ -24,7 +20,6 @@ chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 		} else {
 			msg = hours.toString() + " hrs";
 		}
-		// add minutes to msg
 		if(minutes == 1) {
 			msg = msg + " " + minutes + " min (" + str + ")";
 		} else if(minutes == 0) {
@@ -32,7 +27,6 @@ chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 		} else {
 			msg = msg + " " + minutes + " mins (" + str + ")";
 		}
-		// send msg back to replaceText fcn
 		return msg;
 	}
 

@@ -1,3 +1,5 @@
+var display_wage = parseFloat(localStorage.wage).toFixed(2).toString();
+
 function save_options() {
 	var select = document.getElementById("wage");
 	if(isNaN(parseFloat(select.value))) {
@@ -5,6 +7,9 @@ function save_options() {
 	} else {
 		localStorage.wage = select.value;
 	}
+	display_wage = parseFloat(localStorage.wage).toFixed(2).toString();
+	document.getElementById("wage").placeholder = display_wage;
 }
 
+document.getElementById("wage").placeholder = display_wage;
 document.querySelector("#save").addEventListener("click", save_options);
