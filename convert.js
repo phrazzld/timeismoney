@@ -21,11 +21,11 @@ chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 			msg = hours.toString() + " hrs";
 		}
 		if(minutes == 1) {
-			msg = msg + " " + minutes + " min (" + str + ")";
+			msg = str + " (" + msg + " " + minutes + " min)";
 		} else if(minutes == 0) {
-			msg = msg + " (" + str + ")";
+			msg = str + " (" + msg + ")";
 		} else {
-			msg = msg + " " + minutes + " mins (" + str + ")";
+			msg = str + " (" + msg + " " + minutes + " mins)";
 		}
 		return msg;
 	}
