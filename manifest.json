@@ -4,7 +4,7 @@
 	"name": "Time is Money",
 	"short_name": "t=$",
 	"description": "This extension converts prices into hours of labor.",
-	"version": "1.7.6",
+	"version": "1.8.0",
 
 	"permissions": ["tabs"],
 

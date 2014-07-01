@@ -18,4 +18,9 @@ if(isNaN(display_wage)) {
 	document.getElementById("wage").placeholder = "$" + display_wage;
 }
 
+function prompt_donation() {
+		confirm("Copy my wallet address: \n11MythGvuWjwMiYBmuViWLSXKi5oVR1pa");
+}
+
 document.querySelector("#save").addEventListener("click", save_options);
+document.querySelector("#donate_btc").addEventListener("click", prompt_donation);

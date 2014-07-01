@@ -3,27 +3,78 @@
 		<title>Extension Options</title>
 		<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css">
+		<style type="text/css">
+
+			body {
+				font-family: 'Lato', sans-serif;
+				background-color: #eee;
+			}
+			
+			#container {
+				width: 600px;
+				margin-left: auto;
+				margin-right: auto;
+				background-color: #fff;
+				padding: 10px;
+			}
+
+			h1, h3, h5, form {
+				text-align: center;
+			}
+
+			#wage {
+				border-radius: 0;
+				padding-bottom: 6px;
+			}
+
+			#examples {
+				width: 500px;
+				margin-left: auto;
+				margin-right: auto;
+			}
+
+			.replacement_example {
+				background-color: #ddd;
+				padding: 5px;
+			}
+
+			#footer {
+				width: 100%;
+				margin: 25px 0;
+				border-top: 1px solid #ddd;
+			}
+
+			#footer a {
+				color: #0000ff;
+				text-decoration: none;
+			}
+
+		</style>
 	</head>
 
-	<body style="font-family: 'Lato', sans-serif;">
-		<div id="container" style="width:600px;margin-left:auto;margin-right:auto;">
+	<body>
+		<div id="container">
 			<div id="status"></div>
-			<h1 style="text-align:center;">Time Is Money</h1>
-			<h3 style="text-align:center;">Save your hourly wage and see prices as workhours!</h3>
+			<h1>Time Is Money</h1>
+			<h3>Save your hourly wage and see prices as workhours!</h3>
 			
 			<br />
-			<form class="pure-form" style="text-align:center;">
-				<input type="text" id="wage" placeholder="7.50"></input>
+			<form class="pure-form">
+				<input type="text" id="wage"></input>
 				<button id="save" class="pure-button pure-button-primary">SAVE</button>
 			</form>
 			<br />
 
-			<div id="examples" style="width:500px;margin-left:auto;margin-right:auto;">
+			<div id="examples">
 				<h4>For example, at $10.00/hour:</h4>
-				<blockquote><span style="background-color:#ddd;padding:5px;">$20</span> becomes <span style="background-color:#ddd;padding:5px;">$20 (2 hrs)</span> ,</blockquote>
-				<blockquote><span style="background-color:#ddd;padding:5px;">$7.99</span> becomes <span style="background-color:#ddd;padding:5px;">$7.99 (48 mins)</span> ,</blockquote>
-				<blockquote><span style="background-color:#ddd;padding:5px;">$1,299.50</span> becomes <span style="background-color:#ddd;padding:5px;">$1,299.50 (129 hrs and 57 mins)</span> ,</blockquote>
+				<blockquote><span class="replacement_example">$20</span> becomes <span class="replacement_example">$20 (2 hrs)</span> ,</blockquote>
+				<blockquote><span class="replacement_example">$7.99</span> becomes <span class="replacement_example">$7.99 (48 mins)</span> ,</blockquote>
+				<blockquote><span class="replacement_example">$1,299.50</span> becomes <span class="replacement_example">$1,299.50 (129 hrs and 57 mins)</span> ,</blockquote>
 				<h4>and so on.</h4>
+			</div>
+
+			<div id="footer">
+				<h5>built by <a href="https://twitter.com/phrazzld">@phrazzld</a><br />see the code on <a href="https://github.com/phraznikov/time_is_money">github</a><br />send me <a id="donate_btc" href="#">bitcoin</a></h5>
 			</div>
 		</div>
 	</body>
