@@ -1,6 +1,6 @@
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
 	if(request.method == "getLocal"){
-		sendResponse({wage: localStorage["wage"]});
+		sendResponse({wage: localStorage["wage"]}); // mod sendResponse to include {ignored_sites: localStorage["ignored_sites"]}
 	} else {
 		sendResponse({}); }
 });
@@ -23,8 +23,6 @@ function openOrFocusOptionsPage() {
 }
 chrome.extension.onConnect.addListener(function(port) {
 	var tab = port.sender.tab;
-	// This will get called by the content script we execute in
-	// the tab as a result of the user pressing the browser action.
 	port.onMessage.addListener(function(info) {
 		var max_length = 1024;
 		if (info.selection.length > max_length) {
@@ -34,7 +32,6 @@ chrome.extension.onConnect.addListener(function(port) {
 	});
 });
 
-// Called when the user clicks on the browser action icon.
 chrome.browserAction.onClicked.addListener(function(tab) {
 	openOrFocusOptionsPage();
 });
