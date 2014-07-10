@@ -1,6 +1,6 @@
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
 	if(request.method == "getLocal"){
-		sendResponse({wage: localStorage["wage"]}); // mod sendResponse to include {ignored_sites: localStorage["ignored_sites"]}
+		sendResponse({wage: localStorage["wage"]});
 	} else {
 		sendResponse({}); }
 });

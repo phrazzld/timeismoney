@@ -11,12 +11,6 @@ function save_wage() {
 	document.getElementById("wage").placeholder = "$" + display_wage;
 }
 
-// function save_ignore_sites()
-
-// function quit_ignoring_this_site(str)
-
-// populate div#ignored_sites
-
 if(isNaN(display_wage)) {
 	document.getElementById("wage").placeholder = "Enter your hourly wage"
 } else {
@@ -24,4 +18,3 @@ if(isNaN(display_wage)) {
 }
 
 document.querySelector("#save_wage").addEventListener("click", save_wage);
-// document.querySelector(".stop_ignoring_this_site").addEventListener("click", quit_ignoring_this_site);

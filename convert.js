@@ -1,5 +1,4 @@
 chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
-	// wrap convert logic inside IF DOMAIN DOESN'T MATCH ANYTHING ON IGNORE_SITES LIST
 	var working_wage = response.wage;
 	if(isNaN(working_wage)) {
 		working_wage = 7.50;
