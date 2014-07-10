@@ -1,7 +1,7 @@
 chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 	var working_wage = response.wage;
 	if(isNaN(working_wage)) {
-		working_wage = 7.50;
+		working_wage = 7.25;
 	}
 	$("body *").replaceText(/^(\s*)?\$[0-9]+(\W[0-9]{0,3})*?(\.[0-9][0-9])?$/, convert);
 
@@ -12,20 +12,19 @@ chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 		if(isNaN(time)) { return str; }
 		var hours = Math.floor(time);
 		var minutes = Math.ceil(60 * (time - hours));
+		var msg = str;
 
 		if(hours == 0) {
-			msg = "";
+			msg += " (";
 		} else if(hours == 1) {
-			msg = hours.toString() + " hr";
+			msg += " (" + hours.toString() + " hr ";
 		} else {
-			msg = hours.toString() + " hrs";
+			msg += " (" + hours.toString() + " hrs ";
 		}
 		if(minutes == 1) {
-			msg = str + " (" + msg + " " + minutes + " min)";
-		} else if(minutes == 0) {
-			msg = str + " (" + msg + ")";
+			msg += minutes + " min)";
 		} else {
-			msg = str + " (" + msg + " " + minutes + " mins)";
+			msg += minutes + " mins)";
 		}
 		return msg;
 	}
