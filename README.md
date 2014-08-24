@@ -1,6 +1,6 @@
 # Time Is Money
 
-## Spend it wisely.
+### Spend it wisely.
 
 Why do we want money? Sometimes it's because we really want that new BluRay player, or tickets to that Broadway show, or a pair of fly new kicks. But usually we want money so we can have time to do the things we want. We put in overtime for a few months so we can take a two week adventure in Southeast Asia. We slave away at the office for decades in exchange for a relaxing retirement. For our whole lives, we spend our time trying to earn it back.
 
