@@ -11,7 +11,7 @@ $(document).ready(function(){
 
 	var display_salary = parseFloat(localStorage.salary).toFixed(2).toString();
 	if(isNaN(display_salary)) {
-		$("#salary").attr('placeholder', 'Enter your annual salary');
+		$("#salary").attr('placeholder', 'Enter your annual income');
 	} else {
 		$("#salary").attr('placeholder', '$' + numberWithCommas(display_salary))
 	}
