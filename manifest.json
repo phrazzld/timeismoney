@@ -3,12 +3,12 @@
 
 	"name": "Time Is Money",
 	"short_name": "t=$",
-	"description": "This extension converts prices into hours of labor.",
-	"version": "1.9.1",
+	"description": "See prices as hours of work!",
+	"version": "1.9.5",
 
 	"permissions": ["tabs"],
 
-	"background": {"scripts": ["background.js"]},
+	"background": {"scripts": ["jquery-1.11.0.min.js", "background.js"]},
 
 	"options_page": "options.html",
 

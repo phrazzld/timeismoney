@@ -20,12 +20,12 @@ h1, h3, h5, form {
 	font-family: 'Raleway', sans-serif;
 }
 
-#wage {
+#wage, #salary {
 	border-radius: 0;
 	padding-bottom: 6px;
 }
 
-#save_wage {
+#save_wage, #save_salary {
 	background-color: #216C2A;
 }
 
@@ -50,3 +50,20 @@ h1, h3, h5, form {
 	color: #216C2A;
 	text-decoration: none;
 }
+
+#options_form label {
+	display: inline-block;
+	margin-right: 20px;
+	margin-bottom: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+

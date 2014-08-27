@@ -5,6 +5,8 @@
 		<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css">
 		<link rel="stylesheet" type="text/css" href="style.css">
+		<script type="text/javascript" src="jquery-1.11.0.min.js"></script>
+		<script type="text/javascript" src="options.js"></script>
 	</head>
 
 	<body>
@@ -13,11 +15,27 @@
 			<h1 id="logo_title">Time Is Money</h1>
 			<h3>Save your hourly wage and see prices as workhours!</h3>
 			
-			<br />
-			<form class="pure-form">
-				<input type="text" id="wage"></input>
-				<button id="save_wage" class="pure-button pure-button-primary">SAVE</button>
+			<form id="options_form" class="pure-form">
+				<label for="hourly_option" class="pure-radio">
+					<input id="hourly_option" type="radio" name="choice_radio" value="hourly" checked>
+					Hourly Wage
+				</label>
+				<label for="annual_option" class="pure-radio">
+					<input id="annual_option" type="radio" name="choice_radio" value="annual">
+					Annual Salary
+				</label>
 			</form>
+
+			<form id="wage_form" class="pure-form">
+				<input type="text" id="wage">
+				<button id="save_wage" class="pure-button pure-button-primary">SAVE WAGE</button>
+			</form>
+
+			<form id="salary_form" class="pure-form" style="display:none;">
+				<input type="text" id="salary">
+				<button id="save_salary" class="pure-button pure-button-primary">SAVE SALARY</button>
+			</form>
+
 			<br />
 
 			<div id="examples">
@@ -38,7 +56,5 @@
 			</div>
 		</div>
 	</body>
-
-	<script src="options.js"></script>
 
 </html>

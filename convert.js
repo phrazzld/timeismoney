@@ -1,7 +1,12 @@
 chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 	var working_wage = response.wage;
 	if(isNaN(working_wage)) {
-		working_wage = 7.25;
+		working_wage = response.salary;
+		if(isNaN(working_wage)) {
+			working_wage = 7.25;
+		} else {
+			working_wage = working_wage/52/40;
+		}
 	}
 	$("body *").replaceText(/^(\s*)?\$[0-9]+(\W[0-9]{0,3})*?(\.[0-9][0-9])?$/, convert);
 
