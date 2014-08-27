@@ -70,6 +70,13 @@ h1, h3, h5, form {
 	margin-bottom: 20px;
 }
 
+#alerts {
+	color: #203D6C;
+	background-color: #e0e0e0;
+	text-align: center;
+	padding: 1px;
+	display: none;
+}
 
 
 
