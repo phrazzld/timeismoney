@@ -1,15 +1,19 @@
 chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
-	var working_wage = response.wage;
-	if(isNaN(working_wage)) {
-		working_wage = response.salary;
-		if(isNaN(working_wage)) {
-			working_wage = 7.25;
-		} else {
-			working_wage = working_wage/52/40;
+
+	if(response.using == "wage") {
+		var working_wage = response.wage;
+		if(!isNaN(working_wage)) {
+			$("body *").replaceText(/^(\s*)?\$[0-9]+(\W[0-9]{0,3})*?(\.[0-9][0-9])?$/, convert);
+		}
+
+	} else if(response.using == "salary") {
+		var working_wage = response.salary;
+		working_wage = working_wage/52/40;
+		if(!isNaN(working_wage)) {
+			$("body *").replaceText(/^(\s*)?\$[0-9]+(\W[0-9]{0,3})*?(\.[0-9][0-9])?$/, convert);
 		}
 	}
-	$("body *").replaceText(/^(\s*)?\$[0-9]+(\W[0-9]{0,3})*?(\.[0-9][0-9])?$/, convert);
-
+	
 	function convert(str) {
 		new_str = str.trim();
 		new_str = new_str.replace(/[^\d.]/g, '');
@@ -35,6 +39,6 @@ chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 	}
 
 });
-
 // replaceText jQuery function
 (function($){$.fn.replaceText=function(b,a,c){return this.each(function(){var f=this.firstChild,g,e,d=[];if(f){do{if(f.nodeType===3){g=f.nodeValue;e=g.replace(b,a);if(e!==g){if(!c&&/</.test(e)){$(f).before(e);d.push(f)}else{f.nodeValue=e}}}}while(f=f.nextSibling)}d.length&&$(d).remove()})}})(jQuery);
+
