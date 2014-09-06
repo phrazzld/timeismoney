@@ -21,19 +21,18 @@ chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 		if(isNaN(time)) { return str; }
 		var hours = Math.floor(time);
 		var minutes = Math.ceil(60 * (time - hours));
-		var msg = str;
+		var msg = "";
 
-		if(hours == 0) {
-			msg += " (";
-		} else if(hours == 1) {
-			msg += " (" + hours.toString() + " hr ";
+		if(hours == 0) { } 
+		else if(hours == 1) {
+			msg += hours.toString() + " hr ";
 		} else {
-			msg += " (" + hours.toString() + " hrs ";
+			msg += hours.toString() + " hrs ";
 		}
 		if(minutes == 1) {
-			msg += minutes + " min)";
+			msg += minutes + " min";
 		} else {
-			msg += minutes + " mins)";
+			msg += minutes + " mins";
 		}
 		return msg;
 	}
@@ -41,4 +40,3 @@ chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 });
 // replaceText jQuery function
 (function($){$.fn.replaceText=function(b,a,c){return this.each(function(){var f=this.firstChild,g,e,d=[];if(f){do{if(f.nodeType===3){g=f.nodeValue;e=g.replace(b,a);if(e!==g){if(!c&&/</.test(e)){$(f).before(e);d.push(f)}else{f.nodeValue=e}}}}while(f=f.nextSibling)}d.length&&$(d).remove()})}})(jQuery);
-

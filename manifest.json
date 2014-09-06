@@ -6,7 +6,7 @@
 	"description": "See prices as hours of work!",
 	"version": "2.0.0",
 
-	"permissions": ["tabs"],
+	"permissions": ["tabs", "http://*/*", "https://*/*"],
 
 	"background": {"scripts": ["jquery-1.11.0.min.js", "background.js"]},
 
@@ -20,11 +20,11 @@
 
 	"browser_action": {
 		"name": "Time Is Money",
-		"default_icon": "icon48.png",
-		"default_popup": "options.html"
+		"default_icon": "icon48.png"
 	},
+
 	"content_scripts": [ {
-		"js": [ "jquery-1.11.0.min.js", "convert.js" ],
-		"matches": [ "http://*/*", "https://*/*"]
-	}]
+	    "js": [ "jquery-1.11.0.min.js", "background.js" ],
+	    "matches": [ "http://*/*", "https://*/*"]
+	} ]
 }

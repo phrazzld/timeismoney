@@ -8,36 +8,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
 		sendResponse({}); }
 });
 
-function openOrFocusOptionsPage() {
-	var optionsUrl = chrome.extension.getURL('options.html');
-	chrome.tabs.query({}, function(extensionTabs) {
-		var found = false;
-		for (var i=0; i < extensionTabs.length; i++) {
-			if(optionsUrl == extensionTabs[i].url) {
-				found = true;
-				console.log("tab id: " + extensionTabs[i].id);
-				chrome.tabs.update(extensionTabs[i].id, {"selected": true});
-			}
-		}
-		if (found == false) {
-			chrome.tabs.create({url: "options.html"});
-		}
+if(jQuery){
+	chrome.browserAction.onClicked.addListener(function(tab) {
+	  console.log("converting");
+	  chrome.tabs.executeScript(tab.id, { "file": "convert.js" }, 
+	  	function() {
+	  		console.log("script executed");
+	  	});
 	});
-}
-chrome.extension.onConnect.addListener(function(port) {
-	var tab = port.sender.tab;
-	port.onMessage.addListener(function(info) {
-		var max_length = 1024;
-		if (info.selection.length > max_length) {
-			info.selection = info.selection.substring(0, max_length);
-			openOrFocusOptionsPage();
-		}
-	});
-});
+} else { }
 
-chrome.browserAction.onClicked.addListener(function(tab) {
-	openOrFocusOptionsPage();
-});
 
 
 
