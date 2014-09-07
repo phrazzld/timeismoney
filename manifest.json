@@ -4,7 +4,7 @@
 	"name": "Time Is Money",
 	"short_name": "t=$",
 	"description": "See prices as hours of work!",
-	"version": "2.0.0",
+	"version": "2.1.0",
 
 	"permissions": ["tabs", "http://*/*", "https://*/*"],
 
@@ -20,7 +20,7 @@
 
 	"browser_action": {
 		"name": "Time Is Money",
-		"default_icon": "icon48.png"
+		"default_icon": "dolla.png"
 	},
 
 	"content_scripts": [ {

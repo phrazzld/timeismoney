@@ -24,9 +24,23 @@ h1, h3, h5, form {
 	text-align: center;
 }
 
+#header {
+	border-bottom: 1px solid #e0e0e0;
+}
+
 #logo_title {
 	color: #216C2A;
 	font-family: 'Raleway', sans-serif;
+	margin-bottom: 0;
+}
+
+#tagline {
+	margin-top: 0;
+	margin-bottom: 30px;
+}
+
+#options_form {
+	margin-top: 20px;
 }
 
 #wage, #salary {
@@ -38,15 +52,17 @@ h1, h3, h5, form {
 	background-color: #216C2A;
 }
 
-#examples {
+#user_guide {
 	width: 500px;
+	padding: 13px;
 	margin-left: auto;
 	margin-right: auto;
+	background-color: #B1D0B5;
+	margin-top: 20px;
 }
 
-.replacement_example {
-	background-color: #B1D0B5;
-	padding: 5px;
+#user_guide span {
+	text-transform: 
 }
 
 #footer {
