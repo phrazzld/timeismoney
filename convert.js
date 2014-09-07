@@ -22,7 +22,7 @@ $(document).ready(function(){
 				if(isNaN(time)) { return str; }
 				var hours = Math.floor(time);
 				var minutes = Math.ceil(60 * (time - hours));
-				var msg = "";
+				var msg = " ";
 
 				if(hours == 0) { } 
 				else if(hours == 1) {
@@ -31,9 +31,9 @@ $(document).ready(function(){
 					msg += hours.toString() + " hrs ";
 				}
 				if(minutes == 1) {
-					msg += minutes + " min";
+					msg += minutes + " min ";
 				} else {
-					msg += minutes + " mins";
+					msg += minutes + " mins ";
 				}
 				return msg;
 			}
