@@ -13,14 +13,14 @@
 	"options_page": "options.html",
 
 	"icons": {
-		"16": "icon16.png",
-		"48": "icon48.png",
-		"128": "icon128.png"
+		"16": "images/icon.png",
+		"48": "images/icon48.png",
+		"128": "images/icon128.png"
 	},
 
 	"browser_action": {
 		"name": "Time Is Money",
-		"default_icon": "dolla.png"
+		"default_icon": "images/icon.png"
 	},
 
 	"content_scripts": [ {
