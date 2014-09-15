@@ -23,30 +23,51 @@
 				
 				<div id="header"></div>
 
-				<form id="options_form" class="pure-form">
-					<label for="hourly_option" class="pure-radio">
-						<input id="hourly_option" type="radio" name="choice_radio" value="hourly" checked>
-						Hourly Wage
-					</label>
-					<label for="annual_option" class="pure-radio">
-						<input id="annual_option" type="radio" name="choice_radio" value="annual">
-						Annual Income
-					</label>
-				</form>
+				<div id="bod">
+					<form id="options_form" class="pure-form">
+						<label for="hourly_option" class="pure-radio">
+							<input id="hourly_option" type="radio" name="choice_radio" value="hourly" checked>
+							Hourly Wage
+						</label>
+						<label for="annual_option" class="pure-radio">
+							<input id="annual_option" type="radio" name="choice_radio" value="annual">
+							Annual Income
+						</label>
+					</form>
 
-				<form id="wage_form" class="pure-form">
-					<input type="text" id="wage">
-					<button id="save_wage" class="pure-button pure-button-primary">SAVE</button>
-				</form>
+					<form id="wage_form" class="pure-form">
+						<input type="text" id="wage">
+						<button id="save_wage" class="pure-button pure-button-primary">SAVE</button>
+					</form>
 
-				<form id="salary_form" class="pure-form">
-					<input type="text" id="salary">
-					<button id="save_salary" class="pure-button pure-button-primary">SAVE</button>
-				</form>
+					<form id="salary_form" class="pure-form">
+						<input type="text" id="salary">
+						<button id="save_salary" class="pure-button pure-button-primary">SAVE</button>
+					</form>
 
-				<br />
+					<br />
 
-				<h3>When you see prices on a page, click the browser icon!</h3>
+					<h3>When you see prices on a page, click the browser icon!</h3>
+
+					<div id="adv_section">
+						<h4><a id="adv_options" href="#">Advanced options</a></h4>
+
+						<form id="adv_options_form" class="pure-form">
+							<label for="auto_convert">
+								<input id="auto_convert" type="checkbox"> Auto-convert
+							</label>
+							<br />
+							<label for="show_dollars" class="pure-form">
+								<input id="show_dollars" type="checkbox"> Hybrid view
+							</label>
+							<br />
+							<label for="convert_weeks" class="pure-form">
+								<input id="convert_weeks" type="checkbox"> 40-hour workweek
+							</label>
+						</form>
+					</div>
+
+				</div>
 
 			</div>
 			<div id="footer">

@@ -33,6 +33,10 @@ h1, h3, h5, form {
 	padding-bottom: 20px;
 }
 
+#bod {
+	padding: 0px 50px;
+}
+
 #logo_title {
 	color: #216C2A;
 	font-family: 'Raleway', sans-serif;
@@ -79,8 +83,8 @@ h1, h3, h5, form {
 	bottom: 0;
 	left: 0;
 }
-
-#footer a {
+ 
+a {
 	color: #216C2A;
 	text-decoration: none;
 }
@@ -99,7 +103,17 @@ h1, h3, h5, form {
 	display: none;
 }
 
+#adv_options_form {
+	width: 420px;
+	text-align: left;
+	margin-left: auto;
+	margin-right: auto;
+}
 
+#adv_options_form input {
+	margin-right: 10px;
+	margin-bottom: 5px;
+}
 
 
 

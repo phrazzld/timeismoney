@@ -1,17 +1,19 @@
 $(document).ready(function(){
 	chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
 
-			if(response.using == "wage") {
-				var working_wage = response.wage;
-				if(!isNaN(working_wage)) {
-					$("body *").replaceText(/^(\s*)?\$[0-9]+(\W[0-9]{0,3})*?(\.[0-9][0-9])?$/, convert);
-				}
+			if(response.auto_convert == "yes") {				
+				if(response.using == "wage") {
+					var working_wage = response.wage;
+					if(!isNaN(working_wage)) {
+						$("body *").replaceText(/^(\s*)?\$[0-9]+(\W[0-9]{0,3})*?(\.[0-9][0-9])?$/, convert);
+					}
 
-			} else if(response.using == "salary") {
-				var working_wage = response.salary;
-				working_wage = working_wage/52/40;
-				if(!isNaN(working_wage)) {
-					$("body *").replaceText(/^(\s*)?\$[0-9]+(\W[0-9]{0,3})*?(\.[0-9][0-9])?$/, convert);
+				} else if(response.using == "salary") {
+					var working_wage = response.salary;
+					working_wage = working_wage/52/40;
+					if(!isNaN(working_wage)) {
+						$("body *").replaceText(/^(\s*)?\$[0-9]+(\W[0-9]{0,3})*?(\.[0-9][0-9])?$/, convert);
+					}
 				}
 			}
 

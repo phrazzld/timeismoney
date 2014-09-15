@@ -2,6 +2,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
 	if(request.method == "getLocal"){
 		sendResponse({show_alert: localStorage["show_alert"], 
 					  using: localStorage["using"],
+					  auto_convert: localStorage["auto_convert"],
+					  show_dollars: localStorage["show_dollars"],
+					  convert_weeks: localStorage["convert_weeks"],
+					  adv_view: localStorage["adv_view"],
 					  wage: localStorage["wage"],
 					  salary: localStorage["salary"]});
 	} else {

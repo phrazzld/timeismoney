@@ -15,6 +15,28 @@ $(document).ready(function(){
 		$("#alerts").hide();
 	}
 
+	if(localStorage.auto_convert == "yes") {
+		$("#auto_convert").prop("checked", true);
+	} else {
+		$("#auto_convert").prop("checked", false);
+	}
+
+	if(localStorage.show_dollars == "yes") {
+		$("#show_dollars").prop("checked", true);
+	} else {
+		$("#show_dollars").prop("checked", false);
+	}
+
+	if(localStorage.convert_weeks == "yes") {
+		$("#convert_weeks").prop("checked", true);
+	} else {
+		$("#convert_weeks").prop("checked", false);
+	}
+
+	if(localStorage.adv_view != "show") {
+		$("#adv_options_form").hide();
+	}
+
 	var display_salary = parseFloat(localStorage.salary).toFixed(2).toString();
 	if(isNaN(display_salary)) {
 		$("#salary").attr('placeholder', 'Enter your annual income');
@@ -32,11 +54,50 @@ $(document).ready(function(){
 	$("#hourly_option").click(function() {
 		$("#wage_form").show();
 		$("#salary_form").hide();
+		if(localStorage.wage != null) {
+			localStorage.using = "wage";
+		}
 	});
 
 	$("#annual_option").click(function() {
 		$("#salary_form").show();
 		$("#wage_form").hide();
+		if(localStorage.salary != null) {
+			localStorage.using = "salary";
+		}
+	});
+
+	$("#auto_convert").click(function() {
+		if(localStorage.auto_convert == "yes") {
+			localStorage.auto_convert = "no";
+		} else {
+			localStorage.auto_convert = "yes";
+		}
+	});
+
+	$("#show_dollars").click(function() {
+		if(localStorage.show_dollars == "yes") {
+			localStorage.show_dollars = "no";
+		} else {
+			localStorage.show_dollars = "yes";
+		}
+	});
+
+	$("#convert_weeks").click(function() {
+		if(localStorage.convert_weeks == "yes") {
+			localStorage.convert_weeks = "no";
+		} else {
+			localStorage.convert_weeks = "yes";
+		}
+	});
+
+	$("#adv_options").click(function() {
+		$("#adv_options_form").toggle("fast");
+		if(localStorage.adv_view == "show") {
+			localStorage.adv_view = "hide";
+		} else {
+			localStorage.adv_view = "show";
+		}
 	});
 
 	$("#save_wage").click(save_wage);

@@ -4,7 +4,7 @@
 	"name": "Time Is Money",
 	"short_name": "t=$",
 	"description": "See prices as hours of work!",
-	"version": "2.1.5",
+	"version": "2.3.0",
 
 	"permissions": ["tabs", "http://*/*", "https://*/*"],
 
@@ -24,7 +24,7 @@
 	},
 
 	"content_scripts": [ {
-	    "js": [ "jquery-1.11.0.min.js", "background.js" ],
+	    "js": [ "jquery-1.11.0.min.js", "background.js", "content.js" ],
 	    "matches": [ "http://*/*", "https://*/*"]
 	} ]
 }
