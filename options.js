@@ -15,6 +15,16 @@ $(document).ready(function(){
 		$("#alerts").hide();
 	}
 
+	if(localStorage.currency != "EUR") {
+		$("select#currency option:selected").attr("selected", null);
+		$("select#currency option[value='USD']").attr("selected", "selected");
+		localStorage.currency = "USD";
+	} else {
+		$("select#currency option:selected").attr("selected", null);
+		$("select#currency option[value='EUR']").attr("selected", "selected");
+		localStorage.currency = "EUR";
+	}
+
 	if(localStorage.auto_convert == "yes") {
 		$("#auto_convert").prop("checked", true);
 	} else {
@@ -41,14 +51,22 @@ $(document).ready(function(){
 	if(isNaN(display_salary)) {
 		$("#salary").attr('placeholder', 'Enter your annual income');
 	} else {
-		$("#salary").attr('placeholder', '$' + numberWithCommas(display_salary))
+		if(localStorage.currency == "USD") {
+			$("#salary").attr("placeholder", "$ " + numberWithCommas(display_salary));
+		} else {
+			$("#salary").attr("placeholder", "\u20AC " + numberWithCommas(display_salary));
+		}
 	}
 
 	var display_wage = parseFloat(localStorage.wage).toFixed(2).toString();
 	if(isNaN(display_wage)) {
 		$("#wage").attr('placeholder', 'Enter your hourly wage');
 	} else {
-		$("#wage").attr('placeholder', '$' + display_wage);
+		if(localStorage.currency == "USD") {
+			$("#wage").attr('placeholder', "$ " + display_wage);
+		} else {
+			$("#wage").attr("placeholder", "\u20AC " + display_wage);
+		}
 	}
 
 	$("#hourly_option").click(function() {
@@ -100,33 +118,46 @@ $(document).ready(function(){
 		}
 	});
 
+	$("select#currency").change(function() {
+		var optionSelected = $("option:selected", this);
+		localStorage.currency = optionSelected.data("curr");
+	});
+
 	$("#save_wage").click(save_wage);
 	$("#save_salary").click(save_salary);
 
 	function save_salary() {
 		var select = document.getElementById("salary");
-		if(isNaN(parseFloat(select.value.replace(/\$|,/g, '')))) {
+		if(isNaN(parseFloat(select.value.replace(/(\$|,|€| +?)/g, '')))) {
 			localStorage.show_alert = 'yes';
 		} else {
-			localStorage.salary = select.value.replace(/\$|,/g, '');
+			localStorage.salary = select.value.replace(/(\$|,|€| +?)/g, '');
 			localStorage.using = "salary";
 			localStorage.show_alert = 'no';
 		}
 		display_salary = parseFloat(localStorage.salary).toFixed(2).toString();
-		$("#salary").attr('placeholder', '$' + display_salary);
+		if(localStorage.currency == "USD") {
+			$("#salary").attr("placeholder", "$" + display_salary);
+		} else {
+			$("#salary").attr("placeholder", "€" + display_salary)
+		}
 	}
 
 	function save_wage() {
 		var select = document.getElementById("wage");
-		if(isNaN(parseFloat(select.value.replace(/\$/g, '')))) {
+		if(isNaN(parseFloat(select.value.replace(/(\$|,|€| +?)/g, '')))) {
 			localStorage.show_alert = 'yes';
 		} else {
-			localStorage.wage = select.value.replace(/\$/g, '');
+			localStorage.wage = select.value.replace(/(\$|,|€| +?)/g, '');
 			localStorage.using = "wage";
 			localStorage.show_alert = 'no';
 		}
 		display_wage = parseFloat(localStorage.wage).toFixed(2).toString();
-		$("#wage").attr('placeholder', '$' + display_wage);
+		if(localStorage.currency == "USD") {
+			$("#wage").attr("placeholder", '$' + display_wage);
+		} else {
+			$("#wage").attr("placeholder", '€' + display_wage)
+		}
 	}
 
 });
@@ -136,8 +167,6 @@ $(document).ready(function(){
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-
-
 
 
 

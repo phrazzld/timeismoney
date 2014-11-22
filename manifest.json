@@ -4,7 +4,7 @@
 	"name": "Time Is Money",
 	"short_name": "t=$",
 	"description": "See prices as hours of work!",
-	"version": "2.3.0",
+	"version": "2.5.0",
 
 	"permissions": ["tabs", "http://*/*", "https://*/*"],
 

@@ -15,9 +15,9 @@
 			<div id="content">
 				<div id="status"></div>
 				<div id="alerts">
-					<p>What are they paying you in, Trident Layers?
+					<p>Oops, that doesn't look like any currency I've ever seen!
 						<br />
-						Try entering your salary in standard USD format, like $30,000.00
+						Try entering your earnings as just a decimal, like 30000.00
 					</p>
 				</div>
 				
@@ -33,6 +33,10 @@
 							<input id="annual_option" type="radio" name="choice_radio" value="annual">
 							Annual Income
 						</label>
+						<select id="currency" class="pure-input">
+							<option value="USD" data-curr="USD">USD $</option>
+							<option value="EUR" data-curr="EUR">EUR &euro;</option>
+						</select>
 					</form>
 
 					<form id="wage_form" class="pure-form">
@@ -50,7 +54,7 @@
 					<h3>When you see prices on a page, click the browser icon!</h3>
 
 					<div id="adv_section">
-						<h4><a id="adv_options" href="#">Advanced options</a></h4>
+						<h4><a id="adv_options" href="javascript:;">Advanced options</a></h4>
 
 						<form id="adv_options_form" class="pure-form">
 							<label for="auto_convert">
