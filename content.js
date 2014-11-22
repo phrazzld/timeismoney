@@ -7,8 +7,12 @@ $(document).ready(function(){
 					if(!isNaN(working_wage)) {
 						if(response.currency == "USD") {
 							$("body *").replaceText(/^((\$|USD)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
-						} else {
+						} else if(response.currency == "EUR") {
 							$("body *").replaceText(/^((\€|EUR)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
+						} else if(response.currency == "GBP") {
+							$("body *").replaceText(/^((\£|GBP)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
+						} else {
+							$("body *").replaceText(/^((\$|CDN|CAD|C)(\s{0,2}?)((\$|CDN|CAD|C)?)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
 						}
 					}
 
@@ -18,8 +22,12 @@ $(document).ready(function(){
 					if(!isNaN(working_wage)) {
 						if(response.currency == "USD") {
 							$("body *").replaceText(/^((\$|USD)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
-						} else {
+						} else if(response.currency == "EUR") {
 							$("body *").replaceText(/^((\€|EUR)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
+						} else if(response.currency == "GBP") {
+							$("body *").replaceText(/^((\£|GBP)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
+						} else {
+							$("body *").replaceText(/^((\$|CDN|CAD|C)(\s{0,2}?)((\$|CDN|CAD|C)?)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
 						}
 					}
 				}
@@ -62,7 +70,7 @@ $(document).ready(function(){
 					msg += hours.toString() + " hrs";
 				}
 				if(minutes != 0) { msg += " "; }
-				
+
 				if(minutes == 0) { }
 				else if(minutes == 1) {
 					msg += minutes + " min";
