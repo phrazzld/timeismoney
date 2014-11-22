@@ -5,13 +5,13 @@ $(document).ready(function(){
 				var working_wage = response.wage;
 				if(!isNaN(working_wage)) {
 					if(response.currency == "USD") {
-						$("body *").replaceText(/^((\$|USD)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
+						$("body *").replaceText(/^((\$|USD)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, convert);
 					} else if(response.currency == "EUR") {
-						$("body *").replaceText(/^((\€|EUR)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
+						$("body *").replaceText(/^((\€|EUR)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, convert);
 					} else if(response.currency == "GBP") {
-						$("body *").replaceText(/^((\£|GBP)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
+						$("body *").replaceText(/^((\£|GBP)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, convert);
 					} else {
-						$("body *").replaceText(/^((\$|CDN|CAD|C)(\s{0,2}?)((\$|CDN|CAD|C)?)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
+						$("body *").replaceText(/^((\$|CDN|CAD|C)(\s{0,2}?)((\$|CDN|CAD|C)?)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2}))$/, convert);
 					}
 				}
 
@@ -20,13 +20,13 @@ $(document).ready(function(){
 				working_wage = working_wage/52/40;
 				if(!isNaN(working_wage)) {
 					if(response.currency == "USD") {
-						$("body *").replaceText(/^((\$|USD)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
+						$("body *").replaceText(/^((\$|USD)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, convert);
 					} else if(response.currency == "EUR") {
-						$("body *").replaceText(/^((\€|EUR)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
+						$("body *").replaceText(/^((\€|EUR)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, convert);
 					} else if(response.currency == "GBP") {
-						$("body *").replaceText(/^((\£|GBP)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
+						$("body *").replaceText(/^((\£|GBP)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, convert);
 					} else {
-						$("body *").replaceText(/^((\$|CDN|CAD|C)(\s{0,2}?)((\$|CDN|CAD|C)?)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2})?([pcm]|bn| [mb]illion))$/, convert);
+						$("body *").replaceText(/^((\$|CDN|CAD|C)(\s{0,2}?)((\$|CDN|CAD|C)?)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2}))$/, convert);
 					}
 				}
 			}
