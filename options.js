@@ -140,41 +140,44 @@ $(document).ready(function(){
 
 	function save_salary() {
 		var select = document.getElementById("salary");
-		if(isNaN(parseFloat(select.value.replace(/(\$|,|€|£| +?)/g, '')))) {
-			localStorage.show_alert = 'yes';
-		} else if(parseFloat(select.value.replace(/(\$|,|€|£| +?)/g, '')) == '') {
-		} else {
-			localStorage.salary = select.value.replace(/(\$|,|€|£| +?)/g, '');
-			localStorage.using = "salary";
-			localStorage.show_alert = 'no';
-			display_salary = parseFloat(localStorage.salary).toFixed(2).toString();
-			if(localStorage.currency == "USD" || localStorage.currency == "CAD") {
-				$("#salary").attr("placeholder", "$ " + display_salary);
-			} else if(localStorage.currency == "EUR") {
-				$("#salary").attr("placeholder", "€" + display_salary);
+		if(select.value != "") {
+			if(isNaN(parseFloat(select.value.replace(/(\$|,|€|£| +?)/g, '')))) {
+				localStorage.show_alert = 'yes';
+			} else if(parseFloat(select.value.replace(/(\$|,|€|£| +?)/g, '')) == '') {
 			} else {
-				$("#salary").attr("placeholder", "£" + display_salary);
+				localStorage.salary = select.value.replace(/(\$|,|€|£| +?)/g, '');
+				localStorage.using = "salary";
+				localStorage.show_alert = 'no';
+				display_salary = parseFloat(localStorage.salary).toFixed(2).toString();
+				if(localStorage.currency == "USD" || localStorage.currency == "CAD") {
+					$("#salary").attr("placeholder", "$ " + display_salary);
+				} else if(localStorage.currency == "EUR") {
+					$("#salary").attr("placeholder", "€" + display_salary);
+				} else {
+					$("#salary").attr("placeholder", "£" + display_salary);
+				}
 			}
 		}
 	}
 
 	function save_wage() {
 		var select = document.getElementById("wage");
-		console.log(parseFloat(select.value.replace(/(\$|,|€|£| +?)/g, '')));
-		if(isNaN(parseFloat(select.value.replace(/(\$|,|€|£| +?)/g, '')))) {
-			localStorage.show_alert = 'yes';
-		} else if(parseFloat(select.value.replace(/(\$|,|€|£| +?)/g, '')) == '') {
-		} else {
-			localStorage.wage = select.value.replace(/(\$|,|€|£| +?)/g, '');
-			localStorage.using = "wage";
-			localStorage.show_alert = 'no';
-			display_wage = parseFloat(localStorage.wage).toFixed(2).toString();
-			if(localStorage.currency == "USD" || localStorage.currency == "CAD") {
-				$("#wage").attr("placeholder", "$ " + display_wage);
-			} else if(localStorage.currency == "EUR") {
-				$("#wage").attr("placeholder", "€" + display_wage);
+		if(select.value != "") {
+			if(isNaN(parseFloat(select.value.replace(/(\$|,|€|£| +?)/g, '')))) {
+				localStorage.show_alert = 'yes';
+			} else if(parseFloat(select.value.replace(/(\$|,|€|£| +?)/g, '')) == '') {
 			} else {
-				$("#wage").attr("placeholder", "£" + display_wage);
+				localStorage.wage = select.value.replace(/(\$|,|€|£| +?)/g, '');
+				localStorage.using = "wage";
+				localStorage.show_alert = 'no';
+				display_wage = parseFloat(localStorage.wage).toFixed(2).toString();
+				if(localStorage.currency == "USD" || localStorage.currency == "CAD") {
+					$("#wage").attr("placeholder", "$ " + display_wage);
+				} else if(localStorage.currency == "EUR") {
+					$("#wage").attr("placeholder", "€" + display_wage);
+				} else {
+					$("#wage").attr("placeholder", "£" + display_wage);
+				}
 			}
 		}
 	}
