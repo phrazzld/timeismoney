@@ -61,6 +61,10 @@ $(document).ready(function(){
 		$("#adv_options_form").hide();
 	}
 
+	if(localStorage.show_expenses != "show") {
+		$("#expenses_form").hide();
+	}
+
 	var display_salary = parseFloat(localStorage.salary).toFixed(2).toString();
 	if(isNaN(display_salary)) {
 		$("#salary").attr('placeholder', 'Enter your annual income');
@@ -133,6 +137,15 @@ $(document).ready(function(){
 			localStorage.adv_view = "hide";
 		} else {
 			localStorage.adv_view = "show";
+		}
+	});
+
+	$("#expenses_header").click(function() {
+		$("#expenses_form").toggle("fast");
+		if(localStorage.show_expenses == "show") {
+			localStorage.show_expenses = "hide";
+		} else {
+			localStorage.show_expenses = "show";
 		}
 	});
 
@@ -235,7 +248,7 @@ $(document).ready(function(){
 				if(expenses.hasOwnProperty(expense) && typeof(expenses[expense]) == "object") {
 					var cost = currency_used + parseFloat(expenses[expense].cost).toFixed(2).toString();
 					var frequency = expenses[expense].frequency;
-					var html = create_html('<div class="recurring_expense"><span class="recurring_expense_cost">' + cost + '</span> <span class="recurring_expense_frequency">' + frequency + '</span> on <span class="recurring_expense_name">' + expense.toString() + '</span></div>');
+					var html = create_html('<div class="recurring_expense" id="recurring_expense_' + expense.toString() + '"><span class="recurring_expense_cost">' + cost + '</span> <span class="recurring_expense_frequency">' + frequency + '</span> on <span class="recurring_expense_name">' + expense.toString() + '</span> <span class="recurring_expense_delete"><a class="delete_expense" href="javascript:;">delete</a> </span></div>');
 					document.getElementById("current_expenses").appendChild(html);
 					if(expenses[expense].frequency == "daily") {
 						total_expenses += parseFloat(cost.replace(/(\$|,|€|£| +?)/g, '')) * 30;
@@ -252,6 +265,26 @@ $(document).ready(function(){
 			document.getElementById("current_expenses").appendChild(total_expenses_html);
 			localStorage["total_expenses"] = total_expenses;
 		}
+	}
+
+	$(".delete_expense").click(function() {
+		var id = $(this).closest("div").attr("id");
+		id = id.replace("recurring_expense_", "");
+		alert(id);
+		var expenses = JSON.parse(localStorage["expenses"]);
+		delete expenses[id];
+		expenses = JSON.stringify(expenses);
+		localStorage["expenses"] = expenses;
+		location.reload();
+	});
+
+	function removeExpense(expenseID) {
+		var expense = document.getElementById(expenseID);
+		expense = expense.replace("recurring_expense_", "");
+		var expenses = JSON.parse(localStorage["expenses"]);
+		delete expenses[expense];
+		expenses = JSON.stringify(expenses);
+		localStorage["expenses"] = expenses;
 	}
 
 });

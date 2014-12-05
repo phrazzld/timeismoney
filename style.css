@@ -104,7 +104,7 @@ a {
 	margin-bottom: 15px;
 }
 
-#adv_options_form {
+#adv_options_form, #expenses_form {
 	width: 420px;
 	text-align: left;
 	margin-left: auto;
@@ -116,16 +116,17 @@ a {
 	margin-bottom: 5px;
 }
 
-#expenses_form {
-	text-align: center;
-}
-
 .expense_text {
 	width: 100px;
 }
 
+#expense_cost {
+	margin-right: 10px;
+}
+
 #expense_name {
 	margin-left: 10px;
+	margin-right: 10px;
 }
 
 #expense_frequency {
@@ -148,6 +149,16 @@ a {
 #total_expenses {
 	color: #d40000;
 }
+
+.recurring_expense_delete {
+	float: right;
+	margin-left: 10px;
+}
+
+.recurring_expense_delete a {
+	color: #B1D0B5;
+}
+
 /*
 .recurring_expense_cost {
 	float: left;
