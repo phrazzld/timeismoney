@@ -19,18 +19,22 @@ $(document).ready(function(){
 		$("select#currency option:selected").attr("selected", null);
 		$("select#currency option[value='USD']").attr("selected", "selected");
 		localStorage.currency = "USD";
+		$("input#expense_cost").attr("placeholder", "$ 2.00")
 	} else if(localStorage.currency == "EUR") {
 		$("select#currency option:selected").attr("selected", null);
 		$("select#currency option[value='EUR']").attr("selected", "selected");
 		localStorage.currency = "EUR";
+		$("input#expense_cost").attr("placeholder", "\u20AC 2.00")
 	} else if(localStorage.currency == "GBP") {
 		$("select#currency option:selected").attr("selected", null);
 		$("select#currency option[value='GBP']").attr("selected", "selected");
 		localStorage.currency = "GBP";
+		$("input#expense_cost").attr("placeholder", "\u00A3 2.00")
 	} else {
 		$("select#currency option:selected").attr("selected", null);
 		$("select#currency option[value='CAD']").attr("selected", "selected");
 		localStorage.currency = "CAD";
+		$("input#expense_cost").attr("placeholder", "$ 2.00")
 	}
 
 	if(localStorage.auto_convert == "yes") {
@@ -137,6 +141,7 @@ $(document).ready(function(){
 
 	$("#save_wage").click(save_wage);
 	$("#save_salary").click(save_salary);
+	$("#save_expense").click(save_expense);
 
 	function save_salary() {
 		var select = document.getElementById("salary");
@@ -179,6 +184,27 @@ $(document).ready(function(){
 					$("#wage").attr("placeholder", "£" + display_wage);
 				}
 			}
+		}
+	}
+
+	function save_expense() {
+		if(localStorage.expenses == undefined) {
+			var x = {};
+		} else {
+			var x = JSON.parse(localStorage.expenses);
+		}
+		
+		var c = document.getElementById("expense_cost").value.replace(/(\$|,|€|£| +?)/g, '');
+		var n = document.getElementById("expense_name").value;
+		var f = document.getElementById("expense_frequency").value;
+
+		if(isNaN(parseFloat(c))) {
+			localStorage.show_alert = 'yes';
+		} else if(parseFloat(c) == '') {
+		} else {
+			x[n] = { cost: c, frequency: f };
+			x = JSON.stringify(x);
+			localStorage.expenses = x;	
 		}
 	}
 

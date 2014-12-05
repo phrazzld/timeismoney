@@ -70,6 +70,19 @@
 							<label for="convert_weeks" class="pure-form">
 								<input id="convert_weeks" type="checkbox"> <span title="Convert expensive items into weeks.">40-hour workweek</span>
 							</label>
+							<br />
+							<div id="expenses">
+								<h4 id="expenses_header">Recurring Expenses</h4>
+								<input type="text" class="expense_text" id="expense_cost" placeholder="2.00">on 
+								<input type="text" class="expense_text" id="expense_name" placeholder="coffee">
+								<select id="expense_frequency" class="pure-input">
+									<option value="daily" data-freq="daily">Daily</option>
+									<option value="weekly" data-freq="weekly">Weekly</option>
+									<option value="monthly" data-freq="monthly">Monthly</option>
+									<option value="annually" data-freq="annually">Annually</option>
+								</select>
+								<button id="save_expense" class="pure-button pure-button-primary">SAVE</button>
+							</div>
 						</form>
 					</div>
 

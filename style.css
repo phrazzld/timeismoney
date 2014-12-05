@@ -116,7 +116,21 @@ a {
 	margin-bottom: 5px;
 }
 
+#expenses {
+	text-align: center;
+}
 
+.expense_text {
+	width: 100px;
+}
+
+#expense_name {
+	margin-left: 10px;
+}
+
+#expense_frequency {
+	height: 29px;
+}
 
 
 
