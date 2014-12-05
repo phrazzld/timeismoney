@@ -1,6 +1,7 @@
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
 	if(request.method == "getLocal"){
-		sendResponse({expenses: localStorage["expenses"],
+		sendResponse({total_expenses: localStorage["total_expenses"],
+					  expenses: localStorage["expenses"],
 					  currency: localStorage["currency"],
 					  show_alert: localStorage["show_alert"], 
 					  using: localStorage["using"],

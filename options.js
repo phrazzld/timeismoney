@@ -37,6 +37,8 @@ $(document).ready(function(){
 		$("input#expense_cost").attr("placeholder", "$ 2.00")
 	}
 
+	gen_expenses_html();
+
 	if(localStorage.auto_convert == "yes") {
 		$("#auto_convert").prop("checked", true);
 	} else {
@@ -205,6 +207,50 @@ $(document).ready(function(){
 			x[n] = { cost: c, frequency: f };
 			x = JSON.stringify(x);
 			localStorage.expenses = x;	
+		}
+	}
+
+	function create_html(html_str) {
+		var frag = document.createDocumentFragment(),
+			temp = document.createElement("div");
+		temp.innerHTML = html_str;
+		while(temp.firstChild) {
+			frag.appendChild(temp.firstChild);
+		}
+		return frag;
+	}
+
+	function gen_expenses_html() {
+		if(localStorage.expenses != undefined) {
+			var expenses = JSON.parse(localStorage.expenses);
+			var total_expenses = 0;
+			if(localStorage.currency == "USD" || localStorage.currency == "CAD") {
+				var currency_used = "$ ";
+			} else if(localStorage.currency == "EUR") {
+				var currency_used = "€ ";
+			} else {
+				var currency_used = "£ ";
+			}
+			for(var expense in expenses) {
+				if(expenses.hasOwnProperty(expense) && typeof(expenses[expense]) == "object") {
+					var cost = currency_used + parseFloat(expenses[expense].cost).toFixed(2).toString();
+					var frequency = expenses[expense].frequency;
+					var html = create_html('<div class="recurring_expense"><span class="recurring_expense_cost">' + cost + '</span> <span class="recurring_expense_frequency">' + frequency + '</span> on <span class="recurring_expense_name">' + expense.toString() + '</span></div>');
+					document.getElementById("current_expenses").appendChild(html);
+					if(expenses[expense].frequency == "daily") {
+						total_expenses += parseFloat(cost.replace(/(\$|,|€|£| +?)/g, '')) * 30;
+					} else if(expenses[expense].frequency == "weekly") {
+						total_expenses += parseFloat(cost.replace(/(\$|,|€|£| +?)/g, '')) * 4;
+					} else if(expenses[expense].frequency == "monthly") {
+						total_expenses += parseFloat(cost.replace(/(\$|,|€|£| +?)/g, ''));
+					} else if(expenses[expense].frequency == "annually") {
+						total_expenses += parseFloat(cost.replace(/(\$|,|€|£| +?)/g, '')) / 12;
+					}
+				}
+			}
+			var total_expenses_html = create_html('<div id="total_expenses">' + currency_used + total_expenses.toFixed(2).toString() + ' total per month</div>');
+			document.getElementById("current_expenses").appendChild(total_expenses_html);
+			localStorage["total_expenses"] = total_expenses;
 		}
 	}
 

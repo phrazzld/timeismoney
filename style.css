@@ -57,7 +57,7 @@ h1, h3, h5, form {
 	padding-bottom: 6px;
 }
 
-#save_wage, #save_salary {
+#save_wage, #save_salary, #save_expense {
 	background-color: #216C2A;
 }
 
@@ -116,7 +116,7 @@ a {
 	margin-bottom: 5px;
 }
 
-#expenses {
+#expenses_form {
 	text-align: center;
 }
 
@@ -130,10 +130,39 @@ a {
 
 #expense_frequency {
 	height: 29px;
+	margin-right: 15px;
 }
 
+#current_expenses {
+	margin-bottom: 15px;
+}
 
+#expenses_header {
+	color: #216C2A;
+}
 
+.recurring_expense {
+	margin-bottom: 5px;
+}
+
+#total_expenses {
+	color: #d40000;
+}
+/*
+.recurring_expense_cost {
+	float: left;
+	width: 60px;
+}
+
+.recurring_expense_frequency {
+	float: left;
+	width: 60px;
+}
+
+.recurring_expense_name {
+	float: left;
+	width: 80px;
+}*/
 
 
 
