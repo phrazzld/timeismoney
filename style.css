@@ -17,7 +17,7 @@ body {
 }
 
 #content {
-	padding-bottom: 80px;
+	padding-bottom: 50px;
 }
 
 h1, h3, h5, form {
@@ -76,9 +76,9 @@ h1, h3, h5, form {
 
 #footer {
 	width: 100%;
-	margin: 25px 0;
+	padding-bottom: 10px;
 	border-top: 1px solid #ddd;
-	height: 87px;
+	height: 80px;
 	position: absolute;
 	bottom: 0;
 	left: 0;
@@ -159,21 +159,7 @@ a {
 	color: #B1D0B5;
 }
 
-/*
-.recurring_expense_cost {
-	float: left;
-	width: 60px;
-}
-
 .recurring_expense_frequency {
-	float: left;
-	width: 60px;
+	color: #505050;
 }
-
-.recurring_expense_name {
-	float: left;
-	width: 80px;
-}*/
-
-
 

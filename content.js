@@ -15,8 +15,10 @@ $(document).ready(function(){
 							$("body *").replaceText(/^((\€|EUR)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, convert);
 						} else if(response.currency == "GBP") {
 							$("body *").replaceText(/^((\£|GBP)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, convert);
-						} else {
+						} else if(response.currency == "CAD") {
 							$("body *").replaceText(/^((\$|CDN|CAD|C)(\s{0,2}?)((\$|CDN|CAD|C)?)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2}))$/, convert);
+						} else {
+							$("body *").replaceText(/^((\$|AUD)(\s{0,2}?)((\$|AUD)?)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2}))$/, convert);
 						}
 					}
 					else {
@@ -26,8 +28,10 @@ $(document).ready(function(){
 							$("body *").replaceText(/^((\€|EUR)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, "TOO MUCH");
 						} else if(response.currency == "GBP") {
 							$("body *").replaceText(/^((\£|GBP)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, "TOO MUCH");
-						} else {
+						} else if(response.currency == "CAD") {
 							$("body *").replaceText(/^((\$|CDN|CAD|C)(\s{0,2}?)((\$|CDN|CAD|C)?)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2}))$/, "TOO MUCH");
+						} else {
+							$("body *").replaceText(/^((\$|AUD)(\s{0,2}?)((\$|AUD)?)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2}))$/, "TOO MUCH");
 						}
 					}
 				}
@@ -47,8 +51,10 @@ $(document).ready(function(){
 							$("body *").replaceText(/^((\€|EUR)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, convert);
 						} else if(response.currency == "GBP") {
 							$("body *").replaceText(/^((\£|GBP)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, convert);
-						} else {
+						} else if(response.currency == "CAD") {
 							$("body *").replaceText(/^((\$|CDN|CAD|C)(\s{0,2}?)((\$|CDN|CAD|C)?)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2}))$/, convert);
+						} else {
+							$("body *").replaceText(/^((\$|AUD)(\s{0,2}?)((\$|AUD)?)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2}))$/, convert);
 						}
 					} else {
 						if(response.currency == "USD") {
@@ -57,8 +63,10 @@ $(document).ready(function(){
 							$("body *").replaceText(/^((\€|EUR)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, "TOO MUCH");
 						} else if(response.currency == "GBP") {
 							$("body *").replaceText(/^((\£|GBP)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, "TOO MUCH");
-						} else {
+						} else if(response.currency == "CAD") {
 							$("body *").replaceText(/^((\$|CDN|CAD|C)(\s{0,2}?)((\$|CDN|CAD|C)?)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2}))$/, "TOO MUCH");
+						} else {
+							$("body *").replaceText(/^((\$|AUD)(\s{0,2}?)((\$|AUD)?)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2}))$/, "TOO MUCH");
 						}
 					}
 				}
