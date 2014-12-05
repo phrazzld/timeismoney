@@ -270,7 +270,6 @@ $(document).ready(function(){
 	$(".delete_expense").click(function() {
 		var id = $(this).closest("div").attr("id");
 		id = id.replace("recurring_expense_", "");
-		alert(id);
 		var expenses = JSON.parse(localStorage["expenses"]);
 		delete expenses[id];
 		expenses = JSON.stringify(expenses);
