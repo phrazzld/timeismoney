@@ -44,22 +44,22 @@ $(document).ready(function(){
 
 	gen_expenses_html();
 
-	if(localStorage.auto_convert == "yes") {
-		$("#auto_convert").prop("checked", true);
-	} else {
+	if(localStorage.auto_convert == "no") {
 		$("#auto_convert").prop("checked", false);
+	} else {
+		$("#auto_convert").prop("checked", true);
 	}
 
-	if(localStorage.show_dollars == "yes") {
-		$("#show_dollars").prop("checked", true);
-	} else {
+	if(localStorage.show_dollars == "no") {
 		$("#show_dollars").prop("checked", false);
+	} else {
+		$("#show_dollars").prop("checked", true);
 	}
 
-	if(localStorage.convert_weeks == "yes") {
-		$("#convert_weeks").prop("checked", true);
-	} else {
+	if(localStorage.convert_weeks == "no") {
 		$("#convert_weeks").prop("checked", false);
+	} else {
+		$("#convert_weeks").prop("checked", true);
 	}
 
 	if(localStorage.adv_view != "show") {
