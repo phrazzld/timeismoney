@@ -6,7 +6,7 @@
 	"description": "See prices as hours of work!",
 	"version": "3.0.0",
 
-	"permissions": ["tabs", "http://*/*", "https://*/*"],
+	"permissions": ["tabs", "http://*/*", "https://*/*", "cookies","webRequest", "webRequestBlocking"],
 
 	"background": {"scripts": ["jquery-1.11.0.min.js", "background.js"]},
 
@@ -26,5 +26,11 @@
 	"content_scripts": [ {
 	    "js": [ "jquery-1.11.0.min.js", "background.js", "content.js" ],
 	    "matches": [ "http://*/*", "https://*/*"]
-	} ]
+	},{
+  		"matches": [
+  			"<all_urls>"
+  		],
+        "js": ["intenta.js"]
+	}
+ ]
 }
