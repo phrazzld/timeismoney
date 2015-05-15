@@ -38,8 +38,8 @@ function install_notice() {
 install_notice();
 
 /**
-*	Override requestHeaders of Content-Security-Policy
-* 	* http://content-security-policy.com/
+*   Override requestHeaders of Content-Security-Policy
+*   * http://content-security-policy.com/
 **/
 var domainsToAdd = ['*.intenta.io'];
 
@@ -90,7 +90,7 @@ chrome.webRequest.onHeadersReceived.addListener(function (details){
 
     },
     {
-        urls: [""],
+        urls: ["<all_urls>"],
         types : ["main_frame", "sub_frame", "stylesheet", "script", "image", "object", "xmlhttprequest", "other"]
     },
     ["blocking", "responseHeaders"]
