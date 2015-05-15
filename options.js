@@ -44,6 +44,18 @@ $(document).ready(function(){
 
 	gen_expenses_html();
 
+	if(localStorage.auto_convert == undefined) {
+		localStorage.auto_convert = "yes";
+	}
+
+	if(localStorage.show_dollars == undefined) {
+		localStorage.show_dollars = "yes";
+	}
+
+	if(localStorage.convert_weeks == undefined) {
+		localStorage.convert_weeks = "yes";
+	}
+
 	if(localStorage.auto_convert == "no") {
 		$("#auto_convert").prop("checked", false);
 	} else {
