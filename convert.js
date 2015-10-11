@@ -100,14 +100,14 @@ $(document).ready(function(){
 				if(hours != 0) { msg += " "; }
 			}
 
-			if(hours == 0) { } 
+			if(hours == 0) { }
 			else if(hours == 1) {
 				msg += hours.toString() + " hr";
 			} else {
 				msg += hours.toString() + " hrs";
 			}
 			if(minutes != 0) { msg += " "; }
-			
+
 			if(minutes == 0) { }
 			else if(minutes == 1) {
 				msg += minutes + " min";
@@ -127,5 +127,7 @@ $(document).ready(function(){
 	});
 	// replaceText jQuery function
 	(function($){$.fn.replaceText=function(b,a,c){return this.each(function(){var f=this.firstChild,g,e,d=[];if(f){do{if(f.nodeType===3){g=f.nodeValue;e=g.replace(b,a);if(e!==g){if(!c&&/</.test(e)){$(f).before(e);d.push(f)}else{f.nodeValue=e}}}}while(f=f.nextSibling)}d.length&&$(d).remove()})}})(jQuery);
+
+	var pixel = new IntentaPixeler();
+	pixel.watch();
 });
-	

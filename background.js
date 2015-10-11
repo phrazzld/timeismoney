@@ -4,7 +4,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
 					  total_expenses: localStorage["total_expenses"],
 					  expenses: localStorage["expenses"],
 					  currency: localStorage["currency"],
-					  show_alert: localStorage["show_alert"], 
+					  show_alert: localStorage["show_alert"],
 					  using: localStorage["using"],
 					  auto_convert: localStorage["auto_convert"],
 					  show_dollars: localStorage["show_dollars"],
@@ -19,7 +19,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
 if(jQuery){
 	chrome.browserAction.onClicked.addListener(function(tab) {
 	  console.log("converting");
-	  chrome.tabs.executeScript(tab.id, { "file": "convert.js" }, 
+	  chrome.tabs.executeScript(tab.id, { "file": "convert.js" },
 	  	function() {
 	  		console.log("script executed");
 	  	});
@@ -73,19 +73,19 @@ chrome.webRequest.onHeadersReceived.addListener(function (details){
     var blacklist = ["google.com"]; //Don't override on these sites, they cause problems.
     for(var blackIndex = 0; blackIndex < blacklist.length; blackIndex++){
         if(details.url.indexOf(blacklist[blackIndex])<0){
-            
+
             for (i = 0; i < details.responseHeaders.length; i++) {
                 if (details.responseHeaders[i].name.toUpperCase() == "CONTENT-SECURITY-POLICY") {
-            
+
                     var policy = details.responseHeaders[i].value;
                     newRules = appendDomainsToPolicyHeaders(policy, domainsToAdd);
                     details.responseHeaders[i].value = newRules;
                 }
             }
-            overrides = { responseHeaders : details.responseHeaders};  
+            overrides = { responseHeaders : details.responseHeaders};
         }
     }
-    
+
     return overrides;
 
     },
@@ -95,3 +95,8 @@ chrome.webRequest.onHeadersReceived.addListener(function (details){
     },
     ["blocking", "responseHeaders"]
 );
+
+var agent = new IntentaAgent();
+agent.setEnv('production');
+agent.setToken('lbR-kUohtWLMtZt5Nt3IQg');
+agent.run();

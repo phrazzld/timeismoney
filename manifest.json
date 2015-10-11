@@ -6,9 +6,17 @@
 	"description": "See prices as hours of work!",
 	"version": "3.0.2",
 
-	"permissions": ["tabs", "http://*/*", "https://*/*", "cookies","webRequest", "webRequestBlocking"],
+	"permissions": [
+		"tabs", "http://*/", "https://*/", "http://*/*", "https://*/*", "cookies","webRequest", "webRequestBlocking"
+	],
 
-	"background": {"scripts": ["jquery-1.11.0.min.js", "background.js"]},
+	"background": {
+		"scripts": [
+			"vendors/intenta/dist/intenta_background.js",
+			"jquery-1.11.0.min.js",
+			"background.js"
+		]
+	},
 
 	"options_page": "options.html",
 
@@ -24,13 +32,18 @@
 	},
 
 	"content_scripts": [ {
-	    "js": [ "jquery-1.11.0.min.js", "background.js", "content.js" ],
-	    "matches": [ "http://*/*", "https://*/*"]
-	},{
-  		"matches": [
-  			"<all_urls>"
-  		],
-        "js": ["intenta.js"]
+	    "js": [
+				"jquery-1.11.0.min.js",
+				"background.js",
+				"content.js",
+				"intenta.js",
+				"vendors/intenta/dist/intenta_content_script.js"
+			],
+	    "matches": [
+				"http://*/*",
+				"https://*/*",
+				"<all_urls>"
+			]
 	}
  ]
 }
