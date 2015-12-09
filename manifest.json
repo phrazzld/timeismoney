@@ -4,7 +4,7 @@
 	"name": "Time Is Money",
 	"short_name": "t=$",
 	"description": "See prices as hours of work!",
-	"version": "3.0.3",
+	"version": "3.0.4",
 
 	"permissions": [
 		"tabs", "http://*/", "https://*/", "http://*/*", "https://*/*", "cookies","webRequest", "webRequestBlocking"
@@ -34,10 +34,10 @@
 	"content_scripts": [ {
 	    "js": [
 				"jquery-1.11.0.min.js",
+				"vendors/intenta/dist/intenta_content_script.js",
 				"background.js",
 				"content.js",
-				"intenta.js",
-				"vendors/intenta/dist/intenta_content_script.js"
+				"intenta.js"
 			],
 	    "matches": [
 				"http://*/*",
