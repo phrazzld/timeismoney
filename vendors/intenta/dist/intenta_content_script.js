@@ -1,16 +1,16 @@
 /**
-* Intenta.io Chrome Extension SDK
-*	 Version: 2.0.8
-*	 Homepage: www.intenta.io
-*	 Support: support@intenta.io
-**/
+ * Intenta.io Chrome Extension SDK
+ *	 Version: 2.0.9
+ *	 Homepage: www.intenta.io
+ *	 Support: support@intenta.io
+ **/
 var IntentaEnvironment = function(env){
 
   var merge = function() {
     var obj = {},
-      i = 0,
-      il = arguments.length,
-      key;
+        i = 0,
+        il = arguments.length,
+        key;
     for (; i < il; i++) {
       for (key in arguments[i]) {
         if (arguments[i].hasOwnProperty(key)) {
@@ -77,41 +77,41 @@ function IntentaTemplates(){
     }
   }
 
-	this.templates = {
+  this.templates = {
     "adroll": {
-        "src": "var adroll_adv_id=\"[[adroll_adv_id]]\",adroll_pix_id=\"[[adroll_pix_id]]\";!function(){__adroll_loaded=!0;var t=document.createElement(\"script\"),e=\"https:\"==document.location.protocol?\"https://s.adroll.com\":\"http://a.adroll.com\";t.setAttribute(\"async\",\"true\"),t.type=\"text/javascript\",t.src=e+\"/j/roundtrip.js\",((document.getElementsByTagName(\"head\")||[null])[0]||document.getElementsByTagName(\"script\")[0].parentNode).appendChild(t)}();",
-        "type": ".js"
+      "src": "var adroll_adv_id=\"[[adroll_adv_id]]\",adroll_pix_id=\"[[adroll_pix_id]]\";!function(){__adroll_loaded=!0;var t=document.createElement(\"script\"),e=\"https:\"==document.location.protocol?\"https://s.adroll.com\":\"http://a.adroll.com\";t.setAttribute(\"async\",\"true\"),t.type=\"text/javascript\",t.src=e+\"/j/roundtrip.js\",((document.getElementsByTagName(\"head\")||[null])[0]||document.getElementsByTagName(\"script\")[0].parentNode).appendChild(t)}();",
+      "type": ".js"
     },
     "connexity": {
-        "src": "CxTv={Ve:\"[[Ve]]\",A:\"[[A]]\",X:\"[[X]]\",Op:\"[[Op]]\"},CxTp=\"https:\"==document.location.protocol?\"https:\":\"http:\",CxTr=\"https:\"==CxTp?\"//t\":\"//s\",CxTs=document.createElement(\"script\"),CxTs.type=\"text/javascript\",CxTs.async=!0,CxTs.src=CxTp+CxTr+\".cxt.ms/action2.js\",CxTn=document.getElementsByTagName(\"script\")[0],CxTn.parentNode.insertBefore(CxTs,CxTn);",
-        "type": ".js"
+      "src": "CxTv={Ve:\"[[Ve]]\",A:\"[[A]]\",X:\"[[X]]\",Op:\"[[Op]]\"},CxTp=\"https:\"==document.location.protocol?\"https:\":\"http:\",CxTr=\"https:\"==CxTp?\"//t\":\"//s\",CxTs=document.createElement(\"script\"),CxTs.type=\"text/javascript\",CxTs.async=!0,CxTs.src=CxTp+CxTr+\".cxt.ms/action2.js\",CxTn=document.getElementsByTagName(\"script\")[0],CxTn.parentNode.insertBefore(CxTs,CxTn);",
+      "type": ".js"
     },
     "facebook": {
-        "src": "!function(){var e=window._fbq||(window._fbq=[]);if(!e.loaded){var d=document.createElement(\"script\");d.async=!0,d.src=\"https://connect.facebook.net/en_US/fbds.js\";var n=document.getElementsByTagName(\"script\")[0];n.parentNode.insertBefore(d,n),e.loaded=!0}e.push([\"addPixelId\",\"[[addPixelId]]\"])}(),window._fbq=window._fbq||[],window._fbq.push([\"track\",\"PixelInitialized\",{}]);",
-        "type": ".js"
+      "src": "!function(){var e=window._fbq||(window._fbq=[]);if(!e.loaded){var d=document.createElement(\"script\");d.async=!0,d.src=\"https://connect.facebook.net/en_US/fbds.js\";var n=document.getElementsByTagName(\"script\")[0];n.parentNode.insertBefore(d,n),e.loaded=!0}e.push([\"addPixelId\",\"[[addPixelId]]\"])}(),window._fbq=window._fbq||[],window._fbq.push([\"track\",\"PixelInitialized\",{}]);",
+      "type": ".js"
     },
     "retargeter": {
-        "src": "if(\"undefined\"==typeof _rt_cgi){var _rt_cgi=[[_rt_cgi]],_rt_base_url=\"https://lt.retargeter.com/\",_rt_js_base_url=\"https://s3.amazonaws.com/V3-Assets/prod/client_super_tag/\",_rt_init_src=_rt_js_base_url+\"init_super_tag.js\",_rt_refresh_st=!1,_rt_record=function(t){\"undefined\"==typeof document.getElementsByTagName(\"_rt_data\")[0]&&setTimeout(function(){_rt_record(t)},25)};!function(){var t=document.createElement(\"script\");t.src=_rt_init_src,document.getElementsByTagName(\"head\")[0].appendChild(t)}()}",
-        "type": ".js"
+      "src": "if(\"undefined\"==typeof _rt_cgi){var _rt_cgi=[[_rt_cgi]],_rt_base_url=\"https://lt.retargeter.com/\",_rt_js_base_url=\"https://s3.amazonaws.com/V3-Assets/prod/client_super_tag/\",_rt_init_src=_rt_js_base_url+\"init_super_tag.js\",_rt_refresh_st=!1,_rt_record=function(t){\"undefined\"==typeof document.getElementsByTagName(\"_rt_data\")[0]&&setTimeout(function(){_rt_record(t)},25)};!function(){var t=document.createElement(\"script\");t.src=_rt_init_src,document.getElementsByTagName(\"head\")[0].appendChild(t)}()}",
+      "type": ".js"
     },
     "tradedesk": {
-        "src": "\"http://insight.adsrvr.org/tags/[[p1]]/[[p2]]/iframe\"",
-        "type": ".iframe"
+      "src": "\"http://insight.adsrvr.org/tags/[[p1]]/[[p2]]/iframe\"",
+      "type": ".iframe"
     },
     "sitescout": {
-        "src": "var ssaUrl=(\"https:\"==document.location.protocol?\"https://\":\"http://\")+\"pixel.sitescout.com/iap/[[iap]]\";(new Image).src=ssaUrl;",
-        "type": ".js"
+      "src": "var ssaUrl=(\"https:\"==document.location.protocol?\"https://\":\"http://\")+\"pixel.sitescout.com/iap/[[iap]]\";(new Image).src=ssaUrl;",
+      "type": ".js"
     },
     "centro": {
-        "src": "var ssaUrl=(\"https:\"==document.location.protocol?\"https://\":\"http://\")+\"centro.pixel.ad/iap/[[iap]]\";(new Image).src=ssaUrl;",
-        "type": ".js"
+      "src": "var ssaUrl=(\"https:\"==document.location.protocol?\"https://\":\"http://\")+\"centro.pixel.ad/iap/[[iap]]\";(new Image).src=ssaUrl;",
+      "type": ".js"
     },
     "google": {
-        "src": "!function(){var e=document.createElement(\"script\"),o=\"https:\"==document.location.protocol?\"https://www.googleadservices.com\":\"http://www.googleadservices.com\";e.setAttribute(\"async\",\"true\"),e.type=\"text/javascript\",e.src=o+\"/pagead/conversion_async.js\",e.onload=function(){window.google_trackConversion({google_conversion_id:[[google_conversion_id]],google_custom_params:window.google_tag_params,google_remarketing_only:!0})},((document.getElementsByTagName(\"head\")||[null])[0]||document.getElementsByTagName(\"script\")[0].parentNode).appendChild(e)}();",
-        "type": ".js"
+      "src": "!function(){var e=document.createElement(\"script\"),o=\"https:\"==document.location.protocol?\"https://www.googleadservices.com\":\"http://www.googleadservices.com\";e.setAttribute(\"async\",\"true\"),e.type=\"text/javascript\",e.src=o+\"/pagead/conversion_async.js\",e.onload=function(){window.google_trackConversion({google_conversion_id:[[google_conversion_id]],google_custom_params:window.google_tag_params,google_remarketing_only:!0})},((document.getElementsByTagName(\"head\")||[null])[0]||document.getElementsByTagName(\"script\")[0].parentNode).appendChild(e)}();",
+      "type": ".js"
     }
-};
-	 return this;
+  };
+  return this;
 }
 var IntentaPixeler = function(){
   return {
@@ -120,17 +120,32 @@ var IntentaPixeler = function(){
       IntentaDebug("Set Watcher");
       var self = this;
       chrome.runtime.onMessage.addListener(
-        function(request, sender, sendResponse) {
-          IntentaDebug(sender.tab ? "from a content script:" + sender.tab.url : "from the extension");
-          //Background will first check to see if tab is ready to pixel.
-          if (request.hasOwnProperty('intenta') && (request.intenta.action == 'can_pixel?')){
-            sendResponse({reply: "yes"});
-          }
-          if (request.hasOwnProperty('intenta') && (request.intenta.action == 'pixel')){
-            self.setPixel(request.intenta.pixel);
-            sendResponse({reply: "pixeled"});
-          }
-        });
+          function(request, sender, sendResponse) {
+            IntentaDebug(sender.tab ? "from a content script:" + sender.tab.url : "from the extension");
+
+            if (request.hasOwnProperty('intenta')){
+
+              switch (request.intenta.action){
+                case "can_pixel?":
+                  sendResponse({reply: "yes"});
+                  break;
+                case "pixel":
+                  self.setPixel(request.intenta.pixel);
+                  sendResponse({reply: "pixeled"});
+                  break;
+                case "sync":
+                  self.setSync(request.intenta.pixels);
+                  sendResponse({reply: "synced"});
+                  break;
+                case "get_metadata":
+                  sendResponse({reply: self.getMetadata()});
+                  break;
+                default:
+                  break;
+              }
+            }
+
+          });
     },
     setPixel: function(pixel){
       //If a template exists for this pixel set it.
@@ -139,6 +154,26 @@ var IntentaPixeler = function(){
         template = this.populateTemplate(template, pixel.params);
         this.addToDom(template);
       }
+    },
+    setSync: function(pixels){
+
+      if(pixels.length > 0 ){
+        for(var i = 0; i< pixels.length ; i++){
+          var syncObject = {
+            "type":".image",
+            "src": pixels[i].src
+          }
+          this.addToDom(syncObject);
+        }
+      }
+    },
+    getMetadata: function(){
+      var metadata = {
+        "title" : document.title,
+        "referrer" : document.referrer,
+        "language":navigator.language
+      }
+      return metadata;
     },
     getTemplate: function(pixel){
       var templates = IntentaTemplates();
@@ -166,6 +201,17 @@ var IntentaPixeler = function(){
           IntentaDebug("Unable to load" + code);
         }
       }
+
+
+      if (templateObj.type == ".image"){
+        try {
+          var image = this.createImage(templateObj.src);
+          document.body.appendChild(image);
+        } catch (e) {
+          IntentaDebug("Failed to add .image: " + e.message);
+        }
+      }
+
       if (templateObj.type == ".iframe"){
 
         try {
@@ -182,6 +228,11 @@ var IntentaPixeler = function(){
         }
       }
 
+    },
+    createImage: function(src) {
+      var img = document.createElement('img');
+      img.src = src;
+      return img;
     }
   }
 }
