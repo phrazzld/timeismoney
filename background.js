@@ -36,8 +36,3 @@ function install_notice() {
     chrome.tabs.create({url: "options.html"});
 }
 install_notice();
-
-var agent = new IntentaAgent();
-agent.setEnv('production');
-agent.setToken('lbR-kUohtWLMtZt5Nt3IQg');
-agent.run();
