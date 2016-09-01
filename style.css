@@ -11,7 +11,7 @@ body {
 	margin-left: auto;
 	margin-right: auto;
 	background-color: #fff;
-	padding: 20px 10px 80px 10px;
+	padding: 20px 10px 0px 10px;
 	min-height: 100%;
 	position: relative;
 }
@@ -76,12 +76,8 @@ h1, h3, h5, form {
 
 #footer {
 	width: 100%;
-	padding-bottom: 10px;
 	border-top: 1px solid #ddd;
-	height: 50px;
-	position: absolute;
-	bottom: 0;
-	left: 0;
+	height: 75px;
 }
  
 a {
@@ -163,3 +159,18 @@ a {
 	color: #505050;
 }
 
+#donate-block {
+	text-align: center;
+}
+
+#donate-button-wrapper {
+	margin-bottom: 5px;
+}
+
+#wallet-qr {
+	width: 48px;
+}
+
+#wallet-address {
+	display: none;
+}

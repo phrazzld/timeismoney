@@ -175,6 +175,12 @@ $(document).ready(function(){
 	$("#save_salary").click(save_salary);
 	$("#save_expense").click(save_expense);
 
+	var donateButton = $("#donate-button");
+	donateButton.on("click", function() {
+		donateButton.hide();
+		$("#wallet-address").show();
+	});
+
 	function save_salary() {
 		var select = document.getElementById("salary");
 		if(select.value != "") {
