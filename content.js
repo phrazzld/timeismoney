@@ -100,7 +100,7 @@ $(document).ready(function(){
 				} else {
 					msg += weeks.toString() + " wks";
 				}
-				if(hours != 0) { msg += " "; }
+				if(hours != 0 && weeks > 0) { msg += " "; }
 			}
 
 			if(hours == 0) { }
@@ -109,7 +109,7 @@ $(document).ready(function(){
 			} else {
 				msg += hours.toString() + " hrs";
 			}
-			if(minutes != 0) { msg += " "; }
+			if(minutes != 0 && hours > 0) { msg += " "; }
 
 			if(minutes == 0) { }
 			else if(minutes == 1) {
