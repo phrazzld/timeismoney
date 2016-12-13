@@ -37,7 +37,7 @@ h1, h3, h5, form {
 	padding: 0px 50px;
 }
 
-#logo_title {
+#logo-title {
 	color: #216C2A;
 	font-family: 'Raleway', sans-serif;
 	margin-bottom: 0;
@@ -48,7 +48,7 @@ h1, h3, h5, form {
 	margin-bottom: 30px;
 }
 
-#options_form {
+#options-form {
 	margin-top: 20px;
 }
 
@@ -57,11 +57,11 @@ h1, h3, h5, form {
 	padding-bottom: 6px;
 }
 
-#save_wage, #save_salary, #save_expense {
+#save-wage, #save-salary, #save-expense {
 	background-color: #216C2A;
 }
 
-#user_guide {
+#user-guide {
 	width: 500px;
 	padding: 13px;
 	margin-left: auto;
@@ -81,7 +81,7 @@ a {
 	text-decoration: none;
 }
 
-#options_form label {
+#options-form label {
 	display: inline-block;
 	margin-right: 20px;
 	margin-bottom: 20px;
@@ -96,62 +96,62 @@ a {
 	margin-bottom: 15px;
 }
 
-#adv_options_form, #expenses_form {
+#adv-options-form, #expenses-form {
 	width: 420px;
 	text-align: left;
 	margin-left: auto;
 	margin-right: auto;
 }
 
-#adv_options_form input {
+#adv-options-form input {
 	margin-right: 10px;
 	margin-bottom: 5px;
 }
 
-.expense_text {
+.expense-text {
 	width: 100px;
 }
 
-#expense_cost {
+#expense-cost {
 	margin-right: 10px;
 }
 
-#expense_name {
+#expense-name {
 	margin-left: 10px;
 	margin-right: 10px;
 }
 
-#expense_frequency {
+#expense-frequency {
 	height: 29px;
 	margin-right: 15px;
 }
 
-#current_expenses {
+#current-expenses {
 	margin-bottom: 15px;
 }
 
-#expenses_header {
+#expenses-header {
 	color: #216C2A;
 }
 
-.recurring_expense {
+.recurring-expense {
 	margin-bottom: 5px;
 }
 
-#total_expenses {
+#total-expenses {
 	color: #d40000;
 }
 
-.recurring_expense_delete {
+.reccurring-expense-delete {
 	float: right;
 	margin-left: 10px;
 }
 
-.recurring_expense_delete a {
+.reccurring-expense-delete a {
 	color: #B1D0B5;
 }
 
-.recurring_expense_frequency {
+.reccurring-expense-frequency {
 	color: #505050;
 }
 

@@ -1,15 +1,15 @@
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
 	if(request.method == "getLocal"){
-		sendResponse({show_expenses: localStorage["show_expenses"],
-					  total_expenses: localStorage["total_expenses"],
+		sendResponse({showExpenses: localStorage["showExpenses"],
+					  totalExpenses: localStorage["totalExpenses"],
 					  expenses: localStorage["expenses"],
 					  currency: localStorage["currency"],
-					  show_alert: localStorage["show_alert"],
+					  showAlert: localStorage["showAlert"],
 					  using: localStorage["using"],
-					  auto_convert: localStorage["auto_convert"],
-					  show_dollars: localStorage["show_dollars"],
-					  convert_weeks: localStorage["convert_weeks"],
-					  adv_view: localStorage["adv_view"],
+					  autoConvert: localStorage["autoConvert"],
+					  showDollars: localStorage["showDollars"],
+					  convertWeeks: localStorage["convertWeeks"],
+					  advView: localStorage["advView"],
 					  wage: localStorage["wage"],
 					  salary: localStorage["salary"]});
 	} else {
@@ -27,12 +27,12 @@ if(jQuery){
 } else { }
 
 
-function install_notice() {
-    if (localStorage.getItem('install_time'))
+function installNotice() {
+    if (localStorage.getItem('installTime'))
         return;
 
     var now = new Date().getTime();
-    localStorage.setItem('install_time', now);
+    localStorage.setItem('installTime', now);
     chrome.tabs.create({url: "options.html"});
 }
-install_notice();
+installNotice();

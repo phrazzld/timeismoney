@@ -11,7 +11,6 @@
 
 	<body>
 		<div id="container">
-
 			<div id="content">
 				<div id="status"></div>
 				<div id="alerts">
@@ -21,13 +20,13 @@
 				<div id="header"></div>
 
 				<div id="bod">
-					<form id="options_form" class="pure-form">
-						<label for="hourly_option" class="pure-radio">
-							<input id="hourly_option" type="radio" name="choice_radio" value="hourly" checked>
+					<form id="options-form" class="pure-form">
+						<label for="hourly-option" class="pure-radio">
+							<input id="hourly-option" type="radio" name="choice-radio" value="hourly" checked>
 							Hourly Wage
 						</label>
-						<label for="annual_option" class="pure-radio">
-							<input id="annual_option" type="radio" name="choice_radio" value="annual">
+						<label for="annual-option" class="pure-radio">
+							<input id="annual-option" type="radio" name="choice-radio" value="annual">
 							Annual Income
 						</label>
 						<select id="currency" class="pure-input">
@@ -39,54 +38,54 @@
 						</select>
 					</form>
 
-					<form id="wage_form" class="pure-form">
+					<form id="wage-form" class="pure-form">
 						<input type="text" id="wage">
-						<button id="save_wage" class="pure-button pure-button-primary">SAVE</button>
+						<button id="save-wage" class="pure-button pure-button-primary">SAVE</button>
 					</form>
 
-					<form id="salary_form" class="pure-form">
+					<form id="salary-form" class="pure-form">
 						<input type="text" id="salary">
-						<button id="save_salary" class="pure-button pure-button-primary">SAVE</button>
+						<button id="save-salary" class="pure-button pure-button-primary">SAVE</button>
 					</form>
 
 					<br />
 
 					<h3>When you see prices on a page, click the browser icon!</h3>
 
-					<div id="adv_section">
-						<h4><a id="adv_options" href="javascript:;" title="Advanced options save right when they're clicked, so don't bother clicking the save button!">Advanced options</a></h4>
+					<div id="adv-section">
+						<h4><a id="adv-options" href="javascript:;" title="Advanced options save right when they're clicked, so don't bother clicking the save button!">Advanced options</a></h4>
 
-						<form id="adv_options_form" class="pure-form">
-							<label for="auto_convert">
-								<input id="auto_convert" type="checkbox"> <span title="Automatically convert prices into hours.">Auto-convert</span>
+						<form id="adv-options-form" class="pure-form">
+							<label for="auto-convert">
+								<input id="auto-convert" type="checkbox"> <span title="Automatically convert prices into hours.">Auto-convert</span>
 							</label>
 							<br />
-							<label for="show_dollars" class="pure-form">
-								<input id="show_dollars" type="checkbox"> <span title="Show original price and price in hours, side-by-side.">Hybrid view</span>
+							<label for="show-dollars" class="pure-form">
+								<input id="show-dollars" type="checkbox"> <span title="Show original price and price in hours, side-by-side.">Hybrid view</span>
 							</label>
 							<br />
-							<label for="convert_weeks" class="pure-form">
-								<input id="convert_weeks" type="checkbox"> <span title="Convert expensive items into weeks.">40-hour workweek</span>
+							<label for="convert-weeks" class="pure-form">
+								<input id="convert-weeks" type="checkbox"> <span title="Convert expensive items into weeks.">40-hour workweek</span>
 							</label>
 							<br />
 						</form>
 					</div>
 
-					<h4 title="Time Is Money will adjust prices you see according to your expenses."><a id="expenses_header" href="javascript:;">Recurring Expenses</a></h4>
-					<form id="expenses_form" class="pure-form">
+					<h4 title="Time Is Money will adjust prices you see according to your expenses."><a id="expenses-header" href="javascript:;">Recurring Expenses</a></h4>
+					<form id="expenses-form" class="pure-form">
 						<div id="expenses">
-							<div id="current_expenses">
+							<div id="current-expenses">
 							</div>
-							<div id="expenses_fields">
-								<input type="text" class="expense_text" id="expense_cost" placeholder="2.00">on 
-								<input type="text" class="expense_text" id="expense_name" placeholder="coffee">
-								<select id="expense_frequency" class="pure-input">
+							<div id="expenses-fields">
+								<input type="text" class="expense-text" id="expense-cost" placeholder="2.00">on 
+								<input type="text" class="expense-text" id="expense-name" placeholder="coffee">
+								<select id="expense-frequency" class="pure-input">
 									<option value="daily" data-freq="daily">Daily</option>
 									<option value="weekly" data-freq="weekly">Weekly</option>
 									<option value="monthly" data-freq="monthly">Monthly</option>
 									<option value="annually" data-freq="annually">Annually</option>
 								</select>
-								<button id="save_expense" class="pure-button pure-button-primary">SAVE</button>
+								<button id="save-expense" class="pure-button pure-button-primary">SAVE</button>
 							</div>
 						</div>
 					</form>

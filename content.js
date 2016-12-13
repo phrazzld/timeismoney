@@ -1,14 +1,14 @@
 $(document).ready(function(){
 	chrome.runtime.sendMessage({method: "getLocal"}, function(response) {
-		if(response.auto_convert == "yes") {
+		if(response.autoConvert == "yes") {
 			if(response.using == "wage") {
-				var working_wage = response.wage;
-				if(response.total_expenses != undefined) {
-					var expenses_per_hour = response.total_expenses / 160;
-					working_wage -= expenses_per_hour;
+				var workingWage = response.wage;
+				if(response.totalExpenses != undefined) {
+					var expensesPerHour = response.totalExpenses / 160;
+					workingWage -= expensesPerHour;
 				}
-				if(!isNaN(working_wage)) {
-					if(working_wage > 0) {
+				if(!isNaN(workingWage)) {
+					if(workingWage > 0) {
 						if(response.currency == "USD") {
 							$("body *").replaceText(/^((\$|USD)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, convert);
 						} else if(response.currency == "EUR") {
@@ -37,14 +37,14 @@ $(document).ready(function(){
 				}
 
 			} else if(response.using == "salary") {
-				var working_wage = response.salary;
-				working_wage = working_wage/52/40;
-				if(response.total_expenses != undefined) {
-					var expenses_per_hour = response.total_expenses / 160;
-					working_wage -= expenses_per_hour;
+				var workingWage = response.salary;
+				workingWage = workingWage/52/40;
+				if(response.totalExpenses != undefined) {
+					var expensesPerHour = response.totalExpenses / 160;
+					workingWage -= expensesPerHour;
 				}
-				if(!isNaN(working_wage)) {
-					if(working_wage > 0) {
+				if(!isNaN(workingWage)) {
+					if(workingWage > 0) {
 						if(response.currency == "USD") {
 							$("body *").replaceText(/^((\$|USD)(\s{0,3}?)([0-9]([0-9,])*)((\.|\,)\d{2})?|([0-9]([0-9,]))((\.|\,)\d{2}))$/, convert);
 						} else if(response.currency == "EUR") {
@@ -74,21 +74,21 @@ $(document).ready(function(){
 		}
 
 		function convert(str) {
-			new_str = str.trim();
-			new_str = new_str.replace(/\,(\d\d)$/g, '.$1')
-			new_str = new_str.replace(/[^\d.]/g, '');
-			var time = parseFloat(new_str) / working_wage;
+			newStr = str.trim();
+			newStr = newStr.replace(/\,(\d\d)$/g, '.$1')
+			newStr = newStr.replace(/[^\d.]/g, '');
+			var time = parseFloat(newStr) / workingWage;
 			if(isNaN(time)) { return str; }
 			var hours = Math.floor(time);
 			var minutes = Math.ceil(60 * (time - hours));
 			if(minutes == 60) { hours += 1; minutes = 0; }
-			if(response.show_dollars == "yes") {
+			if(response.showDollars == "yes") {
 				var msg = str + " (";
 			} else {
 				var msg = " ";
 			}
 
-			if(response.convert_weeks == "yes") {
+			if(response.convertWeeks == "yes") {
 				var weeks = Math.floor(hours / 40);
 				if(weeks > 0) {
 					hours = Math.ceil(hours - weeks * 40);
@@ -118,7 +118,7 @@ $(document).ready(function(){
 				msg += minutes + " mins";
 			}
 
-			if(response.show_dollars == "yes") {
+			if(response.showDollars == "yes") {
 				msg += ") ";
 			} else {
 				msg += " ";

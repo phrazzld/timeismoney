@@ -1,12 +1,12 @@
 $(document).ready(function(){
 
 	if(localStorage.using == "salary") {
-		$("#salary_form").show();
-		$("#annual_option").prop("checked", true);
-		$("#wage_form").hide();
+		$("#salary-form").show();
+		$("#annual-option").prop("checked", true);
+		$("#wage-form").hide();
 	} else {
-		$("#wage_form").show();
-		$("#salary_form").hide();
+		$("#wage-form").show();
+		$("#salary-form").hide();
 	}
 
 	if(localStorage.show_alert == 'yes') {
@@ -19,150 +19,150 @@ $(document).ready(function(){
 		$("select#currency option:selected").attr("selected", null);
 		$("select#currency option[value='USD']").attr("selected", "selected");
 		localStorage.currency = "USD";
-		$("input#expense_cost").attr("placeholder", "$ 2.00")
+		$("input#expense-cost").attr("placeholder", "$ 2.00")
 	} else if(localStorage.currency == "EUR") {
 		$("select#currency option:selected").attr("selected", null);
 		$("select#currency option[value='EUR']").attr("selected", "selected");
 		localStorage.currency = "EUR";
-		$("input#expense_cost").attr("placeholder", "\u20AC 2.00")
+		$("input#expense-cost").attr("placeholder", "\u20AC 2.00")
 	} else if(localStorage.currency == "GBP") {
 		$("select#currency option:selected").attr("selected", null);
 		$("select#currency option[value='GBP']").attr("selected", "selected");
 		localStorage.currency = "GBP";
-		$("input#expense_cost").attr("placeholder", "\u00A3 2.00")
+		$("input#expense-cost").attr("placeholder", "\u00A3 2.00")
 	} else if(localStorage.currency == "CAD") {
 		$("select#currency option:selected").attr("selected", null);
 		$("select#currency option[value='CAD']").attr("selected", "selected");
 		localStorage.currency = "CAD";
-		$("input#expense_cost").attr("placeholder", "$ 2.00")
+		$("input#expense-cost").attr("placeholder", "$ 2.00")
 	} else {
 		$("select#currency option:selected").attr("selected", null);
 		$("select#currency option[value='AUD']").attr("selected", "selected");
 		localStorage.currency = "AUD";
-		$("input#expense_cost").attr("placeholder", "$ 2.00")
+		$("input#expense-cost").attr("placeholder", "$ 2.00")
 	}
 
-	gen_expenses_html();
+	genExpensesHtml();
 
-	if(localStorage.auto_convert == undefined) {
-		localStorage.auto_convert = "yes";
+	if(localStorage.autoConvert == undefined) {
+		localStorage.autoConvert = "yes";
 	}
 
-	if(localStorage.show_dollars == undefined) {
-		localStorage.show_dollars = "yes";
+	if(localStorage.showDollars == undefined) {
+		localStorage.showDollars = "yes";
 	}
 
-	if(localStorage.convert_weeks == undefined) {
-		localStorage.convert_weeks = "yes";
+	if(localStorage.convertWeeks == undefined) {
+		localStorage.convertWeeks = "yes";
 	}
 
-	if(localStorage.auto_convert == "no") {
-		$("#auto_convert").prop("checked", false);
+	if(localStorage.autoConvert == "no") {
+		$("#auto-convert").prop("checked", false);
 	} else {
-		$("#auto_convert").prop("checked", true);
+		$("#auto-convert").prop("checked", true);
 	}
 
-	if(localStorage.show_dollars == "no") {
-		$("#show_dollars").prop("checked", false);
+	if(localStorage.showDollars == "no") {
+		$("#show-dollars").prop("checked", false);
 	} else {
-		$("#show_dollars").prop("checked", true);
+		$("#show-dollars").prop("checked", true);
 	}
 
-	if(localStorage.convert_weeks == "no") {
-		$("#convert_weeks").prop("checked", false);
+	if(localStorage.convertWeeks == "no") {
+		$("#convert-weeks").prop("checked", false);
 	} else {
-		$("#convert_weeks").prop("checked", true);
+		$("#convert-weeks").prop("checked", true);
 	}
 
-	if(localStorage.adv_view != "show") {
-		$("#adv_options_form").hide();
+	if(localStorage.advView != "show") {
+		$("#adv-options-form").hide();
 	}
 
-	if(localStorage.show_expenses != "show") {
-		$("#expenses_form").hide();
+	if(localStorage.showExpenses != "show") {
+		$("#expenses-form").hide();
 	}
 
-	var display_salary = parseFloat(localStorage.salary).toFixed(2).toString();
-	if(isNaN(display_salary)) {
+	var displaySalary = parseFloat(localStorage.salary).toFixed(2).toString();
+	if(isNaN(displaySalary)) {
 		$("#salary").attr('placeholder', 'Enter your annual income');
 	} else {
 		if(localStorage.currency == "USD" || localStorage.currency == "CAD" || localStorage.currency == "AUD") {
-			$("#salary").attr("placeholder", "$ " + numberWithCommas(display_salary));
+			$("#salary").attr("placeholder", "$ " + numberWithCommas(displaySalary));
 		} else if(localStorage.currency == "EUR") {
-			$("#salary").attr("placeholder", "\u20AC " + numberWithCommas(display_salary));
+			$("#salary").attr("placeholder", "\u20AC " + numberWithCommas(displaySalary));
 		} else {
-			$("#salary").attr("placeholder", "\u00A3 " + numberWithCommas(display_salary));
+			$("#salary").attr("placeholder", "\u00A3 " + numberWithCommas(displaySalary));
 		}
 	}
 
-	var display_wage = parseFloat(localStorage.wage).toFixed(2).toString();
-	if(isNaN(display_wage)) {
+	var displayWage = parseFloat(localStorage.wage).toFixed(2).toString();
+	if(isNaN(displayWage)) {
 		$("#wage").attr('placeholder', 'Enter your hourly wage');
 	} else {
 		if(localStorage.currency == "USD" || localStorage.currency == "CAD" || localStorage.currency == "AUD") {
-			$("#wage").attr('placeholder', "$ " + display_wage);
+			$("#wage").attr('placeholder', "$ " + displayWage);
 		} else if(localStorage.currency == "EUR") {
-			$("#wage").attr("placeholder", "\u20AC " + display_wage);
+			$("#wage").attr("placeholder", "\u20AC " + displayWage);
 		} else {
-			$("#wage").attr("placeholder", "\u00A3 " + display_wage);
+			$("#wage").attr("placeholder", "\u00A3 " + displayWage);
 		}
 	}
 
-	$("#hourly_option").click(function() {
-		$("#wage_form").show();
-		$("#salary_form").hide();
+	$("#hourly-option").click(function() {
+		$("#wage-form").show();
+		$("#salary-form").hide();
 		if(localStorage.wage != null) {
 			localStorage.using = "wage";
 		}
 	});
 
-	$("#annual_option").click(function() {
-		$("#salary_form").show();
-		$("#wage_form").hide();
+	$("#annual-option").click(function() {
+		$("#salary-form").show();
+		$("#wage-form").hide();
 		if(localStorage.salary != null) {
 			localStorage.using = "salary";
 		}
 	});
 
-	$("#auto_convert").click(function() {
-		if(localStorage.auto_convert == "yes") {
-			localStorage.auto_convert = "no";
+	$("#auto-convert").click(function() {
+		if(localStorage.autoConvert == "yes") {
+			localStorage.autoConvert = "no";
 		} else {
-			localStorage.auto_convert = "yes";
+			localStorage.autoConvert = "yes";
 		}
 	});
 
-	$("#show_dollars").click(function() {
-		if(localStorage.show_dollars == "yes") {
-			localStorage.show_dollars = "no";
+	$("#show-dollars").click(function() {
+		if(localStorage.showDollars == "yes") {
+			localStorage.showDollars = "no";
 		} else {
-			localStorage.show_dollars = "yes";
+			localStorage.showDollars = "yes";
 		}
 	});
 
-	$("#convert_weeks").click(function() {
-		if(localStorage.convert_weeks == "yes") {
-			localStorage.convert_weeks = "no";
+	$("#convert-weeks").click(function() {
+		if(localStorage.convertWeeks == "yes") {
+			localStorage.convertWeeks = "no";
 		} else {
-			localStorage.convert_weeks = "yes";
+			localStorage.convertWeeks = "yes";
 		}
 	});
 
-	$("#adv_options").click(function() {
-		$("#adv_options_form").toggle("fast");
-		if(localStorage.adv_view == "show") {
-			localStorage.adv_view = "hide";
+	$("#adv-options").click(function() {
+		$("#adv-options-form").toggle("fast");
+		if(localStorage.advView == "show") {
+			localStorage.advView = "hide";
 		} else {
-			localStorage.adv_view = "show";
+			localStorage.advView = "show";
 		}
 	});
 
-	$("#expenses_header").click(function() {
-		$("#expenses_form").toggle("fast");
-		if(localStorage.show_expenses == "show") {
-			localStorage.show_expenses = "hide";
+	$("#expenses-header").click(function() {
+		$("#expenses-form").toggle("fast");
+		if(localStorage.showExpenses == "show") {
+			localStorage.showExpenses = "hide";
 		} else {
-			localStorage.show_expenses = "show";
+			localStorage.showExpenses = "show";
 		}
 	});
 
@@ -171,9 +171,9 @@ $(document).ready(function(){
 		localStorage.currency = optionSelected.data("curr");
 	});
 
-	$("#save_wage").click(save_wage);
-	$("#save_salary").click(save_salary);
-	$("#save_expense").click(save_expense);
+	$("#save-wage").click(saveWage);
+	$("#save-salary").click(saveSalary);
+	$("#save-expense").click(saveExpense);
 
 	var donateButton = $("#donate-button");
 	donateButton.on("click", function() {
@@ -181,63 +181,63 @@ $(document).ready(function(){
 		$("#wallet-address").show();
 	});
 
-	function save_salary() {
+	function saveSalary() {
 		var select = document.getElementById("salary");
 		if(select.value != "") {
 			if(isNaN(parseFloat(select.value.replace(/(\$|,|€|£| +?)/g, '')))) {
-				localStorage.show_alert = 'yes';
+				localStorage.showAlert = 'yes';
 			} else if(parseFloat(select.value.replace(/(\$|,|€|£| +?)/g, '')) == '') {
 			} else {
 				localStorage.salary = select.value.replace(/(\$|,|€|£| +?)/g, '');
 				localStorage.using = "salary";
-				localStorage.show_alert = 'no';
-				display_salary = parseFloat(localStorage.salary).toFixed(2).toString();
+				localStorage.showAlert = 'no';
+				displaySalary = parseFloat(localStorage.salary).toFixed(2).toString();
 				if(localStorage.currency == "USD" || localStorage.currency == "CAD" || localStorage.currency == "AUD") {
-					$("#salary").attr("placeholder", "$ " + display_salary);
+					$("#salary").attr("placeholder", "$ " + displaySalary);
 				} else if(localStorage.currency == "EUR") {
-					$("#salary").attr("placeholder", "€ " + display_salary);
+					$("#salary").attr("placeholder", "€ " + displaySalary);
 				} else {
-					$("#salary").attr("placeholder", "£ " + display_salary);
+					$("#salary").attr("placeholder", "£ " + displaySalary);
 				}
 			}
 		}
 	}
 
-	function save_wage() {
+	function saveWage() {
 		var select = document.getElementById("wage");
 		if(select.value != "") {
 			if(isNaN(parseFloat(select.value.replace(/(\$|,|€|£| +?)/g, '')))) {
-				localStorage.show_alert = 'yes';
+				localStorage.showAlert = 'yes';
 			} else if(parseFloat(select.value.replace(/(\$|,|€|£| +?)/g, '')) == '') {
 			} else {
 				localStorage.wage = select.value.replace(/(\$|,|€|£| +?)/g, '');
 				localStorage.using = "wage";
-				localStorage.show_alert = 'no';
-				display_wage = parseFloat(localStorage.wage).toFixed(2).toString();
+				localStorage.showAlert = 'no';
+				displayWage = parseFloat(localStorage.wage).toFixed(2).toString();
 				if(localStorage.currency == "USD" || localStorage.currency == "CAD" || localStorage.currency == "AUD") {
-					$("#wage").attr("placeholder", "$ " + display_wage);
+					$("#wage").attr("placeholder", "$ " + displayWage);
 				} else if(localStorage.currency == "EUR") {
-					$("#wage").attr("placeholder", "€ " + display_wage);
+					$("#wage").attr("placeholder", "€ " + displayWage);
 				} else {
-					$("#wage").attr("placeholder", "£ " + display_wage);
+					$("#wage").attr("placeholder", "£ " + displayWage);
 				}
 			}
 		}
 	}
 
-	function save_expense() {
+	function saveExpense() {
 		if(localStorage.expenses == undefined) {
 			var x = {};
 		} else {
 			var x = JSON.parse(localStorage.expenses);
 		}
 		
-		var c = document.getElementById("expense_cost").value.replace(/(\$|,|€|£| +?)/g, '');
-		var n = document.getElementById("expense_name").value;
-		var f = document.getElementById("expense_frequency").value;
+		var c = document.getElementById("expense-cost").value.replace(/(\$|,|€|£| +?)/g, '');
+		var n = document.getElementById("expense-name").value;
+		var f = document.getElementById("expense-frequency").value;
 
 		if(isNaN(parseFloat(c))) {
-			localStorage.show_alert = 'yes';
+			localStorage.showAlert = 'yes';
 		} else if(parseFloat(c) == '') {
 		} else {
 			x[n] = { cost: c, frequency: f };
@@ -246,53 +246,53 @@ $(document).ready(function(){
 		}
 	}
 
-	function create_html(html_str) {
+	function createHtml(htmlStr) {
 		var frag = document.createDocumentFragment(),
 			temp = document.createElement("div");
-		temp.innerHTML = html_str;
+		temp.innerHtml = htmlStr;
 		while(temp.firstChild) {
 			frag.appendChild(temp.firstChild);
 		}
 		return frag;
 	}
 
-	function gen_expenses_html() {
+	function genExpensesHtml() {
 		if(localStorage.expenses != undefined) {
 			var expenses = JSON.parse(localStorage.expenses);
-			var total_expenses = 0;
+			var totalExpenses = 0;
 			if(localStorage.currency == "USD" || localStorage.currency == "CAD" || localStorage.currency == "AUD") {
-				var currency_used = "$ ";
+				var currencyUsed = "$ ";
 			} else if(localStorage.currency == "EUR") {
-				var currency_used = "€ ";
+				var currencyUsed = "€ ";
 			} else {
-				var currency_used = "£ ";
+				var currencyUsed = "£ ";
 			}
 			for(var expense in expenses) {
 				if(expenses.hasOwnProperty(expense) && typeof(expenses[expense]) == "object") {
-					var cost = currency_used + parseFloat(expenses[expense].cost).toFixed(2).toString();
+					var cost = currencyUsed + parseFloat(expenses[expense].cost).toFixed(2).toString();
 					var frequency = expenses[expense].frequency;
-					var html = create_html('<div class="recurring_expense" id="recurring_expense_' + expense.toString() + '"><span class="recurring_expense_cost">' + cost + '</span> <span class="recurring_expense_frequency">' + frequency + ' on </span><span class="recurring_expense_name">' + expense.toString() + '</span> <span class="recurring_expense_delete"><a class="delete_expense" href="javascript:;">delete</a> </span></div>');
-					document.getElementById("current_expenses").appendChild(html);
+					var html = createHtml('<div class="recurring-expense" id="recurring-expense-' + expense.toString() + '"><span class="recurring-expense-cost">' + cost + '</span> <span class="recurring-expense-frequency">' + frequency + ' on </span><span class="recurring-expense-name">' + expense.toString() + '</span> <span class="recurring-expense-delete"><a class="delete-expense" href="javascript:;">delete</a> </span></div>');
+					document.getElementById("current-expenses").appendChild(html);
 					if(expenses[expense].frequency == "daily") {
-						total_expenses += parseFloat(cost.replace(/(\$|,|€|£| +?)/g, '')) * 30;
+						totalExpenses += parseFloat(cost.replace(/(\$|,|€|£| +?)/g, '')) * 30;
 					} else if(expenses[expense].frequency == "weekly") {
-						total_expenses += parseFloat(cost.replace(/(\$|,|€|£| +?)/g, '')) * 4;
+						totalExpenses += parseFloat(cost.replace(/(\$|,|€|£| +?)/g, '')) * 4;
 					} else if(expenses[expense].frequency == "monthly") {
-						total_expenses += parseFloat(cost.replace(/(\$|,|€|£| +?)/g, ''));
+						totalExpenses += parseFloat(cost.replace(/(\$|,|€|£| +?)/g, ''));
 					} else if(expenses[expense].frequency == "annually") {
-						total_expenses += parseFloat(cost.replace(/(\$|,|€|£| +?)/g, '')) / 12;
+						totalExpenses += parseFloat(cost.replace(/(\$|,|€|£| +?)/g, '')) / 12;
 					}
 				}
 			}
-			var total_expenses_html = create_html('<div id="total_expenses">' + currency_used + total_expenses.toFixed(2).toString() + ' total per month</div>');
-			document.getElementById("current_expenses").appendChild(total_expenses_html);
-			localStorage["total_expenses"] = total_expenses;
+			var totalExpensesHtml = createHtml('<div id="total-expenses">' + currencyUsed + totalExpenses.toFixed(2).toString() + ' total per month</div>');
+			document.getElementById("current-expenses").appendChild(totalExpensesHtml);
+			localStorage["totalExpenses"] = totalExpenses;
 		}
 	}
 
-	$(".delete_expense").click(function() {
+	$(".delete-expense").click(function() {
 		var id = $(this).closest("div").attr("id");
-		id = id.replace("recurring_expense_", "");
+		id = id.replace("recurring-expense-", "");
 		var expenses = JSON.parse(localStorage["expenses"]);
 		delete expenses[id];
 		expenses = JSON.stringify(expenses);
@@ -300,9 +300,9 @@ $(document).ready(function(){
 		location.reload();
 	});
 
-	function removeExpense(expenseID) {
-		var expense = document.getElementById(expenseID);
-		expense = expense.replace("recurring_expense_", "");
+	function removeExpense(expenseId) {
+		var expense = document.getElementById(expenseId);
+		expense = expense.replace("recurring-expense-", "");
 		var expenses = JSON.parse(localStorage["expenses"]);
 		delete expenses[expense];
 		expenses = JSON.stringify(expenses);
