@@ -51,3 +51,4 @@ function numberWithCommas(x) {
 
 document.addEventListener('DOMContentLoaded', initializeOptions);
 document.getElementById('save').addEventListener('click', saveOptions);
+
