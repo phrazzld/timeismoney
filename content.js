@@ -1,4 +1,3 @@
-console.log("content.js loaded");
 walk(document.body);
 
 function walk(node) {
@@ -29,7 +28,8 @@ function walk(node) {
 function plumb(textNode) {
   chrome.storage.sync.get(null, function(items) {
     // Get saved user preferences
-    var frequency, amount, workingwage;
+    var currency, frequency, amount, workingwage;
+    currency = items["currency"];
     frequency = items["frequency"];
     amount = items["amount"];
     // Adjust saved income down to hourly
@@ -55,15 +55,12 @@ function plumb(textNode) {
       var hours, minutes, msg;
       if(!isNaN(time)) {
         hours = Math.floor(time);
-        console.log("hours is " + hours);
         minutes = Math.ceil(60 * (time - hours));
-        console.log("minutes is " + minutes);
         if(minutes == 60) {
           hours += 1;
           minutes = 0;
         }
         msg = original + " (" + hours + "h " + minutes + "m" + ")";
-        console.log("msg is " + msg);
         textNode.nodeValue = msg;
       }
     }
