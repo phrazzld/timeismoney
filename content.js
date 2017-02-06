@@ -60,7 +60,7 @@ function plumb(textNode) {
           hours += 1;
           minutes = 0;
         }
-        msg = original + " (" + hours + "h " + minutes + "m" + ")";
+        msg = original + " (" + hours + "h " + minutes + "m" + ") ";
         textNode.nodeValue = msg;
       }
     }
