@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Time Is Money - Options</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+
+  <body>
+    <p class="limitless">Automatically converts prices online into hours of work.</p>
+    <p class="no-ceiling">Just enter your income below.</p>
+    <div id="form">
+      <select id="currency">
+        <option value="usd">USD $</option>
+        <option value="eur">EUR €</option>
+        <option value="gbp">GBP £</option>
+        <option value="cad">CAD $</option>
+        <option value="aud">AUD $</option>
+        <option value="hkd">HKD $</option>
+        <option value="nzd">NZD $</option>
+      </select>
+      <input type="text" id="amount" placeholder="15.00">
+      <select id="frequency">
+        <option value="hourly">Hourly</option>
+        <option value="yearly">Yearly</option>
+      </select>
+
+      <button id="save">Save</button>
+      <div id="status"></div>
+    </div>
+
+    <p class="helper-text">For example, if you entered $10 hourly and saw a $25 shirt on Amazon, the price tag would look like "$25 (2h 30m)"</p>
+    <p class="feedback"><a href="mailto:phraznikov@gmail.com">Say hello</a>, or just <a href="https://www.github.com/phrazzld/timeismoney" target="_blank">see the code</a>.</p>
+    <script src="options.js"></script>
+  </body>
+</html>

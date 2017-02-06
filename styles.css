@@ -1,0 +1,52 @@
+body {
+  padding: 10px;
+}
+
+.form-element {
+  margin-bottom: 10px;
+}
+
+#status {
+  margin-bottom: 10px;
+}
+
+.no-ceiling {
+  margin-top: 0;
+}
+
+#amount {
+  padding-bottom: 2px;
+}
+
+.helper-text {
+  font-style: italic;
+  font-size: 0.85em;
+  line-height: 1.4em;
+  margin-top: 20px;
+}
+
+.limitless {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.feedback {
+  margin-top: 30px;
+  margin-bottom: 0;
+  font-size: 0.85em;
+  text-align: right;
+}
+
+.feedback a {
+  text-decoration: none;
+}
+
+#form {
+  margin-top: 20px;
+  margin-bottom: 25px;
+}
+
+#save {
+  float: right;
+  margin-right: 15px;
+}

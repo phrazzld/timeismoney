@@ -1,0 +1,43 @@
+{
+  "manifest_version": 2,
+
+  "name": "Time Is Money",
+  "description": "See prices online as equivalent work hours",
+  "version": "4.0.0",
+
+  "browser_action": {
+    "default_icon": {
+      "19": "images/icon_19.png",
+      "38": "images/icon_38.png"
+    }
+  },
+
+  "permissions": [
+    "webRequest",
+    "*://*/*",
+    "storage"
+  ],
+
+  "content_scripts": [
+    {
+      "js": ["content.js"],
+      "matches": ["*://*/*"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true
+  },
+  "options_page": "options.html",
+
+  "icons": {
+    "16": "images/icon_16.png",
+    "48": "images/icon_48.png",
+    "128": "images/icon_128.png"
+  }
+}
+
+
+
