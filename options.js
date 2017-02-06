@@ -13,6 +13,7 @@ function saveOptions() {
       status.textContent = '';
     }, 2000);
   } else {
+    amount = parseFloat(amount).toFixed(2);
     chrome.storage.sync.set({
       currency: currency,
       frequency: frequency,
