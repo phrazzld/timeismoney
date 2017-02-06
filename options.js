@@ -11,7 +11,7 @@ function saveOptions() {
     status.textContent = 'Error! Invalid amount entered.';
     setTimeout(function() {
       status.textContent = '';
-    }, 1000);
+    }, 2000);
   } else {
     chrome.storage.sync.set({
       currency: currency,
@@ -21,7 +21,7 @@ function saveOptions() {
       status.textContent = 'Options saved.';
       setTimeout(function() {
         status.textContent = '';
-      }, 750);
+      }, 2000);
     });
   }
 }

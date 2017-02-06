@@ -46,7 +46,7 @@ function plumb(textNode) {
     } else if(currency == "gbp") {
       keeptruckin = original.match(/(\£|GBP)(\s?)[0-9](([0-9]|\,)*\.?[0-9]{2}?)?/g);
     } else {
-      keeptruckin = original.match(/(\$|USD)(\s?)[0-9](([0-9]|\,)*\.?[0-9]{2}?)?/g);
+      keeptruckin = original.match(/(\$|USD|CAD|MXN|AUD|HKD|NZD)(\s?)[0-9](([0-9]|\,)*\.?[0-9]{2}?)?/g);
     }
     if(keeptruckin) {
       newstring = original.trim();
