@@ -48,6 +48,9 @@ function plumb(textNode) {
     } else {
       keeptruckin = original.match(/(\$|USD|CAD|MXN|AUD|HKD|NZD)(\s?)[0-9](([0-9]|\,)*\.?[0-9]{2}?)?/g);
     }
+    if(workingwage <= 0) {
+      keeptruckin = false;
+    }
     if(keeptruckin) {
       newstring = original.trim();
       newstring = newstring.replace(/[^\d.]/g, '');
