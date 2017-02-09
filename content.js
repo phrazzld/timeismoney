@@ -1,4 +1,8 @@
-walk(document.body);
+chrome.storage.sync.get("disabled", function(obj) {
+  if (obj["disabled"] !== true) { 
+    walk(document.body);
+  }
+});
 
 function walk(node) {
   // I stole this function from here:

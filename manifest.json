@@ -4,9 +4,10 @@
   "name": "Time Is Money",
   "short_name": "timeismoney",
   "description": "See prices online as equivalent work hours",
-  "version": "4.0.3",
+  "version": "4.0.4",
 
   "browser_action": {
+    "default_title": "Time Is Money",
     "default_icon": {
       "19": "images/icon_19.png",
       "38": "images/icon_38.png"
@@ -20,7 +21,8 @@
   "permissions": [
     "webRequest",
     "*://*/*",
-    "storage"
+    "storage",
+    "contextMenus"
   ],
 
   "content_scripts": [
