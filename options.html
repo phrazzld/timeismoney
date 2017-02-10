@@ -9,18 +9,10 @@
     <p class="limitless">Automatically converts prices online into hours of work.</p>
     <p class="no-ceiling">Just enter your income below.</p>
     <div id="form">
-      <select id="currency">
-        <option value="usd">USD $</option>
-        <option value="eur">EUR €</option>
-        <option value="gbp">GBP £</option>
-        <option value="cad">CAD $</option>
-        <option value="mxn">MXN $</option>
-        <option value="aud">AUD $</option>
-        <option value="hkd">HKD $</option>
-        <option value="nzd">NZD $</option>
-      </select>
-      <input type="text" id="amount" placeholder="15.00">
-      <select id="frequency">
+      <input type="text" id="currency-letters" placeholder="USD" title="Currency code">
+      <input type="text" id="currency-symbol" placeholder="$" title="Currency symbol">
+      <input type="text" id="amount" placeholder="15.00" title="Your income">
+      <select id="frequency" title="Payment frequency">
         <option value="hourly">Hourly</option>
         <option value="yearly">Yearly</option>
       </select>

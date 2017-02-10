@@ -1,76 +1,40 @@
-chrome.storage.sync.get("disabled", function(obj) {
-  if (obj["disabled"] !== true) { 
-    walk(document.body);
+chrome.storage.sync.get(null, function(items) {
+  if (items["disabled"] !== true) { 
+    var bod = document.body;
+    var currencySymbol = items["currencySymbol"];
+    var currencyLetters = items["currencyLetters"];
+    var amount = items["amount"];
+    var frequency = items["frequency"];
+    var sourceMoney, workingWage, matchPattern;
+
+    // Build matchPattern
+    matchPattern = new RegExp('(\\' + currencySymbol + '|' + currencyLetters + ')\\x20?\\d(\\d|\\,)*(\\.\\d\\d)?', 'g');
+    bod.innerHTML = bod.innerHTML.replace(matchPattern, function(e) {
+      sourceMoney = parseFloat(e.replace(/[^\d.]/g, '')).toFixed(2);
+      workingWage = parseFloat(amount);
+      if (frequency == "yearly") {
+        workingWage = workingWage/52/40;
+      }
+      workingWage = workingWage.toFixed(2);
+      return makeSnippet(e, workingWage);
+    });
   }
 });
 
-function walk(node) {
-  // I stole this function from here:
-  // http://is.gd/mwZp7E
-
-  var child, next;
-
-  switch(node.nodeType) {
-    case 1:
-    case 9:
-    case 11:
-      child = node.firstChild;
-      while(child) {
-        next = child.nextSibling;
-        walk(child);
-        child = next;
-      }
-      break;
-    case 3:
-      plumb(node);
-      break;
-    default:
-      break;
+function makeSnippet(sourceElement, workingWage) {
+  var sourceMoney = parseFloat(sourceElement.replace(/[^\d.]/g, '')).toFixed(2);
+  var workHours = sourceMoney / workingWage;
+  var hours, minutes, message;
+  if (!isNaN(workHours)) {
+    hours = Math.floor(workHours);
+    minutes = Math.ceil(60 * (workHours - hours));
+    if (minutes == 60) {
+      hours += 1;
+      minutes = 0;
+    }
+    message = sourceElement + " (" + hours + "h " + minutes + "m)";
+  } else {
+    message = sourceElement;
   }
+  return message;
 }
-
-function plumb(textNode) {
-  chrome.storage.sync.get(null, function(items) {
-    // Get saved user preferences
-    var currency, frequency, amount, workingwage;
-    currency = items["currency"];
-    frequency = items["frequency"];
-    amount = items["amount"];
-    // Adjust saved income down to hourly
-    if(frequency == "yearly") {
-      workingwage = parseFloat(amount)/52/40;
-    } else if(frequency == "hourly") {
-      workingwage = parseFloat(amount);
-    }
-
-    var original = textNode.nodeValue;
-    var keeptruckin, newstring;
-    if(currency == "eur") {
-      keeptruckin = original.match(/(\€|EUR)(\s?)[0-9](([0-9]|\,)*\.?[0-9]{2}?)?/g);
-    } else if(currency == "gbp") {
-      keeptruckin = original.match(/(\£|GBP)(\s?)[0-9](([0-9]|\,)*\.?[0-9]{2}?)?/g);
-    } else {
-      keeptruckin = original.match(/(\$|USD|CAD|MXN|AUD|HKD|NZD)(\s?)[0-9](([0-9]|\,)*\.?[0-9]{2}?)?/g);
-    }
-    if(workingwage <= 0) {
-      keeptruckin = false;
-    }
-    if(keeptruckin) {
-      newstring = original.trim();
-      newstring = newstring.replace(/[^\d.]/g, '');
-      var time = parseFloat(newstring) / workingwage;
-      var hours, minutes, msg;
-      if(!isNaN(time)) {
-        hours = Math.floor(time);
-        minutes = Math.ceil(60 * (time - hours));
-        if(minutes == 60) {
-          hours += 1;
-          minutes = 0;
-        }
-        msg = original + " (" + hours + "h " + minutes + "m" + ") ";
-        textNode.nodeValue = msg;
-      }
-    }
-  });
-}
-

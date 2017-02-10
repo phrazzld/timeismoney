@@ -15,8 +15,16 @@ body {
   margin-top: 0;
 }
 
-#amount {
+#amount, #currency-letters, #currency-symbol {
   padding-bottom: 2px;
+}
+
+#currency-letters {
+  width: 50px;
+}
+
+#currency-symbol {
+  width: 25px;
 }
 
 .helper-text {
@@ -49,5 +57,4 @@ body {
 
 #save {
   float: right;
-  margin-right: 15px;
 }
