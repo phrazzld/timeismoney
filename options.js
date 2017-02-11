@@ -3,6 +3,8 @@ function saveOptions() {
   var currencyLetters = document.getElementById('currency-letters').value;
   var frequency = document.getElementById('frequency').value;
   var amount = document.getElementById('amount').value;
+  var thousands = document.getElementById('thousands').value;
+  var decimal = document.getElementById('decimal').value;
   amount = parseFloat(amount.replace(/[^\d.]/g, '')).toFixed(2);
   var status = document.getElementById('status');
 
@@ -16,7 +18,9 @@ function saveOptions() {
       currencySymbol: currencySymbol,
       currencyLetters: currencyLetters,
       frequency: frequency,
-      amount: amount
+      amount: amount,
+      thousands: thousands,
+      decimal: decimal
     }, function() {
       status.textContent = 'Options saved.';
       setTimeout(function() {
@@ -28,15 +32,19 @@ function saveOptions() {
 
 function initializeOptions() {
   chrome.storage.sync.get(null, function(items) {
-    var currencySymbol, currencyLetters, frequency, amount;
+    var currencySymbol, currencyLetters, frequency, amount, thousands, decimal;
     currencySymbol = items['currencySymbol'];
     currencyLetters = items['currencyLetters'];
     frequency = items['frequency'];
     amount = items['amount'];
+    thousands = items['thousands'];
+    decimal = items['decimal'];
     loadSavedOption('currency-symbol', currencySymbol);
     loadSavedOption('currency-letters', currencyLetters);
     loadSavedOption('frequency', frequency);
     loadSavedOption('amount', amount);
+    loadSavedOption('thousands', thousands);
+    loadSavedOption('decimal', decimal);
   });
 }
 
@@ -53,4 +61,3 @@ function numberWithCommas(x) {
 
 document.addEventListener('DOMContentLoaded', initializeOptions);
 document.getElementById('save').addEventListener('click', saveOptions);
-

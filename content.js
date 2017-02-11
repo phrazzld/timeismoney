@@ -32,23 +32,53 @@ function convert(textNode) {
     var currencyLetters = items["currencyLetters"];
     var amount = items["amount"];
     var frequency = items["frequency"];
-    var sourceMoney, workingWage, matchPattern;
-    // Build matchPattern
-    matchPattern = new RegExp('(\\' + currencySymbol + '|' + currencyLetters + ')\\x20?\\d(\\d|\\,)*(\\.\\d\\d)?', 'g');
+    var thousands = items["thousands"];
+    var decimal = items["decimal"];
+    var sourceMoney, workingWage, matchPattern, thousandsString, decimalString;
+    if (thousands == "commas") {
+      thousandsString = '\\,';
+      thousands = new RegExp(thousandsString, 'g');
+    } else if (thousands == "spacesAndDots") {
+      thousandsString = '(\\s|\\.)';
+      thousands = new RegExp(thousandsString, 'g');
+    }
+    if (decimal == "dot") {
+      decimalString = '\\.';
+      decimal = new RegExp(decimalString, 'g');
+    } else if (decimal == "comma") {
+      decimalString = '\\,';
+      decimal = new RegExp(decimalString, 'g');
+    }
+    // Currency indicator preceding amount
+    matchPattern = new RegExp('(\\' + currencySymbol + '|' + currencyLetters + ')\\x20?\\d(\\d|' + thousandsString + ')*(' + decimalString + '\\d\\d)?', 'g');
     textNode.nodeValue = textNode.nodeValue.replace(matchPattern, function(e) {
-      sourceMoney = parseFloat(e.replace(/[^\d.]/g, '')).toFixed(2);
+      sourceMoney = e.replace(thousands, '@').replace(decimal, '~').replace('~', '.').replace('@', '');
+      sourceMoney = parseFloat(sourceMoney.replace(/[^\d.]/g, '')).toFixed(2);
       workingWage = parseFloat(amount);
       if (frequency == "yearly") {
         workingWage = workingWage/52/40;
       }
       workingWage = workingWage.toFixed(2);
-      return makeSnippet(e, workingWage);
+      return makeSnippet(e, sourceMoney, workingWage);
     });
+    // Currency indicator concluding amount
+    matchPattern = new RegExp('\\d(\\d|' + thousandsString + ')*(' + decimalString + '\\d\\d)?\\x20?(\\' + currencySymbol + '|' + currencyLetters + ')', 'g');
+    textNode.nodeValue = textNode.nodeValue.replace(matchPattern, function(e) {
+      sourceMoney = e.replace(thousands, '@').replace(decimal, '~').replace('~', '.').replace('@', '');
+      sourceMoney = parseFloat(sourceMoney.replace(/[^\d.]/g, '')).toFixed(2);
+      workingWage = parseFloat(amount);
+      if (frequency == "yearly") {
+        workingWage = workingWage/52/40;
+      }
+      workingWage = workingWage.toFixed(2);
+      return makeSnippet(e, sourceMoney,  workingWage);
+    });
+
   });
 }
 
-function makeSnippet(sourceElement, workingWage) {
-  var sourceMoney = parseFloat(sourceElement.replace(/[^\d.]/g, '')).toFixed(2);
+// Build text element in the form of: original (conversion)
+function makeSnippet(sourceElement, sourceMoney, workingWage) {
   var workHours = sourceMoney / workingWage;
   var hours, minutes, message;
   if (!isNaN(workHours)) {

@@ -26,6 +26,8 @@ chrome.storage.sync.set({
   currencySymbol: "$",
   currencyLetters: "USD",
   frequency: "hourly",
-  amount: "15.00"
+  amount: "15.00",
+  thousands: "commas",
+  decimal: "dot" 
 });
 createToggleMenu(true);

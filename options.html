@@ -16,12 +16,26 @@
         <option value="hourly">Hourly</option>
         <option value="yearly">Yearly</option>
       </select>
-
       <button id="save">Save</button>
+      <div id="formatting">
+        <h4>Currency format</h4>
+        <div id="thousands-wrapper" class="advanced-option">
+          <p>Thousands place:</p>
+          <select id="thousands" title="Symbols representing the thousand's place">
+            <option value='commas'>Commas</option>
+            <option value='spacesAndDots'>Spaces and dots</option>
+          </select>
+        </div>
+        <div id="decimal-wrapper" class="advanced-option">
+          <p>Decimal place:</p>
+          <select id="decimal" title="Symbols representing the decimal place">
+            <option value='dot'>Dot</option>
+            <option value='comma'>Comma</option>
+          </select>
+        </div>
+      </div>
       <div id="status"></div>
     </div>
-
-    <p class="feedback"><a href="mailto:phraznikov@gmail.com">Say hello</a>, or just <a href="https://www.github.com/phrazzld/timeismoney" target="_blank">see the code</a>.</p>
     <script src="options.js"></script>
   </body>
 </html>

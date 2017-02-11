@@ -40,8 +40,6 @@ body {
 }
 
 .feedback {
-  margin-top: 30px;
-  margin-bottom: 0;
   font-size: 0.85em;
   text-align: right;
 }
@@ -52,9 +50,36 @@ body {
 
 #form {
   margin-top: 20px;
-  margin-bottom: 25px;
 }
 
 #save {
   float: right;
+  font-weight: 500;
+}
+
+#formatting {
+  margin-top: 30px;
+}
+
+.advanced-option {
+  display: inline-block;
+  width: 49%;
+}
+
+.advanced-option p {
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+#form-footer div {
+  display: inline-block;
+}
+
+#formatting h4 {
+  margin-bottom: 0;
+  margin-top: 20px;
+}
+
+.hidden {
+  display: none;
 }
