@@ -42,6 +42,26 @@ function toggleFormatting() {
   } 
 }
 
+function showTooltip() {
+  var tooltip = document.getElementById('master-tooltip');
+  tooltip.textContent = '';
+  var id = this.id;
+  if (id == "currency-code") {
+    tooltip.textContent = "Currency code";
+  } else if (id == "currency-symbol") {
+    tooltip.textContent = "Currency symbol";
+  } else if (id == "amount") {
+    tooltip.textContent = "Income amount";
+  } else if (id == "frequency") {
+    tooltip.textContent = "Pay frequency";
+  }
+}
+
+function hideTooltip() {
+  var tooltip = document.getElementById('master-tooltip');
+  tooltip.textContent = '';
+}
+
 function initializeOptions() {
   chrome.storage.sync.get(null, function(items) {
     var currencySymbol, currencyCode, frequency, amount, thousands, decimal;
@@ -74,4 +94,13 @@ function numberWithCommas(x) {
 document.addEventListener('DOMContentLoaded', initializeOptions);
 document.getElementById('save').addEventListener('click', saveOptions);
 document.getElementById('formatting').style.display = 'none';
-document.getElementById('togglr').addEventListener('click', toggleFormatting);    
+document.getElementById('togglr').addEventListener('click', toggleFormatting);
+document.getElementById('currency-code').addEventListener('focus', showTooltip);
+document.getElementById('currency-symbol').addEventListener('focus', showTooltip);
+document.getElementById('amount').addEventListener('focus', showTooltip);
+document.getElementById('frequency').addEventListener('focus', showTooltip);
+
+document.getElementById('currency-code').addEventListener('blur', hideTooltip);
+document.getElementById('currency-symbol').addEventListener('blur', hideTooltip);
+document.getElementById('amount').addEventListener('blur', hideTooltip);
+document.getElementById('frequency').addEventListener('blur', hideTooltip);
