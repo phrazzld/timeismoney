@@ -1,6 +1,6 @@
 function saveOptions() {
   var currencySymbol = document.getElementById('currency-symbol').value;
-  var currencyLetters = document.getElementById('currency-letters').value;
+  var currencyCode = document.getElementById('currency-code').value;
   var frequency = document.getElementById('frequency').value;
   var amount = document.getElementById('amount').value;
   var thousands = document.getElementById('thousands').value;
@@ -16,7 +16,7 @@ function saveOptions() {
   } else {
     chrome.storage.sync.set({
       currencySymbol: currencySymbol,
-      currencyLetters: currencyLetters,
+      currencyCode: currencyCode,
       frequency: frequency,
       amount: amount,
       thousands: thousands,
@@ -30,17 +30,29 @@ function saveOptions() {
   }
 }
 
+function toggleFormatting() {
+  var formatting = document.getElementById("formatting");
+  var togglr = document.getElementById("togglr");
+  if (formatting.style.display == 'none') {
+    togglr.textContent = "Hide advanced options";
+    formatting.style.display = 'block';
+  } else {
+    togglr.textContent = "Show advanced options";
+    formatting.style.display = 'none';
+  } 
+}
+
 function initializeOptions() {
   chrome.storage.sync.get(null, function(items) {
-    var currencySymbol, currencyLetters, frequency, amount, thousands, decimal;
+    var currencySymbol, currencyCode, frequency, amount, thousands, decimal;
     currencySymbol = items['currencySymbol'];
-    currencyLetters = items['currencyLetters'];
+    currencyCode = items['currencyCode'];
     frequency = items['frequency'];
     amount = items['amount'];
     thousands = items['thousands'];
     decimal = items['decimal'];
     loadSavedOption('currency-symbol', currencySymbol);
-    loadSavedOption('currency-letters', currencyLetters);
+    loadSavedOption('currency-code', currencyCode);
     loadSavedOption('frequency', frequency);
     loadSavedOption('amount', amount);
     loadSavedOption('thousands', thousands);
@@ -61,3 +73,5 @@ function numberWithCommas(x) {
 
 document.addEventListener('DOMContentLoaded', initializeOptions);
 document.getElementById('save').addEventListener('click', saveOptions);
+document.getElementById('formatting').style.display = 'none';
+document.getElementById('togglr').addEventListener('click', toggleFormatting);    

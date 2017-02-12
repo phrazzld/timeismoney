@@ -29,7 +29,7 @@ function walk(node) {
 function convert(textNode) {
   chrome.storage.sync.get(null, function(items) {
     var currencySymbol = items["currencySymbol"];
-    var currencyLetters = items["currencyLetters"];
+    var currencyCode = items["currencyCode"];
     var amount = items["amount"];
     var frequency = items["frequency"];
     var thousands = items["thousands"];
@@ -50,7 +50,7 @@ function convert(textNode) {
       decimal = new RegExp(decimalString, 'g');
     }
     // Currency indicator preceding amount
-    matchPattern = new RegExp('(\\' + currencySymbol + '|' + currencyLetters + ')\\x20?\\d(\\d|' + thousandsString + ')*(' + decimalString + '\\d\\d)?', 'g');
+    matchPattern = new RegExp('(\\' + currencySymbol + '|' + currencyCode + ')\\x20?\\d(\\d|' + thousandsString + ')*(' + decimalString + '\\d\\d)?', 'g');
     textNode.nodeValue = textNode.nodeValue.replace(matchPattern, function(e) {
       sourceMoney = e.replace(thousands, '@').replace(decimal, '~').replace('~', '.').replace('@', '');
       sourceMoney = parseFloat(sourceMoney.replace(/[^\d.]/g, '')).toFixed(2);
@@ -62,7 +62,7 @@ function convert(textNode) {
       return makeSnippet(e, sourceMoney, workingWage);
     });
     // Currency indicator concluding amount
-    matchPattern = new RegExp('\\d(\\d|' + thousandsString + ')*(' + decimalString + '\\d\\d)?\\x20?(\\' + currencySymbol + '|' + currencyLetters + ')', 'g');
+    matchPattern = new RegExp('\\d(\\d|' + thousandsString + ')*(' + decimalString + '\\d\\d)?\\x20?(\\' + currencySymbol + '|' + currencyCode + ')', 'g');
     textNode.nodeValue = textNode.nodeValue.replace(matchPattern, function(e) {
       sourceMoney = e.replace(thousands, '@').replace(decimal, '~').replace('~', '.').replace('@', '');
       sourceMoney = parseFloat(sourceMoney.replace(/[^\d.]/g, '')).toFixed(2);

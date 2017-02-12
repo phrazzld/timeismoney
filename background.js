@@ -24,7 +24,7 @@ function createToggleMenu(disable) {
 chrome.storage.sync.set({
   disabled: false,
   currencySymbol: "$",
-  currencyLetters: "USD",
+  currencyCode: "USD",
   frequency: "hourly",
   amount: "15.00",
   thousands: "commas",
