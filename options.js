@@ -5,6 +5,9 @@ function saveOptions() {
   var amount = document.getElementById('amount').value;
   var thousands = document.getElementById('thousands').value;
   var decimal = document.getElementById('decimal').value;
+  if (decimal !== "dot") {
+    amount = amount.replace(/(\s|\.)/g, '').replace(",", ".");
+  }
   amount = parseFloat(amount.replace(/[^\d.]/g, '')).toFixed(2);
   var status = document.getElementById('status');
 
@@ -74,21 +77,25 @@ function initializeOptions() {
     loadSavedOption('currency-symbol', currencySymbol);
     loadSavedOption('currency-code', currencyCode);
     loadSavedOption('frequency', frequency);
-    loadSavedOption('amount', amount);
+    loadSavedOption('amount', amount, decimal);
     loadSavedOption('thousands', thousands);
     loadSavedOption('decimal', decimal);
   });
 }
 
-function loadSavedOption(elementId, value) {
+function loadSavedOption(elementId, value, decimal = "dot") {
   if (value !== undefined && value !== null) {
-    document.getElementById(elementId).value = elementId == "amount" ? numberWithCommas(value) : value;
+    document.getElementById(elementId).value = elementId == "amount" ? formatIncomeAmount(value, decimal) : value;
   }
 }
 
-// Code from http://bit.ly/1ooHsSO
-function numberWithCommas(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+function formatIncomeAmount(x, decimal) {
+  // Format x based on decimal 
+  if (decimal == "dot") {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  } else {
+    return x.toString().replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
 }
 
 document.addEventListener('DOMContentLoaded', initializeOptions);
