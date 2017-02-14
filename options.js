@@ -90,7 +90,6 @@ function loadSavedOption(elementId, value, decimal = "dot") {
 }
 
 function formatIncomeAmount(x, decimal) {
-  // Format x based on decimal 
   if (decimal == "dot") {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   } else {
