@@ -9,7 +9,7 @@ chrome.runtime.onInstalled.addListener(function() {
 function createToggleMenu(disable) {
   chrome.contextMenus.removeAll();
   chrome.contextMenus.create({
-    title: disable ? "Disable" : "Enable",
+    title: disable ? chrome.i18n.getMessage("disable") : chrome.i18n.getMessage("enable"),
     contexts: ["browser_action"],
     onclick: function() {
       chrome.storage.sync.set({

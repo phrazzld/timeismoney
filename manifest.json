@@ -1,13 +1,14 @@
 {
   "manifest_version": 2,
 
-  "name": "Time Is Money",
+  "name": "__MSG_extName__",
   "short_name": "timeismoney",
-  "description": "See prices online as equivalent work hours",
+  "description": "__MSG_extDesc__",
+  "default_locale": "en",
   "version": "4.0.7",
 
   "browser_action": {
-    "default_title": "Time Is Money",
+    "default_title": "__MSG_extName__",
     "default_icon": {
       "19": "images/icon_19.png",
       "38": "images/icon_38.png"

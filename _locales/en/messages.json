@@ -1,0 +1,91 @@
+{
+  "extName": {
+    "message": "Time Is Money",
+    "description": "Extension name."
+  },
+  "extDesc": {
+    "message": "Automatically converts prices online into hours of work.",
+    "description": "Brief description of the extension's function."
+  },
+  "optionsTitle": {
+    "message": "Time Is Money - Options"
+  },
+  "instructions": {
+    "message": "Just enter your income below:",
+    "description": "Description of what the user must do for the extension to work."
+  },
+  "hourly": {
+    "message": "Hourly",
+    "description": "Pay frequency option for 'by-the-hour' payment."
+  },
+  "yearly": {
+    "message": "Yearly",
+    "description": "Pay frequency option for salary payment."
+  },
+  "save": {
+    "message": "Save",
+    "description": "Stores current form values."
+  },
+  "advShow": {
+    "message": "Show advanced options"
+  },
+  "advHide": {
+    "message": "Hide advanced options"
+  },
+  "currencyFormat": {
+    "message": "Currency format",
+    "description": "Header for the form section that configures symbols for the thousands' place and the decimal place Time Is Money will use to identify currency values online." 
+  },
+  "thousandsPlace": {
+    "message": "Thousands' place"
+  },
+  "decimalPlace": {
+    "message": "Decimal place"
+  },
+  "comma": {
+    "message": "Comma",
+    "description": "An option for the thousands' place."
+  },
+  "commas": {
+    "message": "Commas",
+    "description": "An option for the decimal place."
+  },
+  "spacesAndDots": {
+    "message": "Spaces and dots",
+    "description": "An option for the thousands' place."
+  },
+  "dot": {
+    "message": "Dot",
+    "description": "An option for the decimal place."
+  },
+  "amountErr": {
+    "message": "Error! Invalid amount entered.",
+    "description": "Tell the user that the value entered for 'Income amount' is invalid and the form was not saved."
+  },
+  "saveSuccess": {
+    "message": "Options saved.",
+    "description": "Let the user know their preferences were successfully saved."
+  },
+  "currencyCode": {
+    "message": "Currency code"
+  },
+  "currencySymbol": {
+    "message": "Currency symbol"
+  },
+  "incomeAmount": {
+    "message": "Income amount",
+    "description": "The amount of money the user gets each pay period."
+  },
+  "payFrequency": {
+    "message": "Pay frequency",
+    "description": "How often the user is paid."
+  },
+  "disable": {
+    "message": "Disable",
+    "description": "Option to pause the extension if it is currently running."
+  },
+  "enable": {
+    "message": "Enable",
+    "description": "Option to resume the extension if it is currently paused."
+  }
+}

@@ -1,40 +1,40 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Time Is Money - Options</title>
+    <title></title>
     <link rel="stylesheet" href="styles.css">
   </head>
 
   <body>
-    <p class="limitless">Automatically converts prices online into hours of work.</p>
-    <p class="no-ceiling">Just enter your income below.</p>
+    <p id="ext-desc"></p>
+    <p id="ext-instructions"></p>
     <div id="form">
       <div id="master-tooltip"></div>
       <input type="text" id="currency-code" placeholder="USD">
       <input type="text" id="currency-symbol" placeholder="$">
       <input type="text" id="amount" placeholder="15.00">
       <select id="frequency">
-        <option value="hourly">Hourly</option>
-        <option value="yearly">Yearly</option>
+        <option id="hourly" value="hourly"></option>
+        <option id="yearly" value="yearly"></option>
       </select>
-      <button id="save">Save</button>
+      <button id="save"></button>
       <div id="togglr-wrapper">
-        <a href="#" id="togglr">Show advanced options</a>
+        <a href="#" id="togglr"></a>
       </div>
       <div id="formatting">
-        <h4>Currency format</h4>
+        <h4 id="formatting-header"></h4>
         <div id="thousands-wrapper" class="advanced-option">
-          <p>Thousands place:</p>
+          <p id="thousands-label"></p>
           <select id="thousands" title="Symbols representing the thousand's place">
-            <option value='commas'>Commas</option>
-            <option value='spacesAndDots'>Spaces and dots</option>
+            <option id="commas" value='commas'></option>
+            <option id="spaces-and-dots" value='spacesAndDots'></option>
           </select>
         </div>
         <div id="decimal-wrapper" class="advanced-option">
-          <p>Decimal place:</p>
+          <p id="decimal-label"></p>
           <select id="decimal" title="Symbols representing the decimal place">
-            <option value='dot'>Dot</option>
-            <option value='comma'>Comma</option>
+            <option id="dot" value='dot'></option>
+            <option id="comma" value='comma'></option>
           </select>
         </div>
       </div>
