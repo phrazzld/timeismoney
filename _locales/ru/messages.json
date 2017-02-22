@@ -1,0 +1,91 @@
+{
+  "extName": {
+    "message": "Время - деньги",
+    "description": "Extension name."
+  },
+  "extDesc": {
+    "message": "Автоматически конвертирует цены в онлайн-магазинах в часы работы.",
+    "description": "Brief description of the extension's function."
+  },
+  "optionsTitle": {
+    "message": "Время - деньги: Опции"
+  },
+  "instructions": {
+    "message": "Просто введите ниже сумму ваших доходов:",
+    "description": "Description of what the user must do for the extension to work."
+  },
+  "hourly": {
+    "message": "Почасовая оплата",
+    "description": "Pay frequency option for 'by-the-hour' payment."
+  },
+  "yearly": {
+    "message": "Годовой доход",
+    "description": "Pay frequency option for salary payment."
+  },
+  "save": {
+    "message": "Сохранить",
+    "description": "Stores current form values."
+  },
+  "advShow": {
+    "message": "Показать расширенные опции"
+  },
+  "advHide": {
+    "message": "Скрыть расширенные опции"
+  },
+  "currencyFormat": {
+    "message": "Формат валюты",
+    "description": "Header for the form section that configures symbols for the thousands' place and the decimal place Time Is Money will use to identify currency values online."
+  },
+  "thousandsPlace": {
+    "message": "Тысячный разделитель"
+  },
+  "decimalPlace": {
+    "message": "Десятичный разделитель"
+  },
+  "comma": {
+    "message": "Запятая",
+    "description": "An option for the thousands' place."
+  },
+  "commas": {
+    "message": "Запятые",
+    "description": "An option for the decimal place."
+  },
+  "spacesAndDots": {
+    "message": "Пробелы и точки",
+    "description": "An option for the thousands' place."
+  },
+  "dot": {
+    "message": "Точка",
+    "description": "An option for the decimal place."
+  },
+  "amountErr": {
+    "message": "Ошибка! Введено недопустимое значение.",
+    "description": "Tell the user that the value entered for 'Income amount' is invalid and the form was not saved."
+  },
+  "saveSuccess": {
+    "message": "Настройки сохранены.",
+    "description": "Let the user know their preferences were successfully saved."
+  },
+  "currencyCode": {
+    "message": "Код валюты"
+  },
+  "currencySymbol": {
+    "message": "Символ валюты"
+  },
+  "incomeAmount": {
+    "message": "Сумма дохода",
+    "description": "The amount of money the user gets each pay period."
+  },
+  "payFrequency": {
+    "message": "Период оплаты",
+    "description": "How often the user is paid."
+  },
+  "disable": {
+    "message": "Отключить",
+    "description": "Option to pause the extension if it is currently running."
+  },
+  "enable": {
+    "message": "Включить",
+    "description": "Option to resume the extension if it is currently paused."
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "extName": {
+    "message": "El Tiempo es Dinero",
+    "description": "Extension name."
+  },
+  "extDesc": {
+    "message": "Convierte automáticamente los precios en línea en horas de trabajo.",
+    "description": "Brief description of the extension's function."
+  },
+  "optionsTitle": {
+    "message": "El Tiempo es Dinero - Opciones"
+  },
+  "instructions": {
+    "message": "Simplemente introduce tus ingresos abajo:",
+    "description": "Description of what the user must do for the extension to work."
+  },
+  "hourly": {
+    "message": "Por hora",
+    "description": "Pay frequency option for 'by-the-hour' payment."
+  },
+  "yearly": {
+    "message": "Anual",
+    "description": "Pay frequency option for salary payment."
+  },
+  "save": {
+    "message": "Guardar",
+    "description": "Stores current form values."
+  },
+  "advShow": {
+    "message": "Mostrar opciones avanzadas"
+  },
+  "advHide": {
+    "message": "Ocultar opciones avanzadas"
+  },
+  "currencyFormat": {
+    "message": "Formato de divisas",
+    "description": "Header for the form section that configures symbols for the thousands' place and the decimal place Time Is Money will use to identify currency values online."
+  },
+  "thousandsPlace": {
+    "message": "Posición de millares"
+  },
+  "decimalPlace": {
+    "message": "Posición decimal"
+  },
+  "comma": {
+    "message": "Coma",
+    "description": "An option for the thousands' place."
+  },
+  "commas": {
+    "message": "Comas",
+    "description": "An option for the decimal place."
+  },
+  "spacesAndDots": {
+    "message": "Espacios y puntos",
+    "description": "An option for the thousands' place."
+  },
+  "dot": {
+    "message": "Punto",
+    "description": "An option for the decimal place."
+  },
+  "amountErr": {
+    "message": "¡Error! El monto introducido no es válido.",
+    "description": "Tell the user that the value entered for 'Income amount' is invalid and the form was not saved."
+  },
+  "saveSuccess": {
+    "message": "Opciones guardadas.",
+    "description": "Let the user know their preferences were successfully saved."
+  },
+  "currencyCode": {
+    "message": "Código de divisa"
+  },
+  "currencySymbol": {
+    "message": "Símbolo de divisa"
+  },
+  "incomeAmount": {
+    "message": "Monto de los ingresos",
+    "description": "The amount of money the user gets each pay period."
+  },
+  "payFrequency": {
+    "message": "Frecuencia de pago",
+    "description": "How often the user is paid."
+  },
+  "disable": {
+    "message": "Desactivar",
+    "description": "Option to pause the extension if it is currently running."
+  },
+  "enable": {
+    "message": "Activar",
+    "description": "Option to resume the extension if it is currently paused."
+  }
+}

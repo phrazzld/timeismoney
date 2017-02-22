@@ -1,0 +1,91 @@
+{
+  "extName": {
+    "message": "الوقت هو المال",
+    "description": "Extension name."
+  },
+  "extDesc": {
+    "message": "يقوم تلقائيا بتحويل الأسعار على الإنترنت لساعات من العمل.",
+    "description": "Brief description of the extension's function."
+  },
+  "optionsTitle": {
+    "message": "الوقت هو المال - خيارات"
+  },
+  "instructions": {
+    "message": "أدخل دخلك بالأسفل:",
+    "description": "Description of what the user must do for the extension to work."
+  },
+  "hourly": {
+    "message": "في الساعة",
+    "description": "Pay frequency option for 'by-the-hour' payment."
+  },
+  "yearly": {
+    "message": "في العام",
+    "description": "Pay frequency option for salary payment."
+  },
+  "save": {
+    "message": "حفظ",
+    "description": "Stores current form values."
+  },
+  "advShow": {
+    "message": "عرض الخيارات المتقدمة"
+  },
+  "advHide": {
+    "message": "إخفاء الخيارات المتقدمة"
+  },
+  "currencyFormat": {
+    "message": "تنسيق العملة",
+    "description": "Header for the form section that configures symbols for the thousands' place and the decimal place Time Is Money will use to identify currency values online."
+  },
+  "thousandsPlace": {
+    "message": "مكان الآلاف"
+  },
+  "decimalPlace": {
+    "message": "مكان النقطة العشرية"
+  },
+  "comma": {
+    "message": "فاصلة",
+    "description": "An option for the thousands' place."
+  },
+  "commas": {
+    "message": "فواصل",
+    "description": "An option for the decimal place."
+  },
+  "spacesAndDots": {
+    "message": "المسافات والنقط",
+    "description": "An option for the thousands' place."
+  },
+  "dot": {
+    "message": "نقطة",
+    "description": "An option for the decimal place."
+  },
+  "amountErr": {
+    "message": "خطأ! أدخلت كمية خاطئة.",
+    "description": "Tell the user that the value entered for 'Income amount' is invalid and the form was not saved."
+  },
+  "saveSuccess": {
+    "message": "تم حفظ الخيار.",
+    "description": "Let the user know their preferences were successfully saved."
+  },
+  "currencyCode": {
+    "message": "كود العملة"
+  },
+  "currencySymbol": {
+    "message": "رمز العملة"
+  },
+  "incomeAmount": {
+    "message": "مقدار الدخل",
+    "description": "The amount of money the user gets each pay period."
+  },
+  "payFrequency": {
+    "message": "معدل الدفع",
+    "description": "How often the user is paid."
+  },
+  "disable": {
+    "message": "تعطيل",
+    "description": "Option to pause the extension if it is currently running."
+  },
+  "enable": {
+    "message": "تمكين",
+    "description": "Option to resume the extension if it is currently paused."
+  }
+}

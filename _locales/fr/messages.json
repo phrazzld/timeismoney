@@ -1,0 +1,91 @@
+{
+  "extName": {
+    "message": "Time is Money",
+    "description": "Extension name."
+  },
+  "extDesc": {
+    "message": "Convertit automatiquement les prix en ligne en heures de travail.",
+    "description": "Brief description of the extension's function."
+  },
+  "optionsTitle": {
+    "message": "Time is Money - Options"
+  },
+  "instructions": {
+    "message": "Il suffit d'entrer votre revenu ci-dessous :",
+    "description": "Description of what the user must do for the extension to work."
+  },
+  "hourly": {
+    "message": "Par heure",
+    "description": "Pay frequency option for 'by-the-hour' payment."
+  },
+  "yearly": {
+    "message": "Par an",
+    "description": "Pay frequency option for salary payment."
+  },
+  "save": {
+    "message": "Enregistrer",
+    "description": "Stores current form values."
+  },
+  "advShow": {
+    "message": "Afficher les options avancées"
+  },
+  "advHide": {
+    "message": "Masquer les options avancées"
+  },
+  "currencyFormat": {
+    "message": "Format des devises",
+    "description": "Header for the form section that configures symbols for the thousands' place and the decimal place Time Is Money will use to identify currency values online."
+  },
+  "thousandsPlace": {
+    "message": "Milliers"
+  },
+  "decimalPlace": {
+    "message": "Décimale"
+  },
+  "comma": {
+    "message": "Virgule",
+    "description": "An option for the thousands' place."
+  },
+  "commas": {
+    "message": "Virgules",
+    "description": "An option for the decimal place."
+  },
+  "spacesAndDots": {
+    "message": "Espaces et points",
+    "description": "An option for the thousands' place."
+  },
+  "dot": {
+    "message": "Point",
+    "description": "An option for the decimal place."
+  },
+  "amountErr": {
+    "message": "Erreur ! Le montant indiqué est incorrect.",
+    "description": "Tell the user that the value entered for 'Income amount' is invalid and the form was not saved."
+  },
+  "saveSuccess": {
+    "message": "Options enregistrées.",
+    "description": "Let the user know their preferences were successfully saved."
+  },
+  "currencyCode": {
+    "message": "Code de la devise"
+  },
+  "currencySymbol": {
+    "message": "Symbole de la devise"
+  },
+  "incomeAmount": {
+    "message": "Montant du revenu",
+    "description": "The amount of money the user gets each pay period."
+  },
+  "payFrequency": {
+    "message": "Fréquence du salaire",
+    "description": "How often the user is paid."
+  },
+  "disable": {
+    "message": "Désactiver",
+    "description": "Option to pause the extension if it is currently running."
+  },
+  "enable": {
+    "message": "Activer",
+    "description": "Option to resume the extension if it is currently paused."
+  }
+}
