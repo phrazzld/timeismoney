@@ -57,8 +57,6 @@ function showTooltip() {
     tooltip.textContent = chrome.i18n.getMessage("incomeAmount"); 
   } else if (id == "frequency") {
     tooltip.textContent = chrome.i18n.getMessage("payFrequency");
-  } else if (id == "save") {
-    tooltip.textContent = chrome.i18n.getMessage("save");
   }
 }
 
@@ -119,8 +117,6 @@ function formatIncomeAmount(x, decimal) {
 document.addEventListener('DOMContentLoaded', loadMessagesFromLocale);
 document.addEventListener('DOMContentLoaded', initializeOptions);
 document.getElementById('save').addEventListener('click', saveOptions);
-document.getElementById('save').addEventListener('focus', showTooltip);
-document.getElementById('save').addEventListener('blur', hideTooltip);
 document.getElementById('formatting').style.display = 'none';
 document.getElementById('togglr').addEventListener('click', toggleFormatting);
 document.getElementById('currency-code').addEventListener('focus', showTooltip);

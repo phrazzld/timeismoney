@@ -26,11 +26,15 @@ body {
 }
 
 #currency-symbol {
-  width: 25px;
+  width: 30px;
+}
+
+#amount {
+  width: 100px;
 }
 
 #save {
-  float: right;
+  margin-top: 15px;
   font-weight: 500;
 }
 
@@ -45,6 +49,7 @@ body {
 
 #formatting {
   margin-top: 20px;
+  margin-bottom: 10px;
 }
 
 #formatting h4 {
