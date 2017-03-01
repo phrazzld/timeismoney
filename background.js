@@ -4,6 +4,15 @@ chrome.browserAction.onClicked.addListener(function() {
 
 chrome.runtime.onInstalled.addListener(function() {
   chrome.runtime.openOptionsPage();
+  chrome.storage.sync.set({
+    disabled: false,
+    currencySymbol: "$",
+    currencyCode: "USD",
+    frequency: "hourly",
+    amount: "15.00",
+    thousands: "commas",
+    decimal: "dot" 
+  });
 });
 
 function createToggleMenu(disable) {
@@ -21,13 +30,4 @@ function createToggleMenu(disable) {
   });
 }
 
-chrome.storage.sync.set({
-  disabled: false,
-  currencySymbol: "$",
-  currencyCode: "USD",
-  frequency: "hourly",
-  amount: "15.00",
-  thousands: "commas",
-  decimal: "dot" 
-});
 createToggleMenu(true);
