@@ -7,7 +7,7 @@ chrome.storage.sync.get(null, function(obj) {
 // Credit to t-j-crowder on StackOverflow for this walk function
 // http://bit.ly/1o47R7V
 function walk(node) {
-  var child, next
+  var child, next, price
 
   switch (node.nodeType) {
     case 1:  // Element
@@ -16,6 +16,20 @@ function walk(node) {
       child = node.firstChild
       while (child) {
         next = child.nextSibling
+        // Check if child is Amazon display price
+        var classes = child.classList
+        if (classes && classes.value === 'sx-price-currency') {
+          price = child.firstChild.nodeValue.toString()
+          child.firstChild.nodeValue = null
+        } else if (classes && classes.value === 'sx-price-whole') {
+          price += child.firstChild.nodeValue.toString()
+          child.firstChild.nodeValue = price
+          convert(child.firstChild)
+          child = next
+        } else if (classes && classes.value === 'sx-price-fractional') {
+          child.firstChild.nodeValue = null
+          price = null
+        }
         walk(child)
         child = next
       }
