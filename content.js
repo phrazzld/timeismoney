@@ -16,6 +16,7 @@ function walk(node) {
       child = node.firstChild
       while (child) {
         next = child.nextSibling
+
         // Check if child is Amazon display price
         var classes = child.classList
         if (classes && classes.value === 'sx-price-currency') {
@@ -30,6 +31,7 @@ function walk(node) {
           child.firstChild.nodeValue = null
           price = null
         }
+
         walk(child)
         child = next
       }

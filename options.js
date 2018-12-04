@@ -5,14 +5,14 @@ function saveOptions() {
   var amount = document.getElementById('amount').value
   var thousands = document.getElementById('thousands').value
   var decimal = document.getElementById('decimal').value
-  if (decimal !== "dot") {
-    amount = amount.replace(/(\s|\.)/g, '').replace(",", ".")
+  if (decimal !== 'dot') {
+    amount = amount.replace(/(\s|\.)/g, '').replace(',', '.')
   }
   amount = parseFloat(amount.replace(/[^\d.]/g, '')).toFixed(2)
   var status = document.getElementById('status')
 
   if (isNaN(amount)) {
-    status.textContent = chrome.i18n.getMessage("amountErr")
+    status.textContent = chrome.i18n.getMessage('amountErr')
     setTimeout(function() {
       status.textContent = ''
     }, 2000)
@@ -25,22 +25,24 @@ function saveOptions() {
       thousands: thousands,
       decimal: decimal
     }, function() {
-      status.textContent = chrome.i18n.getMessage("saveSuccess")
+      status.textContent = chrome.i18n.getMessage('saveSuccess')
       setTimeout(function() {
         status.textContent = ''
       }, 2000)
     })
   }
+
+  window.close()
 }
 
 function toggleFormatting() {
-  var formatting = document.getElementById("formatting")
-  var togglr = document.getElementById("togglr")
+  var formatting = document.getElementById('formatting')
+  var togglr = document.getElementById('togglr')
   if (formatting.style.display == 'none') {
-    togglr.textContent = chrome.i18n.getMessage("advHide")
+    togglr.textContent = chrome.i18n.getMessage('advHide')
     formatting.style.display = 'block'
   } else {
-    togglr.textContent = chrome.i18n.getMessage("advShow")
+    togglr.textContent = chrome.i18n.getMessage('advShow')
     formatting.style.display = 'none'
   }
 }
@@ -48,13 +50,13 @@ function toggleFormatting() {
 function setTooltipText(id) {
   switch (id) {
     case 'currency-code':
-      return chrome.i18n.getMessage("currencyCode")
+      return chrome.i18n.getMessage('currencyCode')
     case 'currency-symbol':
-      return chrome.i18n.getMessage("currencySymbol")
+      return chrome.i18n.getMessage('currencySymbol')
     case 'amount':
-      return chrome.i18n.getMessage("incomeAmount")
+      return chrome.i18n.getMessage('incomeAmount')
     case 'frequency':
-      return chrome.i18n.getMessage("payFrequency")
+      return chrome.i18n.getMessage('payFrequency')
   }
 }
 
@@ -88,30 +90,30 @@ function initializeOptions() {
 }
 
 function loadMessagesFromLocale() {
-  document.getElementById("ext-desc").textContent = chrome.i18n.getMessage("extDesc")
-  document.getElementById("ext-instructions").textContent = chrome.i18n.getMessage("instructions")
-  document.getElementById("hourly").textContent = chrome.i18n.getMessage("hourly")
-  document.getElementById("yearly").textContent = chrome.i18n.getMessage("yearly")
-  document.getElementById("save").textContent = chrome.i18n.getMessage("save")
-  document.getElementById("togglr").textContent = chrome.i18n.getMessage("advShow")
-  document.getElementById("formatting-header").textContent = chrome.i18n.getMessage("currencyFormat")
-  document.getElementById("thousands-label").textContent = chrome.i18n.getMessage("thousandsPlace")
-  document.getElementById("decimal-label").textContent = chrome.i18n.getMessage("decimalPlace")
-  document.getElementById("commas").textContent = chrome.i18n.getMessage("commas")
-  document.getElementById("comma").textContent = chrome.i18n.getMessage("comma")
-  document.getElementById("spaces-and-dots").textContent = chrome.i18n.getMessage("spacesAndDots")
-  document.getElementById("dot").textContent = chrome.i18n.getMessage("dot")
-  document.title = chrome.i18n.getMessage("optionsTitle")
+  document.getElementById('ext-desc').textContent = chrome.i18n.getMessage('extDesc')
+  document.getElementById('ext-instructions').textContent = chrome.i18n.getMessage('instructions')
+  document.getElementById('hourly').textContent = chrome.i18n.getMessage('hourly')
+  document.getElementById('yearly').textContent = chrome.i18n.getMessage('yearly')
+  document.getElementById('save').textContent = chrome.i18n.getMessage('save')
+  document.getElementById('togglr').textContent = chrome.i18n.getMessage('advShow')
+  document.getElementById('formatting-header').textContent = chrome.i18n.getMessage('currencyFormat')
+  document.getElementById('thousands-label').textContent = chrome.i18n.getMessage('thousandsPlace')
+  document.getElementById('decimal-label').textContent = chrome.i18n.getMessage('decimalPlace')
+  document.getElementById('commas').textContent = chrome.i18n.getMessage('commas')
+  document.getElementById('comma').textContent = chrome.i18n.getMessage('comma')
+  document.getElementById('spaces-and-dots').textContent = chrome.i18n.getMessage('spacesAndDots')
+  document.getElementById('dot').textContent = chrome.i18n.getMessage('dot')
+  document.title = chrome.i18n.getMessage('optionsTitle')
 }
 
-function loadSavedOption(elementId, value, decimal = "dot") {
+function loadSavedOption(elementId, value, decimal = 'dot') {
   if (value !== undefined && value !== null) {
-    document.getElementById(elementId).value = elementId == "amount" ? formatIncomeAmount(value, decimal) : value
+    document.getElementById(elementId).value = elementId == 'amount' ? formatIncomeAmount(value, decimal) : value
   }
 }
 
 function formatIncomeAmount(x, decimal) {
-  if (decimal == "dot") {
+  if (decimal == 'dot') {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   } else {
     return x.toString().replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
