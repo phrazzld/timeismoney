@@ -1,11 +1,11 @@
-let TAG_KEY = "TIM"
+let disabledOnPage = true
 
 // Should only run on first page load
 chrome.storage.sync.get('disabled', storage => {
     if (!storage.disabled) {
         walk(document.body)
+        disabledOnPage = false
     }
-    tagPage(storage.disabled)
 });
 
 // Should run whenever the popup switch is flipped on the current page
@@ -13,7 +13,7 @@ chrome.storage.onChanged.addListener(changes => {
     if (changes.disabled && !document.hidden) {
         console.debug("Running on detected change...")
         walk(document.body)
-        tagPage(changes.disabled.newValue)
+        disabledOnPage = changes.disabled.newValue
     }
 });
 
@@ -33,35 +33,14 @@ document.addEventListener('visibilitychange', function(e) {
         console.log("Run time is invalid! Please reload the page for the extension to work properly again...")
     } else if (!document.hidden) {
         chrome.storage.sync.get('disabled', storage => {
-            if (pageIsTagged() && getTagContent() !== storage.disabled) {
+            if (disabledOnPage !== storage.disabled) {
                 console.debug("Running on visibility change...")
                 walk(document.body)
-                tagPage(storage.disabled)
+                disabledOnPage = storage.disabled
             }
         });
     }
 });
-
-function tagPage(disabled) {
-    if (!pageIsTagged()) {
-        console.debug(`Tagging page with ${TAG_KEY} - disabled: ${disabled}!`)
-        let meta = document.createElement('meta')
-        meta.name = TAG_KEY
-        meta.content = disabled
-        document.getElementsByTagName('head')[0].appendChild(meta);
-    } else {
-        let meta = document.querySelector(`meta[name=${TAG_KEY}]`)
-        meta.content = disabled
-    }
-}
-
-function getTagContent() {
-    return document.querySelector(`meta[name=${TAG_KEY}]`).content === "true"
-}
-
-function pageIsTagged() {
-    return document.querySelector(`meta[name=${TAG_KEY}]`) != null
-}
 
 // Credit to t-j-crowder on StackOverflow for this walk function
 // http://bit.ly/1o47R7V
