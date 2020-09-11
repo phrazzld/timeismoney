@@ -15,6 +15,16 @@ chrome.runtime.onInstalled.addListener(function() {
   })
 })
 
+chrome.storage.onChanged.addListener(changes => {
+  if (changes.disabled) {
+    if (changes.disabled.newValue) {
+      chrome.browserAction.setIcon({path: "images/icon_disabled_38.png"});
+    } else {
+      chrome.browserAction.setIcon({path: "images/icon_38.png"});
+    }
+  }
+});
+
 function createToggleMenu(disable) {
   chrome.contextMenus.removeAll()
   chrome.contextMenus.create({
