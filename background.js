@@ -24,20 +24,3 @@ chrome.storage.onChanged.addListener(changes => {
     }
   }
 });
-
-// function createToggleMenu(disable) {
-//   chrome.contextMenus.removeAll()
-//   chrome.contextMenus.create({
-//     title: disable ? chrome.i18n.getMessage('disable') : chrome.i18n.getMessage('enable'),
-//     contexts: ['browser_action'],
-//     onclick: function() {
-//       chrome.storage.sync.set({
-//         disabled: disable
-//       }, function() {
-//         createToggleMenu(!disable)
-//       })
-//     }
-//   })
-// }
-//
-// createToggleMenu(true)
