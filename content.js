@@ -28,7 +28,7 @@ function isValidChromeRuntime() {
 
 // Should run whenever the tab is changed and the current extension state
 // differs from the previous one that was run on the page
-document.addEventListener('visibilitychange', function(e) {
+document.addEventListener('visibilitychange', function() {
     if (!isValidChromeRuntime()) {
         console.log("Run time is invalid! Please reload the page for the extension to work properly again...")
     } else if (!document.hidden) {
@@ -100,20 +100,18 @@ function buildDecimalString(delimiter) {
     }
 }
 
-function buildPrecedingMatchPattern(currencySymbol, currencyCode, thousandsString, decimalString) {
-    return new RegExp(`(\\${currencySymbol}|${currencyCode})\\x20?\\d(\\d|${thousandsString})*(${decimalString}\\d\\d)?`, 'g')
+function buildMatchPattern(currencySymbol, currencyCode, thousandsString, decimalString) {
+    let precedingMatchPattern =  new RegExp(`(\\${currencySymbol}|${currencyCode})\\x20?\\d(\\d|${thousandsString})*(${decimalString}\\d\\d)?`, 'g')
+    let concludingMatchPattern = new RegExp(`\\d(\\d|${thousandsString})*(${decimalString}\\d\\d)?\\x20?(\\${currencySymbol}|${currencyCode})`, 'g')
+
+    return new RegExp(precedingMatchPattern.source + "|" + concludingMatchPattern.source)
 }
 
-function reversePrecedingMatchPattern(currencySymbol, currencyCode, thousandsString, decimalString) {
-    return new RegExp(`((\\${currencySymbol}|${currencyCode})\\x20?\\d(\\d|${thousandsString})*(${decimalString}\\d\\d)?)\\s\\(\\d+h\\s\\d+m\\)`, 'g')
-}
+function buildReverseMatchPattern(currencySymbol, currencyCode, thousandsString, decimalString) {
+    let reversedPrecedingMatchPattern = new RegExp(`((\\${currencySymbol}|${currencyCode})\\x20?\\d(\\d|${thousandsString})*(${decimalString}\\d\\d)?)\\s\\(\\d+h\\s\\d+m\\)`, 'g')
+    let reversedConcludingMatchPattern = new RegExp(`\\d(\\d|${thousandsString})*(${decimalString}\\d\\d)?\\x20?(\\${currencySymbol}|${currencyCode})\\s\\(\\d+h\\s\\d+m\\)`, 'g')
 
-function buildConcludingMatchPattern(currencySymbol, currencyCode, thousandsString, decimalString) {
-    return new RegExp(`\\d(\\d|${thousandsString})*(${decimalString}\\d\\d)?\\x20?(\\${currencySymbol}|${currencyCode})`, 'g')
-}
-
-function reverseConcludingMatchPattern(currencySymbol, currencyCode, thousandsString, decimalString) {
-    return new RegExp(`\\d(\\d|${thousandsString})*(${decimalString}\\d\\d)?\\x20?(\\${currencySymbol}|${currencyCode})\\s\\(\\d+h\\s\\d+m\\)`, 'g')
+    return new RegExp(reversedPrecedingMatchPattern.source + "|" + reversedConcludingMatchPattern.source)
 }
 
 function convertHelper(e, thousands, decimal, frequency, amount) {
@@ -122,8 +120,7 @@ function convertHelper(e, thousands, decimal, frequency, amount) {
         .replace(decimal, '~')
         .replace('~', '.')
         .replace('@', '')
-    sourceMoney = parseFloat(sourceMoney
-        .replace(/[^\d.]/g, ''))
+    sourceMoney = parseFloat(sourceMoney.replace(/[^\d.]/g, ''))
         .toFixed(2)
     let workingWage = buildWorkingWage(frequency, amount)
     return makeSnippet(e, sourceMoney, workingWage)
@@ -144,25 +141,14 @@ function convert(textNode) {
         thousands = new RegExp(thousandsString, 'g')
         decimalString = buildDecimalString(decimal)
         decimal = new RegExp(decimalString, 'g')
-        // Currency indicator preceding amount
+        // Replace '$10' with '$10 (1 h)' or '10$' with '10$ (1h)'
         if (disabled !== true) {
-            // Replace '$10' with '$10 (1 h)'
-            matchPattern = buildPrecedingMatchPattern(currencySymbol, currencyCode, thousandsString, decimalString)
+            matchPattern = buildMatchPattern(currencySymbol, currencyCode, thousandsString, decimalString)
             textNode.nodeValue = textNode.nodeValue.replace(matchPattern, function (e) {
                 return convertHelper(e, thousands, decimal, frequency, amount)
             })
         } else {
-            matchPattern = reversePrecedingMatchPattern(currencySymbol, currencyCode, thousandsString, decimalString)
-            textNode.nodeValue = textNode.nodeValue.replace(matchPattern, "$1")
-        }
-        // Currency indicator concluding amount
-        if (disabled !== true) {
-            matchPattern = buildConcludingMatchPattern(currencySymbol, currencyCode, thousandsString, decimalString)
-            textNode.nodeValue = textNode.nodeValue.replace(matchPattern, function (e) {
-                return convertHelper(e, thousands, decimal, frequency, amount)
-            })
-        } else {
-            matchPattern = reverseConcludingMatchPattern(currencySymbol, currencyCode, thousandsString, decimalString)
+            matchPattern = buildReverseMatchPattern(currencySymbol, currencyCode, thousandsString, decimalString)
             textNode.nodeValue = textNode.nodeValue.replace(matchPattern, "$1")
         }
     })
