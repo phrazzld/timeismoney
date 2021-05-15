@@ -5,7 +5,7 @@
   "short_name": "timeismoney",
   "description": "__MSG_extDesc__",
   "default_locale": "en",
-  "version": "4.1.4",
+  "version": "4.1.5",
 
   "browser_action": {
     "default_title": "__MSG_extName__",
@@ -20,10 +20,8 @@
   },
 
   "permissions": [
-    "webRequest",
     "*://*/*",
-    "storage",
-    "contextMenus"
+    "storage"
   ],
 
   "content_scripts": [
