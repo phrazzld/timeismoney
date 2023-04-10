@@ -9,11 +9,12 @@ Time Is Money is a Chrome extension that automatically converts prices online in
 
 ## Featured On 🌟
 
-- [Yahoo News](http://yhoo.it/1xUHPuT)
-- [Lifehacker](http://bit.ly/1EEi06x)
-- [Huffington Post](http://huff.to/1DAaYMV)
-- [Fast Company](http://bit.ly/1zo5t4f)
-- [Free Technology for Teachers](http://bit.ly/1xO6B3e)
+- [Yahoo News](https://finance.yahoo.com/news/time-is-money-chrome-extension-tells-you-how-many-102539694524.html)
+- [Lifehacker](https://lifehacker.com/time-is-money-shows-you-prices-in-terms-of-hours-worked-1657631655)
+- [Huffington Post](https://www.huffpost.com/entry/time-is-money_b_6981806)
+- [Fast Company](https://www.fastcompany.com/3038475/by-turning-minutes-into-moolah-this-chrome-extension-helps-you-save)
+- [Free Technology for Teachers](https://www.freetech4teachers.com/2014/11/time-is-money-chrome-extension-that.html#.VHDu11fF8b5)
+- [Cheapism](https://blog.cheapism.com/time-is-money-chrome-extension/)
 
 ## Usage 🚀
 
