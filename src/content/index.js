@@ -1,58 +1,16 @@
 import { getSettings } from '../utils/storage.js';
 import { initSettings, onSettingsChange, handleVisibilityChange } from './settingsManager.js';
+import { walk } from './domScanner.js';
 
 // Process page with current settings
 function processPage(root) {
-  walk(root);
+  walk(root, convert);
 }
 
 // Initialize settings and set up event handlers
 initSettings(processPage);
 onSettingsChange(processPage);
 handleVisibilityChange(processPage);
-
-/**
- * Traverses the DOM tree starting from the given node and applies price conversion
- * Credit to t-j-crowder on StackOverflow for this walk function
- * http://bit.ly/1o47R7V
- *
- * @param {Node} node - The starting node for traversal
- */
-const walk = (node) => {
-  let child, next, price;
-
-  switch (node.nodeType) {
-    case 1: // Element
-    case 9: // Document
-    case 11: // Document fragment
-      child = node.firstChild;
-      while (child) {
-        next = child.nextSibling;
-
-        // Check if child is Amazon display price
-        const classes = child.classList;
-        if (classes && classes.value === 'sx-price-currency') {
-          price = child.firstChild.nodeValue.toString();
-          child.firstChild.nodeValue = null;
-        } else if (classes && classes.value === 'sx-price-whole') {
-          price += child.firstChild.nodeValue.toString();
-          child.firstChild.nodeValue = price;
-          convert(child.firstChild);
-          child = next;
-        } else if (classes && classes.value === 'sx-price-fractional') {
-          child.firstChild.nodeValue = null;
-          price = null;
-        }
-
-        walk(child);
-        child = next;
-      }
-      break;
-    case 3: // Text node
-      convert(node);
-      break;
-  }
-};
 
 /**
  * Builds a regex pattern string for the thousands delimiter based on user settings

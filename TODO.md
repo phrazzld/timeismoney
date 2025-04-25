@@ -62,7 +62,7 @@
         2. Settings change events delivered correctly.
     - **Depends-on:** T005
 
-- [ ] **T007 · Refactor · P2: extract domScanner.js with walk API**
+- [x] **T007 · Refactor · P2: extract domScanner.js with walk API**
     - **Context:** 2.2 Refactor content.js – Split responsibilities: domScanner.js
     - **Action:**
         1. Create `src/content/domScanner.js` exporting `walk(root, callback)`.
