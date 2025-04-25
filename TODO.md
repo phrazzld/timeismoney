@@ -82,7 +82,7 @@
         2. Content processor uses `findPrices` exclusively.
     - **Depends-on:** T007
 
-- [ ] **T009 · Refactor · P2: extract priceConverter.js with convert and format**
+- [x] **T009 · Refactor · P2: extract priceConverter.js with convert and format**
     - **Context:** 2.2 Refactor content.js – Split responsibilities: priceConverter.js
     - **Action:**
         1. Create `src/content/priceConverter.js` exporting `convertToTime(price, wage)` and `formatTimeSnippet(h, m)`.
