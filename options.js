@@ -1,4 +1,4 @@
-function saveOptions() {
+const saveOptions = () => {
   const currencySymbol = document.getElementById('currency-symbol').value;
   const currencyCode = document.getElementById('currency-code').value;
   const frequency = document.getElementById('frequency').value;
@@ -13,7 +13,7 @@ function saveOptions() {
 
   if (isNaN(amount)) {
     status.textContent = chrome.i18n.getMessage('amountErr');
-    setTimeout(function () {
+    setTimeout(() => {
       status.textContent = '';
     }, 2000);
   } else {
@@ -26,9 +26,9 @@ function saveOptions() {
         thousands: thousands,
         decimal: decimal,
       },
-      function () {
+      () => {
         status.textContent = chrome.i18n.getMessage('saveSuccess');
-        setTimeout(function () {
+        setTimeout(() => {
           status.textContent = '';
         }, 2000);
       }
@@ -36,21 +36,21 @@ function saveOptions() {
   }
 
   window.close();
-}
+};
 
-function toggleFormatting() {
+const toggleFormatting = () => {
   const formatting = document.getElementById('formatting');
   const togglr = document.getElementById('togglr');
-  if (formatting.style.display == 'none') {
+  if (formatting.style.display === 'none') {
     togglr.textContent = chrome.i18n.getMessage('advHide');
     formatting.style.display = 'block';
   } else {
     togglr.textContent = chrome.i18n.getMessage('advShow');
     formatting.style.display = 'none';
   }
-}
+};
 
-function setTooltipText(id) {
+const setTooltipText = (id) => {
   switch (id) {
     case 'currency-code':
       return chrome.i18n.getMessage('currencyCode');
@@ -61,21 +61,21 @@ function setTooltipText(id) {
     case 'frequency':
       return chrome.i18n.getMessage('payFrequency');
   }
-}
+};
 
-function showTooltip() {
+const showTooltip = function () {
   const tooltip = document.getElementById('master-tooltip');
   tooltip.textContent = '';
   tooltip.textContent = setTooltipText(this.id);
-}
+};
 
-function hideTooltip() {
+const hideTooltip = function () {
   const tooltip = document.getElementById('master-tooltip');
   tooltip.textContent = '';
-}
+};
 
-function initializeOptions() {
-  chrome.storage.sync.get(null, function (items) {
+const initializeOptions = () => {
+  chrome.storage.sync.get(null, (items) => {
     let currencySymbol, currencyCode, frequency, amount, thousands, decimal;
     currencySymbol = items['currencySymbol'];
     currencyCode = items['currencyCode'];
@@ -90,9 +90,9 @@ function initializeOptions() {
     loadSavedOption('thousands', thousands);
     loadSavedOption('decimal', decimal);
   });
-}
+};
 
-function loadMessagesFromLocale() {
+const loadMessagesFromLocale = () => {
   document.getElementById('ext-desc').textContent = chrome.i18n.getMessage('extDesc');
   document.getElementById('ext-instructions').textContent = chrome.i18n.getMessage('instructions');
   document.getElementById('hourly').textContent = chrome.i18n.getMessage('hourly');
@@ -108,17 +108,17 @@ function loadMessagesFromLocale() {
   document.getElementById('spaces-and-dots').textContent = chrome.i18n.getMessage('spacesAndDots');
   document.getElementById('dot').textContent = chrome.i18n.getMessage('dot');
   document.title = chrome.i18n.getMessage('optionsTitle');
-}
+};
 
-function loadSavedOption(elementId, value, decimal = 'dot') {
+const loadSavedOption = (elementId, value, decimal = 'dot') => {
   if (value !== undefined && value !== null) {
     document.getElementById(elementId).value =
-      elementId == 'amount' ? formatIncomeAmount(value, decimal) : value;
+      elementId === 'amount' ? formatIncomeAmount(value, decimal) : value;
   }
-}
+};
 
-function formatIncomeAmount(x, decimal) {
-  if (decimal == 'dot') {
+const formatIncomeAmount = (x, decimal) => {
+  if (decimal === 'dot') {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   } else {
     return x
@@ -126,7 +126,7 @@ function formatIncomeAmount(x, decimal) {
       .replace('.', ',')
       .replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   }
-}
+};
 
 document.addEventListener('DOMContentLoaded', loadMessagesFromLocale);
 document.addEventListener('DOMContentLoaded', initializeOptions);

@@ -1,8 +1,8 @@
-chrome.browserAction.onClicked.addListener(function () {
+chrome.browserAction.onClicked.addListener(() => {
   chrome.runtime.openOptionsPage();
 });
 
-chrome.runtime.onInstalled.addListener(function () {
+chrome.runtime.onInstalled.addListener(() => {
   chrome.runtime.openOptionsPage();
   chrome.storage.sync.set({
     disabled: false,

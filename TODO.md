@@ -11,7 +11,7 @@
         2. All existing `.js` files formatted according to rules.
     - **Depends-on:** none
 
-- [ ] **T002 · Refactor · P2: adopt ES6 syntax across codebase**
+- [x] **T002 · Refactor · P2: adopt ES6 syntax across codebase**
     - **Context:** 2.1 General Codebase Improvements – Adopt ES6+ style
     - **Action:**
         1. Replace `var` with `const`/`let`, convert functions to arrow syntax where appropriate.

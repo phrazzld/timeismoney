@@ -1,16 +1,16 @@
-function restoreOptions() {
+const restoreOptions = () => {
   chrome.storage.sync.get(
     {
       disabled: false,
     },
-    function (items) {
+    (items) => {
       document.getElementById('enabled').checked = !items.disabled;
     }
   );
-}
+};
 
 //initial display for popup menu when opened
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
   restoreOptions();
 
   const enable = document.getElementById('enabled');

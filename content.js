@@ -17,20 +17,20 @@ chrome.storage.onChanged.addListener((changes) => {
   }
 });
 
-function isValidChromeRuntime() {
+const isValidChromeRuntime = () => {
   try {
     return chrome.runtime && !!chrome.runtime.getManifest();
   } catch (e) {
     return false;
   }
-}
+};
 
 // Should run whenever the tab is changed and the current extension state
 // differs from the previous one that was run on the page
-document.addEventListener('visibilitychange', function () {
+document.addEventListener('visibilitychange', () => {
   if (!isValidChromeRuntime()) {
     console.log(
-      'Run time is invalid! Please reload the page for the extension to work properly again...'
+      `Run time is invalid! Please reload the page for the extension to work properly again...`
     );
   } else if (!document.hidden) {
     chrome.storage.sync.get('disabled', (storage) => {
@@ -45,7 +45,7 @@ document.addEventListener('visibilitychange', function () {
 
 // Credit to t-j-crowder on StackOverflow for this walk function
 // http://bit.ly/1o47R7V
-function walk(node) {
+const walk = (node) => {
   let child, next, price;
 
   switch (node.nodeType) {
@@ -79,29 +79,29 @@ function walk(node) {
       convert(node);
       break;
   }
-}
+};
 
-function buildThousandsString(delimiter) {
+const buildThousandsString = (delimiter) => {
   if (delimiter === 'commas') {
     return ',';
   } else if (delimiter === 'spacesAndDots') {
     return '(\\s|\\.)';
   } else {
-    throw 'Not a recognized delimiter for thousands!';
+    throw new Error('Not a recognized delimiter for thousands!');
   }
-}
+};
 
-function buildDecimalString(delimiter) {
+const buildDecimalString = (delimiter) => {
   if (delimiter === 'dot') {
     return '\\.';
   } else if (delimiter === 'comma') {
     return ',';
   } else {
-    throw 'Not a recognized delimiter for decimals!';
+    throw new Error('Not a recognized delimiter for decimals!');
   }
-}
+};
 
-function buildMatchPattern(currencySymbol, currencyCode, thousandsString, decimalString) {
+const buildMatchPattern = (currencySymbol, currencyCode, thousandsString, decimalString) => {
   const precedingMatchPattern = new RegExp(
     `(\\${currencySymbol}|${currencyCode})\\x20?\\d(\\d|${thousandsString})*(${decimalString}\\d\\d)?`,
     'g'
@@ -111,10 +111,10 @@ function buildMatchPattern(currencySymbol, currencyCode, thousandsString, decima
     'g'
   );
 
-  return new RegExp(precedingMatchPattern.source + '|' + concludingMatchPattern.source);
-}
+  return new RegExp(`${precedingMatchPattern.source}|${concludingMatchPattern.source}`);
+};
 
-function buildReverseMatchPattern(currencySymbol, currencyCode, thousandsString, decimalString) {
+const buildReverseMatchPattern = (currencySymbol, currencyCode, thousandsString, decimalString) => {
   const reversedPrecedingMatchPattern = new RegExp(
     `((\\${currencySymbol}|${currencyCode})\\x20?\\d(\\d|${thousandsString})*(${decimalString}\\d\\d)?)\\s\\(\\d+h\\s\\d+m\\)`,
     'g'
@@ -125,11 +125,11 @@ function buildReverseMatchPattern(currencySymbol, currencyCode, thousandsString,
   );
 
   return new RegExp(
-    reversedPrecedingMatchPattern.source + '|' + reversedConcludingMatchPattern.source
+    `${reversedPrecedingMatchPattern.source}|${reversedConcludingMatchPattern.source}`
   );
-}
+};
 
-function convertHelper(e, thousands, decimal, frequency, amount) {
+const convertHelper = (e, thousands, decimal, frequency, amount) => {
   let sourceMoney = e
     .replace(thousands, '@')
     .replace(decimal, '~')
@@ -138,10 +138,10 @@ function convertHelper(e, thousands, decimal, frequency, amount) {
   sourceMoney = parseFloat(sourceMoney.replace(/[^\d.]/g, '')).toFixed(2);
   const workingWage = buildWorkingWage(frequency, amount);
   return makeSnippet(e, sourceMoney, workingWage);
-}
+};
 
-function convert(textNode) {
-  chrome.storage.sync.get(null, function (items) {
+const convert = (textNode) => {
+  chrome.storage.sync.get(null, (items) => {
     let currencySymbol,
       currencyCode,
       amount,
@@ -171,7 +171,7 @@ function convert(textNode) {
         thousandsString,
         decimalString
       );
-      textNode.nodeValue = textNode.nodeValue.replace(matchPattern, function (e) {
+      textNode.nodeValue = textNode.nodeValue.replace(matchPattern, (e) => {
         return convertHelper(e, thousands, decimal, frequency, amount);
       });
     } else {
@@ -184,18 +184,18 @@ function convert(textNode) {
       textNode.nodeValue = textNode.nodeValue.replace(matchPattern, '$1');
     }
   });
-}
+};
 
-function buildWorkingWage(frequency, amount) {
+const buildWorkingWage = (frequency, amount) => {
   let workingWage = parseFloat(amount);
   if (frequency === 'yearly') {
     workingWage = workingWage / 52 / 40;
   }
   return workingWage.toFixed(2);
-}
+};
 
 // Build text element in the form of: original (conversion)
-function makeSnippet(sourceElement, sourceMoney, workingWage) {
+const makeSnippet = (sourceElement, sourceMoney, workingWage) => {
   const workHours = sourceMoney / workingWage;
   let hours, minutes, message;
   if (!isNaN(workHours)) {
@@ -205,9 +205,9 @@ function makeSnippet(sourceElement, sourceMoney, workingWage) {
       hours += 1;
       minutes = 0;
     }
-    message = sourceElement + ' (' + hours + 'h ' + minutes + 'm)';
+    message = `${sourceElement} (${hours}h ${minutes}m)`;
   } else {
     message = sourceElement;
   }
   return message;
-}
+};
