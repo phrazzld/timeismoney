@@ -28,7 +28,16 @@ import { processTextNode } from './domModifier.js';
  * @param {Object} [settings] - Optional settings object if already loaded
  */
 function processPage(root, settings) {
-  walk(root, (textNode) => convert(textNode, settings));
+  try {
+    if (!root) {
+      console.error('TimeIsMoney: processPage called with invalid root node');
+      return;
+    }
+
+    walk(root, (textNode) => convert(textNode, settings));
+  } catch (error) {
+    console.error('TimeIsMoney: Error processing page:', error.message, error.stack);
+  }
 }
 
 // Initialize settings and set up event handlers
@@ -55,6 +64,11 @@ const convert = (textNode, preloadedSettings) => {
   settingsPromise
     .then((settings) => {
       try {
+        if (!settings) {
+          console.error('TimeIsMoney: No settings available for conversion');
+          return;
+        }
+
         const formatSettings = {
           currencySymbol: settings.currencySymbol,
           currencyCode: settings.currencyCode,
@@ -64,6 +78,11 @@ const convert = (textNode, preloadedSettings) => {
         };
 
         const priceMatch = findPrices(textNode.nodeValue, formatSettings);
+        if (!priceMatch) {
+          // Not an error, just no prices found
+          return;
+        }
+
         const conversionInfo = {
           convertFn: convertPriceToTimeString,
           formatters: {
@@ -79,12 +98,13 @@ const convert = (textNode, preloadedSettings) => {
         // Process the text node using the DOM modifier
         processTextNode(textNode, priceMatch, conversionInfo, formatSettings.isReverseSearch);
       } catch (error) {
-        // Silently handle errors to prevent extension crashes
-        // In a production environment, we'd want proper error logging here
+        console.error('TimeIsMoney: Error converting price in text node:', error.message, {
+          textContent: textNode?.nodeValue?.substring(0, 50) + '...',
+          errorDetails: error.stack,
+        });
       }
     })
-    .catch(() => {
-      // Handle any promise rejection errors
-      // In a production environment, we'd want proper error logging here
+    .catch((error) => {
+      console.error('TimeIsMoney: Failed to get settings:', error?.message || 'Unknown error');
     });
 };

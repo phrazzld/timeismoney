@@ -130,7 +130,7 @@
         1. No `throw` statements without `new Error`.
     - **Depends-on:** none
 
-- [ ] **T014 · Refactor · P2: wrap critical sections in try/catch with logging**
+- [x] **T014 · Refactor · P2: wrap critical sections in try/catch with logging**
     - **Context:** 2.2 Refactor content.js – Error handling
     - **Action:**
         1. Identify critical code in orchestrator and wrap in `try/catch`.
