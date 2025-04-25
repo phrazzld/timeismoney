@@ -102,7 +102,7 @@
         2. Calling `revertAll` restores original text.
     - **Depends-on:** T009
 
-- [ ] **T011 · Refactor · P2: implement content/index.js orchestrator**
+- [x] **T011 · Refactor · P2: implement content/index.js orchestrator**
     - **Context:** 2.2 Refactor content.js – Orchestrator
     - **Action:**
         1. In `src/content/index.js`, import all modules and replicate init, processPage, and settings-change logic.
