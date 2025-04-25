@@ -72,7 +72,7 @@
         2. No duplicate TreeWalker code remains.
     - **Depends-on:** T006
 
-- [ ] **T008 · Refactor · P2: extract priceFinder.js with findPrices**
+- [x] **T008 · Refactor · P2: extract priceFinder.js with findPrices**
     - **Context:** 2.2 Refactor content.js – Split responsibilities: priceFinder.js
     - **Action:**
         1. Implement `findPrices(text, formatSettings)` in `src/content/priceFinder.js`.
