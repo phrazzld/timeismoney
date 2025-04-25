@@ -1,61 +1,10 @@
-import { saveSettings, getSettings } from '../utils/storage.js';
-
 /**
- * Saves options from the form to Chrome storage
- * Shows success message and closes the options page
+ * Options page main script
+ * Handles UI initialization and tooltip functionality
+ * @module options/index
  */
-const saveOptions = () => {
-  const currencySymbol = document.getElementById('currency-symbol').value;
-  const currencyCode = document.getElementById('currency-code').value;
-  const frequency = document.getElementById('frequency').value;
-  let amount = document.getElementById('amount').value;
-  const thousands = document.getElementById('thousands').value;
-  const decimal = document.getElementById('decimal').value;
-  if (decimal !== 'dot') {
-    amount = amount.replace(/(\s|\.)/g, '').replace(',', '.');
-  }
-  amount = parseFloat(amount.replace(/[^\d.]/g, '')).toFixed(2);
-  const status = document.getElementById('status');
 
-  if (isNaN(amount)) {
-    status.textContent = chrome.i18n.getMessage('amountErr');
-    setTimeout(() => {
-      status.textContent = '';
-    }, 2000);
-  } else {
-    saveSettings({
-      currencySymbol: currencySymbol,
-      currencyCode: currencyCode,
-      frequency: frequency,
-      amount: amount,
-      thousands: thousands,
-      decimal: decimal,
-    }).then(() => {
-      status.textContent = chrome.i18n.getMessage('saveSuccess');
-      setTimeout(() => {
-        status.textContent = '';
-      }, 2000);
-    });
-  }
-
-  window.close();
-};
-
-/**
- * Toggles the display of advanced formatting options
- * Updates the toggle button text based on current state
- */
-const toggleFormatting = () => {
-  const formatting = document.getElementById('formatting');
-  const togglr = document.getElementById('togglr');
-  if (formatting.style.display === 'none') {
-    togglr.textContent = chrome.i18n.getMessage('advHide');
-    formatting.style.display = 'block';
-  } else {
-    togglr.textContent = chrome.i18n.getMessage('advShow');
-    formatting.style.display = 'none';
-  }
-};
+import { loadForm, setupListeners } from './formHandler.js';
 
 /**
  * Determines tooltip text based on input field ID
@@ -73,6 +22,8 @@ const setTooltipText = (id) => {
       return chrome.i18n.getMessage('incomeAmount');
     case 'frequency':
       return chrome.i18n.getMessage('payFrequency');
+    default:
+      return '';
   }
 };
 
@@ -92,26 +43,6 @@ const showTooltip = function () {
 const hideTooltip = function () {
   const tooltip = document.getElementById('master-tooltip');
   tooltip.textContent = '';
-};
-
-/**
- * Initializes options form with values from Chrome storage
- */
-const initializeOptions = () => {
-  getSettings().then((settings) => {
-    const currencySymbol = settings.currencySymbol;
-    const currencyCode = settings.currencyCode;
-    const frequency = settings.frequency;
-    const amount = settings.amount;
-    const thousands = settings.thousands;
-    const decimal = settings.decimal;
-    loadSavedOption('currency-symbol', currencySymbol);
-    loadSavedOption('currency-code', currencyCode);
-    loadSavedOption('frequency', frequency);
-    loadSavedOption('amount', amount, decimal);
-    loadSavedOption('thousands', thousands);
-    loadSavedOption('decimal', decimal);
-  });
 };
 
 /**
@@ -136,48 +67,26 @@ const loadMessagesFromLocale = () => {
 };
 
 /**
- * Sets the value of a form element with saved data
- *
- * @param {string} elementId - The ID of the element to update
- * @param {*} value - The value to set
- * @param {string} decimal - The decimal format to use (default: 'dot')
+ * Initialize the page when DOM is loaded
  */
-const loadSavedOption = (elementId, value, decimal = 'dot') => {
-  if (value !== undefined && value !== null) {
-    document.getElementById(elementId).value =
-      elementId === 'amount' ? formatIncomeAmount(value, decimal) : value;
-  }
+const initialize = () => {
+  // Load localized messages
+  loadMessagesFromLocale();
+
+  // Load form data and set up form listeners
+  loadForm();
+  setupListeners();
+
+  // Set up tooltip listeners
+  document.getElementById('currency-code').addEventListener('focus', showTooltip);
+  document.getElementById('currency-symbol').addEventListener('focus', showTooltip);
+  document.getElementById('amount').addEventListener('focus', showTooltip);
+  document.getElementById('frequency').addEventListener('focus', showTooltip);
+  document.getElementById('currency-code').addEventListener('blur', hideTooltip);
+  document.getElementById('currency-symbol').addEventListener('blur', hideTooltip);
+  document.getElementById('amount').addEventListener('blur', hideTooltip);
+  document.getElementById('frequency').addEventListener('blur', hideTooltip);
 };
 
-/**
- * Formats a number according to the user's decimal format preference
- *
- * @param {string|number} x - The number to format
- * @param {string} decimal - The decimal format ('dot' or 'comma')
- * @returns {string} Formatted number string
- */
-const formatIncomeAmount = (x, decimal) => {
-  if (decimal === 'dot') {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  } else {
-    return x
-      .toString()
-      .replace('.', ',')
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-  }
-};
-
-// Event listeners
-document.addEventListener('DOMContentLoaded', loadMessagesFromLocale);
-document.addEventListener('DOMContentLoaded', initializeOptions);
-document.getElementById('save').addEventListener('click', saveOptions);
-document.getElementById('formatting').style.display = 'none';
-document.getElementById('togglr').addEventListener('click', toggleFormatting);
-document.getElementById('currency-code').addEventListener('focus', showTooltip);
-document.getElementById('currency-symbol').addEventListener('focus', showTooltip);
-document.getElementById('amount').addEventListener('focus', showTooltip);
-document.getElementById('frequency').addEventListener('focus', showTooltip);
-document.getElementById('currency-code').addEventListener('blur', hideTooltip);
-document.getElementById('currency-symbol').addEventListener('blur', hideTooltip);
-document.getElementById('amount').addEventListener('blur', hideTooltip);
-document.getElementById('frequency').addEventListener('blur', hideTooltip);
+// Register initializer when DOM is loaded
+document.addEventListener('DOMContentLoaded', initialize);

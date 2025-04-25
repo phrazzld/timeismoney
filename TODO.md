@@ -141,7 +141,7 @@
     - **Depends-on:** T011
 
 ## Options Module Refactor
-- [ ] **T015 · Refactor · P2: extract formHandler.js for options form logic**
+- [x] **T015 · Refactor · P2: extract formHandler.js for options form logic**
     - **Context:** 2.3 Refactor options.js – Modularize formHandler.js
     - **Action:**
         1. Move form loading, validation, and save logic into `src/options/formHandler.js`.
