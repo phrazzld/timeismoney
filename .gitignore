@@ -1,3 +1,5 @@
 *.DS\_Store
 *.sw?
 images/.DS_Store
+docs/
+thinktank_output/
