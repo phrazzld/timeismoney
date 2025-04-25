@@ -3,6 +3,7 @@ import { initSettings, onSettingsChange, handleVisibilityChange } from './settin
 import { walk } from './domScanner.js';
 import { findPrices } from './priceFinder.js';
 import { convertPriceToTimeString } from './priceConverter.js';
+import { processTextNode } from './domModifier.js';
 
 // Process page with current settings
 function processPage(root) {
@@ -21,6 +22,11 @@ handleVisibilityChange(processPage);
  * @param {Node} textNode - The DOM text node to process
  */
 const convert = (textNode) => {
+  // Skip text nodes that are not valid or empty
+  if (!textNode || !textNode.nodeValue || textNode.nodeValue.trim() === '') {
+    return;
+  }
+
   getSettings().then((settings) => {
     const formatSettings = {
       currencySymbol: settings.currencySymbol,
@@ -30,20 +36,20 @@ const convert = (textNode) => {
       isReverseSearch: settings.disabled === true,
     };
 
-    const { pattern, thousands, decimal } = findPrices(textNode.nodeValue, formatSettings);
+    const priceMatch = findPrices(textNode.nodeValue, formatSettings);
+    const conversionInfo = {
+      convertFn: convertPriceToTimeString,
+      formatters: {
+        thousands: priceMatch.thousands,
+        decimal: priceMatch.decimal,
+      },
+      wageInfo: {
+        frequency: settings.frequency,
+        amount: settings.amount,
+      },
+    };
 
-    // Replace '$10' with '$10 (1h 30m)' or '10$' with '10$ (1h 30m)'
-    if (!formatSettings.isReverseSearch) {
-      textNode.nodeValue = textNode.nodeValue.replace(pattern, (priceString) => {
-        const formatters = { thousands, decimal };
-        const wageInfo = {
-          frequency: settings.frequency,
-          amount: settings.amount,
-        };
-        return convertPriceToTimeString(priceString, formatters, wageInfo);
-      });
-    } else {
-      textNode.nodeValue = textNode.nodeValue.replace(pattern, '$1');
-    }
+    // Process the text node using the DOM modifier
+    processTextNode(textNode, priceMatch, conversionInfo, formatSettings.isReverseSearch);
   });
 };

@@ -92,7 +92,7 @@
         2. All conversions performed via new module.
     - **Depends-on:** T008
 
-- [ ] **T010 · Refactor · P2: extract domModifier.js for applying and reverting conversions**
+- [x] **T010 · Refactor · P2: extract domModifier.js for applying and reverting conversions**
     - **Context:** 2.2 Refactor content.js – Split responsibilities: domModifier.js
     - **Action:**
         1. Implement `applyConversion(node, match, snippet)` and `revertAll(root)` in `src/content/domModifier.js`.
