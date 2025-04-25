@@ -53,7 +53,7 @@ function saveOptions() {
   const normalizedAmount = normalizeAmountString(rawAmount, thousands, decimal);
 
   // Parse to float and fix to 2 decimal places
-  const amount = parseFloat(normalizedAmount.replace(/[^\d.]/g, '')).toFixed(2);
+  const amount = parseFloat(normalizedAmount).toFixed(2);
   const status = document.getElementById('status');
 
   if (isNaN(amount)) {

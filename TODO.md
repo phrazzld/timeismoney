@@ -161,7 +161,7 @@
         2. No tooltip code in formHandler or options.js.
     - **Depends-on:** T015
 
-- [ ] **T017 · Refactor · P2: integrate parser.js for amount string normalization**
+- [x] **T017 · Refactor · P2: integrate parser.js for amount string normalization**
     - **Context:** 2.3 Refactor options.js – Parsing/Formatting
     - **Action:**
         1. Use `normalizeAmountString` from `src/utils/parser.js` in form submission.
