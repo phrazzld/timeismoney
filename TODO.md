@@ -1,7 +1,7 @@
 # Todo
 
 ## General Codebase Improvements
-- [ ] **T001 · Chore · P2: configure ESLint & Prettier**
+- [x] **T001 · Chore · P2: configure ESLint & Prettier**
     - **Context:** 2.1 General Codebase Improvements – Configure ESLint & Prettier
     - **Action:**
         1. Add ESLint and Prettier config files to repo.
