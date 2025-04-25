@@ -112,7 +112,7 @@
         2. No residual code in original content.js.
     - **Depends-on:** [T006, T007, T008, T009, T010]
 
-- [ ] **T012 · Feature · P2: isolate amazon-specific logic into amazonHandler.js**
+- [x] **T012 · Feature · P2: isolate amazon-specific logic into amazonHandler.js**
     - **Context:** 2.2 Refactor content.js – Amazon-specific logic
     - **Action:**
         1. Move existing Amazon hacks into `src/content/amazonHandler.js` with clear API.

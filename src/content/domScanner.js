@@ -3,6 +3,8 @@
  * @module content/domScanner
  */
 
+import { processIfAmazon } from './amazonHandler.js';
+
 /**
  * Traverses the DOM tree starting from the given node and applies a callback to text nodes
  * Credit to t-j-crowder on StackOverflow for this walk function
@@ -10,10 +12,10 @@
  *
  * @param {Node} node - The starting node for traversal
  * @param {Function} callback - Function to call on text nodes
- * @param {Object} options - Optional settings for Amazon price handling
+ * @param {Object} options - Optional settings for traversal
  */
 export const walk = (node, callback, options = {}) => {
-  let child, next, price;
+  let child, next;
 
   switch (node.nodeType) {
     case 1: // Element
@@ -23,22 +25,14 @@ export const walk = (node, callback, options = {}) => {
       while (child) {
         next = child.nextSibling;
 
-        // Check if child is Amazon display price
-        const classes = child.classList;
-        if (classes && classes.value === 'sx-price-currency') {
-          price = child.firstChild.nodeValue.toString();
-          child.firstChild.nodeValue = null;
-        } else if (classes && classes.value === 'sx-price-whole') {
-          price += child.firstChild.nodeValue.toString();
-          child.firstChild.nodeValue = price;
-          callback(child.firstChild);
-          child = next;
-        } else if (classes && classes.value === 'sx-price-fractional') {
-          child.firstChild.nodeValue = null;
-          price = null;
+        // Handle Amazon price components with the dedicated handler
+        const amazonProcessed = processIfAmazon(child, callback);
+
+        // Only continue normal processing if it wasn't handled as an Amazon component
+        if (!amazonProcessed) {
+          walk(child, callback, options);
         }
 
-        walk(child, callback, options);
         child = next;
       }
       break;
