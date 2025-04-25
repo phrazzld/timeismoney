@@ -122,7 +122,7 @@
         2. All Amazon logic lives in amazonHandler.js.
     - **Depends-on:** T008
 
-- [ ] **T013 · Refactor · P2: replace bare throw strings with Error objects**
+- [x] **T013 · Refactor · P2: replace bare throw strings with Error objects**
     - **Context:** 2.2 Refactor content.js – Error handling
     - **Action:**
         1. Find all `throw 'message'` and convert to `throw new Error('message')`.
