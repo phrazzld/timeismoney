@@ -41,7 +41,7 @@
         2. Directory structure matches plan.
     - **Depends-on:** T001
 
-- [ ] **T005 · Refactor · P2: consolidate storage interactions behind storage.js API**
+- [x] **T005 · Refactor · P2: consolidate storage interactions behind storage.js API**
     - **Context:** 2.1 General Codebase Improvements – Consolidate storage calls
     - **Action:**
         1. Implement `getSettings()`, `saveSettings()`, `onSettingsChanged()` in `src/utils/storage.js`.

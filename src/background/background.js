@@ -1,3 +1,5 @@
+import { saveSettings, onSettingsChanged } from '../utils/storage.js';
+
 /**
  * Event handler for browser action click
  * Opens the options page when user clicks the extension icon
@@ -12,7 +14,7 @@ chrome.browserAction.onClicked.addListener(() => {
  */
 chrome.runtime.onInstalled.addListener(() => {
   chrome.runtime.openOptionsPage();
-  chrome.storage.sync.set({
+  saveSettings({
     disabled: false,
     currencySymbol: '$',
     currencyCode: 'USD',
@@ -24,17 +26,19 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 /**
- * Event handler for storage changes
  * Updates the extension icon based on disabled state
  *
- * @param {Object} changes - Object mapping each changed key to its old and new values
+ * @param {Object} settings - Object containing updated settings
  */
-chrome.storage.onChanged.addListener((changes) => {
-  if (changes.disabled) {
-    if (changes.disabled.newValue) {
+function updateIcon(settings) {
+  if ('disabled' in settings) {
+    if (settings.disabled) {
       chrome.browserAction.setIcon({ path: 'images/icon_disabled_38.png' });
     } else {
       chrome.browserAction.setIcon({ path: 'images/icon_38.png' });
     }
   }
-});
+}
+
+// Register settings change listener
+onSettingsChanged(updateIcon);

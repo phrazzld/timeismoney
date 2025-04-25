@@ -1,3 +1,5 @@
+import { saveSettings, getSettings } from '../utils/storage.js';
+
 /**
  * Saves options from the form to Chrome storage
  * Shows success message and closes the options page
@@ -21,22 +23,19 @@ const saveOptions = () => {
       status.textContent = '';
     }, 2000);
   } else {
-    chrome.storage.sync.set(
-      {
-        currencySymbol: currencySymbol,
-        currencyCode: currencyCode,
-        frequency: frequency,
-        amount: amount,
-        thousands: thousands,
-        decimal: decimal,
-      },
-      () => {
-        status.textContent = chrome.i18n.getMessage('saveSuccess');
-        setTimeout(() => {
-          status.textContent = '';
-        }, 2000);
-      }
-    );
+    saveSettings({
+      currencySymbol: currencySymbol,
+      currencyCode: currencyCode,
+      frequency: frequency,
+      amount: amount,
+      thousands: thousands,
+      decimal: decimal,
+    }).then(() => {
+      status.textContent = chrome.i18n.getMessage('saveSuccess');
+      setTimeout(() => {
+        status.textContent = '';
+      }, 2000);
+    });
   }
 
   window.close();
@@ -99,13 +98,13 @@ const hideTooltip = function () {
  * Initializes options form with values from Chrome storage
  */
 const initializeOptions = () => {
-  chrome.storage.sync.get(null, (items) => {
-    const currencySymbol = items['currencySymbol'];
-    const currencyCode = items['currencyCode'];
-    const frequency = items['frequency'];
-    const amount = items['amount'];
-    const thousands = items['thousands'];
-    const decimal = items['decimal'];
+  getSettings().then((settings) => {
+    const currencySymbol = settings.currencySymbol;
+    const currencyCode = settings.currencyCode;
+    const frequency = settings.frequency;
+    const amount = settings.amount;
+    const thousands = settings.thousands;
+    const decimal = settings.decimal;
     loadSavedOption('currency-symbol', currencySymbol);
     loadSavedOption('currency-code', currencyCode);
     loadSavedOption('frequency', frequency);

@@ -1,16 +1,13 @@
+import { getSettings, saveSettings } from '../utils/storage.js';
+
 /**
  * Restores the enabled/disabled state of the extension toggle
  * Reads from Chrome storage and updates the UI accordingly
  */
 const restoreOptions = () => {
-  chrome.storage.sync.get(
-    {
-      disabled: false,
-    },
-    (items) => {
-      document.getElementById('enabled').checked = !items.disabled;
-    }
-  );
+  getSettings().then((settings) => {
+    document.getElementById('enabled').checked = !settings.disabled;
+  });
 };
 
 // Initial display for popup menu when opened
@@ -25,11 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   const enable = document.getElementById('enabled');
   enable.addEventListener('change', (event) => {
-    if (event.target.checked) {
-      chrome.storage.sync.set({ disabled: false });
-    } else {
-      chrome.storage.sync.set({ disabled: true });
-    }
+    saveSettings({ disabled: !event.target.checked });
   });
 
   /**

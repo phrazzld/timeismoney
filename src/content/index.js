@@ -1,19 +1,21 @@
+import { getSettings, onSettingsChanged } from '../utils/storage.js';
+
 let disabledOnPage = true;
 
 // Should only run on first page load
-chrome.storage.sync.get('disabled', (storage) => {
-  if (!storage.disabled) {
+getSettings().then((settings) => {
+  if (!settings.disabled) {
     walk(document.body);
     disabledOnPage = false;
   }
 });
 
 // Should run whenever the popup switch is flipped on the current page
-chrome.storage.onChanged.addListener((changes) => {
-  if (changes.disabled && !document.hidden) {
+onSettingsChanged((updatedSettings) => {
+  if ('disabled' in updatedSettings && !document.hidden) {
     console.debug('Running on detected change...');
     walk(document.body);
-    disabledOnPage = changes.disabled.newValue;
+    disabledOnPage = updatedSettings.disabled;
   }
 });
 
@@ -38,11 +40,11 @@ document.addEventListener('visibilitychange', () => {
       `Run time is invalid! Please reload the page for the extension to work properly again...`
     );
   } else if (!document.hidden) {
-    chrome.storage.sync.get('disabled', (storage) => {
-      if (disabledOnPage !== storage.disabled) {
+    getSettings().then((settings) => {
+      if (disabledOnPage !== settings.disabled) {
         console.debug('Running on visibility change...');
         walk(document.body);
-        disabledOnPage = storage.disabled;
+        disabledOnPage = settings.disabled;
       }
     });
   }
@@ -200,16 +202,16 @@ const convertHelper = (e, thousands, decimal, frequency, amount) => {
  * @param {Node} textNode - The DOM text node to process
  */
 const convert = (textNode) => {
-  chrome.storage.sync.get(null, (items) => {
+  getSettings().then((settings) => {
     let matchPattern;
-    const currencySymbol = items['currencySymbol'];
-    const currencyCode = items['currencyCode'];
-    const amount = items['amount'];
-    const frequency = items['frequency'];
-    const disabled = items['disabled'];
-    const thousandsString = buildThousandsString(items['thousands']);
+    const currencySymbol = settings.currencySymbol;
+    const currencyCode = settings.currencyCode;
+    const amount = settings.amount;
+    const frequency = settings.frequency;
+    const disabled = settings.disabled;
+    const thousandsString = buildThousandsString(settings.thousands);
     const thousands = new RegExp(thousandsString, 'g');
-    const decimalString = buildDecimalString(items['decimal']);
+    const decimalString = buildDecimalString(settings.decimal);
     const decimal = new RegExp(decimalString, 'g');
     // Replace '$10' with '$10 (1 h)' or '10$' with '10$ (1h)'
     if (disabled !== true) {
