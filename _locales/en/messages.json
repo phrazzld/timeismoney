@@ -34,7 +34,7 @@
   },
   "currencyFormat": {
     "message": "Currency format",
-    "description": "Header for the form section that configures symbols for the thousands' place and the decimal place Time Is Money will use to identify currency values online." 
+    "description": "Header for the form section that configures symbols for the thousands' place and the decimal place Time Is Money will use to identify currency values online."
   },
   "thousandsPlace": {
     "message": "Thousands' place"
