@@ -1,54 +1,15 @@
-import { getSettings, onSettingsChanged } from '../utils/storage.js';
+import { getSettings } from '../utils/storage.js';
+import { initSettings, onSettingsChange, handleVisibilityChange } from './settingsManager.js';
 
-let disabledOnPage = true;
+// Process page with current settings
+function processPage(root) {
+  walk(root);
+}
 
-// Should only run on first page load
-getSettings().then((settings) => {
-  if (!settings.disabled) {
-    walk(document.body);
-    disabledOnPage = false;
-  }
-});
-
-// Should run whenever the popup switch is flipped on the current page
-onSettingsChanged((updatedSettings) => {
-  if ('disabled' in updatedSettings && !document.hidden) {
-    console.debug('Running on detected change...');
-    walk(document.body);
-    disabledOnPage = updatedSettings.disabled;
-  }
-});
-
-/**
- * Checks if the Chrome runtime is valid and accessible
- *
- * @returns {boolean} True if Chrome runtime and manifest are accessible, false otherwise
- */
-const isValidChromeRuntime = () => {
-  try {
-    return chrome.runtime && !!chrome.runtime.getManifest();
-  } catch (e) {
-    return false;
-  }
-};
-
-// Should run whenever the tab is changed and the current extension state
-// differs from the previous one that was run on the page
-document.addEventListener('visibilitychange', () => {
-  if (!isValidChromeRuntime()) {
-    console.log(
-      `Run time is invalid! Please reload the page for the extension to work properly again...`
-    );
-  } else if (!document.hidden) {
-    getSettings().then((settings) => {
-      if (disabledOnPage !== settings.disabled) {
-        console.debug('Running on visibility change...');
-        walk(document.body);
-        disabledOnPage = settings.disabled;
-      }
-    });
-  }
-});
+// Initialize settings and set up event handlers
+initSettings(processPage);
+onSettingsChange(processPage);
+handleVisibilityChange(processPage);
 
 /**
  * Traverses the DOM tree starting from the given node and applies price conversion

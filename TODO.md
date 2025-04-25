@@ -52,7 +52,7 @@
     - **Depends-on:** T004
 
 ## Content Module Refactor
-- [ ] **T006 · Refactor · P2: extract settingsManager.js from content.js**
+- [x] **T006 · Refactor · P2: extract settingsManager.js from content.js**
     - **Context:** 2.2 Refactor content.js – Split responsibilities: settingsManager.js
     - **Action:**
         1. Move settings loading/subscription logic into `src/content/settingsManager.js`.
