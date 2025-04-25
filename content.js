@@ -17,6 +17,11 @@ chrome.storage.onChanged.addListener((changes) => {
   }
 });
 
+/**
+ * Checks if the Chrome runtime is valid and accessible
+ *
+ * @returns {boolean} True if Chrome runtime and manifest are accessible, false otherwise
+ */
 const isValidChromeRuntime = () => {
   try {
     return chrome.runtime && !!chrome.runtime.getManifest();
@@ -43,8 +48,13 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-// Credit to t-j-crowder on StackOverflow for this walk function
-// http://bit.ly/1o47R7V
+/**
+ * Traverses the DOM tree starting from the given node and applies price conversion
+ * Credit to t-j-crowder on StackOverflow for this walk function
+ * http://bit.ly/1o47R7V
+ *
+ * @param {Node} node - The starting node for traversal
+ */
 const walk = (node) => {
   let child, next, price;
 
@@ -81,6 +91,13 @@ const walk = (node) => {
   }
 };
 
+/**
+ * Builds a regex pattern string for the thousands delimiter based on user settings
+ *
+ * @param {string} delimiter - The delimiter type for thousands ('commas' or 'spacesAndDots')
+ * @returns {string} Regex pattern string for the thousands delimiter
+ * @throws {Error} If delimiter is not recognized
+ */
 const buildThousandsString = (delimiter) => {
   if (delimiter === 'commas') {
     return ',';
@@ -91,6 +108,13 @@ const buildThousandsString = (delimiter) => {
   }
 };
 
+/**
+ * Builds a regex pattern string for the decimal delimiter based on user settings
+ *
+ * @param {string} delimiter - The delimiter type for decimals ('dot' or 'comma')
+ * @returns {string} Regex pattern string for the decimal delimiter
+ * @throws {Error} If delimiter is not recognized
+ */
 const buildDecimalString = (delimiter) => {
   if (delimiter === 'dot') {
     return '\\.';
@@ -101,6 +125,15 @@ const buildDecimalString = (delimiter) => {
   }
 };
 
+/**
+ * Builds a regex pattern to match prices in various formats
+ *
+ * @param {string} currencySymbol - The currency symbol (e.g., '$')
+ * @param {string} currencyCode - The currency code (e.g., 'USD')
+ * @param {string} thousandsString - Regex pattern for thousands delimiter
+ * @param {string} decimalString - Regex pattern for decimal delimiter
+ * @returns {RegExp} Regex pattern to match prices
+ */
 const buildMatchPattern = (currencySymbol, currencyCode, thousandsString, decimalString) => {
   const precedingMatchPattern = new RegExp(
     `(\\${currencySymbol}|${currencyCode})\\x20?\\d(\\d|${thousandsString})*(${decimalString}\\d\\d)?`,
@@ -114,6 +147,16 @@ const buildMatchPattern = (currencySymbol, currencyCode, thousandsString, decima
   return new RegExp(`${precedingMatchPattern.source}|${concludingMatchPattern.source}`);
 };
 
+/**
+ * Builds a regex pattern to match prices with time conversion annotations
+ * Used to revert prices back to their original form
+ *
+ * @param {string} currencySymbol - The currency symbol (e.g., '$')
+ * @param {string} currencyCode - The currency code (e.g., 'USD')
+ * @param {string} thousandsString - Regex pattern for thousands delimiter
+ * @param {string} decimalString - Regex pattern for decimal delimiter
+ * @returns {RegExp} Regex pattern to match prices with time annotations
+ */
 const buildReverseMatchPattern = (currencySymbol, currencyCode, thousandsString, decimalString) => {
   const reversedPrecedingMatchPattern = new RegExp(
     `((\\${currencySymbol}|${currencyCode})\\x20?\\d(\\d|${thousandsString})*(${decimalString}\\d\\d)?)\\s\\(\\d+h\\s\\d+m\\)`,
@@ -129,6 +172,16 @@ const buildReverseMatchPattern = (currencySymbol, currencyCode, thousandsString,
   );
 };
 
+/**
+ * Helper function to convert a price string to equivalent working time
+ *
+ * @param {string} e - The original price string
+ * @param {RegExp} thousands - Regex for thousands delimiter
+ * @param {RegExp} decimal - Regex for decimal delimiter
+ * @param {string} frequency - Wage frequency ('hourly' or 'yearly')
+ * @param {string} amount - Wage amount as string
+ * @returns {string} Formatted string with price and equivalent working time
+ */
 const convertHelper = (e, thousands, decimal, frequency, amount) => {
   let sourceMoney = e
     .replace(thousands, '@')
@@ -140,29 +193,24 @@ const convertHelper = (e, thousands, decimal, frequency, amount) => {
   return makeSnippet(e, sourceMoney, workingWage);
 };
 
+/**
+ * Converts price text in a DOM text node to include equivalent working time
+ * Or reverts previously converted text back to original form
+ *
+ * @param {Node} textNode - The DOM text node to process
+ */
 const convert = (textNode) => {
   chrome.storage.sync.get(null, (items) => {
-    let currencySymbol,
-      currencyCode,
-      amount,
-      frequency,
-      thousands,
-      decimal,
-      thousandsString,
-      decimalString,
-      matchPattern,
-      disabled;
-    currencySymbol = items['currencySymbol'];
-    currencyCode = items['currencyCode'];
-    amount = items['amount'];
-    frequency = items['frequency'];
-    thousands = items['thousands'];
-    decimal = items['decimal'];
-    disabled = items['disabled'];
-    thousandsString = buildThousandsString(thousands);
-    thousands = new RegExp(thousandsString, 'g');
-    decimalString = buildDecimalString(decimal);
-    decimal = new RegExp(decimalString, 'g');
+    let matchPattern;
+    const currencySymbol = items['currencySymbol'];
+    const currencyCode = items['currencyCode'];
+    const amount = items['amount'];
+    const frequency = items['frequency'];
+    const disabled = items['disabled'];
+    const thousandsString = buildThousandsString(items['thousands']);
+    const thousands = new RegExp(thousandsString, 'g');
+    const decimalString = buildDecimalString(items['decimal']);
+    const decimal = new RegExp(decimalString, 'g');
     // Replace '$10' with '$10 (1 h)' or '10$' with '10$ (1h)'
     if (disabled !== true) {
       matchPattern = buildMatchPattern(
@@ -186,6 +234,13 @@ const convert = (textNode) => {
   });
 };
 
+/**
+ * Calculates the hourly wage based on frequency and amount
+ *
+ * @param {string} frequency - Wage frequency ('hourly' or 'yearly')
+ * @param {string} amount - Wage amount as string
+ * @returns {string} Hourly wage as fixed-point string with 2 decimal places
+ */
 const buildWorkingWage = (frequency, amount) => {
   let workingWage = parseFloat(amount);
   if (frequency === 'yearly') {
@@ -194,7 +249,14 @@ const buildWorkingWage = (frequency, amount) => {
   return workingWage.toFixed(2);
 };
 
-// Build text element in the form of: original (conversion)
+/**
+ * Builds text element in the form of: original (hours h minutes m)
+ *
+ * @param {string} sourceElement - The original price string
+ * @param {number} sourceMoney - The price value as a number
+ * @param {number} workingWage - The hourly wage
+ * @returns {string} Formatted string with price and equivalent working time
+ */
 const makeSnippet = (sourceElement, sourceMoney, workingWage) => {
   const workHours = sourceMoney / workingWage;
   let hours, minutes, message;

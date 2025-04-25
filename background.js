@@ -1,7 +1,15 @@
+/**
+ * Event handler for browser action click
+ * Opens the options page when user clicks the extension icon
+ */
 chrome.browserAction.onClicked.addListener(() => {
   chrome.runtime.openOptionsPage();
 });
 
+/**
+ * Event handler for extension installation or update
+ * Sets up default options and opens the options page
+ */
 chrome.runtime.onInstalled.addListener(() => {
   chrome.runtime.openOptionsPage();
   chrome.storage.sync.set({
@@ -15,6 +23,12 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
+/**
+ * Event handler for storage changes
+ * Updates the extension icon based on disabled state
+ *
+ * @param {Object} changes - Object mapping each changed key to its old and new values
+ */
 chrome.storage.onChanged.addListener((changes) => {
   if (changes.disabled) {
     if (changes.disabled.newValue) {

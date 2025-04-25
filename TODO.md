@@ -21,7 +21,7 @@
         2. Codebase uses arrow functions and template literals consistently.
     - **Depends-on:** T001
 
-- [ ] **T003 · Chore · P2: add JSDoc comments for public APIs**
+- [x] **T003 · Chore · P2: add JSDoc comments for public APIs**
     - **Context:** 2.1 General Codebase Improvements – Add JSDoc comments
     - **Action:**
         1. Document every exported function/module with JSDoc blocks.
