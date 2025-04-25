@@ -151,7 +151,7 @@
         2. No form logic remains in options.js.
     - **Depends-on:** T005, T004
 
-- [ ] **T016 · Refactor · P2: extract tooltip.js for delegated help text**
+- [x] **T016 · Refactor · P2: extract tooltip.js for delegated help text**
     - **Context:** 2.3 Refactor options.js – Modularize tooltip.js
     - **Action:**
         1. Implement delegated `focusin`/`focusout` handlers in `src/options/tooltip.js`.

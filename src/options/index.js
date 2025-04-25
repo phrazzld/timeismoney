@@ -1,49 +1,11 @@
 /**
  * Options page main script
- * Handles UI initialization and tooltip functionality
+ * Handles UI initialization
  * @module options/index
  */
 
 import { loadForm, setupListeners } from './formHandler.js';
-
-/**
- * Determines tooltip text based on input field ID
- *
- * @param {string} id - The ID of the input field
- * @returns {string} The tooltip text for the given field
- */
-const setTooltipText = (id) => {
-  switch (id) {
-    case 'currency-code':
-      return chrome.i18n.getMessage('currencyCode');
-    case 'currency-symbol':
-      return chrome.i18n.getMessage('currencySymbol');
-    case 'amount':
-      return chrome.i18n.getMessage('incomeAmount');
-    case 'frequency':
-      return chrome.i18n.getMessage('payFrequency');
-    default:
-      return '';
-  }
-};
-
-/**
- * Event handler to show tooltip for the current input field
- * Uses this.id to determine which field is focused
- */
-const showTooltip = function () {
-  const tooltip = document.getElementById('master-tooltip');
-  tooltip.textContent = '';
-  tooltip.textContent = setTooltipText(this.id);
-};
-
-/**
- * Event handler to hide tooltip when input loses focus
- */
-const hideTooltip = function () {
-  const tooltip = document.getElementById('master-tooltip');
-  tooltip.textContent = '';
-};
+import { initTooltips } from './tooltip.js';
 
 /**
  * Loads localized messages for UI elements
@@ -77,15 +39,8 @@ const initialize = () => {
   loadForm();
   setupListeners();
 
-  // Set up tooltip listeners
-  document.getElementById('currency-code').addEventListener('focus', showTooltip);
-  document.getElementById('currency-symbol').addEventListener('focus', showTooltip);
-  document.getElementById('amount').addEventListener('focus', showTooltip);
-  document.getElementById('frequency').addEventListener('focus', showTooltip);
-  document.getElementById('currency-code').addEventListener('blur', hideTooltip);
-  document.getElementById('currency-symbol').addEventListener('blur', hideTooltip);
-  document.getElementById('amount').addEventListener('blur', hideTooltip);
-  document.getElementById('frequency').addEventListener('blur', hideTooltip);
+  // Initialize tooltips with delegated event handling
+  initTooltips();
 };
 
 // Register initializer when DOM is loaded
