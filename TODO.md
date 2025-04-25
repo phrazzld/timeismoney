@@ -31,7 +31,7 @@
         2. JSDoc generation (if configured) runs without missing warnings.
     - **Depends-on:** T002
 
-- [ ] **T004 · Chore · P2: reorganize file structure under /src**
+- [x] **T004 · Chore · P2: reorganize file structure under /src**
     - **Context:** 2.1 General Codebase Improvements – Reorganize file structure
     - **Action:**
         1. Create directories as per plan (`/src/{background,content,options,popup,utils}`).
