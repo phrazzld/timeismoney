@@ -16,7 +16,7 @@
 
 import { getSettings } from '../utils/storage.js';
 import { initSettings, onSettingsChange, handleVisibilityChange } from './settingsManager.js';
-import { walk, startObserver } from './domScanner.js';
+import { walk, startObserver, stopObserver } from './domScanner.js';
 import { findPrices } from './priceFinder.js';
 import { convertPriceToTimeString } from '../utils/converter.js';
 import { processTextNode } from './domModifier.js';
@@ -70,6 +70,22 @@ initSettings((root, settings) => {
 });
 onSettingsChange(processPage);
 handleVisibilityChange(processPage);
+
+/**
+ * Handle script unload to clean up resources
+ */
+function handleUnload() {
+  try {
+    // Disconnect the MutationObserver and clean up resources
+    stopObserver();
+  } catch (error) {
+    console.error('TimeIsMoney: Error during unload cleanup:', error.message, error.stack);
+  }
+}
+
+// Add unload event listeners to clean up resources when the page is unloaded
+window.addEventListener('unload', handleUnload);
+window.addEventListener('beforeunload', handleUnload);
 
 /**
  * Converts price text in a DOM text node to include equivalent working time

@@ -109,7 +109,7 @@
         1. `domScanner.walk` is called only after the debounce delay on observed mutations.
     - **Depends-on:** [T012]
 
-- [ ] **T014 · Refactor · P2: disconnect MutationObserver on script unload**
+- [x] **T014 · Refactor · P2: disconnect MutationObserver on script unload**
     - **Context:** cr-04 step 3
     - **Action:**
         1. Add cleanup logic to disconnect the `MutationObserver` when the content script unloads.
