@@ -270,7 +270,7 @@
     - **Depends-on:** [T001, T023]
 
 ## Manifest Migration
-- [ ] **T028 · Feature · P1: migrate extension from Manifest V2 to V3**
+- [x] **T028 · Feature · P1: migrate extension from Manifest V2 to V3**
     - **Context:** 6 Resolved Questions – Manifest V3 migration
     - **Action:**
         1. Update `manifest.json` to v3 schema, replace background scripts with service worker.

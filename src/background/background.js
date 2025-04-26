@@ -1,10 +1,10 @@
 import { getSettings, saveSettings, onSettingsChanged } from '../utils/storage.js';
 
 /**
- * Event handler for browser action click
+ * Event handler for action click
  * Opens the options page when user clicks the extension icon
  */
-function handleBrowserActionClick() {
+function handleActionClick() {
   chrome.runtime.openOptionsPage();
 }
 
@@ -26,7 +26,7 @@ function handleExtensionInstalled() {
 }
 
 // Register event listeners
-chrome.browserAction.onClicked.addListener(handleBrowserActionClick);
+chrome.action.onClicked.addListener(handleActionClick);
 chrome.runtime.onInstalled.addListener(handleExtensionInstalled);
 
 /**
@@ -37,9 +37,9 @@ chrome.runtime.onInstalled.addListener(handleExtensionInstalled);
 function updateIcon(settings) {
   if ('disabled' in settings) {
     if (settings.disabled) {
-      chrome.browserAction.setIcon({ path: 'images/icon_disabled_38.png' });
+      chrome.action.setIcon({ path: '../images/icon_disabled_38.png' });
     } else {
-      chrome.browserAction.setIcon({ path: 'images/icon_38.png' });
+      chrome.action.setIcon({ path: '../images/icon_38.png' });
     }
   }
 }
@@ -48,6 +48,23 @@ function updateIcon(settings) {
 onSettingsChanged(updateIcon);
 
 // Initialize icon on startup based on current settings
-getSettings().then((settings) => {
-  updateIcon({ disabled: settings.disabled });
+// In service workers, we need to do this when the worker starts
+const initializeIcon = async () => {
+  try {
+    const settings = await getSettings();
+    updateIcon({ disabled: settings.disabled });
+  } catch (error) {
+    console.error('Error initializing icon:', error);
+  }
+};
+
+initializeIcon();
+
+// Service worker lifecycle events
+self.addEventListener('activate', () => {
+  // Service worker activated
+});
+
+self.addEventListener('install', () => {
+  self.skipWaiting(); // Ensure service worker activates immediately
 });
