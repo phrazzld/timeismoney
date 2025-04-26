@@ -169,3 +169,24 @@ export const findPrices = (text, formatSettings) => {
     decimal,
   };
 };
+
+/**
+ * Extracts price information from a text string
+ * 
+ * @param {string} text - Text containing a price
+ * @returns {Object|null} Price information object or null if no valid price found
+ */
+export const getPriceInfo = (text) => {
+  if (!text) return null;
+  
+  // Simple regex to extract price values for testing purposes
+  const priceMatch = text.match(/\$(\d+(\.\d+)?)/);
+  
+  if (!priceMatch) return null;
+  
+  return {
+    amount: parseFloat(priceMatch[1]),
+    currency: 'USD',
+    original: priceMatch[0]
+  };
+};
