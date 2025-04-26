@@ -117,7 +117,7 @@
         1. Observer is reliably disconnected during script teardown without errors.
     - **Depends-on:** [T012]
 
-- [ ] **T015 · Test · P2: benchmark and verify optimized scanning**
+- [x] **T015 · Test · P2: benchmark and verify optimized scanning**
     - **Context:** cr-04 step 4
     - **Action:**
         1. Measure DOM scan time before and after optimizations and confirm ≥ 50 % reduction.
