@@ -1,9 +1,58 @@
-*.DS\_Store
+# Build output
+dist/
+timeismoney.zip
+build/
+
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+package-lock.json.bak
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and editor files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.project
+.settings/
 *.sw?
-images/.DS_Store
+.*.sw?
+*.vi
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Test and coverage
+coverage/
+.nyc_output/
+
+# Project specific
 docs/
 thinktank_output/
-node_modules/
 diff.md
 CODE_REVIEW.md
 **/glance.md
+ci_failure_report.md
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
