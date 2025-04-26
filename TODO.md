@@ -192,7 +192,7 @@
     - **Depends-on:** [T015, T016]
 
 ## Popup & Background Refactor
-- [ ] **T020 · Refactor · P2: convert anonymous handlers to named functions**
+- [x] **T020 · Refactor · P2: convert anonymous handlers to named functions**
     - **Context:** 2.4 Refactor popup.js & background.js – Named functions
     - **Action:**
         1. Replace inline anonymous event listeners with named handler functions.

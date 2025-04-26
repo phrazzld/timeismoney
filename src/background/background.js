@@ -4,15 +4,15 @@ import { saveSettings, onSettingsChanged } from '../utils/storage.js';
  * Event handler for browser action click
  * Opens the options page when user clicks the extension icon
  */
-chrome.browserAction.onClicked.addListener(() => {
+function handleBrowserActionClick() {
   chrome.runtime.openOptionsPage();
-});
+}
 
 /**
  * Event handler for extension installation or update
  * Sets up default options and opens the options page
  */
-chrome.runtime.onInstalled.addListener(() => {
+function handleExtensionInstalled() {
   chrome.runtime.openOptionsPage();
   saveSettings({
     disabled: false,
@@ -23,7 +23,11 @@ chrome.runtime.onInstalled.addListener(() => {
     thousands: 'commas',
     decimal: 'dot',
   });
-});
+}
+
+// Register event listeners
+chrome.browserAction.onClicked.addListener(handleBrowserActionClick);
+chrome.runtime.onInstalled.addListener(handleExtensionInstalled);
 
 /**
  * Updates the extension icon based on disabled state
