@@ -4,7 +4,6 @@
  */
 
 import { applyConversion, revertAll } from '../../content/domModifier';
-import { getPriceInfo } from '../../content/priceFinder';
 
 // Simple regex pattern for testing
 const testPricePattern = /\$\d+(\.\d+)?/g;
@@ -13,7 +12,7 @@ const testPricePattern = /\$\d+(\.\d+)?/g;
 const mockConvertFn = (priceString) => {
   const match = priceString.match(/\$(\d+(\.\d+)?)/);
   if (!match) return priceString;
-  
+
   const amount = parseFloat(match[1]);
   const hours = amount / 25; // Using wage of $25/hr
   return `${priceString} (${hours.toFixed(1)}h)`;
@@ -49,7 +48,7 @@ describe('DOM Conversion Integration', () => {
     priceElements.forEach((element) => {
       // Get the text node
       const textNode = element.firstChild;
-      
+
       // Apply conversion directly using the test pattern and mock convert function
       applyConversion(textNode, testPricePattern, mockConvertFn);
     });
@@ -57,13 +56,13 @@ describe('DOM Conversion Integration', () => {
     // Assertions
     const convertedElements = document.querySelectorAll('.tim-converted-price');
     expect(convertedElements.length).toBe(3);
-    
+
     // Check $199.99 conversion (should be 8.0h)
     expect(convertedElements[0].textContent).toBe('$199.99 (8.0h)');
-    
+
     // Check $24.50 conversion (should be 1.0h)
     expect(convertedElements[1].textContent).toBe('$24.50 (1.0h)');
-    
+
     // Check $49.99 conversion (should be 2.0h)
     expect(convertedElements[2].textContent).toBe('$49.99 (2.0h)');
   });
@@ -92,7 +91,7 @@ describe('DOM Conversion Integration', () => {
     priceElements.forEach((element) => {
       // Get the text node
       const textNode = element.firstChild;
-      
+
       // Apply conversion directly using the test pattern and mock convert function
       applyConversion(textNode, testPricePattern, mockConvertFn);
     });
@@ -118,43 +117,43 @@ describe('DOM Conversion Integration', () => {
   test('handles dynamic DOM updates correctly', () => {
     // Set up initial DOM
     document.body.innerHTML = '<div id="container"></div>';
-    
+
     // Reference container for dynamic updates
     const container = document.getElementById('container');
-    
+
     // Add price elements dynamically
     container.innerHTML = `
       <p>Initial price: <span class="price">$99.99</span></p>
     `;
-    
+
     // Convert initial price
     const initialPriceElement = document.querySelector('.price');
     applyConversion(initialPriceElement.firstChild, testPricePattern, mockConvertFn);
-    
+
     // Verify initial conversion
     const convertedElement = document.querySelector('.tim-converted-price');
     expect(convertedElement).not.toBeNull();
     expect(convertedElement.textContent).toBe('$99.99 (4.0h)');
-    
+
     // Simulate dynamic DOM update
     container.innerHTML += `
       <p>Added price: <span class="price">$149.99</span></p>
     `;
-    
+
     // Convert newly added price
     const priceElements = document.querySelectorAll('.price');
     const newPriceElement = priceElements[1];
     applyConversion(newPriceElement.firstChild, testPricePattern, mockConvertFn);
-    
+
     // Verify conversions exist (note: using innerHTML += preserves existing converted elements)
     const convertedElements = document.querySelectorAll('.tim-converted-price');
-    expect(convertedElements.length).toBe(2); 
+    expect(convertedElements.length).toBe(2);
     expect(convertedElements[0].textContent).toBe('$99.99 (4.0h)');
     expect(convertedElements[1].textContent).toBe('$149.99 (6.0h)');
-    
+
     // Revert all
     revertAll(container);
-    
+
     // Verify both are reverted
     expect(document.querySelectorAll('.tim-converted-price').length).toBe(0);
     const revertedElements = document.querySelectorAll('.price');
