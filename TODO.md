@@ -242,7 +242,7 @@
         1. All parser tests pass.
     - **Depends-on:** T023
 
-- [ ] **T025 · Test · P2: add unit tests for converter.js**
+- [x] **T025 · Test · P2: add unit tests for converter.js**
     - **Context:** 5 Testing Strategy – converter.js tests
     - **Action:**
         1. Write `__tests__/converter.test.js` covering price-to-hours calculations.
