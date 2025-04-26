@@ -12,8 +12,34 @@ mkdir -p dist
 # Clear previous contents
 rm -rf dist/*
 
-# Copy the src directory to dist
-cp -r src/* dist/
+# Copy necessary files to dist, excluding test files
+mkdir -p dist/utils dist/content dist/background dist/popup/css dist/options/css
+
+# Copy manifest and other root files
+cp src/manifest.json dist/
+
+# Copy JS files from each directory
+cp src/utils/*.js dist/utils/
+cp src/content/*.js dist/content/
+cp src/background/*.js dist/background/
+cp src/popup/*.js dist/popup/
+cp src/options/*.js dist/options/
+
+# Copy CSS files 
+cp -r src/popup/css/* dist/popup/css/
+cp -r src/options/css/* dist/options/css/
+
+# Copy HTML files
+if [ -f src/popup/index.html ]; then
+  cp src/popup/index.html dist/popup/
+fi
+
+if [ -f src/options/index.html ]; then
+  cp src/options/index.html dist/options/
+fi
+
+# Make sure we don't have any test files
+rm -rf dist/__tests__ 2>/dev/null || true
 
 # Copy images to dist
 cp -r images dist/
