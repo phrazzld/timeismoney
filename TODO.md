@@ -43,7 +43,7 @@
         1. No content scripts reference `src/content/priceConverter.js` and use the functions from `src/utils/converter.js`.
     - **Depends-on:** [T004]
 
-- [ ] **T006 · Chore · P2: remove deprecated priceConverter module**
+- [x] **T006 · Chore · P2: remove deprecated priceConverter module**
     - **Context:** cr-02 step 3
     - **Action:**
         1. Delete the `src/content/priceConverter.js` file from the repository.
