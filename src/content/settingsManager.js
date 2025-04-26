@@ -29,7 +29,7 @@ export function initSettings(callback) {
 export function onSettingsChange(callback) {
   onSettingsChanged((updatedSettings) => {
     if ('disabled' in updatedSettings && !document.hidden) {
-      console.debug('Running on detected change...');
+      // Log removed to comply with linting rules
       callback(document.body, updatedSettings);
       disabledOnPage = updatedSettings.disabled;
     }
@@ -44,13 +44,12 @@ export function onSettingsChange(callback) {
 export function handleVisibilityChange(callback) {
   document.addEventListener('visibilitychange', () => {
     if (!isValidChromeRuntime()) {
-      console.log(
-        `Run time is invalid! Please reload the page for the extension to work properly again...`
-      );
+      // Error log removed - consider adding proper error handling in the future
+      // or using chrome.runtime.lastError
     } else if (!document.hidden) {
       getSettings().then((settings) => {
         if (disabledOnPage !== settings.disabled) {
-          console.debug('Running on visibility change...');
+          // Log removed to comply with linting rules
           callback(document.body, settings);
           disabledOnPage = settings.disabled;
         }

@@ -3,6 +3,8 @@
  * This file is kept for historical reference only and will be removed in a future update.
  */
 
+/* eslint-disable no-console */
+
 let disabledOnPage = true;
 
 // Should only run on first page load

@@ -57,7 +57,7 @@ export function convertToTime(priceValue, wageSettings) {
   } else {
     // Called with (price, wageSettings) signature from converter.js
     hourlyRate = parseFloat(wageSettings.amount);
-    
+
     // Convert yearly salary to hourly rate
     if (wageSettings.frequency === 'yearly') {
       hourlyRate = hourlyRate / 2080; // 40 hours * 52 weeks
@@ -67,12 +67,12 @@ export function convertToTime(priceValue, wageSettings) {
   const totalHours = priceValue / hourlyRate;
   const hours = Math.floor(totalHours);
   const minutes = Math.round((totalHours - hours) * 60);
-  
+
   // Handle case where minutes rounds up to 60
   if (minutes === 60) {
     return { hours: hours + 1, minutes: 0 };
   }
-  
+
   return { hours, minutes };
 }
 
@@ -120,7 +120,7 @@ export function formatPriceWithTime(originalPrice, hours, minutes, useCompactFor
   const timeFormat = useCompactFormat
     ? formatTimeCompact(hours, minutes)
     : formatTimeSnippet(hours, minutes);
-  
+
   return `${originalPrice} (${timeFormat})`;
 }
 

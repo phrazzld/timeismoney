@@ -84,7 +84,7 @@
         1. `.prettierrc` reflects project formatting standards and no formatting issues are reported.
     - **Depends-on:** none
 
-- [ ] **T011 · Chore · P2: run lint and format fixes**
+- [x] **T011 · Chore · P2: run lint and format fixes**
     - **Context:** cr-03 step 4
     - **Action:**
         1. Execute `eslint --fix .` and `prettier --write .` across the codebase.

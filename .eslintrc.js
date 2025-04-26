@@ -28,7 +28,7 @@ module.exports = {
     'node_modules/',
     'dist/',
     'jest.config.js', // Added from .eslintrc.json
-    'jest.setup.js',  // Added from .eslintrc.json
+    'jest.setup.js', // Added from .eslintrc.json
     'babel.config.js', // Added from .eslintrc.json
   ],
   // Added overrides section from .eslintrc.json
@@ -37,6 +37,13 @@ module.exports = {
       files: ['**/*.test.js', '**/*.spec.js'],
       env: {
         jest: true,
+      },
+    },
+    {
+      // Allow console statements in script files
+      files: ['scripts/**/*.js'],
+      rules: {
+        'no-console': 'off',
       },
     },
   ],
