@@ -223,7 +223,7 @@
     - **Depends-on:** T021
 
 ## Testing & CI
-- [ ] **T023 · Chore · P2: configure Jest testing framework**
+- [x] **T023 · Chore · P2: configure Jest testing framework**
     - **Context:** 5 Testing Strategy – Unit Tests
     - **Action:**
         1. Install Jest and configure `jest.config.js`.
