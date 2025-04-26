@@ -65,3 +65,18 @@ jobs:
       with:
         name: coverage-report
         path: coverage/
+        
+    # Build the extension
+    - name: Build extension
+      run: npm run build
+      
+    # Run smoke test
+    - name: Run smoke test
+      run: npm run smoke-test
+      
+    # Upload built extension as artifact
+    - name: Upload extension package
+      uses: actions/upload-artifact@v3
+      with:
+        name: extension-package
+        path: timeismoney.zip

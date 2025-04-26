@@ -17,7 +17,7 @@
         1. CI build and local build use assets exclusively from `src/` and complete successfully.
     - **Depends-on:** [T001]
 
-- [ ] **T003 · Test · P2: smoke-test extension locally and in CI**
+- [x] **T003 · Test · P2: smoke-test extension locally and in CI**
     - **Context:** cr-01 step 3
     - **Action:**
         1. Load the built extension locally and verify all UI functions correctly.

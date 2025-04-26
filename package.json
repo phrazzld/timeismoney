@@ -10,7 +10,10 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "ci": "npm run lint && npm test"
+    "ci": "npm run lint && npm test",
+    "build": "./scripts/build-extension.sh",
+    "smoke-test": "node scripts/smoke-test.js",
+    "start": "./scripts/load-extension.sh"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
