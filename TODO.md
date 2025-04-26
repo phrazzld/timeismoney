@@ -233,7 +233,7 @@
         2. Test suite recognized by CI.
     - **Depends-on:** T001
 
-- [ ] **T024 · Test · P2: add unit tests for parser.js**
+- [x] **T024 · Test · P2: add unit tests for parser.js**
     - **Context:** 5 Testing Strategy – parser.js tests
     - **Action:**
         1. Write test cases in `__tests__/parser.test.js` covering thousands/decimal normalization.
