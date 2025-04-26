@@ -1,286 +1,157 @@
 # Todo
 
-## General Codebase Improvements
-- [x] **T001 · Chore · P2: configure ESLint & Prettier**
-    - **Context:** 2.1 General Codebase Improvements – Configure ESLint & Prettier
+## project-cleanup
+- [x] **T001 · Chore · P2: remove legacy root-level extension assets**
+    - **Context:** cr-01 step 1
     - **Action:**
-        1. Add ESLint and Prettier config files to repo.
-        2. Add npm scripts for linting (`npm run lint`) and formatting (`npm run format`).
+        1. Delete root-level `manifest.json`, `popup.*`, and `options.*` files.
     - **Done-when:**
-        1. `npm run lint` and `npm run format` succeed without errors.
-        2. All existing `.js` files formatted according to rules.
+        1. No `manifest.json`, `popup.*`, or `options.*` exist at the project root.
     - **Depends-on:** none
 
-- [x] **T002 · Refactor · P2: adopt ES6 syntax across codebase**
-    - **Context:** 2.1 General Codebase Improvements – Adopt ES6+ style
+- [ ] **T002 · Chore · P2: update build and CI to use src assets**
+    - **Context:** cr-01 step 2
     - **Action:**
-        1. Replace `var` with `const`/`let`, convert functions to arrow syntax where appropriate.
-        2. Use template literals instead of string concatenation.
+        1. Modify build scripts and GitHub Actions workflows to reference `src/manifest.json` and other assets under `src/`.
     - **Done-when:**
-        1. No occurrences of `var` remain.
-        2. Codebase uses arrow functions and template literals consistently.
-    - **Depends-on:** T001
+        1. CI build and local build use assets exclusively from `src/` and complete successfully.
+    - **Depends-on:** [T001]
 
-- [x] **T003 · Chore · P2: add JSDoc comments for public APIs**
-    - **Context:** 2.1 General Codebase Improvements – Add JSDoc comments
+- [ ] **T003 · Test · P2: smoke-test extension locally and in CI**
+    - **Context:** cr-01 step 3
     - **Action:**
-        1. Document every exported function/module with JSDoc blocks.
-        2. Verify JSDoc covers parameters, return types, and examples if applicable.
+        1. Load the built extension locally and verify all UI functions correctly.
+        2. Ensure the CI smoke-test job runs the extension and passes.
     - **Done-when:**
-        1. All public functions have JSDoc comments.
-        2. JSDoc generation (if configured) runs without missing warnings.
-    - **Depends-on:** T002
+        1. Manual UI verification succeeds and CI smoke-test passes without errors.
+    - **Depends-on:** [T002]
 
-- [x] **T004 · Chore · P2: reorganize file structure under /src**
-    - **Context:** 2.1 General Codebase Improvements – Reorganize file structure
+## converter
+- [ ] **T004 · Refactor · P2: merge converter logic into src/utils/converter.js**
+    - **Context:** cr-02 step 1
     - **Action:**
-        1. Create directories as per plan (`/src/{background,content,options,popup,utils}`).
-        2. Move existing `.js` and asset files into their new locations, update import paths.
+        1. Consolidate `normalizePrice`, `calculateHourlyWage`, and formatting logic from `src/content/priceConverter.js` into `src/utils/converter.js`, ensuring a unified API.
     - **Done-when:**
-        1. Project builds with no import errors.
-        2. Directory structure matches plan.
-    - **Depends-on:** T001
-
-- [x] **T005 · Refactor · P2: consolidate storage interactions behind storage.js API**
-    - **Context:** 2.1 General Codebase Improvements – Consolidate storage calls
-    - **Action:**
-        1. Implement `getSettings()`, `saveSettings()`, `onSettingsChanged()` in `src/utils/storage.js`.
-        2. Remove direct `chrome.storage.sync` calls and replace with storage API.
-    - **Done-when:**
-        1. No direct `chrome.storage.sync` usage remains.
-        2. All modules call storage via storage.js.
-    - **Depends-on:** T004
-
-## Content Module Refactor
-- [x] **T006 · Refactor · P2: extract settingsManager.js from content.js**
-    - **Context:** 2.2 Refactor content.js – Split responsibilities: settingsManager.js
-    - **Action:**
-        1. Move settings loading/subscription logic into `src/content/settingsManager.js`.
-        2. Export functions for `initSettings()` and `onSettingsChange()`.
-    - **Done-when:**
-        1. `content/index.js` imports and uses settingsManager instead of inline code.
-        2. Settings change events delivered correctly.
-    - **Depends-on:** T005
-
-- [x] **T007 · Refactor · P2: extract domScanner.js with walk API**
-    - **Context:** 2.2 Refactor content.js – Split responsibilities: domScanner.js
-    - **Action:**
-        1. Create `src/content/domScanner.js` exporting `walk(root, callback)`.
-        2. Delete equivalent code from content.js and update imports.
-    - **Done-when:**
-        1. Text nodes are traversed using new `walk` function.
-        2. No duplicate TreeWalker code remains.
-    - **Depends-on:** T006
-
-- [x] **T008 · Refactor · P2: extract priceFinder.js with findPrices**
-    - **Context:** 2.2 Refactor content.js – Split responsibilities: priceFinder.js
-    - **Action:**
-        1. Implement `findPrices(text, formatSettings)` in `src/content/priceFinder.js`.
-        2. Build and cache regex patterns according to user settings.
-    - **Done-when:**
-        1. `findPrices` returns correct matches for sample strings.
-        2. Content processor uses `findPrices` exclusively.
-    - **Depends-on:** T007
-
-- [x] **T009 · Refactor · P2: extract priceConverter.js with convert and format**
-    - **Context:** 2.2 Refactor content.js – Split responsibilities: priceConverter.js
-    - **Action:**
-        1. Create `src/content/priceConverter.js` exporting `convertToTime(price, wage)` and `formatTimeSnippet(h, m)`.
-        2. Remove conversion logic from content.js.
-    - **Done-when:**
-        1. Conversions match previous behavior for test cases.
-        2. All conversions performed via new module.
-    - **Depends-on:** T008
-
-- [x] **T010 · Refactor · P2: extract domModifier.js for applying and reverting conversions**
-    - **Context:** 2.2 Refactor content.js – Split responsibilities: domModifier.js
-    - **Action:**
-        1. Implement `applyConversion(node, match, snippet)` and `revertAll(root)` in `src/content/domModifier.js`.
-        2. Wrap converted text in spans with `data-original-price`.
-    - **Done-when:**
-        1. Conversions appear in DOM exactly as before.
-        2. Calling `revertAll` restores original text.
-    - **Depends-on:** T009
-
-- [x] **T011 · Refactor · P2: implement content/index.js orchestrator**
-    - **Context:** 2.2 Refactor content.js – Orchestrator
-    - **Action:**
-        1. In `src/content/index.js`, import all modules and replicate init, processPage, and settings-change logic.
-        2. Replace old content.js in manifest entry.
-    - **Done-when:**
-        1. Extension behavior identical on page load and settings change.
-        2. No residual code in original content.js.
-    - **Depends-on:** [T006, T007, T008, T009, T010]
-
-- [x] **T012 · Feature · P2: isolate amazon-specific logic into amazonHandler.js**
-    - **Context:** 2.2 Refactor content.js – Amazon-specific logic
-    - **Action:**
-        1. Move existing Amazon hacks into `src/content/amazonHandler.js` with clear API.
-        2. Integrate handler into priceFinder or orchestrator.
-    - **Done-when:**
-        1. Amazon-specific cases still pass existing sample tests.
-        2. All Amazon logic lives in amazonHandler.js.
-    - **Depends-on:** T008
-
-- [x] **T013 · Refactor · P2: replace bare throw strings with Error objects**
-    - **Context:** 2.2 Refactor content.js – Error handling
-    - **Action:**
-        1. Find all `throw 'message'` and convert to `throw new Error('message')`.
-    - **Done-when:**
-        1. No `throw` statements without `new Error`.
+        1. `src/utils/converter.js` implements all conversion functions and exports a consistent interface covering both original modules.
     - **Depends-on:** none
 
-- [x] **T014 · Refactor · P2: wrap critical sections in try/catch with logging**
-    - **Context:** 2.2 Refactor content.js – Error handling
+- [ ] **T005 · Refactor · P2: update content scripts to use unified converter**
+    - **Context:** cr-02 step 2
     - **Action:**
-        1. Identify critical code in orchestrator and wrap in `try/catch`.
-        2. Log errors to console with context.
+        1. Replace imports from `src/content/priceConverter.js` with imports from `src/utils/converter.js` in all content scripts.
     - **Done-when:**
-        1. Errors during scanning or conversion are caught and logged.
-        2. Extension does not crash on unexpected input.
-    - **Depends-on:** T011
+        1. No content scripts reference `src/content/priceConverter.js` and use the functions from `src/utils/converter.js`.
+    - **Depends-on:** [T004]
 
-## Options Module Refactor
-- [x] **T015 · Refactor · P2: extract formHandler.js for options form logic**
-    - **Context:** 2.3 Refactor options.js – Modularize formHandler.js
+- [ ] **T006 · Chore · P2: remove deprecated priceConverter module**
+    - **Context:** cr-02 step 3
     - **Action:**
-        1. Move form loading, validation, and save logic into `src/options/formHandler.js`.
-        2. Export `loadForm()` and `setupListeners()`.
+        1. Delete the `src/content/priceConverter.js` file from the repository.
     - **Done-when:**
-        1. Options page loads and saves via formHandler.
-        2. No form logic remains in options.js.
-    - **Depends-on:** T005, T004
+        1. `src/content/priceConverter.js` is removed and the project builds without errors.
+    - **Depends-on:** [T005]
 
-- [x] **T016 · Refactor · P2: extract tooltip.js for delegated help text**
-    - **Context:** 2.3 Refactor options.js – Modularize tooltip.js
+- [ ] **T007 · Test · P2: expand unit tests for merged converter**
+    - **Context:** cr-02 step 4
     - **Action:**
-        1. Implement delegated `focusin`/`focusout` handlers in `src/options/tooltip.js`.
-        2. Remove inline tooltip logic from options.js.
+        1. Add Jest test cases covering all edge cases and API behaviors from both original converter modules to the tests for `src/utils/converter.js`.
     - **Done-when:**
-        1. Tooltips show/hide correctly on focus events.
-        2. No tooltip code in formHandler or options.js.
-    - **Depends-on:** T015
+        1. Unit tests for `src/utils/converter.js` cover previous scenarios and pass.
+    - **Depends-on:** [T004]
 
-- [x] **T017 · Refactor · P2: integrate parser.js for amount string normalization**
-    - **Context:** 2.3 Refactor options.js – Parsing/Formatting
+## lint-and-format
+- [ ] **T008 · Chore · P2: merge ESLint rules into .eslintrc.js**
+    - **Context:** cr-03 step 1
     - **Action:**
-        1. Use `normalizeAmountString` from `src/utils/parser.js` in form submission.
-        2. Remove custom normalization code.
+        1. Copy and integrate custom rules from `.eslintrc.json` into `.eslintrc.js`, resolving any conflicts.
     - **Done-when:**
-        1. Amount strings parse correctly in tests.
-        2. No duplicate normalization logic.
-    - **Depends-on:** T005
+        1. `.eslintrc.js` contains all intended rules and no relevant settings remain in `.eslintrc.json`.
+    - **Depends-on:** none
 
-- [x] **T018 · Feature · P2: enforce numeric, non-negative wage validation**
-    - **Context:** 2.3 Refactor options.js – Validation
+- [ ] **T009 · Chore · P2: delete .eslintrc.json**
+    - **Context:** cr-03 step 2
     - **Action:**
-        1. In `formHandler.js`, validate wage inputs on submit.
-        2. Display inline error messages and prevent saving invalid data.
+        1. Remove the `.eslintrc.json` file from the repository.
     - **Done-when:**
-        1. Invalid values trigger visible error and block save.
-        2. Valid inputs proceed to saveSettings.
-    - **Depends-on:** T015
+        1. `.eslintrc.json` no longer exists and ESLint runs solely with `.eslintrc.js`.
+    - **Depends-on:** [T008]
 
-- [x] **T019 · Refactor · P2: setup DOMContentLoaded entry point in options/index.js**
-    - **Context:** 2.3 Refactor options.js – Initialization
+- [ ] **T010 · Chore · P2: validate and update Prettier configuration**
+    - **Context:** cr-03 step 3
     - **Action:**
-        1. Create `src/options/index.js` that on `DOMContentLoaded` calls `loadForm()` and `setupListeners()`.
-        2. Update manifest to point to new index.js.
+        1. Review `.prettierrc` and ensure it contains all desired formatting options; update if necessary.
     - **Done-when:**
-        1. Options page initializes correctly on load.
-        2. No leftover code in HTML.
-    - **Depends-on:** [T015, T016]
+        1. `.prettierrc` reflects project formatting standards and no formatting issues are reported.
+    - **Depends-on:** none
 
-## Popup & Background Refactor
-- [x] **T020 · Refactor · P2: convert anonymous handlers to named functions**
-    - **Context:** 2.4 Refactor popup.js & background.js – Named functions
+- [ ] **T011 · Chore · P2: run lint and format fixes**
+    - **Context:** cr-03 step 4
     - **Action:**
-        1. Replace inline anonymous event listeners with named handler functions.
-        2. Update references accordingly.
+        1. Execute `eslint --fix .` and `prettier --write .` across the codebase.
     - **Done-when:**
-        1. All handlers are named functions.
-        2. Behavior unchanged.
-    - **Depends-on:** T005
+        1. No lint or formatting errors remain after running the tools.
+    - **Depends-on:** [T008, T009, T010]
 
-- [x] **T021 · Refactor · P2: use storage.js API in popup and background**
-    - **Context:** 2.4 Refactor popup.js & background.js – Shared storage API
+## dom-scanning
+- [ ] **T012 · Feature · P2: implement MutationObserver for DOM scanning**
+    - **Context:** cr-04 step 1
     - **Action:**
-        1. Replace `chrome.storage.sync` calls with `getSettings`, `saveSettings` from storage.js.
-        2. Remove direct storage imports.
+        1. Instantiate a `MutationObserver` on `document.body` to detect added or changed nodes.
     - **Done-when:**
-        1. No direct `chrome.storage.sync` usage in popup/background.
-        2. Toggle state persists via storage API.
-    - **Depends-on:** T005
+        1. The observer correctly fires on DOM mutations in content scripts.
+    - **Depends-on:** none
 
-- [x] **T022 · Feature · P2: synchronize popup toggle state and icon with settings**
-    - **Context:** 2.4 Refactor popup.js & background.js – State sync
+- [ ] **T013 · Refactor · P2: debounce domScanner.walk calls**
+    - **Context:** cr-04 step 2
     - **Action:**
-        1. On popup open, read `disabled` from storage and set toggle UI.
-        2. On toggle change, update icon via background and save setting.
+        1. Replace immediate full DOM scan calls with a debounced (200 ms) invocation of `domScanner.walk` triggered by the observer.
     - **Done-when:**
-        1. Toggle reflects actual disabled setting.
-        2. Icon state updates instantly on toggle.
-    - **Depends-on:** T021
+        1. `domScanner.walk` is called only after the debounce delay on observed mutations.
+    - **Depends-on:** [T012]
 
-## Testing & CI
-- [x] **T023 · Chore · P2: configure Jest testing framework**
-    - **Context:** 5 Testing Strategy – Unit Tests
+- [ ] **T014 · Refactor · P2: disconnect MutationObserver on script unload**
+    - **Context:** cr-04 step 3
     - **Action:**
-        1. Install Jest and configure `jest.config.js`.
-        2. Add npm script `npm test`.
+        1. Add cleanup logic to disconnect the `MutationObserver` when the content script unloads.
     - **Done-when:**
-        1. `npm test` runs and reports no tests.
-        2. Test suite recognized by CI.
-    - **Depends-on:** T001
+        1. Observer is reliably disconnected during script teardown without errors.
+    - **Depends-on:** [T012]
 
-- [x] **T024 · Test · P2: add unit tests for parser.js**
-    - **Context:** 5 Testing Strategy – parser.js tests
+- [ ] **T015 · Test · P2: benchmark and verify optimized scanning**
+    - **Context:** cr-04 step 4
     - **Action:**
-        1. Write test cases in `__tests__/parser.test.js` covering thousands/decimal normalization.
-        2. Assert correct output strings and parseFloat behavior.
+        1. Measure DOM scan time before and after optimizations and confirm ≥ 50 % reduction.
+        2. Validate that all target nodes are still processed correctly.
     - **Done-when:**
-        1. All parser tests pass.
-    - **Depends-on:** T023
+        1. Benchmarks show at least 50 % scan-time improvement and functional behavior is unchanged.
+    - **Depends-on:** [T013, T014]
 
-- [x] **T025 · Test · P2: add unit tests for converter.js**
-    - **Context:** 5 Testing Strategy – converter.js tests
+## integration-tests
+- [ ] **T016 · Chore · P2: configure Jest to use JSDOM environment**
+    - **Context:** cr-05 step 1
     - **Action:**
-        1. Write `__tests__/converter.test.js` covering price-to-hours calculations.
-        2. Verify formatting of time snippets.
+        1. Set `testEnvironment` to `jsdom` in Jest configuration.
+        2. Install `jsdom` if not already present as a dev dependency.
     - **Done-when:**
-        1. All converter tests pass.
-    - **Depends-on:** T023
+        1. Jest tests run in a JSDOM environment and a simple DOM-access test passes.
+    - **Depends-on:** none
 
-- [x] **T026 · Test · P2: add unit tests for priceFinder.js**
-    - **Context:** 5 Testing Strategy – priceFinder.js tests
+- [ ] **T017 · Test · P2: add DOM conversion integration tests**
+    - **Context:** cr-05 steps 2 & 3
     - **Action:**
-        1. Write `__tests__/priceFinder.test.js` with sample price strings.
-        2. Ensure regex matches and indices correct.
+        1. Create JSDOM fixtures with sample text nodes and price elements.
+        2. Write tests asserting `applyConversion` adds time strings and `revertAll` restores originals.
     - **Done-when:**
-        1. All priceFinder tests pass.
-    - **Depends-on:** T023
+        1. Integration tests cover conversion and revert scenarios and pass in CI.
+    - **Depends-on:** [T016]
 
-- [x] **T027 · Chore · P2: set up GitHub Actions CI for lint and tests**
-    - **Context:** 5 Testing Strategy – CI
+- [ ] **T018 · Chore · P2: integrate new tests into CI pipeline**
+    - **Context:** cr-05 step 4
     - **Action:**
-        1. Create `.github/workflows/ci.yml` to run `npm run lint` and `npm test`.
-        2. Ensure PRs report status.
+        1. Update CI workflows to run the new JSDOM-based integration tests.
     - **Done-when:**
-        1. CI pipeline passes on main branch.
-    - **Depends-on:** [T001, T023]
-
-## Manifest Migration
-- [x] **T028 · Feature · P1: migrate extension from Manifest V2 to V3**
-    - **Context:** 6 Resolved Questions – Manifest V3 migration
-    - **Action:**
-        1. Update `manifest.json` to v3 schema, replace background scripts with service worker.
-        2. Adjust permissions and update any deprecated APIs.
-    - **Done-when:**
-        1. Extension loads under Manifest V3 without errors.
-        2. All functionality preserved.
-    - **Depends-on:** T004
+        1. CI pipeline includes and passes the integration tests.
+    - **Depends-on:** [T017]
 
 ### Clarifications & Assumptions
-- [ ] **Issue:** clarify amazon-specific logic requirement
-    - **Context:** 2.2 Refactor content.js – Amazon-specific logic unclear if still required
-    - **Blocking?:** yes
+- none

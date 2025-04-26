@@ -4,3 +4,6 @@ images/.DS_Store
 docs/
 thinktank_output/
 node_modules/
+diff.md
+CODE_REVIEW.md
+**/glance.md
