@@ -1,4 +1,4 @@
-import { saveSettings, onSettingsChanged } from '../utils/storage.js';
+import { getSettings, saveSettings, onSettingsChanged } from '../utils/storage.js';
 
 /**
  * Event handler for browser action click
@@ -46,3 +46,8 @@ function updateIcon(settings) {
 
 // Register settings change listener
 onSettingsChanged(updateIcon);
+
+// Initialize icon on startup based on current settings
+getSettings().then((settings) => {
+  updateIcon({ disabled: settings.disabled });
+});

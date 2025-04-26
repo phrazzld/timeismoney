@@ -212,7 +212,7 @@
         2. Toggle state persists via storage API.
     - **Depends-on:** T005
 
-- [ ] **T022 · Feature · P2: synchronize popup toggle state and icon with settings**
+- [x] **T022 · Feature · P2: synchronize popup toggle state and icon with settings**
     - **Context:** 2.4 Refactor popup.js & background.js – State sync
     - **Action:**
         1. On popup open, read `disabled` from storage and set toggle UI.
