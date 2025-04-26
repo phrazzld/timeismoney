@@ -251,7 +251,7 @@
         1. All converter tests pass.
     - **Depends-on:** T023
 
-- [ ] **T026 · Test · P2: add unit tests for priceFinder.js**
+- [x] **T026 · Test · P2: add unit tests for priceFinder.js**
     - **Context:** 5 Testing Strategy – priceFinder.js tests
     - **Action:**
         1. Write `__tests__/priceFinder.test.js` with sample price strings.
