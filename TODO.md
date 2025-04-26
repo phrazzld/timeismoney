@@ -27,7 +27,7 @@
     - **Depends-on:** [T002]
 
 ## converter
-- [ ] **T004 · Refactor · P2: merge converter logic into src/utils/converter.js**
+- [x] **T004 · Refactor · P2: merge converter logic into src/utils/converter.js**
     - **Context:** cr-02 step 1
     - **Action:**
         1. Consolidate `normalizePrice`, `calculateHourlyWage`, and formatting logic from `src/content/priceConverter.js` into `src/utils/converter.js`, ensuring a unified API.
