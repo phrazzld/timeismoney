@@ -127,7 +127,7 @@
     - **Depends-on:** [T013, T014]
 
 ## integration-tests
-- [ ] **T016 · Chore · P2: configure Jest to use JSDOM environment**
+- [x] **T016 · Chore · P2: configure Jest to use JSDOM environment**
     - **Context:** cr-05 step 1
     - **Action:**
         1. Set `testEnvironment` to `jsdom` in Jest configuration.
