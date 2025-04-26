@@ -68,7 +68,7 @@
         1. `.eslintrc.js` contains all intended rules and no relevant settings remain in `.eslintrc.json`.
     - **Depends-on:** none
 
-- [ ] **T009 · Chore · P2: delete .eslintrc.json**
+- [x] **T009 · Chore · P2: delete .eslintrc.json**
     - **Context:** cr-03 step 2
     - **Action:**
         1. Remove the `.eslintrc.json` file from the repository.
