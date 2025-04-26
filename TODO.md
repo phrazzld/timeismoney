@@ -181,7 +181,7 @@
         2. Valid inputs proceed to saveSettings.
     - **Depends-on:** T015
 
-- [ ] **T019 · Refactor · P2: setup DOMContentLoaded entry point in options/index.js**
+- [x] **T019 · Refactor · P2: setup DOMContentLoaded entry point in options/index.js**
     - **Context:** 2.3 Refactor options.js – Initialization
     - **Action:**
         1. Create `src/options/index.js` that on `DOMContentLoaded` calls `loadForm()` and `setupListeners()`.
