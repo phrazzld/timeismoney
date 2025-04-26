@@ -136,7 +136,7 @@
         1. Jest tests run in a JSDOM environment and a simple DOM-access test passes.
     - **Depends-on:** none
 
-- [ ] **T017 · Test · P2: add DOM conversion integration tests**
+- [x] **T017 · Test · P2: add DOM conversion integration tests**
     - **Context:** cr-05 steps 2 & 3
     - **Action:**
         1. Create JSDOM fixtures with sample text nodes and price elements.
@@ -145,7 +145,7 @@
         1. Integration tests cover conversion and revert scenarios and pass in CI.
     - **Depends-on:** [T016]
 
-- [ ] **T018 · Chore · P2: integrate new tests into CI pipeline**
+- [x] **T018 · Chore · P2: integrate new tests into CI pipeline**
     - **Context:** cr-05 step 4
     - **Action:**
         1. Update CI workflows to run the new JSDOM-based integration tests.
