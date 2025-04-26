@@ -60,7 +60,7 @@
     - **Depends-on:** [T004]
 
 ## lint-and-format
-- [ ] **T008 · Chore · P2: merge ESLint rules into .eslintrc.js**
+- [x] **T008 · Chore · P2: merge ESLint rules into .eslintrc.js**
     - **Context:** cr-03 step 1
     - **Action:**
         1. Copy and integrate custom rules from `.eslintrc.json` into `.eslintrc.js`, resolving any conflicts.
