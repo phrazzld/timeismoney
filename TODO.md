@@ -76,7 +76,7 @@
         1. `.eslintrc.json` no longer exists and ESLint runs solely with `.eslintrc.js`.
     - **Depends-on:** [T008]
 
-- [ ] **T010 · Chore · P2: validate and update Prettier configuration**
+- [x] **T010 · Chore · P2: validate and update Prettier configuration**
     - **Context:** cr-03 step 3
     - **Action:**
         1. Review `.prettierrc` and ensure it contains all desired formatting options; update if necessary.
