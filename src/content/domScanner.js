@@ -9,6 +9,30 @@ import { processIfAmazon } from './amazonHandler.js';
 // Store a reference to the observer for later access
 let domObserver = null;
 
+// Debounce timeout reference
+let debounceTimer = null;
+
+// Store nodes that need processing
+const pendingNodes = new Set();
+const pendingTextNodes = new Set();
+
+/**
+ * Creates a debounced function that delays invoking the provided function
+ * until after the specified wait time has elapsed since the last invocation.
+ *
+ * @param {Function} func - The function to debounce
+ * @param {number} wait - The number of milliseconds to delay
+ * @returns {Function} The debounced function
+ */
+const debounce = (func, wait) => {
+  return function (...args) {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      func.apply(this, args);
+    }, wait);
+  };
+};
+
 /**
  * Traverses the DOM tree starting from the given node and applies a callback to text nodes
  * Credit to t-j-crowder on StackOverflow for this walk function
@@ -112,6 +136,11 @@ export const observeDomChanges = (callback, options = {}) => {
       return null;
     }
 
+    // Create a debounced processor function with 200ms delay
+    const debouncedProcess = debounce(() => {
+      processPendingNodes(callback, options);
+    }, 200);
+
     // Create the mutation observer
     const observer = new MutationObserver((mutations) => {
       try {
@@ -120,18 +149,21 @@ export const observeDomChanges = (callback, options = {}) => {
           // Handle added nodes
           if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
             for (const node of mutation.addedNodes) {
-              // Only process element nodes (skip text nodes, comments, etc.)
+              // Only queue element nodes (skip text nodes, comments, etc.)
               if (node.nodeType === 1) {
-                walk(node, callback, options);
+                pendingNodes.add(node);
               }
             }
           }
 
           // Handle character data changes on text nodes
           if (mutation.type === 'characterData' && mutation.target.nodeType === 3) {
-            callback(mutation.target);
+            pendingTextNodes.add(mutation.target);
           }
         }
+
+        // Trigger the debounced processing
+        debouncedProcess();
       } catch (error) {
         console.error('TimeIsMoney: Error processing mutations:', error.message, error.stack);
       }
@@ -188,12 +220,65 @@ export const startObserver = (targetNode, callback, options = {}) => {
 };
 
 /**
- * Stops and disconnects the DOM observer
+ * Processes all pending nodes that have been collected during mutations
  *
- * @returns {boolean} True if successfully disconnected, false otherwise
+ * @param {Function} callback - The function to call on each text node
+ * @param {Object} options - Optional settings for the walk function
  */
+const processPendingNodes = (callback, options = {}) => {
+  try {
+    // Process element nodes that need walking
+    if (pendingNodes.size > 0) {
+      // Convert Set to Array to avoid issues if the set is modified during processing
+      const nodesToProcess = Array.from(pendingNodes);
+      pendingNodes.clear();
+
+      // Process each pending node
+      for (const node of nodesToProcess) {
+        if (node && node.nodeType === 1) {
+          walk(node, callback, options);
+        }
+      }
+    }
+
+    // Process text nodes directly
+    if (pendingTextNodes.size > 0) {
+      // Convert Set to Array to avoid issues if the set is modified during processing
+      const textNodesToProcess = Array.from(pendingTextNodes);
+      pendingTextNodes.clear();
+
+      // Call callback directly on each text node
+      for (const textNode of textNodesToProcess) {
+        if (textNode && textNode.nodeType === 3) {
+          try {
+            callback(textNode);
+          } catch (callbackError) {
+            console.error('TimeIsMoney: Error in debounced node callback:', callbackError.message, {
+              nodeContent: textNode?.nodeValue?.substring(0, 50) + '...',
+              errorDetails: callbackError.stack,
+            });
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('TimeIsMoney: Error processing pending nodes:', error.message, error.stack);
+  }
+};
+
 export const stopObserver = () => {
   try {
+    // Clear any pending debounce timer
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+      debounceTimer = null;
+    }
+
+    // Clear any pending nodes
+    pendingNodes.clear();
+    pendingTextNodes.clear();
+
+    // Disconnect the observer
     if (domObserver) {
       domObserver.disconnect();
       return true;

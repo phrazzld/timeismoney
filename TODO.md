@@ -101,7 +101,7 @@
         1. The observer correctly fires on DOM mutations in content scripts.
     - **Depends-on:** none
 
-- [ ] **T013 · Refactor · P2: debounce domScanner.walk calls**
+- [x] **T013 · Refactor · P2: debounce domScanner.walk calls**
     - **Context:** cr-04 step 2
     - **Action:**
         1. Replace immediate full DOM scan calls with a debounced (200 ms) invocation of `domScanner.walk` triggered by the observer.
