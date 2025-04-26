@@ -1,0 +1,63 @@
+name: CI
+
+# Run this workflow on push to main branch and on pull requests to main branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # You can add more Node.js versions if you want to test across multiple versions
+    
+    steps:
+    # Check out the repository code
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    # Set up Node.js environment
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    # Cache node_modules to speed up the workflow
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          **/node_modules
+        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-
+    
+    # Install dependencies
+    - name: Install dependencies
+      run: npm ci
+      
+    # Run linting
+    - name: Lint code
+      run: npm run lint
+    
+    # Run tests
+    - name: Run tests
+      run: npm test
+      
+    # Optional: Add test coverage report
+    - name: Generate test coverage
+      run: npm run test:coverage
+      
+    # Optional: Upload coverage reports as artifacts
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coverage/

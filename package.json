@@ -4,12 +4,13 @@
   "description": "Chrome extension that converts prices to equivalent working hours",
   "private": true,
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"**/*.{js,json,css,html}\"",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "ci": "npm run lint && npm test"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",

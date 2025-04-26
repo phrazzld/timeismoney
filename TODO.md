@@ -260,7 +260,7 @@
         1. All priceFinder tests pass.
     - **Depends-on:** T023
 
-- [ ] **T027 · Chore · P2: set up GitHub Actions CI for lint and tests**
+- [x] **T027 · Chore · P2: set up GitHub Actions CI for lint and tests**
     - **Context:** 5 Testing Strategy – CI
     - **Action:**
         1. Create `.github/workflows/ci.yml` to run `npm run lint` and `npm test`.
