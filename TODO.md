@@ -202,7 +202,7 @@
         2. Behavior unchanged.
     - **Depends-on:** T005
 
-- [ ] **T021 · Refactor · P2: use storage.js API in popup and background**
+- [x] **T021 · Refactor · P2: use storage.js API in popup and background**
     - **Context:** 2.4 Refactor popup.js & background.js – Shared storage API
     - **Action:**
         1. Replace `chrome.storage.sync` calls with `getSettings`, `saveSettings` from storage.js.
