@@ -51,7 +51,7 @@
         1. `src/content/priceConverter.js` is removed and the project builds without errors.
     - **Depends-on:** [T005]
 
-- [ ] **T007 · Test · P2: expand unit tests for merged converter**
+- [x] **T007 · Test · P2: expand unit tests for merged converter**
     - **Context:** cr-02 step 4
     - **Action:**
         1. Add Jest test cases covering all edge cases and API behaviors from both original converter modules to the tests for `src/utils/converter.js`.
