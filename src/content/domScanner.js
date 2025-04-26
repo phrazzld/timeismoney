@@ -1,9 +1,13 @@
 /**
  * DOM Scanner module for traversing the DOM tree and processing text nodes.
+ * Also includes MutationObserver for monitoring DOM changes.
  * @module content/domScanner
  */
 
 import { processIfAmazon } from './amazonHandler.js';
+
+// Store a reference to the observer for later access
+let domObserver = null;
 
 /**
  * Traverses the DOM tree starting from the given node and applies a callback to text nodes
@@ -90,5 +94,113 @@ export const walk = (node, callback, options = {}) => {
     }
   } catch (error) {
     console.error('TimeIsMoney: Error in DOM walker:', error.message, error.stack);
+  }
+};
+
+/**
+ * Creates and initializes a MutationObserver to detect DOM changes
+ *
+ * @param {Function} callback - Function to process text nodes (same as walk callback)
+ * @param {Object} options - Optional configuration settings
+ * @returns {MutationObserver} The created observer instance
+ */
+export const observeDomChanges = (callback, options = {}) => {
+  try {
+    // Ensure callback is valid
+    if (!callback || typeof callback !== 'function') {
+      console.error('TimeIsMoney: observeDomChanges called with invalid callback');
+      return null;
+    }
+
+    // Create the mutation observer
+    const observer = new MutationObserver((mutations) => {
+      try {
+        // Process each mutation
+        for (const mutation of mutations) {
+          // Handle added nodes
+          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            for (const node of mutation.addedNodes) {
+              // Only process element nodes (skip text nodes, comments, etc.)
+              if (node.nodeType === 1) {
+                walk(node, callback, options);
+              }
+            }
+          }
+
+          // Handle character data changes on text nodes
+          if (mutation.type === 'characterData' && mutation.target.nodeType === 3) {
+            callback(mutation.target);
+          }
+        }
+      } catch (error) {
+        console.error('TimeIsMoney: Error processing mutations:', error.message, error.stack);
+      }
+    });
+
+    // Store a reference to the observer
+    domObserver = observer;
+
+    return observer;
+  } catch (error) {
+    console.error('TimeIsMoney: Error creating MutationObserver:', error.message, error.stack);
+    return null;
+  }
+};
+
+/**
+ * Starts observing DOM changes on the given target node
+ *
+ * @param {Node} targetNode - The node to observe for changes (usually document.body)
+ * @param {Function} callback - Function to process text nodes
+ * @param {Object} options - Optional configuration
+ * @returns {MutationObserver} The active observer
+ */
+export const startObserver = (targetNode, callback, options = {}) => {
+  try {
+    if (!targetNode) {
+      console.error('TimeIsMoney: startObserver called with invalid target node');
+      return null;
+    }
+
+    // Create the observer if it doesn't exist
+    const observer = domObserver || observeDomChanges(callback, options);
+
+    if (!observer) {
+      console.error('TimeIsMoney: Failed to create MutationObserver');
+      return null;
+    }
+
+    // Configure the observer
+    const observerConfig = {
+      childList: true, // Watch for added/removed nodes
+      subtree: true, // Monitor changes to the target and its descendants
+      characterData: true, // Watch for text content changes
+    };
+
+    // Start observing
+    observer.observe(targetNode, observerConfig);
+
+    return observer;
+  } catch (error) {
+    console.error('TimeIsMoney: Error starting MutationObserver:', error.message, error.stack);
+    return null;
+  }
+};
+
+/**
+ * Stops and disconnects the DOM observer
+ *
+ * @returns {boolean} True if successfully disconnected, false otherwise
+ */
+export const stopObserver = () => {
+  try {
+    if (domObserver) {
+      domObserver.disconnect();
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('TimeIsMoney: Error stopping MutationObserver:', error.message, error.stack);
+    return false;
   }
 };

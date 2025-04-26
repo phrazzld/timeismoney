@@ -16,7 +16,7 @@
 
 import { getSettings } from '../utils/storage.js';
 import { initSettings, onSettingsChange, handleVisibilityChange } from './settingsManager.js';
-import { walk } from './domScanner.js';
+import { walk, startObserver } from './domScanner.js';
 import { findPrices } from './priceFinder.js';
 import { convertPriceToTimeString } from '../utils/converter.js';
 import { processTextNode } from './domModifier.js';
@@ -40,8 +40,34 @@ function processPage(root, settings) {
   }
 }
 
+/**
+ * Initialize DOM observer to watch for dynamic changes
+ *
+ * @param {Node} root - The root node to observe (usually document.body)
+ * @param {Function} callback - The callback function to process nodes
+ */
+function initDomObserver(root, callback) {
+  try {
+    if (!root) {
+      console.error('TimeIsMoney: Cannot initialize observer with invalid root node');
+      return;
+    }
+
+    // Start observing DOM changes
+    startObserver(root, callback);
+  } catch (error) {
+    console.error('TimeIsMoney: Error initializing DOM observer:', error.message, error.stack);
+  }
+}
+
 // Initialize settings and set up event handlers
-initSettings(processPage);
+initSettings((root, settings) => {
+  // Process the page initially
+  processPage(root, settings);
+
+  // Set up the mutation observer for dynamic content
+  initDomObserver(root, (textNode) => convert(textNode, settings));
+});
 onSettingsChange(processPage);
 handleVisibilityChange(processPage);
 

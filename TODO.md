@@ -93,7 +93,7 @@
     - **Depends-on:** [T008, T009, T010]
 
 ## dom-scanning
-- [ ] **T012 · Feature · P2: implement MutationObserver for DOM scanning**
+- [x] **T012 · Feature · P2: implement MutationObserver for DOM scanning**
     - **Context:** cr-04 step 1
     - **Action:**
         1. Instantiate a `MutationObserver` on `document.body` to detect added or changed nodes.
