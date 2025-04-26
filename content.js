@@ -1,3 +1,8 @@
+/**
+ * @deprecated Use src/content/index.js instead
+ * This file is kept for historical reference only and will be removed in a future update.
+ */
+
 let disabledOnPage = true;
 
 // Should only run on first page load

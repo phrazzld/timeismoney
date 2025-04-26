@@ -1,4 +1,7 @@
 /**
+ * @deprecated Use src/background/background.js instead
+ * This file is kept for historical reference only and will be removed in a future update.
+ *
  * Event handler for browser action click
  * Opens the options page when user clicks the extension icon
  */
@@ -32,9 +35,9 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.storage.onChanged.addListener((changes) => {
   if (changes.disabled) {
     if (changes.disabled.newValue) {
-      chrome.browserAction.setIcon({ path: 'images/icon_disabled_38.png' });
+      chrome.browserAction.setIcon({ path: 'src/images/icon_disabled_38.png' });
     } else {
-      chrome.browserAction.setIcon({ path: 'images/icon_38.png' });
+      chrome.browserAction.setIcon({ path: 'src/images/icon_38.png' });
     }
   }
 });

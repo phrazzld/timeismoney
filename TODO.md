@@ -9,7 +9,7 @@
         1. No `manifest.json`, `popup.*`, or `options.*` exist at the project root.
     - **Depends-on:** none
 
-- [ ] **T002 · Chore · P2: update build and CI to use src assets**
+- [x] **T002 · Chore · P2: update build and CI to use src assets**
     - **Context:** cr-01 step 2
     - **Action:**
         1. Modify build scripts and GitHub Actions workflows to reference `src/manifest.json` and other assets under `src/`.
