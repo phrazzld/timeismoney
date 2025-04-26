@@ -50,7 +50,6 @@ export function calculateHourlyWage(frequency, amount) {
  */
 export function convertToTime(priceValue, wageSettings) {
   let hourlyRate;
-  
   // Handle both function signatures for backward compatibility
   if (typeof wageSettings === 'number') {
     // Called with (price, hourlyWage) signature from priceConverter.js
@@ -121,7 +120,7 @@ export function formatPriceWithTime(originalPrice, hours, minutes, useCompactFor
   const timeFormat = useCompactFormat
     ? formatTimeCompact(hours, minutes)
     : formatTimeSnippet(hours, minutes);
-    
+  
   return `${originalPrice} (${timeFormat})`;
 }
 
@@ -138,7 +137,12 @@ export function formatPriceWithTime(originalPrice, hours, minutes, useCompactFor
  * @param {boolean} [useCompactFormat=true] - Whether to use compact formatting (5h 30m) or verbose (5 hours, 30 minutes)
  * @returns {string} Formatted string with price and equivalent working time
  */
-export function convertPriceToTimeString(priceString, formatters, wageInfo, useCompactFormat = true) {
+export function convertPriceToTimeString(
+  priceString,
+  formatters,
+  wageInfo,
+  useCompactFormat = true
+) {
   // Handle invalid inputs
   if (!priceString || !formatters || !wageInfo) {
     return priceString;

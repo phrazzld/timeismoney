@@ -35,7 +35,7 @@
         1. `src/utils/converter.js` implements all conversion functions and exports a consistent interface covering both original modules.
     - **Depends-on:** none
 
-- [ ] **T005 · Refactor · P2: update content scripts to use unified converter**
+- [x] **T005 · Refactor · P2: update content scripts to use unified converter**
     - **Context:** cr-02 step 2
     - **Action:**
         1. Replace imports from `src/content/priceConverter.js` with imports from `src/utils/converter.js` in all content scripts.

@@ -18,7 +18,7 @@ import { getSettings } from '../utils/storage.js';
 import { initSettings, onSettingsChange, handleVisibilityChange } from './settingsManager.js';
 import { walk } from './domScanner.js';
 import { findPrices } from './priceFinder.js';
-import { convertPriceToTimeString } from './priceConverter.js';
+import { convertPriceToTimeString } from '../utils/converter.js';
 import { processTextNode } from './domModifier.js';
 
 /**
