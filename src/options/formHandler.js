@@ -53,16 +53,32 @@ function saveOptions() {
   const normalizedAmount = normalizeAmountString(rawAmount, thousands, decimal);
 
   // Parse to float and fix to 2 decimal places
-  const amount = parseFloat(normalizedAmount).toFixed(2);
+  const amountFloat = parseFloat(normalizedAmount);
   const status = document.getElementById('status');
 
-  if (isNaN(amount)) {
+  // Validate input is a number
+  if (isNaN(amountFloat)) {
     status.textContent = chrome.i18n.getMessage('amountErr');
     setTimeout(() => {
       status.textContent = '';
     }, 2000);
     return;
   }
+
+  // Validate input is non-negative
+  if (amountFloat < 0) {
+    // Use default message if translation is not available
+    const negativeErrMsg =
+      chrome.i18n.getMessage('negativeAmountErr') || 'Amount must be non-negative.';
+    status.textContent = chrome.i18n.getMessage('amountErr') + ' ' + negativeErrMsg;
+    setTimeout(() => {
+      status.textContent = '';
+    }, 2000);
+    return;
+  }
+
+  // Format to 2 decimal places
+  const amount = amountFloat.toFixed(2);
 
   saveSettings({
     currencySymbol,

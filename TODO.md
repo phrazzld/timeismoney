@@ -171,7 +171,7 @@
         2. No duplicate normalization logic.
     - **Depends-on:** T005
 
-- [ ] **T018 · Feature · P2: enforce numeric, non-negative wage validation**
+- [x] **T018 · Feature · P2: enforce numeric, non-negative wage validation**
     - **Context:** 2.3 Refactor options.js – Validation
     - **Action:**
         1. In `formHandler.js`, validate wage inputs on submit.
