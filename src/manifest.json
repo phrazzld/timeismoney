@@ -32,13 +32,10 @@
       "run_at": "document_end"
     }
   ],
-  
+
   "web_accessible_resources": [
     {
-      "resources": [
-        "content/content.bundle.js",
-        "content/content.bundle.js.map"
-      ],
+      "resources": ["content/content.bundle.js", "content/content.bundle.js.map"],
       "matches": ["*://*/*"]
     }
   ],

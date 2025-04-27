@@ -85,7 +85,10 @@ export const buildMatchPattern = (currencySymbol, currencyCode, thousandsString,
     'g'
   );
 
-  const pattern = new RegExp(`${precedingMatchPattern.source}|${concludingMatchPattern.source}`, 'g');
+  const pattern = new RegExp(
+    `${precedingMatchPattern.source}|${concludingMatchPattern.source}`,
+    'g'
+  );
   patternCache.match.set(cacheKey, pattern);
   return pattern;
 };

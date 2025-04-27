@@ -155,7 +155,7 @@ export const observeDomChanges = (callback, options = {}) => {
                 // Skip nodes that are our converted price elements or their descendants
                 let isConvertedPrice = false;
                 let current = node;
-                
+
                 // Check if this node or any ancestor has the converted class
                 while (current) {
                   if (current.classList && current.classList.contains(CONVERTED_PRICE_CLASS)) {
@@ -164,7 +164,7 @@ export const observeDomChanges = (callback, options = {}) => {
                   }
                   current = current.parentNode;
                 }
-                
+
                 if (!isConvertedPrice) {
                   pendingNodes.add(node);
                 }
@@ -177,7 +177,7 @@ export const observeDomChanges = (callback, options = {}) => {
             // Skip text nodes that are children of converted price elements
             let isInConvertedPrice = false;
             let current = mutation.target.parentNode;
-            
+
             // Check if any ancestor has the converted class
             while (current) {
               if (current.classList && current.classList.contains(CONVERTED_PRICE_CLASS)) {
@@ -186,7 +186,7 @@ export const observeDomChanges = (callback, options = {}) => {
               }
               current = current.parentNode;
             }
-            
+
             if (!isInConvertedPrice) {
               pendingTextNodes.add(mutation.target);
             }
