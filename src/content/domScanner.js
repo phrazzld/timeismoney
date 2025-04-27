@@ -5,6 +5,7 @@
  */
 
 import { processIfAmazon } from './amazonHandler.js';
+import { CONVERTED_PRICE_CLASS } from '../utils/constants.js';
 
 // Store a reference to the observer for later access
 let domObserver = null;
@@ -151,14 +152,44 @@ export const observeDomChanges = (callback, options = {}) => {
             for (const node of mutation.addedNodes) {
               // Only queue element nodes (skip text nodes, comments, etc.)
               if (node.nodeType === 1) {
-                pendingNodes.add(node);
+                // Skip nodes that are our converted price elements or their descendants
+                let isConvertedPrice = false;
+                let current = node;
+                
+                // Check if this node or any ancestor has the converted class
+                while (current) {
+                  if (current.classList && current.classList.contains(CONVERTED_PRICE_CLASS)) {
+                    isConvertedPrice = true;
+                    break;
+                  }
+                  current = current.parentNode;
+                }
+                
+                if (!isConvertedPrice) {
+                  pendingNodes.add(node);
+                }
               }
             }
           }
 
           // Handle character data changes on text nodes
           if (mutation.type === 'characterData' && mutation.target.nodeType === 3) {
-            pendingTextNodes.add(mutation.target);
+            // Skip text nodes that are children of converted price elements
+            let isInConvertedPrice = false;
+            let current = mutation.target.parentNode;
+            
+            // Check if any ancestor has the converted class
+            while (current) {
+              if (current.classList && current.classList.contains(CONVERTED_PRICE_CLASS)) {
+                isInConvertedPrice = true;
+                break;
+              }
+              current = current.parentNode;
+            }
+            
+            if (!isInConvertedPrice) {
+              pendingTextNodes.add(mutation.target);
+            }
           }
         }
 

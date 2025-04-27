@@ -1,6 +1,6 @@
 # TODO List
 
-- [ ] T001: Resolve ES6 module loading issue in content scripts (Original Task)
+- [x] T001: Resolve ES6 module loading issue in content scripts (Original Task)
   - Action: Implement the plan outlined in `CONSULTANT-PLAN.md` using a bundler (esbuild) to handle modular content scripts for Manifest V3 compatibility. This involves installing esbuild, configuring bundling, reverting code workarounds, updating the manifest, and modifying the build script. See sub-tasks T002-T009.
   - Depends On: None
   - AC Ref: None
@@ -45,7 +45,7 @@
   - Depends On: T003, T005
   - AC Ref: None
 
-- [ ] T009: Verify fix and mark original task complete
+- [x] T009: Verify fix and mark original task complete
   - Action: Execute the updated build process (e.g., `npm run build` or `bash ./scripts/build-extension.sh`). Load the unpacked extension from the `dist` directory into Chrome. Test the extension on relevant websites, checking for:
     1. Absence of errors related to module loading or `window.timeIsMoney...` in the DevTools console for the content script context.
     2. Correct functionality of the extension (e.g., price conversions).

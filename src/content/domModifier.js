@@ -3,11 +3,7 @@
  * @module content/domModifier
  */
 
-/**
- * CSS class used to identify converted price elements
- * @type {string}
- */
-const CONVERTED_PRICE_CLASS = 'tim-converted-price';
+import { CONVERTED_PRICE_CLASS } from '../utils/constants.js';
 
 /**
  * Applies a price conversion to a text node by replacing the matched text
@@ -27,7 +23,9 @@ export const applyConversion = (textNode, pattern, convertFn) => {
     const text = textNode.nodeValue;
 
     try {
-      const matches = [...text.matchAll(pattern)];
+      // Ensure the pattern is a global RegExp before using matchAll
+      const globalPattern = pattern.global ? pattern : new RegExp(pattern.source, 'g');
+      const matches = [...text.matchAll(globalPattern)];
 
       if (matches.length === 0) {
         return false;

@@ -21,6 +21,7 @@ import { walk, startObserver, stopObserver } from './domScanner.js';
 import { findPrices } from './priceFinder.js';
 import { convertPriceToTimeString } from '../utils/converter.js';
 import { processTextNode } from './domModifier.js';
+import { CONVERTED_PRICE_CLASS } from '../utils/constants.js';
 
 /**
  * Process the page by walking the DOM and converting prices
@@ -99,6 +100,16 @@ const convert = (textNode, preloadedSettings) => {
   // Skip text nodes that are not valid or empty
   if (!textNode || !textNode.nodeValue || textNode.nodeValue.trim() === '') {
     return;
+  }
+
+  // Skip already converted elements or their children
+  // Check if this node or any ancestor has the converted class
+  let parent = textNode.parentNode;
+  while (parent) {
+    if (parent.classList && parent.classList.contains(CONVERTED_PRICE_CLASS)) {
+      return; // This is already within a converted price element
+    }
+    parent = parent.parentNode;
   }
 
   // Use preloaded settings if provided, otherwise fetch them

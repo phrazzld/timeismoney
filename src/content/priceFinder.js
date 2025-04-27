@@ -85,7 +85,7 @@ export const buildMatchPattern = (currencySymbol, currencyCode, thousandsString,
     'g'
   );
 
-  const pattern = new RegExp(`${precedingMatchPattern.source}|${concludingMatchPattern.source}`);
+  const pattern = new RegExp(`${precedingMatchPattern.source}|${concludingMatchPattern.source}`, 'g');
   patternCache.match.set(cacheKey, pattern);
   return pattern;
 };
@@ -121,7 +121,8 @@ export const buildReverseMatchPattern = (
   );
 
   const pattern = new RegExp(
-    `${reversedPrecedingMatchPattern.source}|${reversedConcludingMatchPattern.source}`
+    `${reversedPrecedingMatchPattern.source}|${reversedConcludingMatchPattern.source}`,
+    'g'
   );
   patternCache.reverse.set(cacheKey, pattern);
   return pattern;

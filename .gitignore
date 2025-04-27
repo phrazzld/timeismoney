@@ -45,10 +45,12 @@ coverage/
 # Project specific
 docs/
 thinktank_output/
+thinktank_*/
 diff.md
 CODE_REVIEW.md
 **/glance.md
 ci_failure_report.md
+instructions.md
 
 # Logs
 logs
