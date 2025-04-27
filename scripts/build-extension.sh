@@ -12,15 +12,19 @@ mkdir -p dist
 # Clear previous contents
 rm -rf dist/*
 
+# Bundle content script
+echo "Bundling content script with esbuild..."
+npm run build:content
+
 # Copy necessary files to dist, excluding test files
 mkdir -p dist/utils dist/content dist/background dist/popup/css dist/options/css
 
 # Copy manifest and other root files
 cp src/manifest.json dist/
 
-# Copy JS files from each directory
+# Copy JS files from each directory (except content which is now bundled)
 cp src/utils/*.js dist/utils/
-cp src/content/*.js dist/content/
+# Skip individual content JS files since they're now bundled
 cp src/background/*.js dist/background/
 cp src/popup/*.js dist/popup/
 cp src/options/*.js dist/options/

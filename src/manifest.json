@@ -27,9 +27,19 @@
 
   "content_scripts": [
     {
-      "js": ["content/index.js"],
+      "js": ["content/content.bundle.js"],
       "matches": ["*://*/*"],
       "run_at": "document_end"
+    }
+  ],
+  
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "content/content.bundle.js",
+        "content/content.bundle.js.map"
+      ],
+      "matches": ["*://*/*"]
     }
   ],
 

@@ -12,6 +12,7 @@
     "test:coverage": "jest --coverage",
     "ci": "npm run lint && npm test",
     "build": "./scripts/build-extension.sh",
+    "build:content": "esbuild src/content/index.js --bundle --outfile=dist/content/content.bundle.js --format=iife --sourcemap --target=chrome90",
     "smoke-test": "node scripts/smoke-test.js",
     "start": "./scripts/load-extension.sh"
   },
@@ -20,6 +21,7 @@
     "@babel/preset-env": "^7.26.9",
     "@types/jest": "^29.5.14",
     "babel-jest": "^29.7.0",
+    "esbuild": "^0.25.3",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jest": "^28.11.0",

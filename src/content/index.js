@@ -14,6 +14,7 @@
  * @module content/index
  */
 
+// Restore proper ES6 imports
 import { getSettings } from '../utils/storage.js';
 import { initSettings, onSettingsChange, handleVisibilityChange } from './settingsManager.js';
 import { walk, startObserver, stopObserver } from './domScanner.js';
