@@ -7,7 +7,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: None
   - AC Ref: Extension loads without errors (manifest, background). [Validation Checklist: Extension loads without errors (manifest, background)]
 
-- [ ] T2: Update Build Script for Options/Popup File Copying (Original Plan Item: cr-07)
+- [x] T2: Update Build Script for Options/Popup File Copying (Original Plan Item: cr-07)
   - Action: Modify `scripts/build-extension.sh`. Change the `cp` commands for `src/options/` and `src/popup/` to recursively copy all contents (e.g., `cp -R src/options/* dist/options/` and `cp -R src/popup/* dist/popup/`).
   - Depends On: None
   - AC Ref: Run `npm run build`. Verify that all expected JS files (including sub-modules) from `src/options` and `src/popup` are present in the `dist/options` and `dist/popup` directories respectively. [Validation Checklist: `npm run build` completes successfully]

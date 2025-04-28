@@ -26,21 +26,14 @@ cp src/manifest.json dist/
 cp src/utils/*.js dist/utils/
 # Skip individual content JS files since they're now bundled
 cp src/background/*.js dist/background/
-cp src/popup/*.js dist/popup/
-cp src/options/*.js dist/options/
 
-# Copy CSS files 
-cp -r src/popup/css/* dist/popup/css/
-cp -r src/options/css/* dist/options/css/
+# Recursively copy all popup and options files (including JS, CSS, and HTML)
+cp -R src/popup/* dist/popup/
+cp -R src/options/* dist/options/
 
-# Copy HTML files
-if [ -f src/popup/index.html ]; then
-  cp src/popup/index.html dist/popup/
-fi
-
-if [ -f src/options/index.html ]; then
-  cp src/options/index.html dist/options/
-fi
+# Remove test files if they exist
+rm -rf dist/popup/__tests__ 2>/dev/null || true
+rm -rf dist/options/__tests__ 2>/dev/null || true
 
 # Make sure we don't have any test files
 rm -rf dist/__tests__ 2>/dev/null || true
