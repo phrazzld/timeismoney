@@ -42,19 +42,61 @@ export function setupListeners() {
  * Shows success message and closes the options page
  */
 function saveOptions() {
-  const currencySymbol = document.getElementById('currency-symbol').value;
-  const currencyCode = document.getElementById('currency-code').value;
+  const currencySymbol = document.getElementById('currency-symbol').value.trim();
+  const currencyCode = document.getElementById('currency-code').value.trim().toUpperCase();
   const frequency = document.getElementById('frequency').value;
   const rawAmount = document.getElementById('amount').value;
   const thousands = document.getElementById('thousands').value;
   const decimal = document.getElementById('decimal').value;
+  const status = document.getElementById('status');
+
+  // Validate currency symbol
+  if (!currencySymbol) {
+    status.textContent = chrome.i18n.getMessage('symbolErr') || 'Please enter a currency symbol.';
+    setTimeout(() => {
+      status.textContent = '';
+    }, 2000);
+    return;
+  }
+
+  // Validate symbol doesn't contain HTML or is too long
+  const symbolRegex = /^[^<>]{1,5}$/;
+  if (!symbolRegex.test(currencySymbol)) {
+    status.textContent =
+      chrome.i18n.getMessage('symbolFormatErr') ||
+      'Currency symbol must be 1-5 characters and cannot contain < or >.';
+    setTimeout(() => {
+      status.textContent = '';
+    }, 2000);
+    return;
+  }
+
+  // Validate currency code
+  if (!currencyCode) {
+    status.textContent = chrome.i18n.getMessage('codeErr') || 'Please enter a currency code.';
+    setTimeout(() => {
+      status.textContent = '';
+    }, 2000);
+    return;
+  }
+
+  // Validate code is a standard 3-letter code with only letters
+  const codeRegex = /^[A-Z]{3}$/;
+  if (!codeRegex.test(currencyCode)) {
+    status.textContent =
+      chrome.i18n.getMessage('codeFormatErr') ||
+      'Currency code must be 3 letters (e.g., USD, EUR, GBP).';
+    setTimeout(() => {
+      status.textContent = '';
+    }, 2000);
+    return;
+  }
 
   // Use parser utility to normalize amount string
   const normalizedAmount = normalizeAmountString(rawAmount, thousands, decimal);
 
   // Parse to float and fix to 2 decimal places
   const amountFloat = parseFloat(normalizedAmount);
-  const status = document.getElementById('status');
 
   // Validate input is a number
   if (isNaN(amountFloat) || !rawAmount.trim()) {
