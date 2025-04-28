@@ -72,7 +72,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T1]
   - AC Ref: Load the updated extension. Verify the permissions warning during installation requests access only to the specified sites. Test the extension on a permitted site (verify it works) and a non-permitted site (verify it does not activate or throw errors related to permissions). [Validation Checklist: Host permission prompt requests minimal scope]
 
-- [ ] T15: Refactor Content Script to Fetch Settings Once Per Batch (Original Plan Item: cr-04)
+- [x] T15: Refactor Content Script to Fetch Settings Once Per Batch (Original Plan Item: cr-04)
   - Action: Locate the main processing loop or MutationObserver callback in `src/content/domScanner.js` (or equivalent). Call `getSettings()` *once* at the beginning of this cycle/batch processing logic. In the `.then()` block, pass the retrieved `settings` object as an argument to downstream functions like `convert`. In the `.catch()` block (or if settings are unavailable), ensure the conversion process for that batch is skipped gracefully.
   - Depends On: [T7]
   - AC Ref: Use browser developer tools (Performance tab, console logging of storage calls) to verify that `getSettings` (or the underlying `chrome.storage.get`) is called significantly less often (ideally once per mutation batch or processing cycle) during page interaction on dynamic sites. Observe improved responsiveness. [Validation Checklist: Performance acceptable on dynamic pages]

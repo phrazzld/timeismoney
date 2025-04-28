@@ -113,6 +113,7 @@ const convert = (textNode, preloadedSettings) => {
   }
 
   // Use preloaded settings if provided, otherwise fetch them
+  // The MutationObserver in domScanner.js will now always provide preloadedSettings
   const settingsPromise = preloadedSettings ? Promise.resolve(preloadedSettings) : getSettings();
 
   settingsPromise

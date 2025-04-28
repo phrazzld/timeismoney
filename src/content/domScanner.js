@@ -6,6 +6,7 @@
 
 import { processIfAmazon } from './amazonHandler.js';
 import { CONVERTED_PRICE_CLASS } from '../utils/constants.js';
+import { getSettings } from '../utils/storage.js';
 
 // Store a reference to the observer for later access
 let domObserver = null;
@@ -252,48 +253,75 @@ export const startObserver = (targetNode, callback, options = {}) => {
 
 /**
  * Processes all pending nodes that have been collected during mutations
+ * Fetches settings only once per batch to improve performance
  *
  * @param {Function} callback - The function to call on each text node
  * @param {Object} options - Optional settings for the walk function
  */
 const processPendingNodes = (callback, options = {}) => {
   try {
-    // Process element nodes that need walking
-    if (pendingNodes.size > 0) {
-      // Convert Set to Array to avoid issues if the set is modified during processing
-      const nodesToProcess = Array.from(pendingNodes);
-      pendingNodes.clear();
-
-      // Process each pending node
-      for (const node of nodesToProcess) {
-        if (node && node.nodeType === 1) {
-          walk(node, callback, options);
-        }
-      }
+    // Skip processing if no nodes to process
+    if (pendingNodes.size === 0 && pendingTextNodes.size === 0) {
+      return;
     }
 
-    // Process text nodes directly
-    if (pendingTextNodes.size > 0) {
-      // Convert Set to Array to avoid issues if the set is modified during processing
-      const textNodesToProcess = Array.from(pendingTextNodes);
-      pendingTextNodes.clear();
+    // Use the imported getSettings function
 
-      // Call callback directly on each text node
-      for (const textNode of textNodesToProcess) {
-        if (textNode && textNode.nodeType === 3) {
-          try {
-            callback(textNode);
-          } catch (callbackError) {
-            console.error('TimeIsMoney: Error in debounced node callback:', callbackError.message, {
-              nodeContent: textNode?.nodeValue?.substring(0, 50) + '...',
-              errorDetails: callbackError.stack,
-            });
+    // Fetch settings once for the entire batch
+    getSettings()
+      .then((settings) => {
+        // Process element nodes that need walking
+        if (pendingNodes.size > 0) {
+          // Convert Set to Array to avoid issues if the set is modified during processing
+          const nodesToProcess = Array.from(pendingNodes);
+          pendingNodes.clear();
+
+          // Process each pending node with the settings
+          for (const node of nodesToProcess) {
+            if (node && node.nodeType === 1) {
+              // Pass settings to walk which will pass them to the callback
+              walk(node, (textNode) => callback(textNode, settings), options);
+            }
           }
         }
-      }
-    }
+
+        // Process text nodes directly
+        if (pendingTextNodes.size > 0) {
+          // Convert Set to Array to avoid issues if the set is modified during processing
+          const textNodesToProcess = Array.from(pendingTextNodes);
+          pendingTextNodes.clear();
+
+          // Call callback directly on each text node with the settings
+          for (const textNode of textNodesToProcess) {
+            if (textNode && textNode.nodeType === 3) {
+              try {
+                callback(textNode, settings);
+              } catch (callbackError) {
+                console.error(
+                  'TimeIsMoney: Error in debounced node callback:',
+                  callbackError.message,
+                  {
+                    nodeContent: textNode?.nodeValue?.substring(0, 50) + '...',
+                    errorDetails: callbackError.stack,
+                  }
+                );
+              }
+            }
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('TimeIsMoney: Error fetching settings for batch processing:', error);
+        // Clear the pending nodes to avoid a growing backlog if settings can't be fetched
+        pendingNodes.clear();
+        pendingTextNodes.clear();
+      });
   } catch (error) {
     console.error('TimeIsMoney: Error processing pending nodes:', error.message, error.stack);
+
+    // Clear the pending nodes to avoid a growing backlog on error
+    pendingNodes.clear();
+    pendingTextNodes.clear();
   }
 };
 
