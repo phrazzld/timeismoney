@@ -67,7 +67,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T7, T11]
   - AC Ref: Test saving valid options: verify the window closes after saving. Test saving with invalid input (triggering validation errors): verify the window stays open and shows an error. Test saving under conditions that cause `saveSettings` to fail (if mockable/testable): verify the window stays open and shows a storage error. [Validation Checklist: Options page ... closes correctly]
 
-- [ ] T14: Restrict Broad Host Permissions in Manifest (Original Plan Item: cr-10)
+- [x] T14: Restrict Broad Host Permissions in Manifest (Original Plan Item: cr-10)
   - Action: Identify the specific domains the extension *needs* to operate on (e.g., `"*://*.amazon.com/*"`, `"*://*.ebay.com/*"`). Edit `src/manifest.json` and replace `"host_permissions": ["*://*/*"]` with the specific list of required domain patterns. If broad access is genuinely unavoidable after review, add a comment in the manifest justifying it.
   - Depends On: [T1]
   - AC Ref: Load the updated extension. Verify the permissions warning during installation requests access only to the specified sites. Test the extension on a permitted site (verify it works) and a non-permitted site (verify it does not activate or throw errors related to permissions). [Validation Checklist: Host permission prompt requests minimal scope]
