@@ -57,7 +57,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T9, T10]
   - AC Ref: Code review confirms validation checks precede the `saveSettings` call. Test cases from T9/T10 should demonstrate that `saveSettings` is not invoked when validation fails (verify via console logs, breakpoints, or checking if the "saved" confirmation appears).
 
-- [ ] T12: Add Unit Tests for Options Form Input Validation (Original Plan Item: cr-06)
+- [x] T12: Add Unit Tests for Options Form Input Validation (Original Plan Item: cr-06)
   - Action: Create or update test files for `src/options/formHandler.js`. Add specific test cases simulating form submission with various invalid inputs for amount, symbol, and code (empty, non-numeric, negative, large values, invalid characters, potential XSS attempts like `<script>`). Assert that the validation logic correctly identifies these inputs as invalid and prevents the `saveSettings` function (mock) from being called.
   - Depends On: [T9, T10, T11]
   - AC Ref: Run `npm test`. Verify new tests covering invalid input scenarios pass. [Validation Checklist: All automated tests pass]
