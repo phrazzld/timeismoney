@@ -5,8 +5,12 @@ echo "This script will launch Chrome with the TimeIsMoney extension loaded for t
 echo "Make sure Chrome is closed before running this script."
 echo ""
 
-# Get the current directory
-EXTENSION_DIR=$(cd "$(dirname "$0")/.." && pwd)/src
+# Run the build script first
+echo "Building the extension..."
+cd "$(dirname "$0")/.." && npm run build
+
+# Get the path to the dist directory
+EXTENSION_DIR=$(cd "$(dirname "$0")/.." && pwd)/dist
 
 # Detect operating system
 if [[ "$OSTYPE" == "darwin"* ]]; then

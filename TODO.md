@@ -12,7 +12,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: None
   - AC Ref: Run `npm run build`. Verify that all expected JS files (including sub-modules) from `src/options` and `src/popup` are present in the `dist/options` and `dist/popup` directories respectively. [Validation Checklist: `npm run build` completes successfully]
 
-- [ ] T3: Modify Development Load Script to Use Build Output (Original Plan Item: cr-08)
+- [x] T3: Modify Development Load Script to Use Build Output (Original Plan Item: cr-08)
   - Action: Edit `scripts/load-extension.sh`. Add a command to run the build script (`npm run build` or `bash scripts/build-extension.sh`) *before* the command that loads the extension into Chrome. Update the Chrome loading command to point to the `dist/` directory instead of `src/`.
   - Depends On: [T2]
   - AC Ref: Run `npm run start`. Verify that the build process runs automatically and the extension loaded in the browser is the one from the `dist/` directory. [Validation Checklist: `npm run start` loads the built extension correctly]
