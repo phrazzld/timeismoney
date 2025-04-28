@@ -27,7 +27,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T1, T4]
   - AC Ref: Build the extension (`npm run build`) and load it (`npm run start`). Verify the extension icon appears correctly in the browser toolbar upon installation and updates dynamically if triggered by `setIcon`. [Validation Checklist: Icons load and update correctly]
 
-- [ ] T6: Implement Promise Error Rejection in `storage.js` Wrappers (Original Plan Item: cr-03)
+- [x] T6: Implement Promise Error Rejection in `storage.js` Wrappers (Original Plan Item: cr-03)
   - Action: Modify the promise wrapper functions in `src/utils/storage.js` for `chrome.storage.sync.get` and `chrome.storage.sync.set`. Inside the callback provided to the Chrome API, check for `chrome.runtime.lastError`. If it exists, call `reject(chrome.runtime.lastError)` for the promise returned by the wrapper function.
   - Depends On: [T1]
   - AC Ref: Review `storage.js` code changes. Unit tests for storage utilities should verify that errors are correctly rejected.
