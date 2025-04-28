@@ -1,8 +1,16 @@
+/**
+ * Popup UI controller module
+ * Handles toggle state management and user interactions for the popup UI
+ * @module popup/popup
+ */
+
 import { getSettings, saveSettings } from '../utils/storage.js';
 
 /**
  * Restores the enabled/disabled state of the extension toggle
  * Reads from Chrome storage and updates the UI accordingly
+ *
+ * @returns {Promise<void>} A promise that resolves when the UI is updated
  */
 const restoreOptions = () => {
   getSettings()
@@ -17,8 +25,10 @@ const restoreOptions = () => {
 /**
  * Event handler for the extension enable/disable toggle
  * Updates the storage with the new disabled state
+ * This triggers the background script to update tab icons accordingly
  *
- * @param {Event} event - The change event
+ * @param {Event} event - The change event from the toggle checkbox
+ * @returns {Promise<void>} A promise that resolves when settings are saved
  */
 function handleEnableToggle(event) {
   saveSettings({ disabled: !event.target.checked }).catch((error) => {
@@ -28,7 +38,10 @@ function handleEnableToggle(event) {
 
 /**
  * Event handler for options button click
- * Opens the options page
+ * Opens the extension's options page in a new tab
+ * Uses Chrome API to open the correct options page
+ *
+ * @returns {void}
  */
 function handleOptionsClick() {
   chrome.runtime.openOptionsPage();
@@ -37,6 +50,10 @@ function handleOptionsClick() {
 /**
  * Event handler for DOMContentLoaded event
  * Initializes the popup UI and sets up event listeners
+ * This is the main initialization function for the popup
+ *
+ * @param {Event} event - The DOMContentLoaded event
+ * @returns {void}
  */
 function handleDOMContentLoaded() {
   restoreOptions();

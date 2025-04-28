@@ -9,6 +9,9 @@ import { initTooltips } from './tooltip.js';
 
 /**
  * Loads localized messages for UI elements
+ * Sets text content for all labels and buttons using Chrome i18n API
+ *
+ * @returns {void}
  */
 const loadMessagesFromLocale = () => {
   document.getElementById('ext-desc').textContent = chrome.i18n.getMessage('extDesc');
@@ -29,7 +32,11 @@ const loadMessagesFromLocale = () => {
 };
 
 /**
- * Initialize the page when DOM is loaded
+ * Initialize the options page when DOM is loaded
+ * Sets up localization, form data, event listeners, and tooltips
+ * This is the main initialization function for the options page
+ *
+ * @returns {void}
  */
 const initialize = () => {
   // Load localized messages

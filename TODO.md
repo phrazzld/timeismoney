@@ -107,7 +107,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: None
   - AC Ref: Code review confirms comprehensive JSDoc coverage for the specified files/directories. JSDoc generates without errors/warnings for these files.
 
-- [ ] T22: Add/Improve JSDoc for UI Scripts (Options/Popup) (Original Plan Item: cr-13)
+- [x] T22: Add/Improve JSDoc for UI Scripts (Options/Popup) (Original Plan Item: cr-13)
   - Action: Review JS files in `src/options/` and `src/popup/`. Add or complete JSDoc blocks for all functions as described in T20.
   - Depends On: None
   - AC Ref: Code review confirms comprehensive JSDoc coverage for the specified directories. JSDoc generates without errors/warnings for these files.
