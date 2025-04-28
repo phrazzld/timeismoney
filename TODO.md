@@ -87,7 +87,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T1]
   - AC Ref: Code review confirms the module-level state variable is removed and state is passed via parameters or managed locally. Run existing tests for `amazonHandler.js` and verify they still pass after refactoring.
 
-- [ ] T18: Implement Robust Price Parsing for Locales (Original Plan Item: cr-14)
+- [x] T18: Implement Robust Price Parsing for Locales (Original Plan Item: cr-14)
   - Action: Research and select a robust parsing strategy (Option A: `Intl` APIs if suitable, Option B: Library, Option C: Enhanced Regex). Implement the chosen strategy in `src/content/priceFinder.js`, replacing the existing regex logic. Add or update unit tests with examples of various international currency formats (e.g., `1.234,56 €`, `$1,234.56`, `¥1234`, `£12.34`, `1 234,56 kr`).
   - Depends On: [T1]
   - AC Ref: Run unit tests and verify they pass for diverse currency formats. Manually test on websites known to use different formats (e.g., amazon.de, amazon.co.uk, amazon.jp) and verify prices are parsed and converted correctly. [Validation Checklist: Price conversion works on target sites (check multiple locales)]
