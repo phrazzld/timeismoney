@@ -42,7 +42,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T1, T4, T7]
   - AC Ref: Install the extension, change settings. Update the extension (e.g., reload via `npm run start`). Verify that the previously changed settings are retained and not overwritten by defaults. [Validation Checklist: Settings persist across updates]
 
-- [ ] T9: Implement Input Validation for 'Amount' in Options Form (Original Plan Item: cr-06)
+- [x] T9: Implement Input Validation for 'Amount' in Options Form (Original Plan Item: cr-06)
   - Action: In `src/options/options.html` (or equivalent), ensure the input field for the amount uses `<input type="number" min="0" step="any">`. In `src/options/formHandler.js` (`saveOptions` function), retrieve the amount value, parse it (e.g., `parseFloat`), and validate that it's a finite, positive number (>= 0) and potentially within a reasonable maximum range.
   - Depends On: [T2, T3]
   - AC Ref: Open the options page. Verify the amount input restricts non-numeric characters (browser behavior). Enter negative numbers, leave empty, enter text via devtools manipulation: verify saving is blocked and user feedback (e.g., message near field, field outline) indicates the error. Enter valid positive numbers (0, 1, 123.45): verify these are accepted for saving. [Validation Checklist: Options page saves valid input, rejects invalid input]

@@ -57,8 +57,17 @@ function saveOptions() {
   const status = document.getElementById('status');
 
   // Validate input is a number
-  if (isNaN(amountFloat)) {
-    status.textContent = chrome.i18n.getMessage('amountErr');
+  if (isNaN(amountFloat) || !rawAmount.trim()) {
+    status.textContent = chrome.i18n.getMessage('amountErr') || 'Please enter a valid amount.';
+    setTimeout(() => {
+      status.textContent = '';
+    }, 2000);
+    return;
+  }
+
+  // Validate input is finite
+  if (!isFinite(amountFloat)) {
+    status.textContent = chrome.i18n.getMessage('amountErr') || 'Please enter a valid amount.';
     setTimeout(() => {
       status.textContent = '';
     }, 2000);
@@ -71,6 +80,18 @@ function saveOptions() {
     const negativeErrMsg =
       chrome.i18n.getMessage('negativeAmountErr') || 'Amount must be non-negative.';
     status.textContent = chrome.i18n.getMessage('amountErr') + ' ' + negativeErrMsg;
+    setTimeout(() => {
+      status.textContent = '';
+    }, 2000);
+    return;
+  }
+
+  // Validate input is within reasonable range (less than 1 billion)
+  const MAX_AMOUNT = 1000000000; // 1 billion
+  if (amountFloat > MAX_AMOUNT) {
+    const maxAmountMsg =
+      chrome.i18n.getMessage('maxAmountErr') || 'Amount must be less than 1 billion.';
+    status.textContent = chrome.i18n.getMessage('amountErr') + ' ' + maxAmountMsg;
     setTimeout(() => {
       status.textContent = '';
     }, 2000);
