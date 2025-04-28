@@ -5,9 +5,13 @@ import { getSettings, saveSettings } from '../utils/storage.js';
  * Reads from Chrome storage and updates the UI accordingly
  */
 const restoreOptions = () => {
-  getSettings().then((settings) => {
-    document.getElementById('enabled').checked = !settings.disabled;
-  });
+  getSettings()
+    .then((settings) => {
+      document.getElementById('enabled').checked = !settings.disabled;
+    })
+    .catch((error) => {
+      console.error('Storage operation failed:', error);
+    });
 };
 
 /**
@@ -17,7 +21,9 @@ const restoreOptions = () => {
  * @param {Event} event - The change event
  */
 function handleEnableToggle(event) {
-  saveSettings({ disabled: !event.target.checked });
+  saveSettings({ disabled: !event.target.checked }).catch((error) => {
+    console.error('Storage operation failed:', error);
+  });
 }
 
 /**

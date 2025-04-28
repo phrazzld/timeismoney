@@ -22,6 +22,8 @@ function handleExtensionInstalled() {
     amount: '15.00',
     thousands: 'commas',
     decimal: 'dot',
+  }).catch((error) => {
+    console.error('Storage operation failed:', error);
   });
 }
 

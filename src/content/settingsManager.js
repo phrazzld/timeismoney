@@ -10,15 +10,20 @@ let disabledOnPage = true;
  * @returns {Promise<Object>} Promise that resolves to the current settings
  */
 export function initSettings(callback) {
-  return getSettings().then((settings) => {
-    if (!settings.disabled) {
-      callback(document.body, settings);
-      disabledOnPage = false;
-    } else {
-      disabledOnPage = true;
-    }
-    return settings;
-  });
+  return getSettings()
+    .then((settings) => {
+      if (!settings.disabled) {
+        callback(document.body, settings);
+        disabledOnPage = false;
+      } else {
+        disabledOnPage = true;
+      }
+      return settings;
+    })
+    .catch((error) => {
+      console.error('Storage operation failed:', error);
+      return { disabled: true }; // Safe default if settings can't be loaded
+    });
 }
 
 /**
@@ -47,13 +52,17 @@ export function handleVisibilityChange(callback) {
       // Error log removed - consider adding proper error handling in the future
       // or using chrome.runtime.lastError
     } else if (!document.hidden) {
-      getSettings().then((settings) => {
-        if (disabledOnPage !== settings.disabled) {
-          // Log removed to comply with linting rules
-          callback(document.body, settings);
-          disabledOnPage = settings.disabled;
-        }
-      });
+      getSettings()
+        .then((settings) => {
+          if (disabledOnPage !== settings.disabled) {
+            // Log removed to comply with linting rules
+            callback(document.body, settings);
+            disabledOnPage = settings.disabled;
+          }
+        })
+        .catch((error) => {
+          console.error('Storage operation failed:', error);
+        });
     }
   });
 }

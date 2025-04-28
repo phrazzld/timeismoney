@@ -32,7 +32,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T1]
   - AC Ref: Review `storage.js` code changes. Unit tests for storage utilities should verify that errors are correctly rejected.
 
-- [ ] T7: Add `.catch` Handlers for Storage Operations Callsites (Original Plan Item: cr-03)
+- [x] T7: Add `.catch` Handlers for Storage Operations Callsites (Original Plan Item: cr-03)
   - Action: Search the codebase (e.g., `content/index.js`, `options/formHandler.js`, `background/background.js`) for all calls to `getSettings()` and `saveSettings()`. Append a `.catch(error => { console.error('Storage operation failed:', error); /* Optional: Add user notification logic */ })` block to each promise chain where one is missing.
   - Depends On: [T6]
   - AC Ref: Review code changes to confirm `.catch` blocks are present on all relevant promise chains. Trigger a storage error (e.g., by exceeding quota in dev tools, or temporarily modifying `storage.js` to always reject) and verify the error is caught and logged to the console without causing an uncaught promise rejection. [Validation Checklist: No console errors during normal operation (related to uncaught promises)]
