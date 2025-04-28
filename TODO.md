@@ -62,7 +62,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T9, T10, T11]
   - AC Ref: Run `npm test`. Verify new tests covering invalid input scenarios pass. [Validation Checklist: All automated tests pass]
 
-- [ ] T13: Fix Options Window Closing Logic (Original Plan Item: cr-17)
+- [x] T13: Fix Options Window Closing Logic (Original Plan Item: cr-17)
   - Action: Modify `src/options/formHandler.js` (`saveOptions` function). Ensure `window.close()` is called *only* within the `.then()` block of a successful `saveSettings()` call (after validation in T11 has passed). Ensure the `.catch()` block for `saveSettings()` displays an error but does *not* call `window.close()`. Ensure validation failures also prevent `window.close()`.
   - Depends On: [T7, T11]
   - AC Ref: Test saving valid options: verify the window closes after saving. Test saving with invalid input (triggering validation errors): verify the window stays open and shows an error. Test saving under conditions that cause `saveSettings` to fail (if mockable/testable): verify the window stays open and shows a storage error. [Validation Checklist: Options page ... closes correctly]
