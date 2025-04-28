@@ -36,6 +36,11 @@ const optionalFiles = [
 ];
 
 // Check if manifest.json is valid
+/**
+ * Validates the manifest.json file for required fields and correct manifest version
+ *
+ * @returns {boolean} True if the manifest is valid, false otherwise
+ */
 function checkManifest() {
   console.log('Checking manifest.json...');
 
@@ -76,6 +81,11 @@ function checkManifest() {
 }
 
 // Check if all required files exist
+/**
+ * Verifies that all required extension files exist
+ *
+ * @returns {boolean} True if all required files exist, false otherwise
+ */
 function checkRequiredFiles() {
   console.log('Checking required files...');
 
@@ -98,6 +108,12 @@ function checkRequiredFiles() {
 }
 
 // Check if optional files exist
+/**
+ * Checks for the presence of optional extension files
+ * Warns about missing files but doesn't cause test failure
+ *
+ * @returns {boolean} Always returns true (optional files don't affect functionality)
+ */
 function checkOptionalFiles() {
   console.log('Checking optional files...');
 
@@ -122,6 +138,12 @@ function checkOptionalFiles() {
 }
 
 // Run all checks
+/**
+ * Runs all smoke tests to validate the extension structure
+ * Checks manifest.json and verifies all required files exist
+ *
+ * @returns {number} 0 if tests pass, 1 if tests fail
+ */
 function runSmokeTest() {
   console.log('Running smoke test for Time Is Money extension...');
 

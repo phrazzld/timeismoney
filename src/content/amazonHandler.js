@@ -10,13 +10,17 @@
 /**
  * Creates a new Amazon price state object
  *
- * @returns {Object} A new price state object with methods
+ * @returns {object} A new price state object with methods
  */
 export const createPriceState = () => {
   return {
     currency: null,
     whole: null,
     active: false,
+    /**
+     * Resets the price state to its initial values
+     * Used to start a new price component scan
+     */
     reset() {
       this.currency = null;
       this.whole = null;
@@ -47,7 +51,7 @@ export const isAmazonPriceNode = (node) => {
  *
  * @param {Node} node - Amazon price component node
  * @param {Function} callback - Callback to apply to complete price node
- * @param {Object} state - The price state object to use
+ * @param {object} state - The price state object to use
  * @returns {boolean} True if node was processed as Amazon price component
  */
 export const handleAmazonPrice = (node, callback, state) => {
@@ -101,7 +105,7 @@ export const handleAmazonPrice = (node, callback, state) => {
  *
  * @param {Node} node - DOM node to process
  * @param {Function} callback - Callback to apply to complete price nodes
- * @param {Object} [priceState] - Optional price state object to use for tracking
+ * @param {object} [priceState] - Optional price state object to use for tracking
  * @returns {boolean} True if node was handled as Amazon price component
  */
 export const processIfAmazon = (node, callback, priceState) => {

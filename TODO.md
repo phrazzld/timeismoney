@@ -112,7 +112,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: None
   - AC Ref: Code review confirms comprehensive JSDoc coverage for the specified directories. JSDoc generates without errors/warnings for these files.
 
-- [ ] T23: Configure and Enforce JSDoc Linting (Original Plan Item: cr-13)
+- [x] T23: Configure and Enforce JSDoc Linting (Original Plan Item: cr-13)
   - Action: Install `eslint-plugin-jsdoc` (`npm install --save-dev eslint-plugin-jsdoc`). Configure ESLint rules (`.eslintrc.js` or similar) to require JSDoc comments (e.g., using `plugin:jsdoc/recommended` or specific rules like `jsdoc/require-jsdoc`, `jsdoc/require-param-description`, `jsdoc/require-returns-description`). Run `eslint . --fix` or manually address all reported JSDoc linting errors/warnings across the codebase.
   - Depends On: [T20, T21, T22]
   - AC Ref: ESLint configuration includes JSDoc rules. Running `npm run lint` (or equivalent ESLint command) passes without any JSDoc-related errors. [Validation Checklist: Static analysis (ESLint, Prettier) passes]

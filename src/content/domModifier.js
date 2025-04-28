@@ -1,5 +1,6 @@
 /**
  * DOM Modifier module for applying and reverting price conversions.
+ *
  * @module content/domModifier
  */
 
@@ -143,8 +144,8 @@ export const revertAll = (root) => {
  * Applies conversions to the DOM based on the current settings
  *
  * @param {Node} textNode - The DOM text node to process
- * @param {Object} priceMatch - Object with pattern and other price matching info
- * @param {Object} conversionInfo - Info needed for the conversion
+ * @param {object} priceMatch - Object with pattern and other price matching info
+ * @param {object} conversionInfo - Info needed for the conversion
  * @param {boolean} shouldRevert - Whether to revert conversions instead of applying them
  * @returns {boolean} True if modifications were made, false otherwise
  */
@@ -173,6 +174,12 @@ export const processTextNode = (textNode, priceMatch, conversionInfo, shouldReve
       }
 
       // For applying conversions, we use the applyConversion function
+      /**
+       * Converts a price string to a display string with time equivalents
+       *
+       * @param {string} priceString - The original price string to convert
+       * @returns {string} The formatted price string with time equivalent
+       */
       const convertFn = (priceString) => {
         try {
           return conversionInfo.convertFn(
