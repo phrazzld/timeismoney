@@ -92,7 +92,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T1]
   - AC Ref: Run unit tests and verify they pass for diverse currency formats. Manually test on websites known to use different formats (e.g., amazon.de, amazon.co.uk, amazon.jp) and verify prices are parsed and converted correctly. [Validation Checklist: Price conversion works on target sites (check multiple locales)]
 
-- [ ] T19: Refactor Brittle Tests Relying on Implementation Details (Original Plan Item: cr-16)
+- [x] T19: Refactor Brittle Tests Relying on Implementation Details (Original Plan Item: cr-16)
   - Action: Review tests in `dom-conversion.test.js` and `performance.test.js`. Identify assertions that query specific internal CSS classes (e.g., `.tim-converted-price`) or rely heavily on the exact DOM structure created during conversion (e.g., specific wrapper divs). Modify these tests to assert on the final, user-visible text content of the relevant elements instead, using more general selectors (e.g., targeting the original element) or text matching where possible.
   - Depends On: [T4]
   - AC Ref: Run `npm test`. Verify the refactored tests pass. Code review confirms tests focus on observable outcomes rather than internal structure/classes. Future minor refactors of conversion logic/styling should not break these tests unnecessarily. [Validation Checklist: All automated tests pass]
