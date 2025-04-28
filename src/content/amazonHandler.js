@@ -7,16 +7,22 @@
  * @module content/amazonHandler
  */
 
-// Track price components during DOM traversal
-const priceState = {
-  currency: null,
-  whole: null,
-  active: false,
-  reset() {
-    this.currency = null;
-    this.whole = null;
-    this.active = false;
-  },
+/**
+ * Creates a new Amazon price state object
+ *
+ * @returns {Object} A new price state object with methods
+ */
+export const createPriceState = () => {
+  return {
+    currency: null,
+    whole: null,
+    active: false,
+    reset() {
+      this.currency = null;
+      this.whole = null;
+      this.active = false;
+    },
+  };
 };
 
 /**
@@ -41,9 +47,10 @@ export const isAmazonPriceNode = (node) => {
  *
  * @param {Node} node - Amazon price component node
  * @param {Function} callback - Callback to apply to complete price node
+ * @param {Object} state - The price state object to use
  * @returns {boolean} True if node was processed as Amazon price component
  */
-export const handleAmazonPrice = (node, callback) => {
+export const handleAmazonPrice = (node, callback, state) => {
   if (!node || !node.classList) return false;
 
   const classes = node.classList;
@@ -51,34 +58,34 @@ export const handleAmazonPrice = (node, callback) => {
 
   switch (className) {
     case 'sx-price-currency':
-      priceState.currency = node.firstChild.nodeValue.toString();
+      state.currency = node.firstChild.nodeValue.toString();
       node.firstChild.nodeValue = null; // Clear the node value
-      priceState.active = true;
+      state.active = true;
       return true;
 
     case 'sx-price-whole':
-      if (priceState.active && priceState.currency !== null) {
+      if (state.active && state.currency !== null) {
         // Combine currency and whole part
-        const combinedPrice = priceState.currency + node.firstChild.nodeValue.toString();
+        const combinedPrice = state.currency + node.firstChild.nodeValue.toString();
         node.firstChild.nodeValue = combinedPrice;
 
         // Apply the callback to the whole part node (which now contains the full price)
         callback(node.firstChild);
 
         // Reset currency since we've used it
-        priceState.whole = node.firstChild.nodeValue.toString();
-        priceState.currency = null;
+        state.whole = node.firstChild.nodeValue.toString();
+        state.currency = null;
         return true;
       }
       return false;
 
     case 'sx-price-fractional':
-      if (priceState.active) {
+      if (state.active) {
         // Clear the fractional part as it's already been processed with the whole part
         node.firstChild.nodeValue = null;
 
         // Reset the price state after completing a price
-        priceState.reset();
+        state.reset();
         return true;
       }
       return false;
@@ -94,17 +101,21 @@ export const handleAmazonPrice = (node, callback) => {
  *
  * @param {Node} node - DOM node to process
  * @param {Function} callback - Callback to apply to complete price nodes
+ * @param {Object} [priceState] - Optional price state object to use for tracking
  * @returns {boolean} True if node was handled as Amazon price component
  */
-export const processIfAmazon = (node, callback) => {
+export const processIfAmazon = (node, callback, priceState) => {
+  // Create a new state object if none was provided
+  const state = priceState || createPriceState();
+
   if (!isAmazonPriceNode(node)) {
     // If we've been tracking Amazon price components but found a non-Amazon node,
     // reset the state to avoid incomplete processing
-    if (priceState.active) {
-      priceState.reset();
+    if (state.active) {
+      state.reset();
     }
     return false;
   }
 
-  return handleAmazonPrice(node, callback);
+  return handleAmazonPrice(node, callback, state);
 };

@@ -4,7 +4,7 @@
  * @module content/domScanner
  */
 
-import { processIfAmazon } from './amazonHandler.js';
+import { processIfAmazon, createPriceState } from './amazonHandler.js';
 import { CONVERTED_PRICE_CLASS } from '../utils/constants.js';
 import { getSettings } from '../utils/storage.js';
 
@@ -62,6 +62,9 @@ export const walk = (node, callback, options = {}) => {
       return;
     }
 
+    // Create a local price state for this walk traversal
+    const amazonPriceState = createPriceState();
+
     let child, next;
 
     try {
@@ -75,9 +78,10 @@ export const walk = (node, callback, options = {}) => {
               next = child.nextSibling;
 
               // Handle Amazon price components with the dedicated handler
+              // Pass the local price state to maintain state between sibling nodes
               let amazonProcessed = false;
               try {
-                amazonProcessed = processIfAmazon(child, callback);
+                amazonProcessed = processIfAmazon(child, callback, amazonPriceState);
               } catch (amazonError) {
                 console.error(
                   'TimeIsMoney: Error in Amazon price processing:',

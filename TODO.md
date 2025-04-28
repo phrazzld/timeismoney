@@ -82,7 +82,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T15]
   - AC Ref: Test on pages with very frequent DOM mutations (e.g., infinite scroll, live feeds). Use the browser's memory profiler to monitor the content script's memory usage over time. Verify that memory usage remains relatively stable and does not grow indefinitely. Check console for warnings if implemented.
 
-- [ ] T17: Refactor Amazon Handler to Remove Global State (Original Plan Item: cr-12)
+- [x] T17: Refactor Amazon Handler to Remove Global State (Original Plan Item: cr-12)
   - Action: Edit `src/content/amazonHandler.js`. Remove the module-level global variable (`priceState`). Modify the main `walk` function (or equivalent entry point) to initialize and manage any necessary state locally within its scope (e.g., in an object passed recursively). Pass required state/context explicitly as arguments to any helper functions called during DOM traversal. Update associated unit tests to provide necessary context/state when testing functions in isolation.
   - Depends On: [T1]
   - AC Ref: Code review confirms the module-level state variable is removed and state is passed via parameters or managed locally. Run existing tests for `amazonHandler.js` and verify they still pass after refactoring.
