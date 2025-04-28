@@ -37,7 +37,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T6]
   - AC Ref: Review code changes to confirm `.catch` blocks are present on all relevant promise chains. Trigger a storage error (e.g., by exceeding quota in dev tools, or temporarily modifying `storage.js` to always reject) and verify the error is caught and logged to the console without causing an uncaught promise rejection. [Validation Checklist: No console errors during normal operation (related to uncaught promises)]
 
-- [ ] T8: Prevent Settings Overwrite on Extension Update (Original Plan Item: cr-09)
+- [x] T8: Prevent Settings Overwrite on Extension Update (Original Plan Item: cr-09)
   - Action: Modify the `handleExtensionInstalled` function (or equivalent `chrome.runtime.onInstalled` listener) in `src/background/background.js`. Before potentially calling `saveSettings(defaultSettings)`, call `getSettings()`. In the `.then()` block, check if essential settings keys (e.g., `amount`, `disabled`) already exist in the retrieved settings object (check for `undefined` or use `hasOwnProperty`). Only call `saveSettings(defaultSettings)` if these keys are missing. Optionally, add specific logic based on `details.reason === 'install'` vs `'update'`.
   - Depends On: [T1, T4, T7]
   - AC Ref: Install the extension, change settings. Update the extension (e.g., reload via `npm run start`). Verify that the previously changed settings are retained and not overwritten by defaults. [Validation Checklist: Settings persist across updates]

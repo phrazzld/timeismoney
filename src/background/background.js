@@ -11,10 +11,16 @@ function handleActionClick() {
 /**
  * Event handler for extension installation or update
  * Sets up default options and opens the options page
+ * Preserves existing settings during updates
+ *
+ * @param {Object} details - Installation details from Chrome
+ * @param {string} details.reason - Reason for installation ('install' or 'update')
  */
-function handleExtensionInstalled() {
+function handleExtensionInstalled(details) {
   chrome.runtime.openOptionsPage();
-  saveSettings({
+
+  // Default settings
+  const defaultSettings = {
     disabled: false,
     currencySymbol: '$',
     currencyCode: 'USD',
@@ -22,9 +28,42 @@ function handleExtensionInstalled() {
     amount: '15.00',
     thousands: 'commas',
     decimal: 'dot',
-  }).catch((error) => {
-    console.error('Storage operation failed:', error);
-  });
+  };
+
+  // For new installations, use defaults
+  if (details.reason === 'install') {
+    saveSettings(defaultSettings).catch((error) => {
+      console.error('Storage operation failed:', error);
+    });
+    return;
+  }
+
+  // For updates, preserve existing settings
+  if (details.reason === 'update') {
+    getSettings()
+      .then((existingSettings) => {
+        // Create a merged settings object
+        const mergedSettings = {};
+
+        // Only fill in values that don't exist
+        for (const key in defaultSettings) {
+          mergedSettings[key] =
+            existingSettings[key] !== undefined ? existingSettings[key] : defaultSettings[key];
+        }
+
+        // Only save if there are differences
+        if (JSON.stringify(existingSettings) !== JSON.stringify(mergedSettings)) {
+          return saveSettings(mergedSettings);
+        }
+      })
+      .catch((error) => {
+        console.error('Storage operation failed:', error);
+        // If we can't read settings, use defaults as fallback
+        saveSettings(defaultSettings).catch((error) => {
+          console.error('Storage operation failed:', error);
+        });
+      });
+  }
 }
 
 // Register event listeners
