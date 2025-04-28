@@ -1,6 +1,7 @@
 /**
  * Unified Converter module for converting prices to equivalent working time.
  * Combines functionality from the original converter.js and priceConverter.js.
+ *
  * @module utils/converter
  */
 
@@ -43,10 +44,10 @@ export function calculateHourlyWage(frequency, amount) {
  * Converts a monetary amount to equivalent time based on wage settings
  *
  * @param {number} priceValue - The price to convert
- * @param {Object|number} wageSettings - Either an object containing wage settings or directly the hourly wage
+ * @param {object | number} wageSettings - Either an object containing wage settings or directly the hourly wage
  * @param {number} [wageSettings.amount] - Hourly wage amount
  * @param {string} [wageSettings.frequency] - Wage frequency (hourly, yearly)
- * @returns {Object} Object containing hours and minutes
+ * @returns {object} Object containing hours and minutes
  */
 export function convertToTime(priceValue, wageSettings) {
   let hourlyRate;
@@ -113,7 +114,7 @@ export function formatTimeCompact(hours, minutes) {
  * @param {string} originalPrice - The original price string
  * @param {number} hours - Number of hours
  * @param {number} minutes - Number of minutes
- * @param {boolean} [useCompactFormat=true] - Whether to use compact formatting (5h 30m) or verbose (5 hours, 30 minutes)
+ * @param {boolean} [useCompactFormat] - Whether to use compact formatting (5h 30m) or verbose (5 hours, 30 minutes)
  * @returns {string} Combined string with original price and time (e.g., "$10 (2h 30m)")
  */
 export function formatPriceWithTime(originalPrice, hours, minutes, useCompactFormat = true) {
@@ -128,13 +129,13 @@ export function formatPriceWithTime(originalPrice, hours, minutes, useCompactFor
  * Main function to convert a price string to time representation
  *
  * @param {string} priceString - The original price string
- * @param {Object} formatters - Formatting regex patterns
+ * @param {object} formatters - Formatting regex patterns
  * @param {RegExp} formatters.thousands - Regex for thousands delimiter
  * @param {RegExp} formatters.decimal - Regex for decimal delimiter
- * @param {Object} wageInfo - Information about wage
+ * @param {object} wageInfo - Information about wage
  * @param {string} wageInfo.frequency - Wage frequency ('hourly' or 'yearly')
  * @param {string|number} wageInfo.amount - Wage amount as string or number
- * @param {boolean} [useCompactFormat=true] - Whether to use compact formatting (5h 30m) or verbose (5 hours, 30 minutes)
+ * @param {boolean} [useCompactFormat] - Whether to use compact formatting (5h 30m) or verbose (5 hours, 30 minutes)
  * @returns {string} Formatted string with price and equivalent working time
  */
 export function convertPriceToTimeString(

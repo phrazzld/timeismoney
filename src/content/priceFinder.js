@@ -1,6 +1,7 @@
 /**
  * Price Finder module for detecting and processing price strings.
  * Enhanced to handle international currency formats more robustly.
+ *
  * @module content/priceFinder
  */
 
@@ -74,7 +75,7 @@ export const buildDecimalString = (delimiter) => {
  *
  * @param {string} currencySymbol - The currency symbol (e.g., '$')
  * @param {string} currencyCode - The currency code (e.g., 'USD')
- * @returns {Object} Locale format information
+ * @returns {object} Locale format information
  */
 export const getLocaleFormat = (currencySymbol, currencyCode) => {
   const cacheKey = `${currencySymbol}|${currencyCode}`;
@@ -212,7 +213,7 @@ export const buildReverseMatchPattern = (
  * This helps improve price detection for users in different regions
  *
  * @param {string} text - Sample text containing potential prices
- * @returns {Object} The detected format settings or null if no format detected
+ * @returns {object} The detected format settings or null if no format detected
  */
 export const detectFormatFromText = (text) => {
   if (!text || typeof text !== 'string') return null;
@@ -246,13 +247,13 @@ export const detectFormatFromText = (text) => {
  * Enhanced to support more international formats
  *
  * @param {string} text - The text to search for prices
- * @param {Object} formatSettings - Settings for price formatting
+ * @param {object} formatSettings - Settings for price formatting
  * @param {string} formatSettings.currencySymbol - The currency symbol (e.g., '$')
  * @param {string} formatSettings.currencyCode - The currency code (e.g., 'USD')
  * @param {string} formatSettings.thousands - The thousands delimiter type ('commas' or 'spacesAndDots')
  * @param {string} formatSettings.decimal - The decimal delimiter type ('dot' or 'comma')
  * @param {boolean} formatSettings.isReverseSearch - If true, search for prices with time annotations
- * @returns {Object} Object with matches and regex patterns
+ * @returns {object} Object with matches and regex patterns
  */
 export const findPrices = (text, formatSettings) => {
   if (!text || !formatSettings) return null;
@@ -304,8 +305,8 @@ export const findPrices = (text, formatSettings) => {
  * Enhanced to handle international formats
  *
  * @param {string} text - Text containing a price
- * @param {Object} [formatSettings] - Optional format settings to use
- * @returns {Object|null} Price information object or null if no valid price found
+ * @param {object} [formatSettings] - Optional format settings to use
+ * @returns {object | null} Price information object or null if no valid price found
  */
 export const getPriceInfo = (text, formatSettings = null) => {
   if (!text) return null;
@@ -348,7 +349,9 @@ export const getPriceInfo = (text, formatSettings = null) => {
   let numericPart = match;
 
   // Remove currency symbols
-  const formatGroup = priceMatch.formatInfo ? CURRENCY_FORMATS[priceMatch.formatInfo.localeId] : null;
+  const formatGroup = priceMatch.formatInfo
+    ? CURRENCY_FORMATS[priceMatch.formatInfo.localeId]
+    : null;
   const currencySymbols = formatGroup?.currencySymbols || [];
   for (const symbol of currencySymbols) {
     numericPart = numericPart.replace(

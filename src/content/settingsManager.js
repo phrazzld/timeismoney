@@ -1,6 +1,7 @@
 /**
  * Settings Manager for content scripts
  * Handles initialization, updates, and visibility changes for extension settings
+ *
  * @module content/settingsManager
  */
 
@@ -9,6 +10,7 @@ import { getSettings, onSettingsChanged } from '../utils/storage.js';
 /**
  * Tracks whether the extension is currently disabled on the page
  * This state is used to determine if conversions should be applied or reverted
+ *
  * @type {boolean}
  * @private
  */
@@ -20,8 +22,8 @@ let disabledOnPage = true;
  *
  * @param {Function} callback - Function to call with current settings and DOM root
  * @param {Node} callback.root - The root DOM node (usually document.body)
- * @param {Object} callback.settings - Current extension settings
- * @returns {Promise<Object>} Promise that resolves to the current settings
+ * @param {object} callback.settings - Current extension settings
+ * @returns {Promise<object>} Promise that resolves to the current settings
  * @throws {Error} Will throw if there's an issue fetching settings (handled in catch block)
  */
 export function initSettings(callback) {
@@ -44,34 +46,44 @@ export function initSettings(callback) {
 /**
  * Sets up a listener for settings changes
  * Registers a handler that reacts to changes in the extension's settings
- * Particularly focused on the 'disabled' state changes
+ * Focused on the 'disabled' state changes and performance-related settings like debounceIntervalMs
  *
  * @param {Function} callback - Function to call when settings change
  * @param {Node} callback.root - The root DOM node (usually document.body)
- * @param {Object} callback.updatedSettings - Object containing the updated settings
+ * @param {object} callback.updatedSettings - Object containing the updated settings
  * @returns {void}
  */
 export function onSettingsChange(callback) {
   onSettingsChanged((updatedSettings) => {
-    if ('disabled' in updatedSettings && !document.hidden) {
-      // Log removed to comply with linting rules
+    if (
+      !document.hidden &&
+      ('disabled' in updatedSettings || 'debounceIntervalMs' in updatedSettings)
+    ) {
+      // Call the callback when disabled state or debounce interval changes
       callback(document.body, updatedSettings);
-      disabledOnPage = updatedSettings.disabled;
+
+      // Update the disabled state if it was changed
+      if ('disabled' in updatedSettings) {
+        disabledOnPage = updatedSettings.disabled;
+      }
     }
   });
 }
 
 /**
  * Handles visibility change events (tab changes)
- * Re-applies settings when a tab becomes visible if disabled state has changed
+ * Re-applies settings when a tab becomes visible if important settings have changed
  * Ensures consistent behavior when users switch between tabs
  *
  * @param {Function} callback - Function to call to process the page when settings changed
  * @param {Node} callback.root - The root DOM node (usually document.body)
- * @param {Object} callback.settings - Current extension settings
+ * @param {object} callback.settings - Current extension settings
  * @returns {void}
  */
 export function handleVisibilityChange(callback) {
+  // Keep track of the last known debounce interval for comparison
+  let lastKnownDebounceInterval = null;
+
   document.addEventListener('visibilitychange', () => {
     if (!isValidChromeRuntime()) {
       // Error log removed - consider adding proper error handling in the future
@@ -79,10 +91,22 @@ export function handleVisibilityChange(callback) {
     } else if (!document.hidden) {
       getSettings()
         .then((settings) => {
-          if (disabledOnPage !== settings.disabled) {
-            // Log removed to comply with linting rules
-            callback(document.body, settings);
+          // Check if important settings have changed
+          const disabledChanged = disabledOnPage !== settings.disabled;
+          const debounceChanged =
+            lastKnownDebounceInterval !== null &&
+            lastKnownDebounceInterval !== settings.debounceIntervalMs;
+
+          if (disabledChanged || debounceChanged) {
+            // Update the tracked settings
             disabledOnPage = settings.disabled;
+            lastKnownDebounceInterval = settings.debounceIntervalMs;
+
+            // Process the page with the current settings
+            callback(document.body, settings);
+          } else {
+            // Always update the tracked debounce interval even if we don't call the callback
+            lastKnownDebounceInterval = settings.debounceIntervalMs;
           }
         })
         .catch((error) => {

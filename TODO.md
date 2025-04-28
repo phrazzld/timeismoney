@@ -117,7 +117,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T20, T21, T22]
   - AC Ref: ESLint configuration includes JSDoc rules. Running `npm run lint` (or equivalent ESLint command) passes without any JSDoc-related errors. [Validation Checklist: Static analysis (ESLint, Prettier) passes]
 
-- [ ] T24: Investigate and Potentially Tune Mutation Observer Debounce (Original Plan Item: cr-15)
+- [x] T24: Investigate and Potentially Tune Mutation Observer Debounce (Original Plan Item: cr-15)
   - Action: Benchmark conversion performance and reliability on known highly dynamic websites (e.g., infinite scroll feeds, sites with frequent XHR updates). If significant lag or missed conversions are observed and attributable to the fixed debounce: implement Option A (add a "Debounce Interval (ms)" setting to the options page, read this value from settings in `domScanner.js`) or research Option B (adaptive debounce/throttle - potentially defer if complex). Validate that the chosen solution improves performance/reliability on the problematic sites without degrading performance on static pages.
   - Depends On: [T16]
   - AC Ref: Conversion performance and reliability are deemed acceptable on a range of tested dynamic websites based on benchmarks. If changes were made (e.g., configurable debounce), verify the setting works and improves the situation on problematic sites. [Validation Checklist: Performance acceptable on dynamic pages]

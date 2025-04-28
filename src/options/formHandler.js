@@ -1,6 +1,7 @@
 /**
  * Form Handler for options page
  * Handles loading, validating, and saving form data
+ *
  * @module options/formHandler
  */
 
@@ -21,6 +22,7 @@ export async function loadForm() {
     loadSavedOption('amount', items.amount, items.decimal);
     loadSavedOption('thousands', items.thousands);
     loadSavedOption('decimal', items.decimal);
+    loadSavedOption('debounce-interval', items.debounceIntervalMs);
 
     // Initialize formatting display
     document.getElementById('formatting').style.display = 'none';
@@ -45,7 +47,7 @@ export function setupListeners() {
  * @param {number} timeout - Time in ms before clearing the message
  * @returns {boolean} Always returns false for use in validation functions
  */
-function showError(status, message, timeout = 2000) {
+export function showError(status, message, timeout = 2000) {
   status.textContent = message;
   setTimeout(() => {
     status.textContent = '';
@@ -60,7 +62,7 @@ function showError(status, message, timeout = 2000) {
  * @param {HTMLElement} status - Status element for error messages
  * @returns {boolean} True if valid, false otherwise
  */
-function validateCurrencySymbol(symbol, status) {
+export function validateCurrencySymbol(symbol, status) {
   // Validate currency symbol is not empty
   if (!symbol) {
     return showError(
@@ -89,7 +91,7 @@ function validateCurrencySymbol(symbol, status) {
  * @param {HTMLElement} status - Status element for error messages
  * @returns {boolean} True if valid, false otherwise
  */
-function validateCurrencyCode(code, status) {
+export function validateCurrencyCode(code, status) {
   // Validate currency code is not empty
   if (!code) {
     return showError(status, chrome.i18n.getMessage('codeErr') || 'Please enter a currency code.');
@@ -116,7 +118,7 @@ function validateCurrencyCode(code, status) {
  * @param {HTMLElement} status - Status element for error messages
  * @returns {boolean} True if valid, false otherwise
  */
-function validateAmount(rawAmount, amountFloat, status) {
+export function validateAmount(rawAmount, amountFloat, status) {
   // Validate input is a number
   if (isNaN(amountFloat) || !rawAmount.trim()) {
     return showError(status, chrome.i18n.getMessage('amountErr') || 'Please enter a valid amount.');
@@ -151,7 +153,7 @@ function validateAmount(rawAmount, amountFloat, status) {
  * Shows success message and closes the options page
  * All validation is performed upfront before any processing
  */
-function saveOptions() {
+export function saveOptions() {
   // Get form values
   const currencySymbol = document.getElementById('currency-symbol').value.trim();
   const currencyCode = document.getElementById('currency-code').value.trim().toUpperCase();
@@ -159,6 +161,7 @@ function saveOptions() {
   const rawAmount = document.getElementById('amount').value;
   const thousands = document.getElementById('thousands').value;
   const decimal = document.getElementById('decimal').value;
+  const debounceIntervalStr = document.getElementById('debounce-interval').value;
   const status = document.getElementById('status');
 
   // Normalize and parse amount for validation
@@ -169,13 +172,17 @@ function saveOptions() {
   if (
     !validateCurrencySymbol(currencySymbol, status) ||
     !validateCurrencyCode(currencyCode, status) ||
-    !validateAmount(rawAmount, amountFloat, status)
+    !validateAmount(rawAmount, amountFloat, status) ||
+    !validateDebounceInterval(debounceIntervalStr, status)
   ) {
     return; // Validation failed, don't proceed with saving
   }
 
   // Format amount to 2 decimal places
   const amount = amountFloat.toFixed(2);
+
+  // Parse debounce interval (use default 200ms if empty)
+  const debounceIntervalMs = debounceIntervalStr.trim() ? parseInt(debounceIntervalStr, 10) : 200;
 
   // All validation passed, save settings
   saveSettings({
@@ -185,6 +192,7 @@ function saveOptions() {
     amount,
     thousands,
     decimal,
+    debounceIntervalMs,
   })
     .then(() => {
       status.textContent = chrome.i18n.getMessage('saveSuccess');
@@ -248,4 +256,49 @@ function formatIncomeAmount(x, decimal) {
       .replace('.', ',')
       .replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   }
+}
+
+/**
+ * Validates a debounce interval value
+ *
+ * @param {string} intervalStr - Raw interval string from input
+ * @param {HTMLElement} status - Status element for error messages
+ * @returns {boolean} True if valid, false otherwise
+ */
+export function validateDebounceInterval(intervalStr, status) {
+  // Empty input is valid, will use default value
+  if (!intervalStr.trim()) {
+    return true;
+  }
+
+  // Parse interval to integer
+  const interval = parseInt(intervalStr, 10);
+
+  // Validate input is a number
+  if (isNaN(interval)) {
+    return showError(
+      status,
+      chrome.i18n.getMessage('debounceIntervalErr') || 'Please enter a valid debounce interval.'
+    );
+  }
+
+  // Validate input is finite
+  if (!isFinite(interval)) {
+    return showError(
+      status,
+      chrome.i18n.getMessage('debounceIntervalErr') || 'Please enter a valid debounce interval.'
+    );
+  }
+
+  // Validate input is within range (50-5000ms)
+  const MIN_INTERVAL = 50;
+  const MAX_INTERVAL = 5000;
+  if (interval < MIN_INTERVAL || interval > MAX_INTERVAL) {
+    const rangeErrMsg =
+      chrome.i18n.getMessage('debounceRangeErr') ||
+      `Interval must be between ${MIN_INTERVAL} and ${MAX_INTERVAL}ms.`;
+    return showError(status, rangeErrMsg);
+  }
+
+  return true;
 }

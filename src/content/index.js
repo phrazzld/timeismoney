@@ -29,7 +29,7 @@ import { CONVERTED_PRICE_CLASS } from '../utils/constants.js';
  * based on the provided settings.
  *
  * @param {Node} root - The root node to start processing from (usually document.body)
- * @param {Object} [settings] - Optional settings object if already loaded
+ * @param {object} [settings] - Optional settings object if already loaded
  * @param {boolean} [settings.disabled] - Whether the extension is disabled
  * @param {string} [settings.currencySymbol] - Currency symbol to use (e.g., "$")
  * @param {string} [settings.currencyCode] - Currency code to use (e.g., "USD")
@@ -59,18 +59,36 @@ function processPage(root, settings) {
  *
  * @param {Node} root - The root node to observe (usually document.body)
  * @param {Function} callback - The callback function to process nodes
+ * @param {object} settings - Extension settings including debounce interval
  * @returns {void}
  * @throws {Error} Logs errors but doesn't throw to prevent breaking page functionality
  */
-function initDomObserver(root, callback) {
+function initDomObserver(root, callback, settings) {
   try {
     if (!root) {
       console.error('TimeIsMoney: Cannot initialize observer with invalid root node');
       return;
     }
 
-    // Start observing DOM changes
-    startObserver(root, callback);
+    // Get debounce interval from settings, fallback to default value of 200ms
+    let debounceInterval = 200;
+
+    // Try to parse the debounce interval from settings
+    if (settings && 'debounceIntervalMs' in settings) {
+      const parsedInterval = parseInt(settings.debounceIntervalMs, 10);
+      if (!isNaN(parsedInterval) && parsedInterval > 0) {
+        debounceInterval = parsedInterval;
+      } else {
+        console.warn('TimeIsMoney: Invalid debounce interval in settings, using default 200ms');
+      }
+    }
+
+    // Start observing DOM changes with the configured debounce interval
+    startObserver(root, callback, {}, debounceInterval);
+
+    console.log(
+      `TimeIsMoney: DOM observer initialized with ${debounceInterval}ms debounce interval`
+    );
   } catch (error) {
     console.error('TimeIsMoney: Error initializing DOM observer:', error.message, error.stack);
   }
@@ -81,10 +99,25 @@ initSettings((root, settings) => {
   // Process the page initially
   processPage(root, settings);
 
-  // Set up the mutation observer for dynamic content
-  initDomObserver(root, (textNode) => convert(textNode, settings));
+  // Set up the mutation observer for dynamic content, passing the settings to use the configured debounce interval
+  initDomObserver(root, (textNode) => convert(textNode, settings), settings);
 });
-onSettingsChange(processPage);
+
+// Handle settings changes
+onSettingsChange((root, updatedSettings) => {
+  // Process the page with updated settings
+  processPage(root, updatedSettings);
+
+  // If debounce interval changed, reinitialize the observer with the new value
+  if ('debounceIntervalMs' in updatedSettings) {
+    console.log('TimeIsMoney: Debounce interval changed, reinitializing observer');
+    // Stop the existing observer
+    stopObserver();
+    // Initialize a new observer with the updated debounce interval
+    initDomObserver(root, (textNode) => convert(textNode, updatedSettings), updatedSettings);
+  }
+});
+
 handleVisibilityChange(processPage);
 
 /**
@@ -112,7 +145,7 @@ window.addEventListener('beforeunload', handleUnload);
  * Or reverts previously converted text back to original form
  *
  * @param {Node} textNode - The DOM text node to process
- * @param {Object} [preloadedSettings] - Optional settings object if already loaded
+ * @param {object} [preloadedSettings] - Optional settings object if already loaded
  * @param {boolean} [preloadedSettings.disabled] - Whether the extension is disabled
  * @param {string} [preloadedSettings.currencySymbol] - Currency symbol to use
  * @param {string} [preloadedSettings.currencyCode] - Currency code to use

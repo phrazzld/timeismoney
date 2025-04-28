@@ -58,7 +58,7 @@ describe('Options Form Validation', () => {
     test('window.close() is not called when validation fails', () => {
       // Import the saveOptions function
       const { saveOptions } = require('../../options/formHandler');
-      
+
       // Mock all the DOM elements and values
       document.getElementById = jest.fn((id) => {
         if (id === 'currency-symbol') return { value: '' }; // Invalid value to trigger validation error
@@ -70,17 +70,17 @@ describe('Options Form Validation', () => {
         if (id === 'status') return { textContent: '' };
         return { value: '' };
       });
-      
+
       // Spy on window.close
       const originalWindowClose = window.close;
       window.close = jest.fn();
-      
+
       // Call saveOptions
       saveOptions();
-      
+
       // Expect window.close was not called due to validation failure
       expect(window.close).not.toHaveBeenCalled();
-      
+
       // Restore window.close
       window.close = originalWindowClose;
     });

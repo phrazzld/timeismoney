@@ -36,6 +36,10 @@
             <option id="comma" value="comma"></option>
           </select>
         </div>
+        <div id="debounce-wrapper" class="advanced-option">
+          <p id="debounce-label"></p>
+          <input type="number" id="debounce-interval" min="50" max="5000" step="50" title="Delay in milliseconds after DOM changes before scanning (50-5000). Lower=faster but more CPU, Higher=slower but less CPU." />
+        </div>
       </div>
       <button id="save"></button>
       <div id="status"></div>

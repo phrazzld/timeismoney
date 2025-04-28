@@ -1,5 +1,6 @@
 /**
  * Shared constants used throughout the extension
+ *
  * @module utils/constants
  */
 
@@ -15,14 +16,14 @@ export const CONVERTED_PRICE_CLASS = 'tim-converted-price';
  * Currency format configurations organized by locale groups
  * Each group defines formatting rules and associated currencies
  *
- * @type {Object.<string, {
+ * @type {{[key: string]: {
  *   localeId: string,
  *   thousands: string,
  *   decimal: string,
  *   currencySymbols: string[],
  *   currencyCodes: string[],
  *   symbolsBeforeAmount: boolean
- * }>}
+ * }}}
  */
 export const CURRENCY_FORMATS = {
   // US/UK style with comma thousands and dot decimal
@@ -58,7 +59,7 @@ export const CURRENCY_FORMATS = {
  * Maps currency symbols to their corresponding format group
  * Used to determine which formatting rules to apply based on symbol
  *
- * @type {Object.<string, string>}
+ * @type {{[key: string]: string}}
  */
 export const CURRENCY_SYMBOL_TO_FORMAT = {
   $: 'US',
@@ -78,7 +79,7 @@ export const CURRENCY_SYMBOL_TO_FORMAT = {
  * Maps currency codes to their corresponding format group
  * Used to determine which formatting rules to apply based on currency code
  *
- * @type {Object.<string, string>}
+ * @type {{[key: string]: string}}
  */
 export const CURRENCY_CODE_TO_FORMAT = {
   USD: 'US',

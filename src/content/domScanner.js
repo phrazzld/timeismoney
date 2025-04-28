@@ -1,6 +1,7 @@
 /**
  * DOM Scanner module for traversing the DOM tree and processing text nodes.
  * Also includes MutationObserver for monitoring DOM changes.
+ *
  * @module content/domScanner
  */
 
@@ -48,7 +49,7 @@ const debounce = (func, wait) => {
  *
  * @param {Node} node - The starting node for traversal
  * @param {Function} callback - Function to call on text nodes
- * @param {Object} options - Optional settings for traversal
+ * @param {object} options - Optional settings for traversal
  */
 export const walk = (node, callback, options = {}) => {
   try {
@@ -137,10 +138,11 @@ export const walk = (node, callback, options = {}) => {
  * Creates and initializes a MutationObserver to detect DOM changes
  *
  * @param {Function} callback - Function to process text nodes (same as walk callback)
- * @param {Object} options - Optional configuration settings
+ * @param {object} options - Optional configuration settings
+ * @param {number} [debounceInterval] - Debounce interval in milliseconds. Higher values reduce CPU usage but may delay updates.
  * @returns {MutationObserver} The created observer instance
  */
-export const observeDomChanges = (callback, options = {}) => {
+export const observeDomChanges = (callback, options = {}, debounceInterval = 200) => {
   try {
     // Ensure callback is valid
     if (!callback || typeof callback !== 'function') {
@@ -148,14 +150,28 @@ export const observeDomChanges = (callback, options = {}) => {
       return null;
     }
 
-    // Create a debounced processor function with 200ms delay
+    // Ensure debounceInterval is a valid number
+    if (typeof debounceInterval !== 'number' || isNaN(debounceInterval) || debounceInterval < 0) {
+      console.warn('TimeIsMoney: Invalid debounce interval, using default 200ms');
+      debounceInterval = 200;
+    }
+
+    // Cap the debounce interval to reasonable values (50ms - 2000ms)
+    debounceInterval = Math.max(50, Math.min(2000, debounceInterval));
+
+    // Create a debounced processor function with the provided interval
     const debouncedProcess = debounce(() => {
+      console.time('processPendingNodes');
       processPendingNodes(callback, options);
-    }, 200);
+      console.timeEnd('processPendingNodes');
+    }, debounceInterval);
+
+    console.log(`TimeIsMoney: Observer created with ${debounceInterval}ms debounce interval`);
 
     // Create the mutation observer
     const observer = new MutationObserver((mutations) => {
       try {
+        console.log(`TimeIsMoney: Processing ${mutations.length} mutations`);
         // Process each mutation
         for (const mutation of mutations) {
           // Handle added nodes
@@ -233,6 +249,9 @@ export const observeDomChanges = (callback, options = {}) => {
         }
 
         // Trigger the debounced processing
+        console.log(
+          `TimeIsMoney: Queued nodes - Elements: ${pendingNodes.size}, Text nodes: ${pendingTextNodes.size}`
+        );
         debouncedProcess();
       } catch (error) {
         console.error('TimeIsMoney: Error processing mutations:', error.message, error.stack);
@@ -254,18 +273,28 @@ export const observeDomChanges = (callback, options = {}) => {
  *
  * @param {Node} targetNode - The node to observe for changes (usually document.body)
  * @param {Function} callback - Function to process text nodes
- * @param {Object} options - Optional configuration
+ * @param {object} options - Optional configuration
+ * @param {number} [debounceInterval] - Debounce interval in milliseconds. Higher values reduce CPU usage but may delay updates.
  * @returns {MutationObserver} The active observer
  */
-export const startObserver = (targetNode, callback, options = {}) => {
+export const startObserver = (targetNode, callback, options = {}, debounceInterval = 200) => {
   try {
     if (!targetNode) {
       console.error('TimeIsMoney: startObserver called with invalid target node');
       return null;
     }
 
+    // Ensure debounceInterval is a valid number
+    if (typeof debounceInterval !== 'number' || isNaN(debounceInterval) || debounceInterval < 0) {
+      console.warn('TimeIsMoney: Invalid debounce interval in startObserver, using default 200ms');
+      debounceInterval = 200;
+    }
+
+    // Cap the debounce interval to reasonable values (50ms - 2000ms)
+    debounceInterval = Math.max(50, Math.min(2000, debounceInterval));
+
     // Create the observer if it doesn't exist
-    const observer = domObserver || observeDomChanges(callback, options);
+    const observer = domObserver || observeDomChanges(callback, options, debounceInterval);
 
     if (!observer) {
       console.error('TimeIsMoney: Failed to create MutationObserver');
@@ -294,7 +323,7 @@ export const startObserver = (targetNode, callback, options = {}) => {
  * Fetches settings only once per batch to improve performance
  *
  * @param {Function} callback - The function to call on each text node
- * @param {Object} options - Optional settings for the walk function
+ * @param {object} options - Optional settings for the walk function
  */
 const processPendingNodes = (callback, options = {}) => {
   try {

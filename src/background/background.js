@@ -1,6 +1,7 @@
 /**
  * Background script for the Time Is Money extension.
  * Handles extension lifecycle events, icon updates, and user interactions.
+ *
  * @module background/background
  */
 
@@ -21,7 +22,7 @@ function handleActionClick() {
  * Sets up default options and opens the options page
  * Preserves existing settings during updates
  *
- * @param {Object} details - Installation details from Chrome
+ * @param {object} details - Installation details from Chrome
  * @param {string} details.reason - Reason for installation ('install' or 'update')
  */
 function handleExtensionInstalled(details) {
@@ -36,6 +37,7 @@ function handleExtensionInstalled(details) {
     amount: '15.00',
     thousands: 'commas',
     decimal: 'dot',
+    debounceIntervalMs: 200, // Default debounce interval for MutationObserver
   };
 
   // For new installations, use defaults
@@ -91,7 +93,7 @@ registerEventListeners();
 /**
  * Updates the extension icon based on disabled state
  *
- * @param {Object} settings - Object containing updated settings
+ * @param {object} settings - Object containing updated settings
  * @param {boolean} [settings.disabled] - Whether the extension is disabled
  * @returns {void}
  */

@@ -91,5 +91,21 @@
   "enable": {
     "message": "Enable",
     "description": "Option to resume the extension if it is currently paused."
+  },
+  "debounceLabel": {
+    "message": "DOM Scan Delay (ms)",
+    "description": "Label for the debounce interval setting that controls how quickly the extension processes DOM changes."
+  },
+  "debounceTooltip": {
+    "message": "Delay in milliseconds before processing DOM changes. Lower values (50-100ms) make conversions appear faster but use more CPU. Higher values (500-1000ms) use less CPU but may feel slower. Default: 200ms",
+    "description": "Tooltip text explaining the debounce interval setting."
+  },
+  "debounceIntervalErr": {
+    "message": "Please enter a valid delay value.",
+    "description": "Error shown when the debounce interval input is invalid."
+  },
+  "debounceRangeErr": {
+    "message": "Delay must be between 50ms and 5000ms.",
+    "description": "Error shown when the debounce interval is outside the allowed range."
   }
 }

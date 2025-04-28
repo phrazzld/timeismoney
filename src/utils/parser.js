@@ -1,5 +1,6 @@
 /**
  * Utility functions for parsing and normalizing amount strings
+ *
  * @module utils/parser
  */
 

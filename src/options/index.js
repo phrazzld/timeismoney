@@ -1,6 +1,7 @@
 /**
  * Options page main script
  * Handles UI initialization
+ *
  * @module options/index
  */
 
@@ -28,6 +29,8 @@ const loadMessagesFromLocale = () => {
   document.getElementById('comma').textContent = chrome.i18n.getMessage('comma');
   document.getElementById('spaces-and-dots').textContent = chrome.i18n.getMessage('spacesAndDots');
   document.getElementById('dot').textContent = chrome.i18n.getMessage('dot');
+  document.getElementById('debounce-label').textContent =
+    chrome.i18n.getMessage('debounceLabel') || 'Debounce Interval (ms)';
   document.title = chrome.i18n.getMessage('optionsTitle');
 };
 

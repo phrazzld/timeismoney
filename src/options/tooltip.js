@@ -1,6 +1,7 @@
 /**
  * Tooltip functionality module for options page
  * Provides help text for form fields using delegated event handling
+ *
  * @module options/tooltip
  */
 
@@ -13,6 +14,7 @@ const tooltipMessages = {
   'currency-symbol': 'currencySymbol',
   amount: 'incomeAmount',
   frequency: 'payFrequency',
+  'debounce-interval': 'debounceTooltip',
 };
 
 /**
