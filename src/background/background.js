@@ -37,9 +37,9 @@ chrome.runtime.onInstalled.addListener(handleExtensionInstalled);
 function updateIcon(settings) {
   if ('disabled' in settings) {
     if (settings.disabled) {
-      chrome.action.setIcon({ path: '../images/icon_disabled_38.png' });
+      chrome.action.setIcon({ path: '/images/icon_disabled_38.png' });
     } else {
-      chrome.action.setIcon({ path: '../images/icon_38.png' });
+      chrome.action.setIcon({ path: '/images/icon_38.png' });
     }
   }
 }

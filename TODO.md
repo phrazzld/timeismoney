@@ -22,7 +22,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T1]
   - AC Ref: Codebase search confirms no remaining `chrome.browserAction` references. Run tests (`npm test`) and verify they pass using the updated `chrome.action` mocks. [Validation Checklist: All automated tests pass]
 
-- [ ] T5: Standardize and Fix Extension Icon Paths (Original Plan Item: cr-01)
+- [x] T5: Standardize and Fix Extension Icon Paths (Original Plan Item: cr-01)
   - Action: In `src/background/background.js`, update all `chrome.action.setIcon` calls to use root-relative paths (e.g., `path: '/images/icon_38.png'`). Ensure `src/manifest.json` uses the same root-relative paths in the `icons` and `action.default_icon` fields. Delete the old, unused `background.js` file if one exists separate from the service worker script.
   - Depends On: [T1, T4]
   - AC Ref: Build the extension (`npm run build`) and load it (`npm run start`). Verify the extension icon appears correctly in the browser toolbar upon installation and updates dynamically if triggered by `setIcon`. [Validation Checklist: Icons load and update correctly]

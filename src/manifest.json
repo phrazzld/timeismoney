@@ -10,8 +10,8 @@
   "action": {
     "default_title": "__MSG_extName__",
     "default_icon": {
-      "19": "images/icon_19.png",
-      "38": "images/icon_38.png"
+      "19": "/images/icon_19.png",
+      "38": "/images/icon_38.png"
     },
     "default_popup": "popup/index.html"
   },
@@ -45,8 +45,8 @@
   },
 
   "icons": {
-    "16": "images/icon_16.png",
-    "48": "images/icon_48.png",
-    "128": "images/icon_128.png"
+    "16": "/images/icon_16.png",
+    "48": "/images/icon_48.png",
+    "128": "/images/icon_128.png"
   }
 }
