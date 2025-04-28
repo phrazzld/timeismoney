@@ -14,9 +14,15 @@ let domObserver = null;
 // Debounce timeout reference
 let debounceTimer = null;
 
+// Maximum number of nodes to queue before forcing processing
+const MAX_PENDING_NODES = 1000;
+
 // Store nodes that need processing
 const pendingNodes = new Set();
 const pendingTextNodes = new Set();
+
+// Track if processing is currently in progress to avoid concurrent processing
+let isProcessing = false;
 
 /**
  * Creates a debounced function that delays invoking the provided function
@@ -167,6 +173,20 @@ export const observeDomChanges = (callback, options = {}) => {
                 }
 
                 if (!isConvertedPrice) {
+                  // Check if we've reached the size limit
+                  if (pendingNodes.size >= MAX_PENDING_NODES) {
+                    console.warn(
+                      `TimeIsMoney: Pending nodes limit (${MAX_PENDING_NODES}) reached, processing immediately`
+                    );
+                    // Cancel any pending debounce timer
+                    clearTimeout(debounceTimer);
+                    // Process pending nodes immediately if not already processing
+                    if (!isProcessing) {
+                      processPendingNodes(callback, options);
+                    }
+                  }
+
+                  // Add node after potential processing to avoid adding to a full set
                   pendingNodes.add(node);
                 }
               }
@@ -189,6 +209,20 @@ export const observeDomChanges = (callback, options = {}) => {
             }
 
             if (!isInConvertedPrice) {
+              // Check if we've reached the size limit
+              if (pendingTextNodes.size >= MAX_PENDING_NODES) {
+                console.warn(
+                  `TimeIsMoney: Pending text nodes limit (${MAX_PENDING_NODES}) reached, processing immediately`
+                );
+                // Cancel any pending debounce timer
+                clearTimeout(debounceTimer);
+                // Process pending nodes immediately if not already processing
+                if (!isProcessing) {
+                  processPendingNodes(callback, options);
+                }
+              }
+
+              // Add text node after potential processing to avoid adding to a full set
               pendingTextNodes.add(mutation.target);
             }
           }
@@ -265,49 +299,57 @@ const processPendingNodes = (callback, options = {}) => {
       return;
     }
 
+    // Set processing flag to prevent concurrent processing
+    isProcessing = true;
+
     // Use the imported getSettings function
 
     // Fetch settings once for the entire batch
     getSettings()
       .then((settings) => {
-        // Process element nodes that need walking
-        if (pendingNodes.size > 0) {
-          // Convert Set to Array to avoid issues if the set is modified during processing
-          const nodesToProcess = Array.from(pendingNodes);
-          pendingNodes.clear();
+        try {
+          // Process element nodes that need walking
+          if (pendingNodes.size > 0) {
+            // Convert Set to Array to avoid issues if the set is modified during processing
+            const nodesToProcess = Array.from(pendingNodes);
+            pendingNodes.clear();
 
-          // Process each pending node with the settings
-          for (const node of nodesToProcess) {
-            if (node && node.nodeType === 1) {
-              // Pass settings to walk which will pass them to the callback
-              walk(node, (textNode) => callback(textNode, settings), options);
-            }
-          }
-        }
-
-        // Process text nodes directly
-        if (pendingTextNodes.size > 0) {
-          // Convert Set to Array to avoid issues if the set is modified during processing
-          const textNodesToProcess = Array.from(pendingTextNodes);
-          pendingTextNodes.clear();
-
-          // Call callback directly on each text node with the settings
-          for (const textNode of textNodesToProcess) {
-            if (textNode && textNode.nodeType === 3) {
-              try {
-                callback(textNode, settings);
-              } catch (callbackError) {
-                console.error(
-                  'TimeIsMoney: Error in debounced node callback:',
-                  callbackError.message,
-                  {
-                    nodeContent: textNode?.nodeValue?.substring(0, 50) + '...',
-                    errorDetails: callbackError.stack,
-                  }
-                );
+            // Process each pending node with the settings
+            for (const node of nodesToProcess) {
+              if (node && node.nodeType === 1) {
+                // Pass settings to walk which will pass them to the callback
+                walk(node, (textNode) => callback(textNode, settings), options);
               }
             }
           }
+
+          // Process text nodes directly
+          if (pendingTextNodes.size > 0) {
+            // Convert Set to Array to avoid issues if the set is modified during processing
+            const textNodesToProcess = Array.from(pendingTextNodes);
+            pendingTextNodes.clear();
+
+            // Call callback directly on each text node with the settings
+            for (const textNode of textNodesToProcess) {
+              if (textNode && textNode.nodeType === 3) {
+                try {
+                  callback(textNode, settings);
+                } catch (callbackError) {
+                  console.error(
+                    'TimeIsMoney: Error in debounced node callback:',
+                    callbackError.message,
+                    {
+                      nodeContent: textNode?.nodeValue?.substring(0, 50) + '...',
+                      errorDetails: callbackError.stack,
+                    }
+                  );
+                }
+              }
+            }
+          }
+        } finally {
+          // Always clear the processing flag, even if errors occur during processing
+          isProcessing = false;
         }
       })
       .catch((error) => {
@@ -315,6 +357,8 @@ const processPendingNodes = (callback, options = {}) => {
         // Clear the pending nodes to avoid a growing backlog if settings can't be fetched
         pendingNodes.clear();
         pendingTextNodes.clear();
+        // Clear the processing flag to allow future processing
+        isProcessing = false;
       });
   } catch (error) {
     console.error('TimeIsMoney: Error processing pending nodes:', error.message, error.stack);
@@ -322,9 +366,16 @@ const processPendingNodes = (callback, options = {}) => {
     // Clear the pending nodes to avoid a growing backlog on error
     pendingNodes.clear();
     pendingTextNodes.clear();
+    // Clear the processing flag to allow future processing
+    isProcessing = false;
   }
 };
 
+/**
+ * Stops the MutationObserver and cleans up all resources
+ *
+ * @returns {boolean} True if observer was successfully stopped, false otherwise
+ */
 export const stopObserver = () => {
   try {
     // Clear any pending debounce timer
@@ -337,9 +388,13 @@ export const stopObserver = () => {
     pendingNodes.clear();
     pendingTextNodes.clear();
 
+    // Reset processing flag
+    isProcessing = false;
+
     // Disconnect the observer
     if (domObserver) {
       domObserver.disconnect();
+      domObserver = null;
       return true;
     }
     return false;

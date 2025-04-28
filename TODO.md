@@ -77,7 +77,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T7]
   - AC Ref: Use browser developer tools (Performance tab, console logging of storage calls) to verify that `getSettings` (or the underlying `chrome.storage.get`) is called significantly less often (ideally once per mutation batch or processing cycle) during page interaction on dynamic sites. Observe improved responsiveness. [Validation Checklist: Performance acceptable on dynamic pages]
 
-- [ ] T16: Implement Size Limit and Cleanup for Mutation Observer Sets (Original Plan Item: cr-05)
+- [x] T16: Implement Size Limit and Cleanup for Mutation Observer Sets (Original Plan Item: cr-05)
   - Action: In `src/content/domScanner.js`, define a constant (e.g., `MAX_PENDING_NODES = 1000`). In the `MutationObserver` callback, before adding nodes to `pendingNodes`/`pendingTextNodes`, check if `Set.size` exceeds the limit. If so, consider logging a warning or potentially triggering immediate processing (`processPendingNodes()`) and clearing the sets *before* adding the new nodes (evaluate trade-offs). Ensure `processPendingNodes` reliably clears the sets after processing. Add a `window.addEventListener('unload', ...)` handler to clear the sets when the page unloads.
   - Depends On: [T15]
   - AC Ref: Test on pages with very frequent DOM mutations (e.g., infinite scroll, live feeds). Use the browser's memory profiler to monitor the content script's memory usage over time. Verify that memory usage remains relatively stable and does not grow indefinitely. Check console for warnings if implemented.
