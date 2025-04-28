@@ -25,9 +25,20 @@ import { CONVERTED_PRICE_CLASS } from '../utils/constants.js';
 
 /**
  * Process the page by walking the DOM and converting prices
+ * Traverses the DOM tree starting from the root node and applies price conversions
+ * based on the provided settings.
  *
- * @param {Node} root - The root node to start processing from
+ * @param {Node} root - The root node to start processing from (usually document.body)
  * @param {Object} [settings] - Optional settings object if already loaded
+ * @param {boolean} [settings.disabled] - Whether the extension is disabled
+ * @param {string} [settings.currencySymbol] - Currency symbol to use (e.g., "$")
+ * @param {string} [settings.currencyCode] - Currency code to use (e.g., "USD")
+ * @param {string} [settings.frequency] - Wage frequency ("hourly" or "yearly")
+ * @param {string} [settings.amount] - Wage amount as string
+ * @param {string} [settings.thousands] - Thousands separator format
+ * @param {string} [settings.decimal] - Decimal separator format
+ * @returns {void}
+ * @throws {Error} Logs errors but doesn't throw to prevent breaking page functionality
  */
 function processPage(root, settings) {
   try {
@@ -44,9 +55,12 @@ function processPage(root, settings) {
 
 /**
  * Initialize DOM observer to watch for dynamic changes
+ * Sets up a MutationObserver to detect and process DOM changes as they occur
  *
  * @param {Node} root - The root node to observe (usually document.body)
  * @param {Function} callback - The callback function to process nodes
+ * @returns {void}
+ * @throws {Error} Logs errors but doesn't throw to prevent breaking page functionality
  */
 function initDomObserver(root, callback) {
   try {
@@ -75,6 +89,10 @@ handleVisibilityChange(processPage);
 
 /**
  * Handle script unload to clean up resources
+ * Ensures proper cleanup of observers and event listeners when page unloads
+ *
+ * @returns {void}
+ * @throws {Error} Logs errors but doesn't throw to prevent breaking page functionality
  */
 function handleUnload() {
   try {
@@ -95,6 +113,14 @@ window.addEventListener('beforeunload', handleUnload);
  *
  * @param {Node} textNode - The DOM text node to process
  * @param {Object} [preloadedSettings] - Optional settings object if already loaded
+ * @param {boolean} [preloadedSettings.disabled] - Whether the extension is disabled
+ * @param {string} [preloadedSettings.currencySymbol] - Currency symbol to use
+ * @param {string} [preloadedSettings.currencyCode] - Currency code to use
+ * @param {string} [preloadedSettings.frequency] - Wage frequency
+ * @param {string} [preloadedSettings.amount] - Wage amount as string
+ * @param {string} [preloadedSettings.thousands] - Thousands separator format
+ * @param {string} [preloadedSettings.decimal] - Decimal separator format
+ * @returns {void}
  */
 const convert = (textNode, preloadedSettings) => {
   // Skip text nodes that are not valid or empty

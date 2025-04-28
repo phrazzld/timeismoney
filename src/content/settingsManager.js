@@ -1,13 +1,28 @@
+/**
+ * Settings Manager for content scripts
+ * Handles initialization, updates, and visibility changes for extension settings
+ * @module content/settingsManager
+ */
+
 import { getSettings, onSettingsChanged } from '../utils/storage.js';
 
-// Track the disabled state on the current page
+/**
+ * Tracks whether the extension is currently disabled on the page
+ * This state is used to determine if conversions should be applied or reverted
+ * @type {boolean}
+ * @private
+ */
 let disabledOnPage = true;
 
 /**
  * Initializes settings and applies them to the page if needed
+ * Fetches settings and calls the provided callback if the extension is enabled
  *
- * @param {Function} callback - Function to call with current settings and to process page when needed
+ * @param {Function} callback - Function to call with current settings and DOM root
+ * @param {Node} callback.root - The root DOM node (usually document.body)
+ * @param {Object} callback.settings - Current extension settings
  * @returns {Promise<Object>} Promise that resolves to the current settings
+ * @throws {Error} Will throw if there's an issue fetching settings (handled in catch block)
  */
 export function initSettings(callback) {
   return getSettings()
@@ -28,8 +43,13 @@ export function initSettings(callback) {
 
 /**
  * Sets up a listener for settings changes
+ * Registers a handler that reacts to changes in the extension's settings
+ * Particularly focused on the 'disabled' state changes
  *
  * @param {Function} callback - Function to call when settings change
+ * @param {Node} callback.root - The root DOM node (usually document.body)
+ * @param {Object} callback.updatedSettings - Object containing the updated settings
+ * @returns {void}
  */
 export function onSettingsChange(callback) {
   onSettingsChanged((updatedSettings) => {
@@ -43,8 +63,13 @@ export function onSettingsChange(callback) {
 
 /**
  * Handles visibility change events (tab changes)
+ * Re-applies settings when a tab becomes visible if disabled state has changed
+ * Ensures consistent behavior when users switch between tabs
  *
  * @param {Function} callback - Function to call to process the page when settings changed
+ * @param {Node} callback.root - The root DOM node (usually document.body)
+ * @param {Object} callback.settings - Current extension settings
+ * @returns {void}
  */
 export function handleVisibilityChange(callback) {
   document.addEventListener('visibilitychange', () => {
@@ -69,6 +94,7 @@ export function handleVisibilityChange(callback) {
 
 /**
  * Gets the current disabled state on the page
+ * Accessor for the private disabledOnPage state variable
  *
  * @returns {boolean} True if the extension is disabled on the current page
  */
@@ -78,8 +104,11 @@ export function isDisabled() {
 
 /**
  * Checks if the Chrome runtime is valid and accessible
+ * Used to ensure the extension API is available before attempting to use it
+ * Prevents errors when Chrome runtime becomes unavailable
  *
  * @returns {boolean} True if Chrome runtime and manifest are accessible, false otherwise
+ * @private
  */
 function isValidChromeRuntime() {
   try {

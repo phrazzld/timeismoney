@@ -102,7 +102,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: None
   - AC Ref: Code review confirms comprehensive JSDoc coverage for the specified directories. JSDoc generates without errors/warnings for these files (if tool used).
 
-- [ ] T21: Add/Improve JSDoc for Content Scripts (Original Plan Item: cr-13)
+- [x] T21: Add/Improve JSDoc for Content Scripts (Original Plan Item: cr-13)
   - Action: Review JS files in `src/content/` (including handlers like `amazonHandler.js`), `src/content/domScanner.js`, and `src/content/priceFinder.js`. Add or complete JSDoc blocks for all functions as described in T20.
   - Depends On: None
   - AC Ref: Code review confirms comprehensive JSDoc coverage for the specified files/directories. JSDoc generates without errors/warnings for these files.
