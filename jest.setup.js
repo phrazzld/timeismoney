@@ -27,7 +27,7 @@ global.chrome = {
       removeListener: jest.fn(),
     },
   },
-  browserAction: {
+  action: {
     setIcon: jest.fn(),
     onClicked: {
       addListener: jest.fn(),

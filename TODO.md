@@ -17,7 +17,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T2]
   - AC Ref: Run `npm run start`. Verify that the build process runs automatically and the extension loaded in the browser is the one from the `dist/` directory. [Validation Checklist: `npm run start` loads the built extension correctly]
 
-- [ ] T4: Replace Deprecated `chrome.browserAction` with `chrome.action` (Original Plan Item: cr-02)
+- [x] T4: Replace Deprecated `chrome.browserAction` with `chrome.action` (Original Plan Item: cr-02)
   - Action: Search the codebase (`*.js`, `*.test.js`, `*.setup.js`) for all instances of `chrome.browserAction` and replace them with `chrome.action`. Update Jest mocks in `jest.setup.js` to correctly stub `chrome.action` methods like `onClicked.addListener` and `setIcon`. Run `npm test` and fix any resulting test failures.
   - Depends On: [T1]
   - AC Ref: Codebase search confirms no remaining `chrome.browserAction` references. Run tests (`npm test`) and verify they pass using the updated `chrome.action` mocks. [Validation Checklist: All automated tests pass]
