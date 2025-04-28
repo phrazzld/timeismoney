@@ -3,10 +3,27 @@
  * @module utils/constants
  */
 
-// CSS class used to identify converted price elements
+/**
+ * CSS class used to identify converted price elements in the DOM
+ * This class is applied to elements that have been processed by the extension
+ *
+ * @type {string}
+ */
 export const CONVERTED_PRICE_CLASS = 'tim-converted-price';
 
-// Currency format configurations by locale
+/**
+ * Currency format configurations organized by locale groups
+ * Each group defines formatting rules and associated currencies
+ *
+ * @type {Object.<string, {
+ *   localeId: string,
+ *   thousands: string,
+ *   decimal: string,
+ *   currencySymbols: string[],
+ *   currencyCodes: string[],
+ *   symbolsBeforeAmount: boolean
+ * }>}
+ */
 export const CURRENCY_FORMATS = {
   // US/UK style with comma thousands and dot decimal
   US: {
@@ -37,7 +54,12 @@ export const CURRENCY_FORMATS = {
   },
 };
 
-// Mapping of common currency symbols to their respective format group
+/**
+ * Maps currency symbols to their corresponding format group
+ * Used to determine which formatting rules to apply based on symbol
+ *
+ * @type {Object.<string, string>}
+ */
 export const CURRENCY_SYMBOL_TO_FORMAT = {
   $: 'US',
   '£': 'US',
@@ -52,7 +74,12 @@ export const CURRENCY_SYMBOL_TO_FORMAT = {
   '￥': 'JP',
 };
 
-// Mapping of common currency codes to their respective format group
+/**
+ * Maps currency codes to their corresponding format group
+ * Used to determine which formatting rules to apply based on currency code
+ *
+ * @type {Object.<string, string>}
+ */
 export const CURRENCY_CODE_TO_FORMAT = {
   USD: 'US',
   GBP: 'US',

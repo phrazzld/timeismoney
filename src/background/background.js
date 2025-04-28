@@ -1,8 +1,16 @@
+/**
+ * Background script for the Time Is Money extension.
+ * Handles extension lifecycle events, icon updates, and user interactions.
+ * @module background/background
+ */
+
 import { getSettings, saveSettings, onSettingsChanged } from '../utils/storage.js';
 
 /**
  * Event handler for action click
  * Opens the options page when user clicks the extension icon
+ *
+ * @returns {void}
  */
 function handleActionClick() {
   chrome.runtime.openOptionsPage();
@@ -66,14 +74,26 @@ function handleExtensionInstalled(details) {
   }
 }
 
-// Register event listeners
-chrome.action.onClicked.addListener(handleActionClick);
-chrome.runtime.onInstalled.addListener(handleExtensionInstalled);
+/**
+ * Registers core extension event listeners
+ * Sets up handlers for extension lifecycle events
+ *
+ * @returns {void}
+ */
+function registerEventListeners() {
+  chrome.action.onClicked.addListener(handleActionClick);
+  chrome.runtime.onInstalled.addListener(handleExtensionInstalled);
+}
+
+// Initialize event listeners
+registerEventListeners();
 
 /**
  * Updates the extension icon based on disabled state
  *
  * @param {Object} settings - Object containing updated settings
+ * @param {boolean} [settings.disabled] - Whether the extension is disabled
+ * @returns {void}
  */
 function updateIcon(settings) {
   if ('disabled' in settings) {
@@ -85,11 +105,25 @@ function updateIcon(settings) {
   }
 }
 
-// Register settings change listener
-onSettingsChanged(updateIcon);
+/**
+ * Sets up a listener for settings changes to update the icon accordingly
+ *
+ * @returns {void}
+ */
+function registerSettingsListener() {
+  onSettingsChanged(updateIcon);
+}
 
-// Initialize icon on startup based on current settings
-// In service workers, we need to do this when the worker starts
+// Register settings change listener
+registerSettingsListener();
+
+/**
+ * Initializes the extension icon on startup based on current settings
+ * In service workers, we need to do this when the worker starts
+ *
+ * @returns {Promise<void>} Promise that resolves when icon is initialized
+ * @throws {Error} If there's an error retrieving settings
+ */
 const initializeIcon = async () => {
   try {
     const settings = await getSettings();
@@ -99,13 +133,23 @@ const initializeIcon = async () => {
   }
 };
 
+// Start icon initialization
 initializeIcon();
 
-// Service worker lifecycle events
-self.addEventListener('activate', () => {
-  // Service worker activated
-});
+/**
+ * Sets up service worker lifecycle event handlers
+ *
+ * @returns {void}
+ */
+function setupServiceWorkerEvents() {
+  self.addEventListener('activate', () => {
+    // Service worker activated
+  });
 
-self.addEventListener('install', () => {
-  self.skipWaiting(); // Ensure service worker activates immediately
-});
+  self.addEventListener('install', () => {
+    self.skipWaiting(); // Ensure service worker activates immediately
+  });
+}
+
+// Set up service worker events
+setupServiceWorkerEvents();

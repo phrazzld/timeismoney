@@ -1,5 +1,13 @@
 /**
+ * Storage utility functions for managing extension settings
+ * Provides a Promise-based wrapper around Chrome's storage API
+ * @module utils/storage
+ */
+
+/**
  * Default settings for the extension
+ * These values are used when no user settings are found
+ *
  * @type {Object}
  */
 const DEFAULTS = {
@@ -51,8 +59,11 @@ export function saveSettings(newSettings) {
 
 /**
  * Sets up a callback for storage changes
+ * Registers a listener that will be called whenever stored settings change
  *
  * @param {Function} callback - Function to call when settings change
+ * @param {Object} callback.updated - Object containing the updated settings values
+ * @returns {void}
  */
 export function onSettingsChanged(callback) {
   chrome.storage.onChanged.addListener((changes) => {

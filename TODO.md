@@ -97,7 +97,7 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T4]
   - AC Ref: Run `npm test`. Verify the refactored tests pass. Code review confirms tests focus on observable outcomes rather than internal structure/classes. Future minor refactors of conversion logic/styling should not break these tests unnecessarily. [Validation Checklist: All automated tests pass]
 
-- [ ] T20: Add/Improve JSDoc for Background and Utility Scripts (Original Plan Item: cr-13)
+- [x] T20: Add/Improve JSDoc for Background and Utility Scripts (Original Plan Item: cr-13)
   - Action: Review JS files in `src/background/` and `src/utils/`. Add or complete JSDoc blocks (`/** ... */`) for all functions, detailing purpose, `@param {type} name - Description`, `@returns {type} - Description`, and any side effects or `@throws`. Ensure module-level descriptions are present where appropriate.
   - Depends On: None
   - AC Ref: Code review confirms comprehensive JSDoc coverage for the specified directories. JSDoc generates without errors/warnings for these files (if tool used).
