@@ -47,12 +47,12 @@ Okay, here is the task breakdown for the Remediation Plan:
   - Depends On: [T2, T3]
   - AC Ref: Open the options page. Verify the amount input restricts non-numeric characters (browser behavior). Enter negative numbers, leave empty, enter text via devtools manipulation: verify saving is blocked and user feedback (e.g., message near field, field outline) indicates the error. Enter valid positive numbers (0, 1, 123.45): verify these are accepted for saving. [Validation Checklist: Options page saves valid input, rejects invalid input]
 
-- [ ] T10: Implement Input Validation/Sanitization for 'Symbol/Code' in Options Form (Original Plan Item: cr-06)
+- [x] T10: Implement Input Validation/Sanitization for 'Symbol/Code' in Options Form (Original Plan Item: cr-06)
   - Action: In `src/options/formHandler.js` (`saveOptions` function), retrieve the currency symbol and code values. Define and apply validation rules (e.g., using a strict regex like `^[^\<\>]{1,5}$` to allow most symbols but block HTML, checking length limits). Trim whitespace before validation.
   - Depends On: [T2, T3]
   - AC Ref: Open the options page. Enter overly long strings, strings with forbidden characters (e.g., `<script>`), or empty strings (if disallowed): verify saving is blocked and user feedback indicates the error. Enter valid examples (e.g., "$", "USD", "€"): verify these are accepted for saving. [Validation Checklist: Options page saves valid input, rejects invalid input]
 
-- [ ] T11: Ensure Options Validation Occurs Before Saving Attempt (Original Plan Item: cr-06)
+- [x] T11: Ensure Options Validation Occurs Before Saving Attempt (Original Plan Item: cr-06)
   - Action: Review and refactor `src/options/formHandler.js` (`saveOptions` function). Consolidate all validation logic (from T9, T10) to execute at the beginning of the function. If any validation check fails, display appropriate user feedback (error messages) and immediately `return` to prevent the `saveSettings()` call.
   - Depends On: [T9, T10]
   - AC Ref: Code review confirms validation checks precede the `saveSettings` call. Test cases from T9/T10 should demonstrate that `saveSettings` is not invoked when validation fails (verify via console logs, breakpoints, or checking if the "saved" confirmation appears).
