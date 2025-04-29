@@ -48,7 +48,24 @@ function processPage(root, settings) {
       return;
     }
 
-    walk(root, (textNode) => convert(textNode, settings));
+    // If no settings were provided, fetch them first
+    if (!settings) {
+      getSettings()
+        .then((fetchedSettings) => {
+          walk(
+            root,
+            (textNode, nodeSettings) => convert(textNode, nodeSettings),
+            fetchedSettings,
+            {}
+          );
+        })
+        .catch((error) => {
+          logger.error('Error fetching settings in processPage:', error.message, error.stack);
+        });
+    } else {
+      // Use the provided settings
+      walk(root, (textNode, nodeSettings) => convert(textNode, nodeSettings), settings, {});
+    }
   } catch (error) {
     logger.error('Error processing page:', error.message, error.stack);
   }

@@ -253,7 +253,7 @@
         1. All internal and callback invocations receive `settings`.
     - **Depends‑on:** T025
 
-- [ ] **T027 · Refactor · P1: update all walk callers to provide settings object**
+- [x] **T027 · Refactor · P1: update all walk callers to provide settings object**
     - **Context:** cr-04, Step 3
     - **Action:**
         1. Refactor `processPage` in `index.js` and `processPendingNodes` in `domScanner.js` to fetch and pass `settings` to `walk`.
