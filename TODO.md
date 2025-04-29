@@ -430,7 +430,7 @@
         1. Tests and manual checks confirm correct background behavior.
     - **Depends‑on:** T042
 
-- [ ] **T045 · Chore · P2: update build script to use relative, cross-platform paths**
+- [x] **T045 · Chore · P2: update build script to use relative, cross-platform paths**
     - **Context:** cr-01+cr-23p1, Step 4
     - **Action:**
         1. Refactor `scripts/build-extension.sh` (or equivalent) to use relative paths (e.g., `./src`, `./dist`) and avoid OS-specific commands where possible.
