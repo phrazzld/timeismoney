@@ -245,7 +245,7 @@
         2. Tests updated and pass.
     - **Depends‑on:** none
 
-- [ ] **T026 · Refactor · P1: propagate settings through recursive walk calls and to callback**
+- [x] **T026 · Refactor · P1: propagate settings through recursive walk calls and to callback**
     - **Context:** cr-04, Step 2
     - **Action:**
         1. Ensure `walk` passes the received `settings` object to all recursive calls and when invoking the `callback`.

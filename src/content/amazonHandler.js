@@ -63,7 +63,8 @@ export const isAmazonPriceNode = (node) => {
  *
  * @param {Node} node - Amazon price component node to process
  * @param {Function} callback - Callback function to apply to the complete price node
- * @param {Function} callback.textNode - Text node containing the full price (passed to callback)
+ * @param {Node} callback.textNode - Text node containing the full price (passed to callback)
+ * @param {object} callback.settings - The current extension settings (passed by domScanner)
  * @param {object} state - The price state object tracking Amazon price components
  * @param {string|null} state.currency - The currency symbol/code component
  * @param {string|null} state.whole - The whole number component
@@ -90,6 +91,7 @@ export const handleAmazonPrice = (node, callback, state) => {
         node.firstChild.nodeValue = combinedPrice;
 
         // Apply the callback to the whole part node (which now contains the full price)
+        // The callback is expected to handle settings parameter which is passed through from the domScanner
         callback(node.firstChild);
 
         // Reset currency since we've used it
@@ -123,6 +125,7 @@ export const handleAmazonPrice = (node, callback, state) => {
  * @param {Node} node - DOM node to process
  * @param {Function} callback - Callback to apply to complete price nodes
  * @param {Node} callback.textNode - Text node containing the full price (passed to callback)
+ * @param {object} callback.settings - The current extension settings (passed by domScanner)
  * @param {object} [priceState] - Optional price state object to use for tracking
  *                               If not provided, a new state object will be created
  * @returns {boolean} True if node was handled as an Amazon price component,
