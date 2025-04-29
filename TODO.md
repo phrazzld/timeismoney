@@ -116,7 +116,7 @@
         1. Default branch is `master`.
     - **Depends‑on:** none
 
-- [ ] **T012 · Chore · P2: update CI workflow triggers to master branch**
+- [x] **T012 · Chore · P2: update CI workflow triggers to master branch**
     - **Context:** cr-11, Step 2
     - **Action:**
         1. Change `.github/workflows/ci.yml` triggers to reference `master` branch for `push` and `pull_request`.
