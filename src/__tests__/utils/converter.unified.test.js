@@ -119,22 +119,7 @@ describe('calculateHourlyWage', () => {
 });
 
 describe('convertToTime', () => {
-  // Original signature tests (with wageSettings object)
-  test('converts with wageSettings object - hourly', () => {
-    const wageSettings = { amount: '20', frequency: 'hourly' };
-    const result = convertToTime(100, wageSettings);
-    expect(result.hours).toBe(5);
-    expect(result.minutes).toBe(0);
-  });
-
-  test('converts with wageSettings object - yearly', () => {
-    const wageSettings = { amount: '41600', frequency: 'yearly' };
-    const result = convertToTime(100, wageSettings);
-    expect(result.hours).toBe(5);
-    expect(result.minutes).toBe(0);
-  });
-
-  // New signature tests (with direct hourlyWage)
+  // Direct hourlyWage parameter tests
   test('converts with direct hourlyWage parameter', () => {
     const result = convertToTime(100, 20);
     expect(result.hours).toBe(5);
@@ -194,18 +179,6 @@ describe('convertToTime', () => {
     const result = convertToTime(100, 27.5);
     expect(result.hours).toBe(3);
     expect(result.minutes).toBe(38);
-  });
-
-  test('handles wageSettings object with missing values', () => {
-    // Missing frequency defaults to hourly
-    const result1 = convertToTime(100, { amount: '20' });
-    expect(result1.hours).toBe(5);
-    expect(result1.minutes).toBe(0);
-
-    // Missing amount should cause an error or NaN
-    expect(() => {
-      convertToTime(100, { frequency: 'hourly' });
-    }).not.toThrow(); // Should handle gracefully
   });
 });
 

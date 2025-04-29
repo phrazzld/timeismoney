@@ -72,7 +72,7 @@
     - **Depends‑on:** T005
 
 ## Core / converter.js
-- [ ] **T007 · Refactor · P2: refactor converttotime to single signature**
+- [x] **T007 · Refactor · P2: refactor converttotime to single signature**
     - **Context:** cr-05+cr-25, Step 1
     - **Action:**
         1. Change `convertToTime` in `converter.js` to accept only `(priceValue, hourlyRate)`.

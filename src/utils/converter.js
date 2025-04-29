@@ -41,30 +41,13 @@ export function calculateHourlyWage(frequency, amount) {
 }
 
 /**
- * Converts a monetary amount to equivalent time based on wage settings
+ * Converts a monetary amount to equivalent time based on hourly rate
  *
  * @param {number} priceValue - The price to convert
- * @param {object | number} wageSettings - Either an object containing wage settings or directly the hourly wage
- * @param {number} [wageSettings.amount] - Hourly wage amount
- * @param {string} [wageSettings.frequency] - Wage frequency (hourly, yearly)
+ * @param {number} hourlyRate - The hourly wage rate
  * @returns {object} Object containing hours and minutes
  */
-export function convertToTime(priceValue, wageSettings) {
-  let hourlyRate;
-  // Handle both function signatures for backward compatibility
-  if (typeof wageSettings === 'number') {
-    // Called with (price, hourlyWage) signature from priceConverter.js
-    hourlyRate = wageSettings;
-  } else {
-    // Called with (price, wageSettings) signature from converter.js
-    hourlyRate = parseFloat(wageSettings.amount);
-
-    // Convert yearly salary to hourly rate
-    if (wageSettings.frequency === 'yearly') {
-      hourlyRate = hourlyRate / 2080; // 40 hours * 52 weeks
-    }
-  }
-
+export function convertToTime(priceValue, hourlyRate) {
   const totalHours = priceValue / hourlyRate;
   const hours = Math.floor(totalHours);
   const minutes = Math.round((totalHours - hours) * 60);

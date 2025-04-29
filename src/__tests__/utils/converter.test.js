@@ -7,24 +7,24 @@ import { convertToTime, formatTimeSnippet } from '../../utils/converter';
 describe('convertToTime', () => {
   // Hourly wage conversion tests
   test('converts prices with hourly wages - even division', () => {
-    const wageSettings = { amount: '20', frequency: 'hourly' };
-    const result = convertToTime(100, wageSettings);
+    const hourlyRate = 20; // Using direct hourly rate
+    const result = convertToTime(100, hourlyRate);
 
     expect(result.hours).toBe(5);
     expect(result.minutes).toBe(0);
   });
 
   test('converts prices with hourly wages - with fractional time', () => {
-    const wageSettings = { amount: '20', frequency: 'hourly' };
-    const result = convertToTime(30, wageSettings);
+    const hourlyRate = 20; // Using direct hourly rate
+    const result = convertToTime(30, hourlyRate);
 
     expect(result.hours).toBe(1);
     expect(result.minutes).toBe(30);
   });
 
   test('converts prices with hourly wages - small fraction', () => {
-    const wageSettings = { amount: '60', frequency: 'hourly' };
-    const result = convertToTime(5, wageSettings);
+    const hourlyRate = 60; // Using direct hourly rate
+    const result = convertToTime(5, hourlyRate);
 
     // 5/60 = 0.0833... hours = 5 minutes
     expect(result.hours).toBe(0);
@@ -32,19 +32,18 @@ describe('convertToTime', () => {
   });
 
   // Yearly wage conversion tests
+  // (now pre-calculating the hourly rate instead of passing wage settings)
   test('converts prices with yearly wages', () => {
-    const wageSettings = { amount: '41600', frequency: 'yearly' };
-    // 41600/2080 = $20/hour, so $100 should be 5 hours
-    const result = convertToTime(100, wageSettings);
+    const hourlyRate = 41600 / 2080; // 41600/2080 = $20/hour
+    const result = convertToTime(100, hourlyRate);
 
     expect(result.hours).toBe(5);
     expect(result.minutes).toBe(0);
   });
 
   test('converts prices with yearly wages - with fractional time', () => {
-    const wageSettings = { amount: '41600', frequency: 'yearly' };
-    // 41600/2080 = $20/hour, so $30 should be 1.5 hours = 1 hour, 30 minutes
-    const result = convertToTime(30, wageSettings);
+    const hourlyRate = 41600 / 2080; // 41600/2080 = $20/hour
+    const result = convertToTime(30, hourlyRate);
 
     expect(result.hours).toBe(1);
     expect(result.minutes).toBe(30);
@@ -52,16 +51,16 @@ describe('convertToTime', () => {
 
   // Edge cases
   test('handles zero price', () => {
-    const wageSettings = { amount: '20', frequency: 'hourly' };
-    const result = convertToTime(0, wageSettings);
+    const hourlyRate = 20;
+    const result = convertToTime(0, hourlyRate);
 
     expect(result.hours).toBe(0);
     expect(result.minutes).toBe(0);
   });
 
   test('handles very small prices', () => {
-    const wageSettings = { amount: '20', frequency: 'hourly' };
-    const result = convertToTime(0.01, wageSettings);
+    const hourlyRate = 20;
+    const result = convertToTime(0.01, hourlyRate);
 
     // 0.01/20 = 0.0005 hours = 0.03 minutes, which rounds to 0
     expect(result.hours).toBe(0);
@@ -69,8 +68,8 @@ describe('convertToTime', () => {
   });
 
   test('handles very large prices', () => {
-    const wageSettings = { amount: '20', frequency: 'hourly' };
-    const result = convertToTime(1000000, wageSettings);
+    const hourlyRate = 20;
+    const result = convertToTime(1000000, hourlyRate);
 
     // 1000000/20 = 50000 hours
     expect(result.hours).toBe(50000);
@@ -78,8 +77,8 @@ describe('convertToTime', () => {
   });
 
   test('handles very high wages', () => {
-    const wageSettings = { amount: '1000', frequency: 'hourly' };
-    const result = convertToTime(100, wageSettings);
+    const hourlyRate = 1000;
+    const result = convertToTime(100, hourlyRate);
 
     // 100/1000 = 0.1 hours = 6 minutes
     expect(result.hours).toBe(0);
@@ -87,8 +86,8 @@ describe('convertToTime', () => {
   });
 
   test('handles very low wages', () => {
-    const wageSettings = { amount: '0.01', frequency: 'hourly' };
-    const result = convertToTime(1, wageSettings);
+    const hourlyRate = 0.01;
+    const result = convertToTime(1, hourlyRate);
 
     // 1/0.01 = 100 hours
     expect(result.hours).toBe(100);
@@ -96,8 +95,8 @@ describe('convertToTime', () => {
   });
 
   test('rounding minutes correctly', () => {
-    const wageSettings = { amount: '15', frequency: 'hourly' };
-    const result = convertToTime(7.5, wageSettings);
+    const hourlyRate = 15;
+    const result = convertToTime(7.5, hourlyRate);
 
     // 7.5/15 = 0.5 hours = 30 minutes
     expect(result.hours).toBe(0);
