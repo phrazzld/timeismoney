@@ -186,7 +186,7 @@
         1. Logger module exists and exports logging methods.
     - **Depends‑on:** none
 
-- [ ] **T020 · Feature · P2: implement log level control by build environment**
+- [x] **T020 · Feature · P2: implement log level control by build environment**
     - **Context:** cr-10, Step 2
     - **Action:**
         1. Add mechanism to `logger.js` to set minimum log level via environment variable (e.g., `process.env.NODE_ENV`).
