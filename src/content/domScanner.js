@@ -8,6 +8,7 @@
 import { processIfAmazon, createPriceState } from './amazonHandler.js';
 import { CONVERTED_PRICE_CLASS } from '../utils/constants.js';
 import { getSettings } from '../utils/storage.js';
+import * as logger from '../utils/logger.js';
 
 // Store a reference to the observer for later access
 let domObserver = null;
@@ -54,12 +55,12 @@ const debounce = (func, wait) => {
 export const walk = (node, callback, options = {}) => {
   try {
     if (!node) {
-      console.error('TimeIsMoney: walk called with invalid node');
+      logger.error('walk called with invalid node');
       return;
     }
 
     if (!callback || typeof callback !== 'function') {
-      console.error('TimeIsMoney: walk called with invalid callback');
+      logger.error('walk called with invalid callback');
       return;
     }
 
@@ -84,8 +85,8 @@ export const walk = (node, callback, options = {}) => {
               try {
                 amazonProcessed = processIfAmazon(child, callback, amazonPriceState);
               } catch (amazonError) {
-                console.error(
-                  'TimeIsMoney: Error in Amazon price processing:',
+                logger.error(
+                  'Error in Amazon price processing:',
                   amazonError.message,
                   amazonError.stack
                 );
@@ -98,11 +99,7 @@ export const walk = (node, callback, options = {}) => {
 
               child = next;
             } catch (childError) {
-              console.error(
-                'TimeIsMoney: Error processing child node:',
-                childError.message,
-                childError.stack
-              );
+              logger.error('Error processing child node:', childError.message, childError.stack);
               // Skip problematic node and continue with next sibling
               child = child?.nextSibling || null;
             }
@@ -112,7 +109,7 @@ export const walk = (node, callback, options = {}) => {
           try {
             callback(node);
           } catch (callbackError) {
-            console.error('TimeIsMoney: Error in node callback:', callbackError.message, {
+            logger.error('Error in node callback:', callbackError.message, {
               nodeContent: node?.nodeValue?.substring(0, 50) + '...',
               errorDetails: callbackError.stack,
             });
@@ -123,14 +120,10 @@ export const walk = (node, callback, options = {}) => {
           break;
       }
     } catch (nodeTypeError) {
-      console.error(
-        'TimeIsMoney: Error accessing node properties:',
-        nodeTypeError.message,
-        nodeTypeError.stack
-      );
+      logger.error('Error accessing node properties:', nodeTypeError.message, nodeTypeError.stack);
     }
   } catch (error) {
-    console.error('TimeIsMoney: Error in DOM walker:', error.message, error.stack);
+    logger.error('Error in DOM walker:', error.message, error.stack);
   }
 };
 
@@ -146,13 +139,13 @@ export const observeDomChanges = (callback, options = {}, debounceInterval = 200
   try {
     // Ensure callback is valid
     if (!callback || typeof callback !== 'function') {
-      console.error('TimeIsMoney: observeDomChanges called with invalid callback');
+      logger.error('observeDomChanges called with invalid callback');
       return null;
     }
 
     // Ensure debounceInterval is a valid number
     if (typeof debounceInterval !== 'number' || isNaN(debounceInterval) || debounceInterval < 0) {
-      console.warn('TimeIsMoney: Invalid debounce interval, using default 200ms');
+      logger.warn('Invalid debounce interval, using default 200ms');
       debounceInterval = 200;
     }
 
@@ -161,17 +154,18 @@ export const observeDomChanges = (callback, options = {}, debounceInterval = 200
 
     // Create a debounced processor function with the provided interval
     const debouncedProcess = debounce(() => {
-      console.time('processPendingNodes');
+      const startTime = performance.now();
       processPendingNodes(callback, options);
-      console.timeEnd('processPendingNodes');
+      const endTime = performance.now();
+      logger.debug(`processPendingNodes: ${Math.round(endTime - startTime)} ms`);
     }, debounceInterval);
 
-    console.log(`TimeIsMoney: Observer created with ${debounceInterval}ms debounce interval`);
+    logger.info(`Observer created with ${debounceInterval}ms debounce interval`);
 
     // Create the mutation observer
     const observer = new MutationObserver((mutations) => {
       try {
-        console.log(`TimeIsMoney: Processing ${mutations.length} mutations`);
+        logger.debug(`Processing ${mutations.length} mutations`);
         // Process each mutation
         for (const mutation of mutations) {
           // Handle added nodes
@@ -195,8 +189,8 @@ export const observeDomChanges = (callback, options = {}, debounceInterval = 200
                 if (!isConvertedPrice) {
                   // Check if we've reached the size limit
                   if (pendingNodes.size >= MAX_PENDING_NODES) {
-                    console.warn(
-                      `TimeIsMoney: Pending nodes limit (${MAX_PENDING_NODES}) reached, processing immediately`
+                    logger.warn(
+                      `Pending nodes limit (${MAX_PENDING_NODES}) reached, processing immediately`
                     );
                     // Cancel any pending debounce timer
                     clearTimeout(debounceTimer);
@@ -231,8 +225,8 @@ export const observeDomChanges = (callback, options = {}, debounceInterval = 200
             if (!isInConvertedPrice) {
               // Check if we've reached the size limit
               if (pendingTextNodes.size >= MAX_PENDING_NODES) {
-                console.warn(
-                  `TimeIsMoney: Pending text nodes limit (${MAX_PENDING_NODES}) reached, processing immediately`
+                logger.warn(
+                  `Pending text nodes limit (${MAX_PENDING_NODES}) reached, processing immediately`
                 );
                 // Cancel any pending debounce timer
                 clearTimeout(debounceTimer);
@@ -249,12 +243,12 @@ export const observeDomChanges = (callback, options = {}, debounceInterval = 200
         }
 
         // Trigger the debounced processing
-        console.log(
-          `TimeIsMoney: Queued nodes - Elements: ${pendingNodes.size}, Text nodes: ${pendingTextNodes.size}`
+        logger.debug(
+          `Queued nodes - Elements: ${pendingNodes.size}, Text nodes: ${pendingTextNodes.size}`
         );
         debouncedProcess();
       } catch (error) {
-        console.error('TimeIsMoney: Error processing mutations:', error.message, error.stack);
+        logger.error('Error processing mutations:', error.message, error.stack);
       }
     });
 
@@ -263,7 +257,7 @@ export const observeDomChanges = (callback, options = {}, debounceInterval = 200
 
     return observer;
   } catch (error) {
-    console.error('TimeIsMoney: Error creating MutationObserver:', error.message, error.stack);
+    logger.error('Error creating MutationObserver:', error.message, error.stack);
     return null;
   }
 };
@@ -280,13 +274,13 @@ export const observeDomChanges = (callback, options = {}, debounceInterval = 200
 export const startObserver = (targetNode, callback, options = {}, debounceInterval = 200) => {
   try {
     if (!targetNode) {
-      console.error('TimeIsMoney: startObserver called with invalid target node');
+      logger.error('startObserver called with invalid target node');
       return null;
     }
 
     // Ensure debounceInterval is a valid number
     if (typeof debounceInterval !== 'number' || isNaN(debounceInterval) || debounceInterval < 0) {
-      console.warn('TimeIsMoney: Invalid debounce interval in startObserver, using default 200ms');
+      logger.warn('Invalid debounce interval in startObserver, using default 200ms');
       debounceInterval = 200;
     }
 
@@ -297,7 +291,7 @@ export const startObserver = (targetNode, callback, options = {}, debounceInterv
     const observer = domObserver || observeDomChanges(callback, options, debounceInterval);
 
     if (!observer) {
-      console.error('TimeIsMoney: Failed to create MutationObserver');
+      logger.error('Failed to create MutationObserver');
       return null;
     }
 
@@ -313,7 +307,7 @@ export const startObserver = (targetNode, callback, options = {}, debounceInterv
 
     return observer;
   } catch (error) {
-    console.error('TimeIsMoney: Error starting MutationObserver:', error.message, error.stack);
+    logger.error('Error starting MutationObserver:', error.message, error.stack);
     return null;
   }
 };
@@ -368,14 +362,10 @@ const processPendingNodes = (callback, options = {}) => {
                 try {
                   callback(textNode, settings);
                 } catch (callbackError) {
-                  console.error(
-                    'TimeIsMoney: Error in debounced node callback:',
-                    callbackError.message,
-                    {
-                      nodeContent: textNode?.nodeValue?.substring(0, 50) + '...',
-                      errorDetails: callbackError.stack,
-                    }
-                  );
+                  logger.error('Error in debounced node callback:', callbackError.message, {
+                    nodeContent: textNode?.nodeValue?.substring(0, 50) + '...',
+                    errorDetails: callbackError.stack,
+                  });
                 }
               }
             }
@@ -386,7 +376,7 @@ const processPendingNodes = (callback, options = {}) => {
         }
       })
       .catch((error) => {
-        console.error('TimeIsMoney: Error fetching settings for batch processing:', error);
+        logger.error('Error fetching settings for batch processing:', error);
         // Clear the pending nodes to avoid a growing backlog if settings can't be fetched
         pendingNodes.clear();
         pendingTextNodes.clear();
@@ -394,7 +384,7 @@ const processPendingNodes = (callback, options = {}) => {
         isProcessing = false;
       });
   } catch (error) {
-    console.error('TimeIsMoney: Error processing pending nodes:', error.message, error.stack);
+    logger.error('Error processing pending nodes:', error.message, error.stack);
 
     // Clear the pending nodes to avoid a growing backlog on error
     pendingNodes.clear();
@@ -432,7 +422,7 @@ export const stopObserver = () => {
     }
     return false;
   } catch (error) {
-    console.error('TimeIsMoney: Error stopping MutationObserver:', error.message, error.stack);
+    logger.error('Error stopping MutationObserver:', error.message, error.stack);
     return false;
   }
 };

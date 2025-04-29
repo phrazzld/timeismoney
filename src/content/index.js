@@ -22,6 +22,7 @@ import { findPrices } from './priceFinder.js';
 import { convertPriceToTimeString } from '../utils/converter.js';
 import { processTextNode } from './domModifier.js';
 import { CONVERTED_PRICE_CLASS } from '../utils/constants.js';
+import * as logger from '../utils/logger.js';
 
 /**
  * Process the page by walking the DOM and converting prices
@@ -43,13 +44,13 @@ import { CONVERTED_PRICE_CLASS } from '../utils/constants.js';
 function processPage(root, settings) {
   try {
     if (!root) {
-      console.error('TimeIsMoney: processPage called with invalid root node');
+      logger.error('processPage called with invalid root node');
       return;
     }
 
     walk(root, (textNode) => convert(textNode, settings));
   } catch (error) {
-    console.error('TimeIsMoney: Error processing page:', error.message, error.stack);
+    logger.error('Error processing page:', error.message, error.stack);
   }
 }
 
@@ -66,7 +67,7 @@ function processPage(root, settings) {
 function initDomObserver(root, callback, settings) {
   try {
     if (!root) {
-      console.error('TimeIsMoney: Cannot initialize observer with invalid root node');
+      logger.error('Cannot initialize observer with invalid root node');
       return;
     }
 
@@ -79,18 +80,16 @@ function initDomObserver(root, callback, settings) {
       if (!isNaN(parsedInterval) && parsedInterval > 0) {
         debounceInterval = parsedInterval;
       } else {
-        console.warn('TimeIsMoney: Invalid debounce interval in settings, using default 200ms');
+        logger.warn('Invalid debounce interval in settings, using default 200ms');
       }
     }
 
     // Start observing DOM changes with the configured debounce interval
     startObserver(root, callback, {}, debounceInterval);
 
-    console.log(
-      `TimeIsMoney: DOM observer initialized with ${debounceInterval}ms debounce interval`
-    );
+    logger.info(`DOM observer initialized with ${debounceInterval}ms debounce interval`);
   } catch (error) {
-    console.error('TimeIsMoney: Error initializing DOM observer:', error.message, error.stack);
+    logger.error('Error initializing DOM observer:', error.message, error.stack);
   }
 }
 
@@ -110,7 +109,7 @@ onSettingsChange((root, updatedSettings) => {
 
   // If debounce interval changed, reinitialize the observer with the new value
   if ('debounceIntervalMs' in updatedSettings) {
-    console.log('TimeIsMoney: Debounce interval changed, reinitializing observer');
+    logger.info('Debounce interval changed, reinitializing observer');
     // Stop the existing observer
     stopObserver();
     // Initialize a new observer with the updated debounce interval
@@ -132,7 +131,7 @@ function handleUnload() {
     // Disconnect the MutationObserver and clean up resources
     stopObserver();
   } catch (error) {
-    console.error('TimeIsMoney: Error during unload cleanup:', error.message, error.stack);
+    logger.error('Error during unload cleanup:', error.message, error.stack);
   }
 }
 
@@ -179,7 +178,7 @@ const convert = (textNode, preloadedSettings) => {
     .then((settings) => {
       try {
         if (!settings) {
-          console.error('TimeIsMoney: No settings available for conversion');
+          logger.error('No settings available for conversion');
           return;
         }
 
@@ -212,13 +211,13 @@ const convert = (textNode, preloadedSettings) => {
         // Process the text node using the DOM modifier
         processTextNode(textNode, priceMatch, conversionInfo, formatSettings.isReverseSearch);
       } catch (error) {
-        console.error('TimeIsMoney: Error converting price in text node:', error.message, {
+        logger.error('Error converting price in text node:', error.message, {
           textContent: textNode?.nodeValue?.substring(0, 50) + '...',
           errorDetails: error.stack,
         });
       }
     })
     .catch((error) => {
-      console.error('TimeIsMoney: Failed to get settings:', error?.message || 'Unknown error');
+      logger.error('Failed to get settings:', error?.message || 'Unknown error');
     });
 };

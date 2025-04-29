@@ -5,6 +5,8 @@
  * @module utils/converter
  */
 
+import * as logger from './logger.js';
+
 /**
  * Normalizes a price string by removing formatting characters
  *
@@ -143,7 +145,7 @@ export function convertPriceToTimeString(
     const { hours, minutes } = convertToTime(normalizedPrice, hourlyWage);
     return formatPriceWithTime(priceString, hours, minutes, useCompactFormat);
   } catch (error) {
-    console.error('Error converting price:', error);
+    logger.error('Error converting price:', error);
     return priceString;
   }
 }

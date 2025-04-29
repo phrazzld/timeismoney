@@ -197,7 +197,7 @@
         2. Set NODE_ENV=development, build, run, confirm DEBUG/INFO logs also appear.
     - **Depends‑on:** T019
 
-- [ ] **T021 · Refactor · P2: replace direct console calls with logger calls**
+- [x] **T021 · Refactor · P2: replace direct console calls with logger calls**
     - **Context:** cr-10, Step 3
     - **Action:**
         1. Replace all `console.*` usage in `src/` with corresponding `logger.*` calls.
