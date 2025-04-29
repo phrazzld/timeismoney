@@ -10,14 +10,29 @@ import { getSettings, saveSettings } from '../utils/storage.js';
 /**
  * Restores the enabled/disabled state of the extension toggle
  * Reads from Chrome storage and updates the UI accordingly
+ * 
+ * @export
  */
-const restoreOptions = () => {
+export const restoreOptions = () => {
+  const status = document.getElementById('status');
   getSettings()
     .then((settings) => {
       document.getElementById('enabled').checked = !settings.disabled;
+      // Clear any previous error messages
+      status.textContent = '';
+      status.classList.remove('error');
     })
     .catch((error) => {
       console.error('Storage operation failed:', error);
+      // Show user-friendly error message
+      status.textContent = chrome.i18n.getMessage('loadError') || 'Failed to load your settings. Please try again.';
+      status.classList.add('error');
+      
+      // Clear error after 5 seconds
+      setTimeout(() => {
+        status.textContent = '';
+        status.classList.remove('error');
+      }, 5000);
     });
 };
 
@@ -27,11 +42,33 @@ const restoreOptions = () => {
  * This triggers the background script to update tab icons accordingly
  *
  * @param {Event} event - The change event from the toggle checkbox
+ * @export
  */
-function handleEnableToggle(event) {
-  saveSettings({ disabled: !event.target.checked }).catch((error) => {
-    console.error('Storage operation failed:', error);
-  });
+export function handleEnableToggle(event) {
+  const status = document.getElementById('status');
+  
+  saveSettings({ disabled: !event.target.checked })
+    .then(() => {
+      // Clear any previous error messages
+      status.textContent = '';
+      status.classList.remove('error');
+    })
+    .catch((error) => {
+      console.error('Storage operation failed:', error);
+      
+      // Show user-friendly error message
+      status.textContent = chrome.i18n.getMessage('saveError') || 'Failed to save your settings. Please try again.';
+      status.classList.add('error');
+      
+      // Revert the toggle to its previous state since the save failed
+      event.target.checked = !event.target.checked;
+      
+      // Clear error after 5 seconds
+      setTimeout(() => {
+        status.textContent = '';
+        status.classList.remove('error');
+      }, 5000);
+    });
 }
 
 /**
@@ -40,8 +77,9 @@ function handleEnableToggle(event) {
  * Uses Chrome API to open the correct options page
  *
  * @returns {void}
+ * @export
  */
-function handleOptionsClick() {
+export function handleOptionsClick() {
   chrome.runtime.openOptionsPage();
 }
 
@@ -51,8 +89,9 @@ function handleOptionsClick() {
  * This is the main initialization function for the popup
  *
  * @returns {void}
+ * @export
  */
-function handleDOMContentLoaded() {
+export function handleDOMContentLoaded() {
   restoreOptions();
 
   const enable = document.getElementById('enabled');

@@ -71,6 +71,13 @@ body {
 
 #status {
   margin-top: 15px;
+  padding: 5px;
   min-height: 15px;
   font-weight: 200;
+}
+
+#status.error {
+  color: #d32f2f;
+  background-color: #ffebee;
+  border-radius: 4px;
 }

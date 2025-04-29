@@ -116,6 +116,7 @@ export function sanitizeNumericInput(input) {
  * @returns {Promise<void>} A promise that resolves when form is loaded
  */
 export async function loadForm() {
+  const status = document.getElementById('status');
   try {
     const items = await getSettings();
     loadSavedOption('currency-symbol', items.currencySymbol);
@@ -128,8 +129,21 @@ export async function loadForm() {
 
     // Initialize formatting display
     document.getElementById('formatting').style.display = 'none';
+    
+    // Clear any previous error messages
+    status.textContent = '';
   } catch (error) {
     console.error('Error loading options form:', error);
+    
+    // Display user-facing error message
+    status.textContent = chrome.i18n.getMessage('loadError') || 'Failed to load your settings. Please try again.';
+    status.className = 'error';
+    
+    // Clear error after 5 seconds
+    setTimeout(() => {
+      status.textContent = '';
+      status.className = '';
+    }, 5000);
   }
 }
 
@@ -205,10 +219,16 @@ export function saveOptions() {
     })
     .catch((error) => {
       console.error('Error saving options:', error);
-      status.textContent = 'Error saving options';
+      
+      // Display a user-friendly error message
+      status.textContent = chrome.i18n.getMessage('saveError') || 'Failed to save your settings. Please try again.';
+      status.className = 'error';
+      
+      // Clear the error after 5 seconds
       setTimeout(() => {
         status.textContent = '';
-      }, 2000);
+        status.className = '';
+      }, 5000);
     });
 }
 

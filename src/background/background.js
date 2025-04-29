@@ -43,7 +43,7 @@ function handleExtensionInstalled(details) {
   // For new installations, use defaults
   if (details.reason === 'install') {
     saveSettings(defaultSettings).catch((error) => {
-      console.error('Storage operation failed:', error);
+      console.error('Failed to save default settings on extension install:', error);
     });
     return;
   }
@@ -67,10 +67,10 @@ function handleExtensionInstalled(details) {
         }
       })
       .catch((error) => {
-        console.error('Storage operation failed:', error);
+        console.error('Failed to read existing settings during extension update:', error);
         // If we can't read settings, use defaults as fallback
-        saveSettings(defaultSettings).catch((error) => {
-          console.error('Storage operation failed:', error);
+        saveSettings(defaultSettings).catch((failError) => {
+          console.error('Failed to save default settings after read error during update:', failError);
         });
       });
   }
@@ -131,7 +131,7 @@ const initializeIcon = async () => {
     const settings = await getSettings();
     updateIcon({ disabled: settings.disabled });
   } catch (error) {
-    console.error('Error initializing icon:', error);
+    console.error('Failed to initialize extension icon due to storage error:', error);
   }
 };
 

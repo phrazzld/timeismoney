@@ -3,6 +3,18 @@
     "message": "Time Is Money",
     "description": "Extension name."
   },
+  "storageError": {
+    "message": "Failed to access extension storage. Please try again later.",
+    "description": "Error message shown when the extension can't access Chrome storage API."
+  },
+  "loadError": {
+    "message": "Failed to load your settings. Please try again.",
+    "description": "Error message shown when the extension can't load user settings."
+  },
+  "saveError": {
+    "message": "Failed to save your settings. Please try again.",
+    "description": "Error message shown when the extension can't save user settings."
+  },
   "extDesc": {
     "message": "Automatically converts prices online into hours of work.",
     "description": "Brief description of the extension's function."

@@ -49,7 +49,7 @@
         2. Tests pass.
     - **Depends‑on:** T003
 
-- [ ] **T005 · Feature · P1: display user-facing errors for storage failures**
+- [x] **T005 · Feature · P1: display user-facing errors for storage failures**
     - **Context:** cr-03+cr-18, Step 1
     - **Action:**
         1. Modify `.catch` blocks for `getSettings`/`saveSettings` in `formHandler.js`, `popup.js`, `background.js` (where applicable) to update the UI (`#status` or similar) with clear error messages.
