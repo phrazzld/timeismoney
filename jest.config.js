@@ -1,7 +1,7 @@
 /**
  * Jest configuration for TimeIsMoney extension
  */
-module.exports = {
+export default {
   // Indicates test environment
   testEnvironment: 'jsdom',
 
@@ -15,7 +15,7 @@ module.exports = {
   testPathIgnorePatterns: ['/node_modules/'],
 
   // Module file extensions
-  moduleFileExtensions: ['js', 'json'],
+  moduleFileExtensions: ['js', 'json', 'mjs'],
 
   // Setup files run before each test
   setupFiles: ['<rootDir>/jest.setup.js'],
@@ -24,6 +24,11 @@ module.exports = {
   transform: {
     '^.+\\.js$': 'babel-jest',
   },
+
+  // Transform ignore patterns for node_modules
+  transformIgnorePatterns: [
+    '/node_modules/(?!node-fetch|fetch-blob|data-uri-to-buffer|formdata-polyfill)',
+  ],
 
   // Indicate coverage collection
   collectCoverage: false,

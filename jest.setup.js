@@ -37,3 +37,6 @@ global.chrome = {
     getMessage: jest.fn(),
   },
 };
+
+// Setup for ES modules in Jest
+globalThis.jest = jest;

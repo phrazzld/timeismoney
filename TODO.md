@@ -151,7 +151,7 @@
     - **Depends‑on:** T014
 
 ## Platform / Module System
-- [ ] **T016 · Refactor · P1: add type module to package.json**
+- [x] **T016 · Refactor · P1: add type module to package.json**
     - **Context:** cr-16, Step 1
     - **Action:**
         1. Add `"type": "module"` to the root `package.json`.
@@ -159,7 +159,7 @@
         1. Node treats JS files as ES6 modules by default.
     - **Depends‑on:** none
 
-- [ ] **T017 · Refactor · P1: update Jest and Babel configs for ES6 modules**
+- [x] **T017 · Refactor · P1: update Jest and Babel configs for ES6 modules**
     - **Context:** cr-16, Step 2
     - **Action:**
         1. Update `jest.config.js` and `babel.config.js` to correctly handle ES6 modules (e.g., using necessary Babel transforms or Node flags).
