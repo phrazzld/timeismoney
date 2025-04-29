@@ -90,7 +90,7 @@
         2. Tests pass.
     - **Depends‑on:** T007
 
-- [ ] **T009 · Refactor · P2: update all callers to compute hourly rate externally**
+- [x] **T009 · Refactor · P2: update all callers to compute hourly rate externally**
     - **Context:** cr-05+cr-25, Step 3
     - **Action:**
         1. Refactor all callers (e.g., `convertPriceToTimeString`) to use `calculateHourlyWage` before calling `convertToTime`.
