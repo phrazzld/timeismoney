@@ -50,9 +50,10 @@ const debounce = (func, wait) => {
  *
  * @param {Node} node - The starting node for traversal
  * @param {Function} callback - Function to call on text nodes
+ * @param {object} settings - The current extension settings
  * @param {object} options - Optional settings for traversal
  */
-export const walk = (node, callback, options = {}) => {
+export const walk = (node, callback, settings, options = {}) => {
   try {
     if (!node) {
       logger.error('walk called with invalid node');
@@ -83,7 +84,11 @@ export const walk = (node, callback, options = {}) => {
               // Pass the local price state to maintain state between sibling nodes
               let amazonProcessed = false;
               try {
-                amazonProcessed = processIfAmazon(child, callback, amazonPriceState);
+                amazonProcessed = processIfAmazon(
+                  child,
+                  (textNode) => callback(textNode, settings),
+                  amazonPriceState
+                );
               } catch (amazonError) {
                 logger.error(
                   'Error in Amazon price processing:',
@@ -94,7 +99,7 @@ export const walk = (node, callback, options = {}) => {
 
               // Only continue normal processing if it wasn't handled as an Amazon component
               if (!amazonProcessed) {
-                walk(child, callback, options);
+                walk(child, callback, settings, options);
               }
 
               child = next;
@@ -107,7 +112,7 @@ export const walk = (node, callback, options = {}) => {
           break;
         case 3: // Text node
           try {
-            callback(node);
+            callback(node, settings);
           } catch (callbackError) {
             logger.error('Error in node callback:', callbackError.message, {
               nodeContent: node?.nodeValue?.substring(0, 50) + '...',
@@ -350,7 +355,7 @@ const processPendingNodes = (callback, options = {}) => {
             for (const node of nodesToProcess) {
               if (node && node.nodeType === 1) {
                 // Pass settings to walk which will pass them to the callback
-                walk(node, (textNode) => callback(textNode, settings), options);
+                walk(node, (textNode) => callback(textNode, settings), settings, options);
               }
             }
           }

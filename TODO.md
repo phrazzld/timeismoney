@@ -236,7 +236,7 @@
     - **Depends‑on:** T023
 
 ## Frontend / domScanner.js
-- [ ] **T025 · Refactor · P1: update walk function to accept settings parameter**
+- [x] **T025 · Refactor · P1: update walk function to accept settings parameter**
     - **Context:** cr-04, Step 1
     - **Action:**
         1. Change `walk` signature in `domScanner.js` to `walk(node, callback, settings, options = {})`.
