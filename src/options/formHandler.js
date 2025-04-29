@@ -129,16 +129,17 @@ export async function loadForm() {
 
     // Initialize formatting display
     document.getElementById('formatting').style.display = 'none';
-    
+
     // Clear any previous error messages
     status.textContent = '';
   } catch (error) {
     console.error('Error loading options form:', error);
-    
+
     // Display user-facing error message
-    status.textContent = chrome.i18n.getMessage('loadError') || 'Failed to load your settings. Please try again.';
+    status.textContent =
+      chrome.i18n.getMessage('loadError') || 'Failed to load your settings. Please try again.';
     status.className = 'error';
-    
+
     // Clear error after 5 seconds
     setTimeout(() => {
       status.textContent = '';
@@ -212,18 +213,23 @@ export function saveOptions() {
   })
     .then(() => {
       status.textContent = chrome.i18n.getMessage('saveSuccess');
+
+      // Close window immediately after successful save
+      window.close();
+
+      // The following code would only run if window.close() doesn't work
       setTimeout(() => {
         status.textContent = '';
-        window.close();
       }, 2000);
     })
     .catch((error) => {
       console.error('Error saving options:', error);
-      
+
       // Display a user-friendly error message
-      status.textContent = chrome.i18n.getMessage('saveError') || 'Failed to save your settings. Please try again.';
+      status.textContent =
+        chrome.i18n.getMessage('saveError') || 'Failed to save your settings. Please try again.';
       status.className = 'error';
-      
+
       // Clear the error after 5 seconds
       setTimeout(() => {
         status.textContent = '';

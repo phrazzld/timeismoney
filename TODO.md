@@ -60,7 +60,7 @@
         1. Manual: Simulate storage failure (e.g., via devtools), confirm error is shown in the UI.
     - **Depends‑on:** none
 
-- [ ] **T006 · Bugfix · P1: close popup immediately after successful save**
+- [x] **T006 · Bugfix · P1: close popup immediately after successful save**
     - **Context:** cr-03+cr-18, Step 2
     - **Action:**
         1. Move `window.close()` in `formHandler.js:saveOptions` to execute immediately after successful `saveSettings()` resolution, before any `setTimeout`.

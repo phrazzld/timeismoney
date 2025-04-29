@@ -22,6 +22,11 @@ describe('Options Form Validation', () => {
   beforeAll(() => {
     // Mock getMessage to return the key itself
     chrome.i18n.getMessage = jest.fn((key) => key);
+    
+    // Set up document object if it doesn't exist (Jest environment)
+    if (!global.document) {
+      global.document = {};
+    }
   });
 
   beforeEach(() => {
@@ -261,6 +266,42 @@ describe('Options Form Validation', () => {
           amount: expect.any(String),
         })
       );
+    });
+
+    test('window.close() is called immediately after successful save', async () => {
+      // Mock all the DOM elements and values with valid data
+      document.getElementById = jest.fn((id) => {
+        if (id === 'currency-symbol') return { value: '$' };
+        if (id === 'currency-code') return { value: 'USD' };
+        if (id === 'frequency') return { value: 'hourly' };
+        if (id === 'amount') return { value: '15.00' };
+        if (id === 'thousands') return { value: 'commas' };
+        if (id === 'decimal') return { value: 'dot' };
+        if (id === 'debounce-interval') return { value: '200' };
+        if (id === 'status') return { textContent: '' };
+        return { value: '' };
+      });
+
+      // Spy on window.close
+      const originalWindowClose = window.close;
+      window.close = jest.fn();
+
+      // Mock saveSettings to resolve successfully
+      jest.spyOn(require('../../utils/storage.js'), 'saveSettings').mockImplementation(() => {
+        return Promise.resolve();
+      });
+
+      // Call saveOptions
+      saveOptions();
+      
+      // Wait for promises to resolve
+      await new Promise(process.nextTick);
+
+      // Expect window.close was called without waiting for setTimeout
+      expect(window.close).toHaveBeenCalled();
+
+      // Restore window.close
+      window.close = originalWindowClose;
     });
   });
 
