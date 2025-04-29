@@ -178,7 +178,7 @@
     - **Depends‑on:** T017
 
 ## Core / Logging
-- [ ] **T019 · Feature · P2: implement centralized logger utility**
+- [x] **T019 · Feature · P2: implement centralized logger utility**
     - **Context:** cr-10, Step 1
     - **Action:**
         1. Create `src/utils/logger.js` wrapping `console.debug/info/warn/error`.
