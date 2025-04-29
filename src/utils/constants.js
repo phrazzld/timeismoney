@@ -63,6 +63,7 @@ export const DEFAULT_SETTINGS = {
   decimal: 'dot',
   disabled: false,
   debounceIntervalMs: DEFAULT_DEBOUNCE_INTERVAL_MS,
+  enableDynamicScanning: true, // Whether to monitor DOM changes in real-time
 };
 
 /**

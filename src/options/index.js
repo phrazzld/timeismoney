@@ -31,6 +31,8 @@ const loadMessagesFromLocale = () => {
   document.getElementById('dot').textContent = chrome.i18n.getMessage('dot');
   document.getElementById('debounce-label').textContent =
     chrome.i18n.getMessage('debounceLabel') || 'Debounce Interval (ms)';
+  document.getElementById('dynamic-scanning-label').textContent =
+    chrome.i18n.getMessage('dynamicScanningLabel') || 'Enable Real-time Price Updates';
   document.title = chrome.i18n.getMessage('optionsTitle');
 };
 

@@ -126,6 +126,7 @@ export async function loadForm() {
     loadSavedOption('thousands', items.thousands);
     loadSavedOption('decimal', items.decimal);
     loadSavedOption('debounce-interval', items.debounceIntervalMs);
+    loadSavedOption('enable-dynamic-scanning', items.enableDynamicScanning);
 
     // Initialize formatting display
     document.getElementById('formatting').style.display = 'none';
@@ -170,6 +171,7 @@ export function saveOptions() {
   const rawThousands = document.getElementById('thousands').value;
   const rawDecimal = document.getElementById('decimal').value;
   const rawDebounceIntervalStr = document.getElementById('debounce-interval').value;
+  const enableDynamicScanning = document.getElementById('enable-dynamic-scanning').checked;
   const status = document.getElementById('status');
 
   // Sanitize all inputs before validation
@@ -210,6 +212,7 @@ export function saveOptions() {
     thousands,
     decimal,
     debounceIntervalMs,
+    enableDynamicScanning,
   })
     .then(() => {
       status.textContent = chrome.i18n.getMessage('saveSuccess');
@@ -263,8 +266,14 @@ function toggleFormatting() {
  */
 function loadSavedOption(elementId, value, decimal = 'dot') {
   if (value !== undefined && value !== null) {
-    document.getElementById(elementId).value =
-      elementId === 'amount' ? formatIncomeAmount(value, decimal) : value;
+    const element = document.getElementById(elementId);
+
+    // Handle checkbox elements differently
+    if (element.type === 'checkbox') {
+      element.checked = Boolean(value);
+    } else {
+      element.value = elementId === 'amount' ? formatIncomeAmount(value, decimal) : value;
+    }
   }
 }
 

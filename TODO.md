@@ -306,7 +306,7 @@
         1. Inspect logs/timings during dynamic page updates in dev tools.
     - **Depends‑on:** T021 # Assumes logger exists
 
-- [ ] **T032 · Feature · P2: add option to disable or throttle DOM observation**
+- [x] **T032 · Feature · P2: add option to disable or throttle DOM observation**
     - **Context:** cr-06+cr-15p1, Step 2
     - **Action:**
         1. Add a user setting (e.g., `enableDynamicScanning`) in options & storage.

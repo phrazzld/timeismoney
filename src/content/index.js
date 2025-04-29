@@ -92,6 +92,15 @@ function initDomObserver(root, callback, settings, state = domScannerState) {
       return;
     }
 
+    // Check if dynamic scanning is enabled in settings
+    const isDynamicScanningEnabled = settings && settings.enableDynamicScanning !== false;
+
+    // If dynamic scanning is disabled, log a message and return without starting the observer
+    if (!isDynamicScanningEnabled) {
+      logger.info('Dynamic scanning is disabled in user settings, observer not started');
+      return;
+    }
+
     // Get debounce interval from settings, fallback to default value
     let debounceInterval = DEFAULT_DEBOUNCE_INTERVAL_MS;
 
@@ -128,12 +137,26 @@ onSettingsChange((root, updatedSettings) => {
   // Process the page with updated settings
   processPage(root, updatedSettings);
 
-  // If debounce interval changed, reinitialize the observer with the new value
-  if ('debounceIntervalMs' in updatedSettings) {
-    logger.info('Debounce interval changed, reinitializing observer');
+  // Check if dynamic scanning setting or debounce interval changed
+  const dynamicScanningChanged = 'enableDynamicScanning' in updatedSettings;
+  const debounceIntervalChanged = 'debounceIntervalMs' in updatedSettings;
+
+  if (dynamicScanningChanged || debounceIntervalChanged) {
+    // Log the change that triggered reinitialization
+    if (dynamicScanningChanged) {
+      logger.info(
+        `Dynamic scanning ${updatedSettings.enableDynamicScanning ? 'enabled' : 'disabled'}`
+      );
+    }
+    if (debounceIntervalChanged) {
+      logger.info('Debounce interval changed, reinitializing observer');
+    }
+
     // Stop the existing observer
     stopObserver(domScannerState);
-    // Initialize a new observer with the updated debounce interval
+
+    // Initialize a new observer with the updated settings
+    // If dynamic scanning is disabled, initDomObserver will handle that internally
     initDomObserver(
       root,
       (textNode) => convert(textNode, updatedSettings),
