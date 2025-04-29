@@ -26,7 +26,7 @@
         1. Manual: Try invalid symbols/codes/amounts in the options form; confirm rejection.
     - **Depends‑on:** T001
 
-- [ ] **T003 · Feature · P1: check validation function results before saving options**
+- [x] **T003 · Feature · P1: check validation function results before saving options**
     - **Context:** cr-02+cr-20+cr-17p1, Step 3
     - **Action:**
         1. Ensure `saveOptions` in `formHandler.js` checks return values from all `validate*` functions.

@@ -103,10 +103,20 @@ describe('Options Form Validation', () => {
     });
   });
 
-  describe('Window closing behavior tests', () => {
-    test('window.close() is not called when validation fails', () => {
-      // saveOptions is imported at the top of the file
+  describe('Validation and saving behavior tests', () => {
+    beforeEach(() => {
+      // Mock saveSettings so we can verify it's called or not called
+      jest.spyOn(require('../../utils/storage.js'), 'saveSettings').mockImplementation(() => {
+        return Promise.resolve();
+      });
+    });
 
+    afterEach(() => {
+      // Clean up mock
+      jest.restoreAllMocks();
+    });
+
+    test('saveSettings is not called when currency symbol validation fails', () => {
       // Mock all the DOM elements and values
       document.getElementById = jest.fn((id) => {
         if (id === 'currency-symbol') return { value: '' }; // Invalid value to trigger validation error
@@ -115,6 +125,95 @@ describe('Options Form Validation', () => {
         if (id === 'amount') return { value: '15.00' };
         if (id === 'thousands') return { value: 'commas' };
         if (id === 'decimal') return { value: 'dot' };
+        if (id === 'debounce-interval') return { value: '200' };
+        if (id === 'status') return { textContent: '' };
+        return { value: '' };
+      });
+
+      // Call saveOptions
+      saveOptions();
+
+      // Expect saveSettings was NOT called due to validation failure
+      const { saveSettings } = require('../../utils/storage.js');
+      expect(saveSettings).not.toHaveBeenCalled();
+    });
+
+    test('saveSettings is not called when currency code validation fails', () => {
+      // Mock all the DOM elements and values
+      document.getElementById = jest.fn((id) => {
+        if (id === 'currency-symbol') return { value: '$' };
+        if (id === 'currency-code') return { value: 'USDT' }; // Invalid: 4 chars instead of 3
+        if (id === 'frequency') return { value: 'hourly' };
+        if (id === 'amount') return { value: '15.00' };
+        if (id === 'thousands') return { value: 'commas' };
+        if (id === 'decimal') return { value: 'dot' };
+        if (id === 'debounce-interval') return { value: '200' };
+        if (id === 'status') return { textContent: '' };
+        return { value: '' };
+      });
+
+      // Call saveOptions
+      saveOptions();
+
+      // Expect saveSettings was NOT called due to validation failure
+      const { saveSettings } = require('../../utils/storage.js');
+      expect(saveSettings).not.toHaveBeenCalled();
+    });
+
+    test('saveSettings is not called when amount validation fails', () => {
+      // Mock all the DOM elements and values
+      document.getElementById = jest.fn((id) => {
+        if (id === 'currency-symbol') return { value: '$' };
+        if (id === 'currency-code') return { value: 'USD' };
+        if (id === 'frequency') return { value: 'hourly' };
+        if (id === 'amount') return { value: '-15.00' }; // Invalid: negative amount
+        if (id === 'thousands') return { value: 'commas' };
+        if (id === 'decimal') return { value: 'dot' };
+        if (id === 'debounce-interval') return { value: '200' };
+        if (id === 'status') return { textContent: '' };
+        return { value: '' };
+      });
+
+      // Call saveOptions
+      saveOptions();
+
+      // Expect saveSettings was NOT called due to validation failure
+      const { saveSettings } = require('../../utils/storage.js');
+      expect(saveSettings).not.toHaveBeenCalled();
+    });
+
+    test('saveSettings is not called when debounce interval validation fails', () => {
+      // Mock all the DOM elements and values
+      document.getElementById = jest.fn((id) => {
+        if (id === 'currency-symbol') return { value: '$' };
+        if (id === 'currency-code') return { value: 'USD' };
+        if (id === 'frequency') return { value: 'hourly' };
+        if (id === 'amount') return { value: '15.00' };
+        if (id === 'thousands') return { value: 'commas' };
+        if (id === 'decimal') return { value: 'dot' };
+        if (id === 'debounce-interval') return { value: '10000' }; // Invalid: too high
+        if (id === 'status') return { textContent: '' };
+        return { value: '' };
+      });
+
+      // Call saveOptions
+      saveOptions();
+
+      // Expect saveSettings was NOT called due to validation failure
+      const { saveSettings } = require('../../utils/storage.js');
+      expect(saveSettings).not.toHaveBeenCalled();
+    });
+
+    test('window.close() is not called when validation fails', () => {
+      // Mock all the DOM elements and values
+      document.getElementById = jest.fn((id) => {
+        if (id === 'currency-symbol') return { value: '' }; // Invalid value to trigger validation error
+        if (id === 'currency-code') return { value: 'USD' };
+        if (id === 'frequency') return { value: 'hourly' };
+        if (id === 'amount') return { value: '15.00' };
+        if (id === 'thousands') return { value: 'commas' };
+        if (id === 'decimal') return { value: 'dot' };
+        if (id === 'debounce-interval') return { value: '200' };
         if (id === 'status') return { textContent: '' };
         return { value: '' };
       });
@@ -131,6 +230,32 @@ describe('Options Form Validation', () => {
 
       // Restore window.close
       window.close = originalWindowClose;
+    });
+
+    test('saveSettings is called when all validations pass', () => {
+      // Mock all the DOM elements and values with valid data
+      document.getElementById = jest.fn((id) => {
+        if (id === 'currency-symbol') return { value: '$' };
+        if (id === 'currency-code') return { value: 'USD' };
+        if (id === 'frequency') return { value: 'hourly' };
+        if (id === 'amount') return { value: '15.00' };
+        if (id === 'thousands') return { value: 'commas' };
+        if (id === 'decimal') return { value: 'dot' };
+        if (id === 'debounce-interval') return { value: '200' };
+        if (id === 'status') return { textContent: '' };
+        return { value: '' };
+      });
+
+      // Call saveOptions
+      saveOptions();
+
+      // Expect saveSettings WAS called with valid settings
+      const { saveSettings } = require('../../utils/storage.js');
+      expect(saveSettings).toHaveBeenCalledWith(expect.objectContaining({
+        currencySymbol: '$',
+        currencyCode: 'USD',
+        amount: expect.any(String)
+      }));
     });
   });
 
