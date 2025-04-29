@@ -14,18 +14,41 @@ import {
 import { getSettings } from '../utils/storage.js';
 import * as logger from '../utils/logger.js';
 
-// Store a reference to the observer for later access
-let domObserver = null;
+/**
+ * Creates and initializes a DomScannerState object for tracking mutation observer state
+ *
+ * @returns {object} A state object for managing DOM scanner state
+ */
+export const createDomScannerState = () => {
+  return {
+    // Observer reference for later access
+    domObserver: null,
 
-// Debounce timeout reference
-let debounceTimer = null;
+    // Debounce timeout reference
+    debounceTimer: null,
 
-// Store nodes that need processing
-const pendingNodes = new Set();
-const pendingTextNodes = new Set();
+    // Store nodes that need processing
+    pendingNodes: new Set(),
+    pendingTextNodes: new Set(),
 
-// Track if processing is currently in progress to avoid concurrent processing
-let isProcessing = false;
+    // Track if processing is currently in progress to avoid concurrent processing
+    isProcessing: false,
+
+    /**
+     * Resets the state to its initial values
+     */
+    reset() {
+      this.domObserver = null;
+      this.debounceTimer = null;
+      this.pendingNodes.clear();
+      this.pendingTextNodes.clear();
+      this.isProcessing = false;
+    },
+  };
+};
+
+// Create a default state for backward compatibility
+const defaultState = createDomScannerState();
 
 /**
  * Creates a debounced function that delays invoking the provided function
@@ -33,12 +56,13 @@ let isProcessing = false;
  *
  * @param {Function} func - The function to debounce
  * @param {number} wait - The number of milliseconds to delay
+ * @param {object} state - The state object containing the debounceTimer reference
  * @returns {Function} The debounced function
  */
-const debounce = (func, wait) => {
+const debounce = (func, wait, state) => {
   return function (...args) {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
+    clearTimeout(state.debounceTimer);
+    state.debounceTimer = setTimeout(() => {
       func.apply(this, args);
     }, wait);
   };
@@ -139,12 +163,14 @@ export const walk = (node, callback, settings, options = {}) => {
  * @param {Function} callback - Function to process text nodes (same as walk callback)
  * @param {object} options - Optional configuration settings
  * @param {number} [debounceInterval] - Debounce interval in milliseconds. Higher values reduce CPU usage but may delay updates.
+ * @param {object} [state] - Optional state object to use. If not provided, uses the default state.
  * @returns {MutationObserver} The created observer instance
  */
 export const observeDomChanges = (
   callback,
   options = {},
-  debounceInterval = DEFAULT_DEBOUNCE_INTERVAL_MS
+  debounceInterval = DEFAULT_DEBOUNCE_INTERVAL_MS,
+  state = defaultState
 ) => {
   try {
     // Ensure callback is valid
@@ -165,12 +191,16 @@ export const observeDomChanges = (
     debounceInterval = Math.max(50, Math.min(2000, debounceInterval));
 
     // Create a debounced processor function with the provided interval
-    const debouncedProcess = debounce(() => {
-      const startTime = performance.now();
-      processPendingNodes(callback, options);
-      const endTime = performance.now();
-      logger.debug(`processPendingNodes: ${Math.round(endTime - startTime)} ms`);
-    }, debounceInterval);
+    const debouncedProcess = debounce(
+      () => {
+        const startTime = performance.now();
+        processPendingNodes(callback, options, state);
+        const endTime = performance.now();
+        logger.debug(`processPendingNodes: ${Math.round(endTime - startTime)} ms`);
+      },
+      debounceInterval,
+      state
+    );
 
     logger.info(`Observer created with ${debounceInterval}ms debounce interval`);
 
@@ -200,20 +230,20 @@ export const observeDomChanges = (
 
                 if (!isConvertedPrice) {
                   // Check if we've reached the size limit
-                  if (pendingNodes.size >= MAX_PENDING_NODES) {
+                  if (state.pendingNodes.size >= MAX_PENDING_NODES) {
                     logger.warn(
                       `Pending nodes limit (${MAX_PENDING_NODES}) reached, processing immediately`
                     );
                     // Cancel any pending debounce timer
-                    clearTimeout(debounceTimer);
+                    clearTimeout(state.debounceTimer);
                     // Process pending nodes immediately if not already processing
-                    if (!isProcessing) {
-                      processPendingNodes(callback, options);
+                    if (!state.isProcessing) {
+                      processPendingNodes(callback, options, state);
                     }
                   }
 
                   // Add node after potential processing to avoid adding to a full set
-                  pendingNodes.add(node);
+                  state.pendingNodes.add(node);
                 }
               }
             }
@@ -236,27 +266,27 @@ export const observeDomChanges = (
 
             if (!isInConvertedPrice) {
               // Check if we've reached the size limit
-              if (pendingTextNodes.size >= MAX_PENDING_NODES) {
+              if (state.pendingTextNodes.size >= MAX_PENDING_NODES) {
                 logger.warn(
                   `Pending text nodes limit (${MAX_PENDING_NODES}) reached, processing immediately`
                 );
                 // Cancel any pending debounce timer
-                clearTimeout(debounceTimer);
+                clearTimeout(state.debounceTimer);
                 // Process pending nodes immediately if not already processing
-                if (!isProcessing) {
-                  processPendingNodes(callback, options);
+                if (!state.isProcessing) {
+                  processPendingNodes(callback, options, state);
                 }
               }
 
               // Add text node after potential processing to avoid adding to a full set
-              pendingTextNodes.add(mutation.target);
+              state.pendingTextNodes.add(mutation.target);
             }
           }
         }
 
         // Trigger the debounced processing
         logger.debug(
-          `Queued nodes - Elements: ${pendingNodes.size}, Text nodes: ${pendingTextNodes.size}`
+          `Queued nodes - Elements: ${state.pendingNodes.size}, Text nodes: ${state.pendingTextNodes.size}`
         );
         debouncedProcess();
       } catch (error) {
@@ -264,8 +294,8 @@ export const observeDomChanges = (
       }
     });
 
-    // Store a reference to the observer
-    domObserver = observer;
+    // Store a reference to the observer in the state
+    state.domObserver = observer;
 
     return observer;
   } catch (error) {
@@ -281,13 +311,15 @@ export const observeDomChanges = (
  * @param {Function} callback - Function to process text nodes
  * @param {object} options - Optional configuration
  * @param {number} [debounceInterval] - Debounce interval in milliseconds. Higher values reduce CPU usage but may delay updates.
+ * @param {object} [state] - Optional state object to use. If not provided, uses the default state.
  * @returns {MutationObserver} The active observer
  */
 export const startObserver = (
   targetNode,
   callback,
   options = {},
-  debounceInterval = DEFAULT_DEBOUNCE_INTERVAL_MS
+  debounceInterval = DEFAULT_DEBOUNCE_INTERVAL_MS,
+  state = defaultState
 ) => {
   try {
     if (!targetNode) {
@@ -309,7 +341,8 @@ export const startObserver = (
     debounceInterval = Math.max(50, Math.min(2000, debounceInterval));
 
     // Create the observer if it doesn't exist
-    const observer = domObserver || observeDomChanges(callback, options, debounceInterval);
+    const observer =
+      state.domObserver || observeDomChanges(callback, options, debounceInterval, state);
 
     if (!observer) {
       logger.error('Failed to create MutationObserver');
@@ -342,18 +375,22 @@ export const startObserver = (
  * @param {Node} callback.textNode - The text node to process
  * @param {object} callback.settings - The current extension settings
  * @param {object} options - Optional settings for the walk function
+ * @param {object} state - The scanner state object
+ * @param {Set<Node>} state.pendingNodes - Set of element nodes to process
+ * @param {Set<Node>} state.pendingTextNodes - Set of text nodes to process
+ * @param {boolean} state.isProcessing - Flag to prevent concurrent processing
  * @returns {void}
  * @private
  */
-const processPendingNodes = (callback, options = {}) => {
+const processPendingNodes = (callback, options = {}, state = defaultState) => {
   try {
     // Skip processing if no nodes to process
-    if (pendingNodes.size === 0 && pendingTextNodes.size === 0) {
+    if (state.pendingNodes.size === 0 && state.pendingTextNodes.size === 0) {
       return;
     }
 
     // Set processing flag to prevent concurrent processing
-    isProcessing = true;
+    state.isProcessing = true;
 
     // Use the imported getSettings function
 
@@ -362,10 +399,10 @@ const processPendingNodes = (callback, options = {}) => {
       .then((settings) => {
         try {
           // Process element nodes that need walking
-          if (pendingNodes.size > 0) {
+          if (state.pendingNodes.size > 0) {
             // Convert Set to Array to avoid issues if the set is modified during processing
-            const nodesToProcess = Array.from(pendingNodes);
-            pendingNodes.clear();
+            const nodesToProcess = Array.from(state.pendingNodes);
+            state.pendingNodes.clear();
 
             // Process each pending node with the settings
             for (const node of nodesToProcess) {
@@ -377,10 +414,10 @@ const processPendingNodes = (callback, options = {}) => {
           }
 
           // Process text nodes directly
-          if (pendingTextNodes.size > 0) {
+          if (state.pendingTextNodes.size > 0) {
             // Convert Set to Array to avoid issues if the set is modified during processing
-            const textNodesToProcess = Array.from(pendingTextNodes);
-            pendingTextNodes.clear();
+            const textNodesToProcess = Array.from(state.pendingTextNodes);
+            state.pendingTextNodes.clear();
 
             // Call callback directly on each text node with the settings
             for (const textNode of textNodesToProcess) {
@@ -398,52 +435,53 @@ const processPendingNodes = (callback, options = {}) => {
           }
         } finally {
           // Always clear the processing flag, even if errors occur during processing
-          isProcessing = false;
+          state.isProcessing = false;
         }
       })
       .catch((error) => {
         logger.error('Error fetching settings for batch processing:', error);
         // Clear the pending nodes to avoid a growing backlog if settings can't be fetched
-        pendingNodes.clear();
-        pendingTextNodes.clear();
+        state.pendingNodes.clear();
+        state.pendingTextNodes.clear();
         // Clear the processing flag to allow future processing
-        isProcessing = false;
+        state.isProcessing = false;
       });
   } catch (error) {
     logger.error('Error processing pending nodes:', error.message, error.stack);
 
     // Clear the pending nodes to avoid a growing backlog on error
-    pendingNodes.clear();
-    pendingTextNodes.clear();
+    state.pendingNodes.clear();
+    state.pendingTextNodes.clear();
     // Clear the processing flag to allow future processing
-    isProcessing = false;
+    state.isProcessing = false;
   }
 };
 
 /**
  * Stops the MutationObserver and cleans up all resources
  *
+ * @param {object} [state] - Optional state object to use. If not provided, uses the default state.
  * @returns {boolean} True if observer was successfully stopped, false otherwise
  */
-export const stopObserver = () => {
+export const stopObserver = (state = defaultState) => {
   try {
     // Clear any pending debounce timer
-    if (debounceTimer) {
-      clearTimeout(debounceTimer);
-      debounceTimer = null;
+    if (state.debounceTimer) {
+      clearTimeout(state.debounceTimer);
+      state.debounceTimer = null;
     }
 
     // Clear any pending nodes
-    pendingNodes.clear();
-    pendingTextNodes.clear();
+    state.pendingNodes.clear();
+    state.pendingTextNodes.clear();
 
     // Reset processing flag
-    isProcessing = false;
+    state.isProcessing = false;
 
     // Disconnect the observer
-    if (domObserver) {
-      domObserver.disconnect();
-      domObserver = null;
+    if (state.domObserver) {
+      state.domObserver.disconnect();
+      state.domObserver = null;
       return true;
     }
     return false;

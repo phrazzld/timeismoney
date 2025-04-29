@@ -17,12 +17,15 @@
 // Restore proper ES6 imports
 import { getSettings } from '../utils/storage.js';
 import { initSettings, onSettingsChange, handleVisibilityChange } from './settingsManager.js';
-import { walk, startObserver, stopObserver } from './domScanner.js';
+import { walk, startObserver, stopObserver, createDomScannerState } from './domScanner.js';
 import { findPrices } from './priceFinder.js';
 import { convertPriceToTimeString } from '../utils/converter.js';
 import { processTextNode } from './domModifier.js';
 import { CONVERTED_PRICE_CLASS, DEFAULT_DEBOUNCE_INTERVAL_MS } from '../utils/constants.js';
 import * as logger from '../utils/logger.js';
+
+// Create a single shared state object for the DOM scanner
+const domScannerState = createDomScannerState();
 
 /**
  * Process the page by walking the DOM and converting prices
@@ -78,10 +81,11 @@ function processPage(root, settings) {
  * @param {Node} root - The root node to observe (usually document.body)
  * @param {Function} callback - The callback function to process nodes
  * @param {object} settings - Extension settings including debounce interval
+ * @param {object} [state] - Optional DOM scanner state. If not provided, uses the module's shared state.
  * @returns {void}
  * @throws {Error} Logs errors but doesn't throw to prevent breaking page functionality
  */
-function initDomObserver(root, callback, settings) {
+function initDomObserver(root, callback, settings, state = domScannerState) {
   try {
     if (!root) {
       logger.error('Cannot initialize observer with invalid root node');
@@ -102,7 +106,7 @@ function initDomObserver(root, callback, settings) {
     }
 
     // Start observing DOM changes with the configured debounce interval
-    startObserver(root, callback, {}, debounceInterval);
+    startObserver(root, callback, {}, debounceInterval, state);
 
     logger.info(`DOM observer initialized with ${debounceInterval}ms debounce interval`);
   } catch (error) {
@@ -116,7 +120,7 @@ initSettings((root, settings) => {
   processPage(root, settings);
 
   // Set up the mutation observer for dynamic content, passing the settings to use the configured debounce interval
-  initDomObserver(root, (textNode) => convert(textNode, settings), settings);
+  initDomObserver(root, (textNode) => convert(textNode, settings), settings, domScannerState);
 });
 
 // Handle settings changes
@@ -128,9 +132,14 @@ onSettingsChange((root, updatedSettings) => {
   if ('debounceIntervalMs' in updatedSettings) {
     logger.info('Debounce interval changed, reinitializing observer');
     // Stop the existing observer
-    stopObserver();
+    stopObserver(domScannerState);
     // Initialize a new observer with the updated debounce interval
-    initDomObserver(root, (textNode) => convert(textNode, updatedSettings), updatedSettings);
+    initDomObserver(
+      root,
+      (textNode) => convert(textNode, updatedSettings),
+      updatedSettings,
+      domScannerState
+    );
   }
 });
 
@@ -140,13 +149,14 @@ handleVisibilityChange(processPage);
  * Handle script unload to clean up resources
  * Ensures proper cleanup of observers and event listeners when page unloads
  *
+ * @param {object} [state] - Optional DOM scanner state. If not provided, uses the module's shared state.
  * @returns {void}
  * @throws {Error} Logs errors but doesn't throw to prevent breaking page functionality
  */
-function handleUnload() {
+function handleUnload(state = domScannerState) {
   try {
     // Disconnect the MutationObserver and clean up resources
-    stopObserver();
+    stopObserver(state);
   } catch (error) {
     logger.error('Error during unload cleanup:', error.message, error.stack);
   }

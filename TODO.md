@@ -275,7 +275,7 @@
         2. Imports updated, build succeeds.
     - **Depends‑on:** none
 
-- [ ] **T029 · Refactor · P1: refactor functions to accept state via parameters**
+- [x] **T029 · Refactor · P1: refactor functions to accept state via parameters**
     - **Context:** cr-08+cr-14, Step 2
     - **Action:**
         1. Update functions (e.g., within `domScanner`) relying on shared state (e.g., `amazonPriceState`) to receive state explicitly as parameters.
