@@ -164,13 +164,15 @@ export const walk = (node, callback, settings, options = {}) => {
  * @param {object} options - Optional configuration settings
  * @param {number} [debounceInterval] - Debounce interval in milliseconds. Higher values reduce CPU usage but may delay updates.
  * @param {object} [state] - Optional state object to use. If not provided, uses the default state.
+ * @param {Function} [ObserverClass] - Optional MutationObserver constructor for testing. If not provided, uses the global MutationObserver.
  * @returns {MutationObserver} The created observer instance
  */
 export const observeDomChanges = (
   callback,
   options = {},
   debounceInterval = DEFAULT_DEBOUNCE_INTERVAL_MS,
-  state = defaultState
+  state = defaultState,
+  ObserverClass = null
 ) => {
   try {
     // Ensure callback is valid
@@ -204,8 +206,11 @@ export const observeDomChanges = (
 
     logger.info(`Observer created with ${debounceInterval}ms debounce interval`);
 
+    // Use the provided observer class or fall back to the global MutationObserver
+    const ActualObserver = ObserverClass || MutationObserver;
+
     // Create the mutation observer
-    const observer = new MutationObserver((mutations) => {
+    const observer = new ActualObserver((mutations) => {
       try {
         logger.debug(`Processing ${mutations.length} mutations`);
         // Process each mutation
@@ -312,6 +317,7 @@ export const observeDomChanges = (
  * @param {object} options - Optional configuration
  * @param {number} [debounceInterval] - Debounce interval in milliseconds. Higher values reduce CPU usage but may delay updates.
  * @param {object} [state] - Optional state object to use. If not provided, uses the default state.
+ * @param {Function} [ObserverClass] - Optional MutationObserver constructor for testing. If not provided, uses the global MutationObserver.
  * @returns {MutationObserver} The active observer
  */
 export const startObserver = (
@@ -319,7 +325,8 @@ export const startObserver = (
   callback,
   options = {},
   debounceInterval = DEFAULT_DEBOUNCE_INTERVAL_MS,
-  state = defaultState
+  state = defaultState,
+  ObserverClass = null
 ) => {
   try {
     if (!targetNode) {
@@ -342,7 +349,8 @@ export const startObserver = (
 
     // Create the observer if it doesn't exist
     const observer =
-      state.domObserver || observeDomChanges(callback, options, debounceInterval, state);
+      state.domObserver ||
+      observeDomChanges(callback, options, debounceInterval, state, ObserverClass);
 
     if (!observer) {
       logger.error('Failed to create MutationObserver');

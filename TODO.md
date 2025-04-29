@@ -317,7 +317,7 @@
         1. Manual: Disable option, load dynamic page, confirm no updates after initial load. Enable, confirm updates work.
     - **Depends‑on:** none
 
-- [ ] **T033 · Refactor · P2: allow injecting mock MutationObserver for tests**
+- [x] **T033 · Refactor · P2: allow injecting mock MutationObserver for tests**
     - **Context:** cr-06+cr-15p1, Step 3
     - **Action:**
         1. Refactor `observeDomChanges` (or equivalent setup logic) to optionally accept a `MutationObserver` constructor/instance as a parameter for testing.
