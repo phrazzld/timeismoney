@@ -124,7 +124,7 @@
         1. CI only runs for `master`.
     - **Depends‑on:** T011
 
-- [ ] **T013 · Chore · P2: update README badge to master branch**
+- [x] **T013 · Chore · P2: update README badge to master branch**
     - **Context:** cr-11, Step 3
     - **Action:**
         1. Update README CI badge URL to reference `branch=master`.
