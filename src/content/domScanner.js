@@ -212,88 +212,8 @@ export const observeDomChanges = (
     // Create the mutation observer
     const observer = new ActualObserver((mutations) => {
       try {
-        logger.debug(`Processing ${mutations.length} mutations`);
-        // Process each mutation
-        for (const mutation of mutations) {
-          // Handle added nodes
-          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-            for (const node of mutation.addedNodes) {
-              // Only queue element nodes (skip text nodes, comments, etc.)
-              if (node.nodeType === 1) {
-                // Skip nodes that are our converted price elements or their descendants
-                let isConvertedPrice = false;
-                let current = node;
-
-                // Check if this node or any ancestor has the converted class
-                while (current) {
-                  if (current.classList && current.classList.contains(CONVERTED_PRICE_CLASS)) {
-                    isConvertedPrice = true;
-                    break;
-                  }
-                  current = current.parentNode;
-                }
-
-                if (!isConvertedPrice) {
-                  // Check if we've reached the size limit
-                  if (state.pendingNodes.size >= MAX_PENDING_NODES) {
-                    logger.warn(
-                      `Pending nodes limit (${MAX_PENDING_NODES}) reached, processing immediately`
-                    );
-                    // Cancel any pending debounce timer
-                    clearTimeout(state.debounceTimer);
-                    // Process pending nodes immediately if not already processing
-                    if (!state.isProcessing) {
-                      processPendingNodes(callback, options, state);
-                    }
-                  }
-
-                  // Add node after potential processing to avoid adding to a full set
-                  state.pendingNodes.add(node);
-                }
-              }
-            }
-          }
-
-          // Handle character data changes on text nodes
-          if (mutation.type === 'characterData' && mutation.target.nodeType === 3) {
-            // Skip text nodes that are children of converted price elements
-            let isInConvertedPrice = false;
-            let current = mutation.target.parentNode;
-
-            // Check if any ancestor has the converted class
-            while (current) {
-              if (current.classList && current.classList.contains(CONVERTED_PRICE_CLASS)) {
-                isInConvertedPrice = true;
-                break;
-              }
-              current = current.parentNode;
-            }
-
-            if (!isInConvertedPrice) {
-              // Check if we've reached the size limit
-              if (state.pendingTextNodes.size >= MAX_PENDING_NODES) {
-                logger.warn(
-                  `Pending text nodes limit (${MAX_PENDING_NODES}) reached, processing immediately`
-                );
-                // Cancel any pending debounce timer
-                clearTimeout(state.debounceTimer);
-                // Process pending nodes immediately if not already processing
-                if (!state.isProcessing) {
-                  processPendingNodes(callback, options, state);
-                }
-              }
-
-              // Add text node after potential processing to avoid adding to a full set
-              state.pendingTextNodes.add(mutation.target);
-            }
-          }
-        }
-
-        // Trigger the debounced processing
-        logger.debug(
-          `Queued nodes - Elements: ${state.pendingNodes.size}, Text nodes: ${state.pendingTextNodes.size}`
-        );
-        debouncedProcess();
+        // Process mutations using the extractable, testable function
+        processMutations(mutations, callback, options, state, debouncedProcess);
       } catch (error) {
         logger.error('Error processing mutations:', error.message, error.stack);
       }
@@ -375,6 +295,109 @@ export const startObserver = (
 };
 
 /**
+ * Processes mutation records from MutationObserver and adds nodes to the queues
+ * This function is separate from the observer callback for testability
+ *
+ * @param {MutationRecord[]} mutations - Array of mutation records from MutationObserver
+ * @param {Function} callback - The function to call on text nodes
+ * @param {object} options - Optional settings for processing
+ * @param {object} state - The scanner state object
+ * @param {Function} debouncedProcessFn - The debounced processing function to trigger
+ * @returns {void}
+ */
+export const processMutations = (
+  mutations,
+  callback,
+  options = {},
+  state = defaultState,
+  debouncedProcessFn
+) => {
+  logger.debug(`Processing ${mutations.length} mutations`);
+
+  // Process each mutation
+  for (const mutation of mutations) {
+    // Handle added nodes
+    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+      for (const node of mutation.addedNodes) {
+        // Only queue element nodes (skip text nodes, comments, etc.)
+        if (node.nodeType === 1) {
+          // Skip nodes that are our converted price elements or their descendants
+          let isConvertedPrice = false;
+          let current = node;
+
+          // Check if this node or any ancestor has the converted class
+          while (current) {
+            if (current.classList && current.classList.contains(CONVERTED_PRICE_CLASS)) {
+              isConvertedPrice = true;
+              break;
+            }
+            current = current.parentNode;
+          }
+
+          if (!isConvertedPrice) {
+            // Check if we've reached the size limit
+            if (state.pendingNodes.size >= MAX_PENDING_NODES) {
+              logger.warn(
+                `Pending nodes limit (${MAX_PENDING_NODES}) reached, processing immediately`
+              );
+              // Cancel any pending debounce timer
+              clearTimeout(state.debounceTimer);
+              // Process pending nodes immediately if not already processing
+              if (!state.isProcessing) {
+                processPendingNodes(callback, options, state);
+              }
+            }
+
+            // Add node after potential processing to avoid adding to a full set
+            state.pendingNodes.add(node);
+          }
+        }
+      }
+    }
+
+    // Handle character data changes on text nodes
+    if (mutation.type === 'characterData' && mutation.target.nodeType === 3) {
+      // Skip text nodes that are children of converted price elements
+      let isInConvertedPrice = false;
+      let current = mutation.target.parentNode;
+
+      // Check if any ancestor has the converted class
+      while (current) {
+        if (current.classList && current.classList.contains(CONVERTED_PRICE_CLASS)) {
+          isInConvertedPrice = true;
+          break;
+        }
+        current = current.parentNode;
+      }
+
+      if (!isInConvertedPrice) {
+        // Check if we've reached the size limit
+        if (state.pendingTextNodes.size >= MAX_PENDING_NODES) {
+          logger.warn(
+            `Pending text nodes limit (${MAX_PENDING_NODES}) reached, processing immediately`
+          );
+          // Cancel any pending debounce timer
+          clearTimeout(state.debounceTimer);
+          // Process pending nodes immediately if not already processing
+          if (!state.isProcessing) {
+            processPendingNodes(callback, options, state);
+          }
+        }
+
+        // Add text node after potential processing to avoid adding to a full set
+        state.pendingTextNodes.add(mutation.target);
+      }
+    }
+  }
+
+  // Trigger the debounced processing
+  logger.debug(
+    `Queued nodes - Elements: ${state.pendingNodes.size}, Text nodes: ${state.pendingTextNodes.size}`
+  );
+  debouncedProcessFn();
+};
+
+/**
  * Processes all pending nodes that have been collected during mutations
  * Fetches settings only once per batch to improve performance
  * This function is called via the debounced handler when DOM mutations occur
@@ -388,9 +411,8 @@ export const startObserver = (
  * @param {Set<Node>} state.pendingTextNodes - Set of text nodes to process
  * @param {boolean} state.isProcessing - Flag to prevent concurrent processing
  * @returns {void}
- * @private
  */
-const processPendingNodes = (callback, options = {}, state = defaultState) => {
+export const processPendingNodes = (callback, options = {}, state = defaultState) => {
   try {
     // Performance timing - start overall processing
     performance.mark('processPendingNodes-start');

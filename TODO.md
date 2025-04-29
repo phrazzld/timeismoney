@@ -325,7 +325,7 @@
         1. Tests can inject and control observer behavior.
     - **Depends‑on:** none
 
-- [ ] **T034 · Refactor · P2: ensure observer callback logic is unit-testable**
+- [x] **T034 · Refactor · P2: ensure observer callback logic is unit-testable**
     - **Context:** cr-06+cr-15p1, Step 4
     - **Action:**
         1. Structure observer callback logic (`processPendingNodes`) so it can be invoked directly with mock `MutationRecord` arrays for testing.
