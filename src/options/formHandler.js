@@ -167,18 +167,72 @@ export function validateCurrencySymbol(symbol, status) {
     );
   }
 
-  // Validate symbol doesn't contain HTML or is too long
-  const symbolRegex = /^[^<>]{1,5}$/;
-  if (!symbolRegex.test(symbol)) {
+  // Validate symbol length is within acceptable range (1-3 characters)
+  if (symbol.length < 1 || symbol.length > 3) {
+    return showError(
+      status,
+      chrome.i18n.getMessage('symbolLengthErr') || 'Currency symbol must be 1-3 characters long.'
+    );
+  }
+
+  // Validate symbol contains only permitted characters
+  // Allow common currency symbols and alphanumeric characters
+  const safeSymbolRegex = /^[$€£¥₹₽¢₩₪₴₺₼₸฿₫₭₲₡₱a-zA-Z0-9]+$/;
+  if (!safeSymbolRegex.test(symbol)) {
     return showError(
       status,
       chrome.i18n.getMessage('symbolFormatErr') ||
-        'Currency symbol must be 1-5 characters and cannot contain < or >.'
+        'Currency symbol can only contain alphanumeric characters and common currency symbols.'
     );
   }
 
   return true;
 }
+
+/**
+ * List of common ISO 4217 currency codes
+ * This is not an exhaustive list but covers major currencies
+ */
+const COMMON_CURRENCY_CODES = [
+  'USD',
+  'EUR',
+  'GBP',
+  'JPY',
+  'AUD',
+  'CAD',
+  'CHF',
+  'CNY',
+  'HKD',
+  'NZD',
+  'SEK',
+  'KRW',
+  'SGD',
+  'NOK',
+  'MXN',
+  'INR',
+  'RUB',
+  'ZAR',
+  'TRY',
+  'BRL',
+  'TWD',
+  'DKK',
+  'PLN',
+  'THB',
+  'IDR',
+  'HUF',
+  'CZK',
+  'ILS',
+  'CLP',
+  'PHP',
+  'AED',
+  'COP',
+  'SAR',
+  'MYR',
+  'RON',
+  'BGN',
+  'HRK',
+  'UAH',
+];
 
 /**
  * Validates a currency code
@@ -193,14 +247,28 @@ export function validateCurrencyCode(code, status) {
     return showError(status, chrome.i18n.getMessage('codeErr') || 'Please enter a currency code.');
   }
 
-  // Validate code is a standard 3-letter code with only letters
+  // Validate code is exactly 3 uppercase letters
   const codeRegex = /^[A-Z]{3}$/;
   if (!codeRegex.test(code)) {
     return showError(
       status,
       chrome.i18n.getMessage('codeFormatErr') ||
-        'Currency code must be 3 letters (e.g., USD, EUR, GBP).'
+        'Currency code must be 3 uppercase letters (e.g., USD, EUR, GBP).'
     );
+  }
+
+  // Optional: Provide a warning for uncommon currency codes
+  // This is a UX improvement - still allows the code but warns the user
+  if (!COMMON_CURRENCY_CODES.includes(code)) {
+    // Only show a warning, but still return true to allow saving
+    status.textContent =
+      chrome.i18n.getMessage('codeUncommonWarn') ||
+      'Note: This appears to be an uncommon currency code. Please verify it is correct.';
+
+    // Clear the warning after 3 seconds
+    setTimeout(() => {
+      status.textContent = '';
+    }, 3000);
   }
 
   return true;
@@ -215,8 +283,23 @@ export function validateCurrencyCode(code, status) {
  * @returns {boolean} True if valid, false otherwise
  */
 export function validateAmount(rawAmount, amountFloat, status) {
-  // Validate input is a number
-  if (isNaN(amountFloat) || !rawAmount.trim()) {
+  // Validate input is not empty
+  if (!rawAmount.trim()) {
+    return showError(status, chrome.i18n.getMessage('amountEmptyErr') || 'Please enter an amount.');
+  }
+
+  // Check for valid numeric format
+  const numberPattern = /^[0-9,.]+$/;
+  if (!numberPattern.test(rawAmount.trim())) {
+    return showError(
+      status,
+      chrome.i18n.getMessage('amountFormatErr') ||
+        'Amount must contain only digits, commas, and decimal points.'
+    );
+  }
+
+  // Validate input is a valid number
+  if (isNaN(amountFloat)) {
     return showError(status, chrome.i18n.getMessage('amountErr') || 'Please enter a valid amount.');
   }
 
@@ -225,20 +308,37 @@ export function validateAmount(rawAmount, amountFloat, status) {
     return showError(status, chrome.i18n.getMessage('amountErr') || 'Please enter a valid amount.');
   }
 
-  // Validate input is non-negative
-  if (amountFloat < 0) {
+  // Validate input is positive (not just non-negative)
+  if (amountFloat <= 0) {
     // Use default message if translation is not available
-    const negativeErrMsg =
-      chrome.i18n.getMessage('negativeAmountErr') || 'Amount must be non-negative.';
-    return showError(status, chrome.i18n.getMessage('amountErr') + ' ' + negativeErrMsg);
+    const positiveErrMsg =
+      chrome.i18n.getMessage('positiveAmountErr') || 'Amount must be greater than zero.';
+    return showError(status, positiveErrMsg);
   }
 
-  // Validate input is within reasonable range (less than 1 billion)
+  // Validate input is within reasonable range
+  const MIN_AMOUNT = 0.01; // Minimum sensible amount
   const MAX_AMOUNT = 1000000000; // 1 billion
+
+  if (amountFloat < MIN_AMOUNT) {
+    const minAmountMsg =
+      chrome.i18n.getMessage('minAmountErr') || `Amount must be at least ${MIN_AMOUNT}.`;
+    return showError(status, minAmountMsg);
+  }
+
   if (amountFloat > MAX_AMOUNT) {
     const maxAmountMsg =
-      chrome.i18n.getMessage('maxAmountErr') || 'Amount must be less than 1 billion.';
-    return showError(status, chrome.i18n.getMessage('amountErr') + ' ' + maxAmountMsg);
+      chrome.i18n.getMessage('maxAmountErr') || `Amount must be less than ${MAX_AMOUNT}.`;
+    return showError(status, maxAmountMsg);
+  }
+
+  // Validate number of decimal places (prevent super-precise values)
+  const decimalStr = amountFloat.toString().split('.');
+  if (decimalStr.length > 1 && decimalStr[1].length > 6) {
+    return showError(
+      status,
+      chrome.i18n.getMessage('decimalPlacesErr') || 'Amount cannot have more than 6 decimal places.'
+    );
   }
 
   return true;
@@ -376,10 +476,18 @@ export function validateDebounceInterval(intervalStr, status) {
     return true;
   }
 
+  // Check that input contains only digits
+  if (!/^\d+$/.test(intervalStr.trim())) {
+    return showError(
+      status,
+      chrome.i18n.getMessage('debounceFormatErr') || 'Debounce interval must contain only digits.'
+    );
+  }
+
   // Parse interval to integer
   const interval = parseInt(intervalStr, 10);
 
-  // Validate input is a number
+  // Validate input is a number and not NaN
   if (isNaN(interval)) {
     return showError(
       status,
@@ -392,6 +500,14 @@ export function validateDebounceInterval(intervalStr, status) {
     return showError(
       status,
       chrome.i18n.getMessage('debounceIntervalErr') || 'Please enter a valid debounce interval.'
+    );
+  }
+
+  // Validate input is an integer
+  if (interval !== parseFloat(intervalStr)) {
+    return showError(
+      status,
+      chrome.i18n.getMessage('debounceIntegerErr') || 'Debounce interval must be a whole number.'
     );
   }
 

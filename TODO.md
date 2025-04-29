@@ -14,7 +14,7 @@
         2. Automated tests pass for input sanitization.
     - **Depends‑on:** none
 
-- [ ] **T002 · Feature · P1: strengthen input validation logic**
+- [x] **T002 · Feature · P1: strengthen input validation logic**
     - **Context:** cr-02+cr-20+cr-17p1, Step 2
     - **Action:**
         1. Update validation regexes and add explicit range/length/numeric checks (`isFinite`) in `formHandler.js` (or later `validator.js`).

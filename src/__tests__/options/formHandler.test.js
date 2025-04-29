@@ -7,6 +7,7 @@ import {
   validateCurrencySymbol,
   validateCurrencyCode,
   validateAmount,
+  validateDebounceInterval,
   saveOptions,
   sanitizeTextInput,
   sanitizeCurrencySymbol,
@@ -24,16 +25,23 @@ describe('Options Form Validation', () => {
     jest.clearAllMocks();
   });
 
-  describe('Basic validation tests', () => {
+  describe('Comprehensive validation tests', () => {
     test('validateCurrencySymbol functionality', () => {
       // Create a mock status element
       const status = { textContent: '' };
 
       // Valid cases
       expect(validateCurrencySymbol('$', status)).toBe(true);
+      expect(validateCurrencySymbol('£', status)).toBe(true);
+      expect(validateCurrencySymbol('€', status)).toBe(true);
+      expect(validateCurrencySymbol('¥', status)).toBe(true);
+      expect(validateCurrencySymbol('₹', status)).toBe(true);
 
-      // Invalid case
-      expect(validateCurrencySymbol('', status)).toBe(false);
+      // Invalid cases
+      expect(validateCurrencySymbol('', status)).toBe(false); // Empty
+      expect(validateCurrencySymbol('$$$$', status)).toBe(false); // Too long
+      expect(validateCurrencySymbol('!@#', status)).toBe(false); // Invalid characters
+      expect(validateCurrencySymbol('^%$', status)).toBe(false); // Mixed invalid + valid
     });
 
     test('validateCurrencyCode functionality', () => {
@@ -42,9 +50,19 @@ describe('Options Form Validation', () => {
 
       // Valid cases
       expect(validateCurrencyCode('USD', status)).toBe(true);
+      expect(validateCurrencyCode('EUR', status)).toBe(true);
+      expect(validateCurrencyCode('GBP', status)).toBe(true);
+      expect(validateCurrencyCode('JPY', status)).toBe(true);
 
-      // Invalid case
-      expect(validateCurrencyCode('', status)).toBe(false);
+      // Should show a warning for uncommon codes but still return true
+      expect(validateCurrencyCode('XYZ', status)).toBe(true);
+
+      // Invalid cases
+      expect(validateCurrencyCode('', status)).toBe(false); // Empty
+      expect(validateCurrencyCode('U$D', status)).toBe(false); // Invalid characters
+      expect(validateCurrencyCode('USDT', status)).toBe(false); // Too long
+      expect(validateCurrencyCode('US', status)).toBe(false); // Too short
+      expect(validateCurrencyCode('usd', status)).toBe(false); // Lowercase
     });
 
     test('validateAmount functionality', () => {
@@ -53,9 +71,35 @@ describe('Options Form Validation', () => {
 
       // Valid cases
       expect(validateAmount('100', 100, status)).toBe(true);
+      expect(validateAmount('0.01', 0.01, status)).toBe(true);
+      expect(validateAmount('999999999', 999999999, status)).toBe(true);
+      expect(validateAmount('1,234.56', 1234.56, status)).toBe(true);
 
-      // Invalid case
-      expect(validateAmount('', NaN, status)).toBe(false);
+      // Invalid cases
+      expect(validateAmount('', NaN, status)).toBe(false); // Empty
+      expect(validateAmount('abc', NaN, status)).toBe(false); // Not a number
+      expect(validateAmount('0', 0, status)).toBe(false); // Zero
+      expect(validateAmount('-10', -10, status)).toBe(false); // Negative
+      expect(validateAmount('2000000000', 2000000000, status)).toBe(false); // Too large
+      expect(validateAmount('0.001', 0.001, status)).toBe(false); // Too small
+    });
+
+    test('validateDebounceInterval functionality', () => {
+      // Create a mock status element
+      const status = { textContent: '' };
+
+      // Valid cases
+      expect(validateDebounceInterval('100', status)).toBe(true);
+      expect(validateDebounceInterval('50', status)).toBe(true);
+      expect(validateDebounceInterval('5000', status)).toBe(true);
+      expect(validateDebounceInterval('', status)).toBe(true); // Empty is valid (uses default)
+
+      // Invalid cases
+      expect(validateDebounceInterval('49', status)).toBe(false); // Too small
+      expect(validateDebounceInterval('5001', status)).toBe(false); // Too large
+      expect(validateDebounceInterval('100.5', status)).toBe(false); // Not an integer
+      expect(validateDebounceInterval('abc', status)).toBe(false); // Not a number
+      expect(validateDebounceInterval('-100', status)).toBe(false); // Negative
     });
   });
 
