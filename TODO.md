@@ -108,7 +108,7 @@
     - **Depends‑on:** none
 
 ## DevOps / CI & Smoke Test
-- [ ] **T011 · Chore · P2: ensure repository default branch is master**
+- [x] **T011 · Chore · P2: ensure repository default branch is master**
     - **Context:** cr-11, Step 1
     - **Action:**
         1. Verify and set the repository default branch to `master` in the Git hosting platform settings.
