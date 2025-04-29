@@ -13,6 +13,59 @@
 export const CONVERTED_PRICE_CLASS = 'tim-converted-price';
 
 /**
+ * CSS class names used to identify Amazon price components
+ * Amazon splits prices into separate DOM elements with these classes
+ *
+ * @type {{[key: string]: string}}
+ */
+export const AMAZON_PRICE_CLASSES = {
+  CURRENCY: 'sx-price-currency',
+  WHOLE: 'sx-price-whole',
+  FRACTIONAL: 'sx-price-fractional',
+};
+
+/**
+ * Maximum number of nodes to queue before forcing processing
+ * Used to prevent memory issues with large DOM changes
+ *
+ * @type {number}
+ */
+export const MAX_PENDING_NODES = 1000;
+
+/**
+ * Default debounce interval for MutationObserver in milliseconds
+ * Controls how frequently DOM changes are processed
+ *
+ * @type {number}
+ */
+export const DEFAULT_DEBOUNCE_INTERVAL_MS = 200;
+
+/**
+ * Regular expression pattern used to match time annotations
+ * Used to detect already-converted prices
+ *
+ * @type {string}
+ */
+export const TIME_ANNOTATION_PATTERN = '\\s\\(\\d+h\\s\\d+m\\)';
+
+/**
+ * Default extension settings
+ * Used when user settings are not available
+ *
+ * @type {object}
+ */
+export const DEFAULT_SETTINGS = {
+  amount: 30,
+  frequency: 'hourly',
+  currencySymbol: '$',
+  currencyCode: 'USD',
+  thousands: 'commas',
+  decimal: 'dot',
+  disabled: false,
+  debounceIntervalMs: DEFAULT_DEBOUNCE_INTERVAL_MS,
+};
+
+/**
  * Currency format configurations organized by locale groups
  * Each group defines formatting rules and associated currencies
  *

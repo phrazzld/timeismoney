@@ -21,7 +21,7 @@ import { walk, startObserver, stopObserver } from './domScanner.js';
 import { findPrices } from './priceFinder.js';
 import { convertPriceToTimeString } from '../utils/converter.js';
 import { processTextNode } from './domModifier.js';
-import { CONVERTED_PRICE_CLASS } from '../utils/constants.js';
+import { CONVERTED_PRICE_CLASS, DEFAULT_DEBOUNCE_INTERVAL_MS } from '../utils/constants.js';
 import * as logger from '../utils/logger.js';
 
 /**
@@ -88,8 +88,8 @@ function initDomObserver(root, callback, settings) {
       return;
     }
 
-    // Get debounce interval from settings, fallback to default value of 200ms
-    let debounceInterval = 200;
+    // Get debounce interval from settings, fallback to default value
+    let debounceInterval = DEFAULT_DEBOUNCE_INTERVAL_MS;
 
     // Try to parse the debounce interval from settings
     if (settings && 'debounceIntervalMs' in settings) {

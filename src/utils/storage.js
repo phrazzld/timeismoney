@@ -5,22 +5,7 @@
  * @module utils/storage
  */
 
-/**
- * Default settings for the extension
- * These values are used when no user settings are found
- *
- * @type {object}
- */
-const DEFAULTS = {
-  amount: 30,
-  frequency: 'hourly',
-  currencySymbol: '$',
-  currencyCode: 'USD',
-  thousands: 'commas',
-  decimal: 'dot',
-  disabled: false,
-  debounceIntervalMs: 200, // Default debounce interval for MutationObserver
-};
+import { DEFAULT_SETTINGS } from './constants.js';
 
 /**
  * Gets the current settings from Chrome storage
@@ -30,7 +15,7 @@ const DEFAULTS = {
  */
 export function getSettings() {
   return new Promise((resolve, reject) => {
-    chrome.storage.sync.get(DEFAULTS, (items) => {
+    chrome.storage.sync.get(DEFAULT_SETTINGS, (items) => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
       } else {

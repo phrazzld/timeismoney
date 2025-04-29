@@ -8,6 +8,7 @@
 import {
   CURRENCY_FORMATS,
   CURRENCY_SYMBOL_TO_FORMAT,
+  TIME_ANNOTATION_PATTERN,
   CURRENCY_CODE_TO_FORMAT,
 } from '../utils/constants.js';
 
@@ -195,12 +196,9 @@ export const buildReverseMatchPattern = (
     decimalString
   );
 
-  // Add the time annotation pattern
-  const timeAnnotationPattern = '\\s\\(\\d+h\\s\\d+m\\)';
-
-  // Create the full pattern
+  // Create the full pattern using the imported TIME_ANNOTATION_PATTERN
   const pattern = new RegExp(
-    `(${pricePattern.source.replace(/\//g, '')})${timeAnnotationPattern}`,
+    `(${pricePattern.source.replace(/\//g, '')})${TIME_ANNOTATION_PATTERN}`,
     'g'
   );
 

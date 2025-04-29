@@ -7,6 +7,8 @@
  * @module content/amazonHandler
  */
 
+import { AMAZON_PRICE_CLASSES } from '../utils/constants.js';
+
 /**
  * Creates a new Amazon price state object to track Amazon's split price components
  * Amazon often splits prices across multiple DOM elements (currency, whole, fractional)
@@ -50,9 +52,9 @@ export const isAmazonPriceNode = (node) => {
 
   const className = node.classList.value;
   return (
-    className === 'sx-price-currency' ||
-    className === 'sx-price-whole' ||
-    className === 'sx-price-fractional'
+    className === AMAZON_PRICE_CLASSES.CURRENCY ||
+    className === AMAZON_PRICE_CLASSES.WHOLE ||
+    className === AMAZON_PRICE_CLASSES.FRACTIONAL
   );
 };
 
@@ -78,13 +80,13 @@ export const handleAmazonPrice = (node, callback, state) => {
   const className = classes.value;
 
   switch (className) {
-    case 'sx-price-currency':
+    case AMAZON_PRICE_CLASSES.CURRENCY:
       state.currency = node.firstChild.nodeValue.toString();
       node.firstChild.nodeValue = null; // Clear the node value
       state.active = true;
       return true;
 
-    case 'sx-price-whole':
+    case AMAZON_PRICE_CLASSES.WHOLE:
       if (state.active && state.currency !== null) {
         // Combine currency and whole part
         const combinedPrice = state.currency + node.firstChild.nodeValue.toString();
@@ -101,7 +103,7 @@ export const handleAmazonPrice = (node, callback, state) => {
       }
       return false;
 
-    case 'sx-price-fractional':
+    case AMAZON_PRICE_CLASSES.FRACTIONAL:
       if (state.active) {
         // Clear the fractional part as it's already been processed with the whole part
         node.firstChild.nodeValue = null;

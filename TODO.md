@@ -264,7 +264,7 @@
     - **Depends‑on:** T026
 
 ## Core / Constants & Decoupling
-- [ ] **T028 · Refactor · P2: centralize all shared constants in constants.js**
+- [x] **T028 · Refactor · P2: centralize all shared constants in constants.js**
     - **Context:** cr-08+cr-14, Step 1
     - **Action:**
         1. Create `src/utils/constants.js`.

@@ -6,7 +6,11 @@
  */
 
 import { processIfAmazon, createPriceState } from './amazonHandler.js';
-import { CONVERTED_PRICE_CLASS } from '../utils/constants.js';
+import {
+  CONVERTED_PRICE_CLASS,
+  MAX_PENDING_NODES,
+  DEFAULT_DEBOUNCE_INTERVAL_MS,
+} from '../utils/constants.js';
 import { getSettings } from '../utils/storage.js';
 import * as logger from '../utils/logger.js';
 
@@ -15,9 +19,6 @@ let domObserver = null;
 
 // Debounce timeout reference
 let debounceTimer = null;
-
-// Maximum number of nodes to queue before forcing processing
-const MAX_PENDING_NODES = 1000;
 
 // Store nodes that need processing
 const pendingNodes = new Set();
@@ -140,7 +141,11 @@ export const walk = (node, callback, settings, options = {}) => {
  * @param {number} [debounceInterval] - Debounce interval in milliseconds. Higher values reduce CPU usage but may delay updates.
  * @returns {MutationObserver} The created observer instance
  */
-export const observeDomChanges = (callback, options = {}, debounceInterval = 200) => {
+export const observeDomChanges = (
+  callback,
+  options = {},
+  debounceInterval = DEFAULT_DEBOUNCE_INTERVAL_MS
+) => {
   try {
     // Ensure callback is valid
     if (!callback || typeof callback !== 'function') {
@@ -150,8 +155,10 @@ export const observeDomChanges = (callback, options = {}, debounceInterval = 200
 
     // Ensure debounceInterval is a valid number
     if (typeof debounceInterval !== 'number' || isNaN(debounceInterval) || debounceInterval < 0) {
-      logger.warn('Invalid debounce interval, using default 200ms');
-      debounceInterval = 200;
+      logger.warn(
+        'Invalid debounce interval, using default ' + DEFAULT_DEBOUNCE_INTERVAL_MS + 'ms'
+      );
+      debounceInterval = DEFAULT_DEBOUNCE_INTERVAL_MS;
     }
 
     // Cap the debounce interval to reasonable values (50ms - 2000ms)
@@ -276,7 +283,12 @@ export const observeDomChanges = (callback, options = {}, debounceInterval = 200
  * @param {number} [debounceInterval] - Debounce interval in milliseconds. Higher values reduce CPU usage but may delay updates.
  * @returns {MutationObserver} The active observer
  */
-export const startObserver = (targetNode, callback, options = {}, debounceInterval = 200) => {
+export const startObserver = (
+  targetNode,
+  callback,
+  options = {},
+  debounceInterval = DEFAULT_DEBOUNCE_INTERVAL_MS
+) => {
   try {
     if (!targetNode) {
       logger.error('startObserver called with invalid target node');
@@ -285,8 +297,12 @@ export const startObserver = (targetNode, callback, options = {}, debounceInterv
 
     // Ensure debounceInterval is a valid number
     if (typeof debounceInterval !== 'number' || isNaN(debounceInterval) || debounceInterval < 0) {
-      logger.warn('Invalid debounce interval in startObserver, using default 200ms');
-      debounceInterval = 200;
+      logger.warn(
+        'Invalid debounce interval in startObserver, using default ' +
+          DEFAULT_DEBOUNCE_INTERVAL_MS +
+          'ms'
+      );
+      debounceInterval = DEFAULT_DEBOUNCE_INTERVAL_MS;
     }
 
     // Cap the debounce interval to reasonable values (50ms - 2000ms)
