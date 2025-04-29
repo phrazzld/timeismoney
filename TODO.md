@@ -168,7 +168,7 @@
         2. Tests run successfully.
     - **Depends‑on:** T016
 
-- [ ] **T018 · Refactor · P1: convert tests and helpers to import/export syntax**
+- [x] **T018 · Refactor · P1: convert tests and helpers to import/export syntax**
     - **Context:** cr-16, Step 3
     - **Action:**
         1. Replace all `require`/`module.exports` in test files and helper scripts with ES6 `import`/`export`.

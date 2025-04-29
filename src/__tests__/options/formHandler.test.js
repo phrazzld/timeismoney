@@ -7,6 +7,7 @@ import {
   validateCurrencySymbol,
   validateCurrencyCode,
   validateAmount,
+  saveOptions,
 } from '../../options/formHandler';
 
 describe('Options Form Validation', () => {
@@ -56,8 +57,7 @@ describe('Options Form Validation', () => {
 
   describe('Window closing behavior tests', () => {
     test('window.close() is not called when validation fails', () => {
-      // Import the saveOptions function
-      const { saveOptions } = require('../../options/formHandler');
+      // saveOptions is imported at the top of the file
 
       // Mock all the DOM elements and values
       document.getElementById = jest.fn((id) => {
