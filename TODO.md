@@ -285,7 +285,7 @@
         2. Tests updated and pass.
     - **Depends‑on:** T028
 
-- [ ] **T030 · Refactor · P1: separate concerns of scanning, finding, converting, modifying**
+- [x] **T030 · Refactor · P1: separate concerns of scanning, finding, converting, modifying**
     - **Context:** cr-08+cr-14, Step 3
     - **Action:**
         1. Create/refine modules: `domScanner` finds nodes; `priceFinder` identifies prices; `converter` converts; `domModifier` updates DOM.

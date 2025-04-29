@@ -1,10 +1,41 @@
 /**
  * DOM Modifier module for applying and reverting price conversions.
+ * Responsible for all DOM manipulation related to price conversions.
  *
  * @module content/domModifier
  */
 
 import { CONVERTED_PRICE_CLASS } from '../utils/constants.js';
+import * as logger from '../utils/logger.js';
+
+/**
+ * Checks if a node is valid for processing and not already processed
+ *
+ * @param {Node} textNode - The text node to check
+ * @returns {boolean} True if the node is valid and not yet processed, false otherwise
+ */
+export const isValidForProcessing = (textNode) => {
+  try {
+    // Check if the node itself is valid
+    if (!textNode || !textNode.nodeValue || textNode.nodeValue.trim() === '') {
+      return false;
+    }
+
+    // Check if the node is already within a converted price element
+    let parent = textNode.parentNode;
+    while (parent) {
+      if (parent.classList && parent.classList.contains(CONVERTED_PRICE_CLASS)) {
+        return false; // This is already within a converted price element
+      }
+      parent = parent.parentNode;
+    }
+
+    return true;
+  } catch (error) {
+    logger.error('Error checking if node is valid for processing:', error.message, error.stack);
+    return false;
+  }
+};
 
 /**
  * Applies a price conversion to a text node by replacing the matched text
@@ -56,7 +87,7 @@ export const applyConversion = (textNode, pattern, convertFn) => {
 
           lastIndex = match.index + originalPrice.length;
         } catch (matchError) {
-          console.error('TimeIsMoney: Error processing price match:', matchError.message, {
+          logger.error('Error processing price match:', matchError.message, {
             match: match[0],
             errorDetails: matchError.stack,
           });
@@ -75,7 +106,7 @@ export const applyConversion = (textNode, pattern, convertFn) => {
         return true;
       }
     } catch (matchesError) {
-      console.error('TimeIsMoney: Error in regex pattern matching:', matchesError.message, {
+      logger.error('Error in regex pattern matching:', matchesError.message, {
         pattern: pattern.toString(),
         textSample: text.substring(0, 50) + '...',
         errorDetails: matchesError.stack,
@@ -84,7 +115,7 @@ export const applyConversion = (textNode, pattern, convertFn) => {
 
     return false;
   } catch (error) {
-    console.error('TimeIsMoney: Error in applyConversion:', error.message, error.stack);
+    logger.error('Error in applyConversion:', error.message, error.stack);
     return false;
   }
 };
@@ -105,7 +136,7 @@ export const revertAll = (root) => {
     try {
       convertedElements = root.querySelectorAll(`.${CONVERTED_PRICE_CLASS}`);
     } catch (queryError) {
-      console.error('TimeIsMoney: Error querying for converted elements:', queryError.message, {
+      logger.error('Error querying for converted elements:', queryError.message, {
         className: CONVERTED_PRICE_CLASS,
         errorDetails: queryError.stack,
       });
@@ -125,7 +156,7 @@ export const revertAll = (root) => {
           }
         }
       } catch (elementError) {
-        console.error('TimeIsMoney: Error reverting converted element:', elementError.message, {
+        logger.error('Error reverting converted element:', elementError.message, {
           element: element.outerHTML?.substring(0, 100) || 'unknown element',
           errorDetails: elementError.stack,
         });
@@ -135,9 +166,37 @@ export const revertAll = (root) => {
 
     return count;
   } catch (error) {
-    console.error('TimeIsMoney: Error in revertAll:', error.message, error.stack);
+    logger.error('Error in revertAll:', error.message, error.stack);
     return 0;
   }
+};
+
+/**
+ * Creates a conversion function that uses the provided conversion info to transform
+ * a price string into a display string with time equivalents
+ *
+ * @param {object} conversionInfo - Info needed for the conversion
+ * @param {Function} conversionInfo.convertFn - Function that converts price strings
+ * @param {object} conversionInfo.formatters - Formatting options for currency
+ * @param {object} conversionInfo.wageInfo - Information about hourly wage for conversion
+ * @returns {Function} A function that converts a price string to a display string
+ */
+const createPriceToTimeConverter = (conversionInfo) => {
+  return (priceString) => {
+    try {
+      return conversionInfo.convertFn(
+        priceString,
+        conversionInfo.formatters,
+        conversionInfo.wageInfo
+      );
+    } catch (error) {
+      logger.error('Error in price conversion function:', error.message, {
+        priceString,
+        errorDetails: error.stack,
+      });
+      return priceString; // Return original price if conversion fails
+    }
+  };
 };
 
 /**
@@ -160,56 +219,36 @@ export const revertAll = (root) => {
 export const processTextNode = (textNode, priceMatch, conversionInfo, shouldRevert) => {
   try {
     if (!textNode) {
-      console.error('TimeIsMoney: processTextNode called with invalid text node');
+      logger.error('processTextNode called with invalid text node');
       return false;
     }
 
+    // Handle reversion mode - when extension is disabled, revert any converted prices
     if (shouldRevert) {
-      // For reverting, we handle the parent element directly since we need to find spans
       const parent = textNode.parentNode;
       if (parent) {
         return revertAll(parent) > 0;
       }
       return false;
-    } else {
-      if (!priceMatch || !priceMatch.pattern || !conversionInfo) {
-        console.error('TimeIsMoney: Missing required data for price conversion', {
-          hasMatch: !!priceMatch,
-          hasPattern: !!(priceMatch && priceMatch.pattern),
-          hasConversionInfo: !!conversionInfo,
-        });
-        return false;
-      }
-
-      // For applying conversions, we use the applyConversion function
-      /**
-       * Converts a price string to a display string with time equivalents
-       * Inner function that wraps the conversion logic with error handling
-       *
-       * @param {string} priceString - The original price string to convert
-       * @returns {string} The formatted price string with time equivalent (e.g., "$10.99 (2h 15m)")
-       * @private
-       */
-      const convertFn = (priceString) => {
-        try {
-          return conversionInfo.convertFn(
-            priceString,
-            conversionInfo.formatters,
-            conversionInfo.wageInfo
-          );
-        } catch (error) {
-          console.error('TimeIsMoney: Error in price conversion function:', error.message, {
-            priceString,
-            errorDetails: error.stack,
-          });
-          return priceString; // Return original price if conversion fails
-        }
-      };
-
-      return applyConversion(textNode, priceMatch.pattern, convertFn);
     }
+
+    // Handle conversion mode - find and convert prices
+    if (!priceMatch || !priceMatch.pattern || !conversionInfo) {
+      logger.error('Missing required data for price conversion', {
+        hasMatch: !!priceMatch,
+        hasPattern: !!(priceMatch && priceMatch.pattern),
+        hasConversionInfo: !!conversionInfo,
+      });
+      return false;
+    }
+
+    // Create a converter function that will transform price strings
+    const converter = createPriceToTimeConverter(conversionInfo);
+
+    // Apply the conversion to the DOM
+    return applyConversion(textNode, priceMatch.pattern, converter);
   } catch (error) {
-    console.error('TimeIsMoney: Error in processTextNode:', error.message, error.stack);
+    logger.error('Error in processTextNode:', error.message, error.stack);
     return false;
   }
 };

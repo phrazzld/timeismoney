@@ -20,8 +20,8 @@ import { initSettings, onSettingsChange, handleVisibilityChange } from './settin
 import { walk, startObserver, stopObserver, createDomScannerState } from './domScanner.js';
 import { findPrices } from './priceFinder.js';
 import { convertPriceToTimeString } from '../utils/converter.js';
-import { processTextNode } from './domModifier.js';
-import { CONVERTED_PRICE_CLASS, DEFAULT_DEBOUNCE_INTERVAL_MS } from '../utils/constants.js';
+import { processTextNode, isValidForProcessing } from './domModifier.js';
+import { DEFAULT_DEBOUNCE_INTERVAL_MS } from '../utils/constants.js';
 import * as logger from '../utils/logger.js';
 
 // Create a single shared state object for the DOM scanner
@@ -167,8 +167,12 @@ window.addEventListener('unload', handleUnload);
 window.addEventListener('beforeunload', handleUnload);
 
 /**
- * Converts price text in a DOM text node to include equivalent working time
- * Or reverts previously converted text back to original form
+ * Orchestrates the price conversion pipeline by separating the process into discrete steps:
+ * 1. Check if the node is valid and not already processed (using domModifier.isValidForProcessing)
+ * 2. Get settings (either from parameters or storage)
+ * 3. Find prices in the text using the priceFinder module
+ * 4. Create conversion info for the converter module
+ * 5. Update the DOM using the domModifier module
  *
  * @param {Node} textNode - The DOM text node to process
  * @param {object} [preloadedSettings] - Optional settings object if already loaded
@@ -182,19 +186,9 @@ window.addEventListener('beforeunload', handleUnload);
  * @returns {void}
  */
 const convert = (textNode, preloadedSettings) => {
-  // Skip text nodes that are not valid or empty
-  if (!textNode || !textNode.nodeValue || textNode.nodeValue.trim() === '') {
+  // Use the domModifier's validation function to check if this node is valid for processing
+  if (!isValidForProcessing(textNode)) {
     return;
-  }
-
-  // Skip already converted elements or their children
-  // Check if this node or any ancestor has the converted class
-  let parent = textNode.parentNode;
-  while (parent) {
-    if (parent.classList && parent.classList.contains(CONVERTED_PRICE_CLASS)) {
-      return; // This is already within a converted price element
-    }
-    parent = parent.parentNode;
   }
 
   // Use preloaded settings if provided, otherwise fetch them
@@ -209,6 +203,7 @@ const convert = (textNode, preloadedSettings) => {
           return;
         }
 
+        // STEP 1: Prepare the format settings for price finding
         const formatSettings = {
           currencySymbol: settings.currencySymbol,
           currencyCode: settings.currencyCode,
@@ -217,12 +212,14 @@ const convert = (textNode, preloadedSettings) => {
           isReverseSearch: settings.disabled === true,
         };
 
+        // STEP 2: Use priceFinder to identify prices in the text
         const priceMatch = findPrices(textNode.nodeValue, formatSettings);
         if (!priceMatch) {
           // Not an error, just no prices found
           return;
         }
 
+        // STEP 3: Prepare conversion information for the converter
         const conversionInfo = {
           convertFn: convertPriceToTimeString,
           formatters: {
@@ -235,7 +232,7 @@ const convert = (textNode, preloadedSettings) => {
           },
         };
 
-        // Process the text node using the DOM modifier
+        // STEP 4: Use domModifier to update the DOM with the converted prices
         processTextNode(textNode, priceMatch, conversionInfo, formatSettings.isReverseSearch);
       } catch (error) {
         logger.error('Error converting price in text node:', error.message, {
