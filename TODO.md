@@ -224,7 +224,7 @@
         2. ESLint enforces JSDoc policy consistently.
     - **Depends‑on:** T022
 
-- [ ] **T024 · Chore · P2: add or complete JSDoc for all exported key module functions**
+- [x] **T024 · Chore · P2: add or complete JSDoc for all exported key module functions**
     - **Context:** cr-07+cr-12, Step 3
     - **Action:**
         1. Write full JSDoc blocks (`@param`, `@returns`, description) for all exported functions/classes in `storage.js`, `converter.js`, `domScanner.js`, `priceFinder.js`, etc.

@@ -129,7 +129,11 @@ export function isDisabled() {
 /**
  * Checks if the Chrome runtime is valid and accessible
  * Used to ensure the extension API is available before attempting to use it
- * Prevents errors when Chrome runtime becomes unavailable
+ * Prevents errors when Chrome runtime becomes unavailable (e.g., during page unload or extension update)
+ *
+ * This is important because the Chrome extension context can become invalid in certain scenarios,
+ * such as during navigation, extension updates, or when a tab is being closed.
+ * Attempting to access APIs in an invalid context would throw errors.
  *
  * @returns {boolean} True if Chrome runtime and manifest are accessible, false otherwise
  * @private

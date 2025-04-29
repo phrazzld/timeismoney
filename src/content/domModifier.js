@@ -141,11 +141,19 @@ export const revertAll = (root) => {
 };
 
 /**
- * Applies conversions to the DOM based on the current settings
+ * Applies or reverts price conversions to the DOM based on current settings
+ * Serves as the main entry point for modifying text nodes with price information
  *
  * @param {Node} textNode - The DOM text node to process
  * @param {object} priceMatch - Object with pattern and other price matching info
+ * @param {RegExp} priceMatch.pattern - Regex pattern for matching prices in text
+ * @param {object} priceMatch.thousands - Regex for thousands delimiter
+ * @param {object} priceMatch.decimal - Regex for decimal delimiter
+ * @param {object} priceMatch.formatInfo - Currency format information
  * @param {object} conversionInfo - Info needed for the conversion
+ * @param {Function} conversionInfo.convertFn - Function that converts price strings
+ * @param {object} conversionInfo.formatters - Formatting options for currency
+ * @param {object} conversionInfo.wageInfo - Information about hourly wage for conversion
  * @param {boolean} shouldRevert - Whether to revert conversions instead of applying them
  * @returns {boolean} True if modifications were made, false otherwise
  */
@@ -176,9 +184,11 @@ export const processTextNode = (textNode, priceMatch, conversionInfo, shouldReve
       // For applying conversions, we use the applyConversion function
       /**
        * Converts a price string to a display string with time equivalents
+       * Inner function that wraps the conversion logic with error handling
        *
        * @param {string} priceString - The original price string to convert
-       * @returns {string} The formatted price string with time equivalent
+       * @returns {string} The formatted price string with time equivalent (e.g., "$10.99 (2h 15m)")
+       * @private
        */
       const convertFn = (priceString) => {
         try {

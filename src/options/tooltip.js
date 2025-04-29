@@ -19,6 +19,7 @@ const tooltipMessages = {
 
 /**
  * Initializes tooltip functionality with delegated event handling
+ * Sets up event listeners for displaying help text when form inputs receive focus
  *
  * @returns {void}
  */

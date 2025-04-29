@@ -315,9 +315,14 @@ export const startObserver = (targetNode, callback, options = {}, debounceInterv
 /**
  * Processes all pending nodes that have been collected during mutations
  * Fetches settings only once per batch to improve performance
+ * This function is called via the debounced handler when DOM mutations occur
  *
  * @param {Function} callback - The function to call on each text node
+ * @param {Node} callback.textNode - The text node to process
+ * @param {object} callback.settings - The current extension settings
  * @param {object} options - Optional settings for the walk function
+ * @returns {void}
+ * @private
  */
 const processPendingNodes = (callback, options = {}) => {
   try {

@@ -70,7 +70,10 @@ function handleExtensionInstalled(details) {
         console.error('Failed to read existing settings during extension update:', error);
         // If we can't read settings, use defaults as fallback
         saveSettings(defaultSettings).catch((failError) => {
-          console.error('Failed to save default settings after read error during update:', failError);
+          console.error(
+            'Failed to save default settings after read error during update:',
+            failError
+          );
         });
       });
   }

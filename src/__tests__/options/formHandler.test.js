@@ -22,7 +22,7 @@ describe('Options Form Validation', () => {
   beforeAll(() => {
     // Mock getMessage to return the key itself
     chrome.i18n.getMessage = jest.fn((key) => key);
-    
+
     // Set up document object if it doesn't exist (Jest environment)
     if (!global.document) {
       global.document = {};
@@ -293,7 +293,7 @@ describe('Options Form Validation', () => {
 
       // Call saveOptions
       saveOptions();
-      
+
       // Wait for promises to resolve
       await new Promise(process.nextTick);
 

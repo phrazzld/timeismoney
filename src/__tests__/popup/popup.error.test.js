@@ -11,7 +11,7 @@ describe('Popup Error Handling', () => {
       <div id="status" class="status"></div>
       <input type="checkbox" id="enabled" />
     `;
-    
+
     // Mock console.error
     jest.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -72,7 +72,7 @@ describe('Popup Error Handling', () => {
 
       // Verify console.error was called
       expect(console.error).toHaveBeenCalledWith('Storage operation failed:', expect.any(Error));
-      
+
       // Verify the checkbox was toggled back
       expect(mockEvent.target.checked).toBe(false);
     });

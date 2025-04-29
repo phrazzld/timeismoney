@@ -210,10 +210,18 @@ export const buildReverseMatchPattern = (
 
 /**
  * Detects the most likely locale format from a text sample
- * This helps improve price detection for users in different regions
+ * This helps improve price detection for users in different regions by analyzing
+ * currency symbols and codes in the text
  *
  * @param {string} text - Sample text containing potential prices
- * @returns {object} The detected format settings or null if no format detected
+ * @returns {object|null} The detected format settings with the following properties,
+ *                        or null if no format could be detected:
+ *   - localeId {string} - The locale identifier (e.g., 'en-US', 'de-DE')
+ *   - thousands {string} - The thousands delimiter type
+ *   - decimal {string} - The decimal delimiter type
+ *   - currencySymbols {string[]} - Array of associated currency symbols
+ *   - currencyCodes {string[]} - Array of associated currency codes
+ *   - symbolsBeforeAmount {boolean} - Whether symbols appear before the amount
  */
 export const detectFormatFromText = (text) => {
   if (!text || typeof text !== 'string') return null;
@@ -244,7 +252,7 @@ export const detectFormatFromText = (text) => {
 
 /**
  * Finds price strings in a text based on format settings
- * Enhanced to support more international formats
+ * Enhanced to support more international formats with robust pattern matching
  *
  * @param {string} text - The text to search for prices
  * @param {object} formatSettings - Settings for price formatting
@@ -253,7 +261,11 @@ export const detectFormatFromText = (text) => {
  * @param {string} formatSettings.thousands - The thousands delimiter type ('commas' or 'spacesAndDots')
  * @param {string} formatSettings.decimal - The decimal delimiter type ('dot' or 'comma')
  * @param {boolean} formatSettings.isReverseSearch - If true, search for prices with time annotations
- * @returns {object} Object with matches and regex patterns
+ * @returns {object|null} Object with price matching data, or null if invalid input:
+ *   - pattern {RegExp} - Regex pattern for matching prices
+ *   - thousands {RegExp} - Regex for thousands delimiter
+ *   - decimal {RegExp} - Regex for decimal delimiter
+ *   - formatInfo {object} - Currency format information
  */
 export const findPrices = (text, formatSettings) => {
   if (!text || !formatSettings) return null;
@@ -302,11 +314,20 @@ export const findPrices = (text, formatSettings) => {
 
 /**
  * Extracts and normalizes price information from a text string
- * Enhanced to handle international formats
+ * Enhanced to handle international formats by normalizing according to locale
  *
  * @param {string} text - Text containing a price
  * @param {object} [formatSettings] - Optional format settings to use
- * @returns {object | null} Price information object or null if no valid price found
+ * @param {string} [formatSettings.currencySymbol] - The currency symbol (e.g., '$')
+ * @param {string} [formatSettings.currencyCode] - The currency code (e.g., 'USD')
+ * @param {string} [formatSettings.thousands] - The thousands delimiter type ('commas' or 'spacesAndDots')
+ * @param {string} [formatSettings.decimal] - The decimal delimiter type ('dot' or 'comma')
+ * @param {boolean} [formatSettings.isReverseSearch] - Whether to search for already converted prices
+ * @returns {object|null} Price information object, or null if no valid price found:
+ *   - amount {number} - The numerical amount of the price
+ *   - currency {string} - The detected currency code
+ *   - original {string} - The original price string as found in the text
+ *   - format {object} - The format settings used for parsing
  */
 export const getPriceInfo = (text, formatSettings = null) => {
   if (!text) return null;

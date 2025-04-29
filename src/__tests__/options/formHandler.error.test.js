@@ -18,7 +18,7 @@ describe('FormHandler Error Handling', () => {
       <input id="debounce-interval" value="200" />
       <div id="formatting" style="display: none;"></div>
     `;
-    
+
     // Mock console.error
     jest.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -27,7 +27,7 @@ describe('FormHandler Error Handling', () => {
       const messages = {
         loadError: 'Failed to load your settings. Please try again.',
         saveError: 'Failed to save your settings. Please try again.',
-        saveSuccess: 'Options saved.'
+        saveSuccess: 'Options saved.',
       };
       return messages[key] || key;
     });
@@ -59,10 +59,16 @@ describe('FormHandler Error Handling', () => {
   describe('saveOptions', () => {
     it('should show error message when saveSettings fails', async () => {
       // Mock necessary validation functions to return true
-      jest.spyOn(require('../../options/validator.js'), 'validateCurrencySymbol').mockReturnValue(true);
-      jest.spyOn(require('../../options/validator.js'), 'validateCurrencyCode').mockReturnValue(true);
+      jest
+        .spyOn(require('../../options/validator.js'), 'validateCurrencySymbol')
+        .mockReturnValue(true);
+      jest
+        .spyOn(require('../../options/validator.js'), 'validateCurrencyCode')
+        .mockReturnValue(true);
       jest.spyOn(require('../../options/validator.js'), 'validateAmount').mockReturnValue(true);
-      jest.spyOn(require('../../options/validator.js'), 'validateDebounceInterval').mockReturnValue(true);
+      jest
+        .spyOn(require('../../options/validator.js'), 'validateDebounceInterval')
+        .mockReturnValue(true);
 
       // Mock saveSettings to reject
       jest.spyOn(storage, 'saveSettings').mockImplementation(() => {
