@@ -81,7 +81,7 @@
         2. Tests updated and pass.
     - **Depends‑on:** none
 
-- [ ] **T008 · Refactor · P2: remove internal rate calculation from converttotime**
+- [x] **T008 · Refactor · P2: remove internal rate calculation from converttotime**
     - **Context:** cr-05+cr-25, Step 2
     - **Action:**
         1. Delete internal rate calculation logic from `convertToTime`.
