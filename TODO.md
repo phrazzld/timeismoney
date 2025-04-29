@@ -1,7 +1,7 @@
 # TODO
 
 ## Options Page / formHandler.js
-- [ ] **T001 · Feature · P0: sanitize user inputs before validation and saving**
+- [x] **T001 · Feature · P0: sanitize user inputs before validation and saving**
     - **Context:** cr-02+cr-20+cr-17p1, Step 1
     - **Action:**
         1. Update `formHandler.js` to sanitize all user inputs (`currencySymbol`, `amount`, `debounceInterval`) before validation/saving.
