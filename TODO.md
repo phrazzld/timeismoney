@@ -38,7 +38,7 @@
         1. Manual: Enter invalid data and confirm settings are not saved.
     - **Depends‑on:** T002
 
-- [ ] **T004 · Refactor · P2: extract validation functions to separate module**
+- [x] **T004 · Refactor · P2: extract validation functions to separate module**
     - **Context:** cr-02+cr-20+cr-17p1, Step 4
     - **Action:**
         1. Create `src/options/validator.js`.

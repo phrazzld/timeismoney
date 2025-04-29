@@ -2,18 +2,21 @@
  * Unit tests for options form validation
  */
 
-// Import the module we want to test
+// Import the modules we want to test
 import {
-  validateCurrencySymbol,
-  validateCurrencyCode,
-  validateAmount,
-  validateDebounceInterval,
   saveOptions,
   sanitizeTextInput,
   sanitizeCurrencySymbol,
   sanitizeCurrencyCode,
   sanitizeNumericInput,
 } from '../../options/formHandler';
+
+import {
+  validateCurrencySymbol,
+  validateCurrencyCode,
+  validateAmount,
+  validateDebounceInterval,
+} from '../../options/validator';
 
 describe('Options Form Validation', () => {
   beforeAll(() => {
@@ -251,11 +254,13 @@ describe('Options Form Validation', () => {
 
       // Expect saveSettings WAS called with valid settings
       const { saveSettings } = require('../../utils/storage.js');
-      expect(saveSettings).toHaveBeenCalledWith(expect.objectContaining({
-        currencySymbol: '$',
-        currencyCode: 'USD',
-        amount: expect.any(String)
-      }));
+      expect(saveSettings).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currencySymbol: '$',
+          currencyCode: 'USD',
+          amount: expect.any(String),
+        })
+      );
     });
   });
 
