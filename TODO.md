@@ -207,7 +207,7 @@
     - **Depends‑on:** T020
 
 ## Dev / Documentation
-- [ ] **T022 · Chore · P2: update ESLint JSDoc policy for public APIs**
+- [x] **T022 · Chore · P2: update ESLint JSDoc policy for public APIs**
     - **Context:** cr-07+cr-12, Step 1
     - **Action:**
         1. Configure `.eslintrc.js` rule `jsdoc/require-jsdoc` to enforce JSDoc on exported functions/classes (`publicOnly: true` or similar).

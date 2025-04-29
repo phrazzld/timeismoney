@@ -10,8 +10,8 @@ import { getSettings, saveSettings } from '../utils/storage.js';
 /**
  * Restores the enabled/disabled state of the extension toggle
  * Reads from Chrome storage and updates the UI accordingly
- * 
- * @export
+ *
+ * @function
  */
 export const restoreOptions = () => {
   const status = document.getElementById('status');
@@ -25,9 +25,10 @@ export const restoreOptions = () => {
     .catch((error) => {
       console.error('Storage operation failed:', error);
       // Show user-friendly error message
-      status.textContent = chrome.i18n.getMessage('loadError') || 'Failed to load your settings. Please try again.';
+      status.textContent =
+        chrome.i18n.getMessage('loadError') || 'Failed to load your settings. Please try again.';
       status.classList.add('error');
-      
+
       // Clear error after 5 seconds
       setTimeout(() => {
         status.textContent = '';
@@ -42,11 +43,11 @@ export const restoreOptions = () => {
  * This triggers the background script to update tab icons accordingly
  *
  * @param {Event} event - The change event from the toggle checkbox
- * @export
+ * @function
  */
 export function handleEnableToggle(event) {
   const status = document.getElementById('status');
-  
+
   saveSettings({ disabled: !event.target.checked })
     .then(() => {
       // Clear any previous error messages
@@ -55,14 +56,15 @@ export function handleEnableToggle(event) {
     })
     .catch((error) => {
       console.error('Storage operation failed:', error);
-      
+
       // Show user-friendly error message
-      status.textContent = chrome.i18n.getMessage('saveError') || 'Failed to save your settings. Please try again.';
+      status.textContent =
+        chrome.i18n.getMessage('saveError') || 'Failed to save your settings. Please try again.';
       status.classList.add('error');
-      
+
       // Revert the toggle to its previous state since the save failed
       event.target.checked = !event.target.checked;
-      
+
       // Clear error after 5 seconds
       setTimeout(() => {
         status.textContent = '';
@@ -77,7 +79,7 @@ export function handleEnableToggle(event) {
  * Uses Chrome API to open the correct options page
  *
  * @returns {void}
- * @export
+ * @function
  */
 export function handleOptionsClick() {
   chrome.runtime.openOptionsPage();
@@ -89,7 +91,7 @@ export function handleOptionsClick() {
  * This is the main initialization function for the popup
  *
  * @returns {void}
- * @export
+ * @function
  */
 export function handleDOMContentLoaded() {
   restoreOptions();
