@@ -215,7 +215,7 @@
         1. ESLint fails when exported APIs lack JSDoc.
     - **Depends‑on:** none
 
-- [ ] **T023 · Chore · P2: remove JSDoc rule overrides for UI components**
+- [x] **T023 · Chore · P2: remove JSDoc rule overrides for UI components**
     - **Context:** cr-07+cr-12, Step 2
     - **Action:**
         1. Delete or update the `overrides` section disabling JSDoc rules for UI components in `.eslintrc.js`.
