@@ -296,7 +296,7 @@
     - **Depends‑on:** T029
 
 ## Frontend / MutationObserver & Testability
-- [ ] **T031 · Feature · P2: add performance timing to processPendingNodes**
+- [x] **T031 · Feature · P2: add performance timing to processPendingNodes**
     - **Context:** cr-06+cr-15p1, Step 1
     - **Action:**
         1. Add `performance.mark`/`measure` or `logger.debug` timings around the core logic in `processPendingNodes`.

@@ -384,6 +384,9 @@ export const startObserver = (
  */
 const processPendingNodes = (callback, options = {}, state = defaultState) => {
   try {
+    // Performance timing - start overall processing
+    performance.mark('processPendingNodes-start');
+
     // Skip processing if no nodes to process
     if (state.pendingNodes.size === 0 && state.pendingTextNodes.size === 0) {
       return;
@@ -392,17 +395,28 @@ const processPendingNodes = (callback, options = {}, state = defaultState) => {
     // Set processing flag to prevent concurrent processing
     state.isProcessing = true;
 
-    // Use the imported getSettings function
+    // Log queue sizes for performance monitoring
+    logger.debug(
+      `Processing queue: ${state.pendingNodes.size} element nodes, ${state.pendingTextNodes.size} text nodes`
+    );
 
     // Fetch settings once for the entire batch
+    performance.mark('settings-fetch-start');
     getSettings()
       .then((settings) => {
+        performance.mark('settings-fetch-end');
+        performance.measure('Settings Fetch Time', 'settings-fetch-start', 'settings-fetch-end');
+
         try {
           // Process element nodes that need walking
           if (state.pendingNodes.size > 0) {
+            performance.mark('element-nodes-start');
+
             // Convert Set to Array to avoid issues if the set is modified during processing
             const nodesToProcess = Array.from(state.pendingNodes);
             state.pendingNodes.clear();
+
+            const nodeCount = nodesToProcess.length;
 
             // Process each pending node with the settings
             for (const node of nodesToProcess) {
@@ -411,13 +425,28 @@ const processPendingNodes = (callback, options = {}, state = defaultState) => {
                 walk(node, (textNode) => callback(textNode, settings), settings, options);
               }
             }
+
+            performance.mark('element-nodes-end');
+            performance.measure(
+              'Element Nodes Processing',
+              'element-nodes-start',
+              'element-nodes-end'
+            );
+            const elementMeasure = performance.getEntriesByName('Element Nodes Processing').pop();
+            logger.debug(
+              `Processed ${nodeCount} element nodes in ${Math.round(elementMeasure.duration)}ms`
+            );
           }
 
           // Process text nodes directly
           if (state.pendingTextNodes.size > 0) {
+            performance.mark('text-nodes-start');
+
             // Convert Set to Array to avoid issues if the set is modified during processing
             const textNodesToProcess = Array.from(state.pendingTextNodes);
             state.pendingTextNodes.clear();
+
+            const textNodeCount = textNodesToProcess.length;
 
             // Call callback directly on each text node with the settings
             for (const textNode of textNodesToProcess) {
@@ -432,10 +461,43 @@ const processPendingNodes = (callback, options = {}, state = defaultState) => {
                 }
               }
             }
+
+            performance.mark('text-nodes-end');
+            performance.measure('Text Nodes Processing', 'text-nodes-start', 'text-nodes-end');
+            const textMeasure = performance.getEntriesByName('Text Nodes Processing').pop();
+            logger.debug(
+              `Processed ${textNodeCount} text nodes in ${Math.round(textMeasure.duration)}ms`
+            );
           }
         } finally {
           // Always clear the processing flag, even if errors occur during processing
           state.isProcessing = false;
+
+          // Complete overall timing
+          performance.mark('processPendingNodes-end');
+          performance.measure(
+            'Total Processing Time',
+            'processPendingNodes-start',
+            'processPendingNodes-end'
+          );
+
+          // Log the overall timing results
+          const totalMeasure = performance.getEntriesByName('Total Processing Time').pop();
+          logger.debug(`Total processing time: ${Math.round(totalMeasure.duration)}ms`);
+
+          // Clean up performance entries to avoid memory leaks
+          performance.clearMarks('processPendingNodes-start');
+          performance.clearMarks('processPendingNodes-end');
+          performance.clearMarks('settings-fetch-start');
+          performance.clearMarks('settings-fetch-end');
+          performance.clearMarks('element-nodes-start');
+          performance.clearMarks('element-nodes-end');
+          performance.clearMarks('text-nodes-start');
+          performance.clearMarks('text-nodes-end');
+          performance.clearMeasures('Total Processing Time');
+          performance.clearMeasures('Settings Fetch Time');
+          performance.clearMeasures('Element Nodes Processing');
+          performance.clearMeasures('Text Nodes Processing');
         }
       })
       .catch((error) => {
@@ -445,6 +507,24 @@ const processPendingNodes = (callback, options = {}, state = defaultState) => {
         state.pendingTextNodes.clear();
         // Clear the processing flag to allow future processing
         state.isProcessing = false;
+
+        // Complete timing on error
+        performance.mark('processPendingNodes-end');
+        performance.measure(
+          'Total Processing Time (Error)',
+          'processPendingNodes-start',
+          'processPendingNodes-end'
+        );
+        const errorMeasure = performance.getEntriesByName('Total Processing Time (Error)').pop();
+        logger.error(
+          `Processing failed after ${Math.round(errorMeasure.duration)}ms due to settings error`
+        );
+
+        // Clean up performance entries
+        performance.clearMarks('processPendingNodes-start');
+        performance.clearMarks('processPendingNodes-end');
+        performance.clearMarks('settings-fetch-start');
+        performance.clearMeasures('Total Processing Time (Error)');
       });
   } catch (error) {
     logger.error('Error processing pending nodes:', error.message, error.stack);
@@ -454,6 +534,30 @@ const processPendingNodes = (callback, options = {}, state = defaultState) => {
     state.pendingTextNodes.clear();
     // Clear the processing flag to allow future processing
     state.isProcessing = false;
+
+    // Log error timing if the performance mark was created
+    try {
+      performance.mark('processPendingNodes-end');
+      performance.measure(
+        'Total Processing Time (Exception)',
+        'processPendingNodes-start',
+        'processPendingNodes-end'
+      );
+      const exceptionMeasure = performance
+        .getEntriesByName('Total Processing Time (Exception)')
+        .pop();
+      logger.error(
+        `Processing failed after ${Math.round(exceptionMeasure.duration)}ms due to exception`
+      );
+
+      // Clean up performance entries
+      performance.clearMarks('processPendingNodes-start');
+      performance.clearMarks('processPendingNodes-end');
+      performance.clearMeasures('Total Processing Time (Exception)');
+    } catch (perfError) {
+      // Handle case where initial mark wasn't set
+      logger.error('Error adding performance timing on exception:', perfError.message);
+    }
   }
 };
 
