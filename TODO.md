@@ -386,7 +386,7 @@
         1. Tests fail if false positives/negatives occur.
     - **Depends‑on:** T039
 
-- [ ] **T041 · Chore · P3: document regex logic with clear comments**
+- [x] **T041 · Chore · P3: document regex logic with clear comments**
     - **Context:** cr-13, Step 3
     - **Action:**
         1. Add comments in `priceFinder.js` explaining the logic of each significant part of the regex patterns.
