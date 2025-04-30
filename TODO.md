@@ -334,7 +334,7 @@
     - **Depends‑on:** T033
 
 ## QA / Edge Case & Security Tests
-- [ ] **T035 · Test · P0: add XSS injection tests for formHandler**
+- [x] **T035 · Test · P0: add XSS injection tests for formHandler**
     - **Context:** cr-09+cr-15p2, Step 1
     - **Action:**
         1. Create unit tests in `formHandler.spec.js` that attempt to inject XSS payloads via form inputs and verify sanitization works.
