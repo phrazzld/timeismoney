@@ -132,7 +132,7 @@
         1. Badge shows status for `master` branch.
     - **Depends‑on:** T012
 
-- [ ] **T014 · Chore · P1: update smoke test to target dist directory**
+- [x] **T014 · Chore · P1: update smoke test to target dist directory**
     - **Context:** cr-19, Step 1
     - **Action:**
         1. Update `scripts/smoke-test.js` to check for required files/structure in `./dist` directory.
@@ -359,10 +359,10 @@
         1. Observer handles simulated stress and is cleaned up correctly in tests.
     - **Depends‑on:** T034
 
-- [ ] **T038 · Test · P2: add edge case tests for converter logic**
+- [x] **T038 · Test · P2: add edge case tests for converter logic**
     - **Context:** cr-09+cr-15p2, Step 4
     - **Action:**
-        1. Write unit tests in `converter.spec.js` covering zero, large, negative, and non-numeric values for price/rate inputs.
+        1. Write unit tests in `converter.edge.test.js` covering zero, large, negative, and non-numeric values for price/rate inputs.
     - **Done‑when:**
         1. Edge cases for conversion logic are covered and handled correctly.
     - **Depends‑on:** T009
