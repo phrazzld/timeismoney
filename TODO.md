@@ -407,7 +407,7 @@
         1. Manual: Load unpacked extension in Chrome/Edge, confirm no load errors.
     - **Depends‑on:** none
 
-- [ ] **T043 · Feature · P0: minimize and restrict host permissions**
+- [x] **T043 · Feature · P0: minimize and restrict host permissions**
     - **Context:** cr-01+cr-23p1, Step 2
     - **Action:**
         1. Restrict `host_permissions` in `manifest.json` to the minimum required URL patterns.
