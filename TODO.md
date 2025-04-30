@@ -376,7 +376,7 @@
         1. Regex logic is modular and easy to read/maintain.
     - **Depends‑on:** T030 # Assumes separation of concerns is done
 
-- [ ] **T040 · Test · P1: add comprehensive unit tests for currency regexes**
+- [x] **T040 · Test · P1: add comprehensive unit tests for currency regexes**
     - **Context:** cr-13, Step 2
     - **Action:**
         1. Write unit tests in `priceFinder.spec.js` covering various currency formats (USD, EUR, JPY, etc.), edge cases (prices in text, multiple prices), and non-matches.
