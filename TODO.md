@@ -368,7 +368,7 @@
     - **Depends‑on:** T009
 
 ## Core / priceFinder.js
-- [~] **T039 · Refactor · P2: simplify and clarify regex construction**
+- [x] **T039 · Refactor · P2: simplify and clarify regex construction**
     - **Context:** cr-13, Step 1
     - **Action:**
         1. Refactor regex construction in `priceFinder.js`. Break down complex ORs. Consider separate patterns for common cases.
