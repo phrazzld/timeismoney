@@ -35,6 +35,11 @@ export default {
 
   // Directory where coverage reports will be stored
   coverageDirectory: 'coverage',
+  
+  // Set tests to use fake timers
+  testEnvironmentOptions: {
+    pretendToBeVisual: true,
+  },
 
   // Mock modules
   moduleNameMapper: {

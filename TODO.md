@@ -343,7 +343,7 @@
         2. Tests fail if XSS is possible, pass when fixed.
     - **Depends‑on:** T001
 
-- [ ] **T036 · Test · P1: add storage error simulation tests for storage.js**
+- [x] **T036 · Test · P1: add storage error simulation tests for storage.js**
     - **Context:** cr-09+cr-15p2, Step 2
     - **Action:**
         1. Write unit tests in `storage.spec.js` or relevant UI tests that simulate `chrome.runtime.lastError` and verify error handling/UI display.
