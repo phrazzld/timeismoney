@@ -351,7 +351,7 @@
         1. Storage errors are correctly surfaced and handled in tests.
     - **Depends‑on:** T005
 
-- [ ] **T037 · Test · P1: add observer stress and cleanup tests for domScanner.js**
+- [x] **T037 · Test · P1: add observer stress and cleanup tests for domScanner.js**
     - **Context:** cr-09+cr-15p2, Step 3
     - **Action:**
         1. Write unit tests using mocked observer/timers to simulate rapid DOM mutations and verify `stopObserver` cleans up correctly.
