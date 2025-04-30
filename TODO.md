@@ -395,7 +395,7 @@
     - **Depends‑on:** T039
 
 ## Platform / Manifest V3 & Build
-- [ ] **T042 · Feature · P0: migrate manifest.json to Manifest V3**
+- [x] **T042 · Feature · P0: migrate manifest.json to Manifest V3**
     - **Context:** cr-01+cr-23p1, Step 1
     - **Action:**
         1. Update `manifest.json` to `manifest_version: 3`.
