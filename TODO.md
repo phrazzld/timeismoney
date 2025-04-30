@@ -142,7 +142,7 @@
         1. Run `npm run build` then `npm run smoke-test`, confirm success/failure as appropriate.
     - **Depends‑on:** T045 # Depends on the build script being stable
 
-- [ ] **T015 · Chore · P1: ensure CI runs build before smoke test**
+- [x] **T015 · Chore · P1: ensure CI runs build before smoke test**
     - **Context:** cr-19, Step 2
     - **Action:**
         1. Edit CI workflow (`.github/workflows/ci.yml`) so `npm run build` executes before `npm run smoke-test`.
@@ -368,7 +368,7 @@
     - **Depends‑on:** T009
 
 ## Core / priceFinder.js
-- [ ] **T039 · Refactor · P2: simplify and clarify regex construction**
+- [~] **T039 · Refactor · P2: simplify and clarify regex construction**
     - **Context:** cr-13, Step 1
     - **Action:**
         1. Refactor regex construction in `priceFinder.js`. Break down complex ORs. Consider separate patterns for common cases.
