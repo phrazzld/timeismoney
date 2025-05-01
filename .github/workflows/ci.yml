@@ -49,14 +49,14 @@ jobs:
     
     # Run tests (using src/ directory)
     - name: Run tests
-      run: NODE_OPTIONS='--max-old-space-size=4096 --expose-gc --unhandled-rejections=strict' jest --config=jest.config.cjs --runInBand --no-cache --detectOpenHandles
+      run: NODE_OPTIONS='--max-old-space-size=4096 --expose-gc --unhandled-rejections=strict' npx jest --config=jest.config.cjs --runInBand --no-cache --detectOpenHandles
       env:
         SRC_DIR: src
         CI: 'true'
       
     # Optional: Add test coverage report
     - name: Generate test coverage
-      run: NODE_OPTIONS='--max-old-space-size=4096 --expose-gc --unhandled-rejections=strict' jest --config=jest.config.cjs --runInBand --no-cache --coverage
+      run: NODE_OPTIONS='--max-old-space-size=4096 --expose-gc --unhandled-rejections=strict' npx jest --config=jest.config.cjs --runInBand --no-cache --coverage
       env:
         SRC_DIR: src
         CI: 'true'
