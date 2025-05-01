@@ -18,11 +18,11 @@ module.exports = {
   moduleFileExtensions: ['js', 'json', 'mjs'],
 
   // Setup files run before each test
-  setupFiles: ['<rootDir>/jest.setup.js'],
+  setupFiles: ['<rootDir>/jest.setup.cjs'],
 
   // Transform files with babel-jest
   transform: {
-    '^.+\\.js$': 'babel-jest',
+    '^.+\\.js$': ['babel-jest', { configFile: './babel.config.cjs' }],
   },
 
   // Transform ignore patterns for node_modules
