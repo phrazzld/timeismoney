@@ -60,11 +60,9 @@ if (typeof performance === 'undefined') {
   };
 }
 
-// Setup common DOM elements needed by multiple tests
-beforeEach(() => {
-  // Clear any mocks between tests
-  jest.clearAllMocks();
-  
+// Helper function to set up common DOM elements
+// This will be imported in test files that need it
+global.setupTestDom = () => {
   // Reset the document body before each test
   document.body.innerHTML = '';
   
@@ -91,7 +89,15 @@ beforeEach(() => {
   createFormElement('decimal', 'select', 'dot');
   createFormElement('debounce-interval', 'number', '200');
   createFormElement('enable-dynamic-scanning', 'checkbox').checked = true;
-});
+};
 
 // Setup for ES modules in Jest
 globalThis.jest = jest;
+
+// Properly import Jest's functions for setup files
+const { beforeEach } = global;
+
+// Clear all mocks before each test
+beforeEach(() => {
+  jest.clearAllMocks();
+});
