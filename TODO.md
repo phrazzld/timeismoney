@@ -419,7 +419,7 @@
         1. Inspect permissions requested upon install/update.
     - **Depends‑on:** T042
 
-- [ ] **T044 · Refactor · P1: adapt background.js for service worker context**
+- [x] **T044 · Refactor · P1: adapt background.js for service worker context**
     - **Context:** cr-01+cr-23p1, Step 3
     - **Action:**
         1. Refactor `background.js` for service worker environment (use top-level listeners, avoid persistent state, ensure MV3 API compatibility).
