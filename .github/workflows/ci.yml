@@ -49,13 +49,13 @@ jobs:
     
     # Run tests (using src/ directory)
     - name: Run tests
-      run: npm test
+      run: NODE_OPTIONS=--max-old-space-size=4096 npm test
       env:
         SRC_DIR: src
       
     # Optional: Add test coverage report
     - name: Generate test coverage
-      run: npm run test:coverage
+      run: NODE_OPTIONS=--max-old-space-size=4096 npm run test:coverage
       env:
         SRC_DIR: src
       

@@ -40,7 +40,7 @@ global.chrome = {
 
 // Fix JSDOM window.location issue
 // This ensures window.location is properly initialized
-if (window) {
+if (typeof window !== 'undefined') {
   // Only do this if we're in a JSDOM environment
   if (window.location === undefined || window.location === null) {
     delete window.location;
