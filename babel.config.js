@@ -1,7 +1,7 @@
 /**
  * Babel configuration for TimeIsMoney extension
  */
-export default {
+module.exports = {
   presets: [
     [
       '@babel/preset-env',

@@ -1,7 +1,7 @@
 /**
  * Jest configuration for TimeIsMoney extension
  */
-export default {
+module.exports = {
   // Indicates test environment
   testEnvironment: 'jsdom',
 
