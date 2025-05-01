@@ -40,13 +40,17 @@ module.exports = {
   // Directory where coverage reports will be stored
   coverageDirectory: 'coverage',
 
-  // Set tests to use fake timers
+  // Set tests to use fake timers and provide proper URL for JSDOM
   testEnvironmentOptions: {
     pretendToBeVisual: true,
+    url: 'http://localhost'
   },
 
   // Mock modules
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
+
+  // Run sequentially in CI to avoid memory issues
+  ...(process.env.CI ? { maxWorkers: 1 } : {}),
 };
