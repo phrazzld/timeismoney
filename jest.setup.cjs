@@ -94,10 +94,7 @@ global.setupTestDom = () => {
 // Setup for ES modules in Jest
 globalThis.jest = jest;
 
-// Properly import Jest's functions for setup files
-const { beforeEach } = global;
-
-// Clear all mocks before each test
-beforeEach(() => {
+// Create a helper that can be used in each test file to reset mocks
+global.resetTestMocks = () => {
   jest.clearAllMocks();
-});
+};
