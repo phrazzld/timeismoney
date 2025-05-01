@@ -2,6 +2,7 @@
  * Tests for the MutationObserver callback logic in domScanner
  * Shows how to test the observer callback logic independently
  */
+/* global setupTestDom, resetTestMocks */
 
 import {
   processMutations,
@@ -39,6 +40,14 @@ afterAll(() => {
 });
 
 describe('Observer callback logic', () => {
+  beforeEach(() => {
+    // Reset mocks
+    resetTestMocks();
+    
+    // Set up DOM elements
+    setupTestDom();
+  });
+
   describe('processMutations', () => {
     it('should process childList mutations correctly', () => {
       // Create a state object to track pending nodes
@@ -150,10 +159,15 @@ describe('Observer callback logic', () => {
       state.pendingNodes.add(element);
       state.pendingTextNodes.add(textNode);
 
-      // Create a mock callback
-      const nodesPassed = [];
+      // Make the callback do something meaningful to verify it gets called
       const callback = jest.fn((node) => {
-        nodesPassed.push(node);
+        // Simple implementation to simulate real callback behavior
+        const span = node.querySelector ? node.querySelector('span') : null;
+        if (span && span.textContent.includes('$')) {
+          // Simulating real callback work
+          return true;
+        }
+        return false;
       });
 
       // Process pending nodes
@@ -169,8 +183,7 @@ describe('Observer callback logic', () => {
       expect(state.pendingNodes.size).toBe(0);
       expect(state.pendingTextNodes.size).toBe(0);
 
-      // Callback would have been called, though in this test environment
-      // the DOM walking won't fully work as it would in a browser
+      // Callback would have been called
       expect(callback).toHaveBeenCalled();
     });
 

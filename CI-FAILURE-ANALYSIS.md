@@ -1,127 +1,91 @@
 # CI Failure Analysis
 
-## Summary
-The CI pipeline has failed with multiple test errors. The primary issues appear to be related to:
+## Current Status (2025-05-01)
 
-1. JSDOM environment configuration issues
-2. Missing or incomplete DOM elements in test environment 
-3. Problems with mocking certain browser APIs
+After several iterations of fixes, we're making progress on the CI tests:
 
-## Detailed Error Categories
+- 16 of 24 test suites are now passing
+- 178 of 185 individual tests are now passing
+- Linting issues have been resolved
 
-### 1. JSDOM Window Location Issues
+## Remaining Issues
 
-Multiple tests are failing with:
+There are still several test suites failing due to the following issues:
+
+### 1. JSDOM Window Location Issues (Partially Fixed)
+
+- We've added window.location initialization to jest.setup.cjs
+- Some tests are still failing with location errors in:
+  - `src/__tests__/options/formHandler.test.js`
+  - `src/__tests__/options/formHandler.xss.test.js`
+
+These tests need to be updated to call the setupTestDom() function in their beforeEach blocks.
+
+### 2. Missing DOM Elements (Partially Fixed)
+
+- We've created a global setupTestDom() helper
+- Some tests are still failing due to missing elements:
+  - `src/__tests__/options/formHandler.error.test.js` - missing 'enable-dynamic-scanning' element
+
+Individual test files need to be updated to call the setupTestDom() function in their beforeEach blocks.
+
+### 3. Mock Function Issues (Not Fixed)
+
+Test failures related to mock functions:
+- `src/__tests__/options/formHandler.storage.direct.test.js` - Cannot read properties of undefined (reading 'calls')
+
+These tests need to be updated to use the resetTestMocks() helper and properly initialize Jest mocks.
+
+### 4. Testing Failures (Not Fixed)
+
+Assertion failures in several tests:
+- `src/__tests__/options/formHandler.storage.test.js` - Expected text doesn't match
+
+These failures will be fixed when the DOM elements are properly set up.
+
+### 5. Worker Process Issues (New)
+
+Some test workers are being terminated prematurely:
 ```
-TypeError: Cannot read properties of null (reading '_location')
-  at Window.get location [as location] (node_modules/jsdom/lib/jsdom/browser/Window.js:376:79)
-```
-
-This is affecting these test files:
-- `src/__tests__/options/formHandler.test.js`
-- `src/__tests__/options/formHandler.xss.test.js`
-
-This suggests that the JSDOM environment is not properly initialized with a location value.
-
-### 2. Missing DOM Elements
-
-Several tests are failing because they're trying to access DOM elements that don't exist in the test environment:
-
-```
-TypeError: Cannot read properties of null (reading 'checked')
-```
-
-This happens in:
-- `src/__tests__/options/formHandler.error.test.js` (line 174)
-
-The test is trying to access `document.getElementById('enable-dynamic-scanning').checked`, but the element doesn't exist in the test DOM.
-
-### 3. Mock Function Issues
-
-There are issues with accessing mock functions:
-
-```
-TypeError: Cannot read properties of undefined (reading 'calls')
-```
-
-This happens in:
-- `src/__tests__/options/formHandler.storage.direct.test.js` (line 73)
-
-The test is trying to access mock function calls that don't exist.
-
-### 4. Test Expectations Not Met
-
-Several tests have assertions that are failing:
-
-```
-Expected: "Failed to save your settings. Please try again."
-Received: ""
+A jest worker process (pid=2033) was terminated by another process: signal=SIGTERM, exitCode=null
 ```
 
-This happens in:
-- `src/__tests__/options/formHandler.storage.test.js`
+This might be related to memory/resource limits in the CI environment.
 
-These tests are checking DOM elements' content/status that isn't being properly set.
+## Path Forward
 
-### 5. Missing Browser APIs
+1. ✅ Create a test migration guide (TEST-MIGRATION-GUIDE.md)
+2. ✅ Create an example test that demonstrates how to use the helpers (test-setup-example.js)
+3. ✅ Fix the testing infrastructure (jest.setup.cjs, jest.config.cjs)
+4. 🔄 Update individual test files to use the new helpers
 
-Some tests are failing due to missing browser APIs:
+### Time Estimate
 
+Updating the remaining 8 failing test suites will require:
+1. Adding `/* global setupTestDom, resetTestMocks */` to each file
+2. Adding a beforeEach block that calls the helpers
+3. Possibly updating the test expectations to match the new environment
+
+This is a non-trivial task that should be done methodically, one test file at a time.
+
+### Example Fix Pattern
+
+For each test file:
+
+```javascript
+/* global setupTestDom, resetTestMocks */
+
+describe('Test Suite', () => {
+  beforeEach(() => {
+    resetTestMocks();
+    setupTestDom();
+    // Additional test-specific setup
+  });
+
+  // Tests remain unchanged
+});
 ```
-TypeError: performance.mark is not a function
-```
 
-This happens in:
-- `src/__tests__/content/observer-stress.test.js`
+## Final Notes
 
-The performance API isn't properly mocked in the test environment.
-
-### 6. Empty Test Files
-
-Some files are marked as test files but don't contain actual tests:
-
-```
-Your test suite must contain at least one test.
-```
-
-This happens in:
-- `src/__tests__/content/priceFinder.test.patch.js`
-- `src/__tests__/utils/test-helpers.js`
-
-These files may be intended as test helpers but Jest is trying to run them as test suites.
-
-## Recommended Fixes
-
-1. **JSDOM Window Location Setup**:
-   - Set up a proper JSDOM environment with window.location in `jest.setup.cjs`
-   - Example: `window.location = new URL('http://localhost/')`
-
-2. **Mock DOM Elements**:
-   - Ensure all tests properly set up the DOM environment before testing
-   - Add missing elements in the `beforeEach` setup for relevant tests
-
-3. **Fix Mock Function Issues**:
-   - Ensure all mocks are properly initialized before access
-   - Use Jest's `mockImplementation` for complex mocks
-
-4. **Fix Performance API Mock**:
-   - Add a global mock for the Performance API in `jest.setup.cjs`
-   - Example: 
-   ```javascript
-   global.performance = {
-     mark: jest.fn(),
-     measure: jest.fn(),
-     clearMarks: jest.fn(),
-     clearMeasures: jest.fn()
-   };
-   ```
-
-5. **Fix Empty Test Files**:
-   - Either add tests to these files or exclude them from Jest test runs
-   - You can use `testPathIgnorePatterns` in Jest config to exclude helper files
-
-## Next Steps
-
-1. Update `jest.setup.cjs` to properly configure the JSDOM environment
-2. Fix individual test files to properly set up their DOM testing environment
-3. Ensure all browser APIs used in code are properly mocked in tests
+Once all tests are passing in CI, we can proceed with the actual work of completing the MV3 migration (T046).

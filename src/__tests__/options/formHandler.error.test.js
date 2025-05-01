@@ -1,23 +1,17 @@
 /**
  * Tests for error handling in the form handler
  */
+/* global setupTestDom, resetTestMocks */
 import { loadForm, saveOptions } from '../../options/formHandler';
 import * as storage from '../../utils/storage';
 
 describe('FormHandler Error Handling', () => {
   beforeEach(() => {
+    // Reset all mocks
+    resetTestMocks();
+    
     // Set up DOM elements needed by the code
-    document.body.innerHTML = `
-      <div id="status"></div>
-      <input id="currency-symbol" value="$" />
-      <input id="currency-code" value="USD" />
-      <input id="frequency" value="hourly" />
-      <input id="amount" value="15.00" />
-      <input id="thousands" value="commas" />
-      <input id="decimal" value="dot" />
-      <input id="debounce-interval" value="200" />
-      <div id="formatting" style="display: none;"></div>
-    `;
+    setupTestDom();
 
     // Mock console.error
     jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -31,9 +25,6 @@ describe('FormHandler Error Handling', () => {
       };
       return messages[key] || key;
     });
-
-    // Reset all mocks
-    jest.clearAllMocks();
   });
 
   describe('loadForm', () => {

@@ -2,6 +2,7 @@
  * Tests for storage error handling in the form handler UI
  * These tests focus on UI feedback during storage errors
  */
+/* global setupTestDom, resetTestMocks */
 import { loadForm, saveOptions } from '../../options/formHandler.js';
 import * as storage from '../../utils/storage.js';
 import * as validator from '../../options/validator.js';
@@ -10,27 +11,27 @@ describe('FormHandler Storage Error UI Tests', () => {
   let originalSetTimeout;
 
   beforeEach(() => {
+    // Reset all mocks
+    resetTestMocks();
+    
     // Set up DOM elements needed by the tests
-    document.body.innerHTML = `
-      <div id="status"></div>
-      <input id="currency-symbol" value="$" />
-      <input id="currency-code" value="USD" />
-      <select id="frequency" value="hourly">
-        <option value="hourly">Hourly</option>
-        <option value="daily">Daily</option>
-        <option value="weekly">Weekly</option>
-        <option value="monthly">Monthly</option>
-        <option value="yearly">Yearly</option>
-      </select>
-      <input id="amount" value="15.00" />
-      <input id="thousands" value="commas" />
-      <input id="decimal" value="dot" />
-      <input id="debounce-interval" value="200" />
-      <input id="enable-dynamic-scanning" type="checkbox" checked />
-      <div id="formatting" style="display: none;"></div>
-      <button id="save">Save</button>
-      <button id="togglr">Show Advanced</button>
-    `;
+    setupTestDom();
+    
+    // Add additional DOM elements needed for these specific tests
+    const saveButton = document.createElement('button');
+    saveButton.id = 'save';
+    saveButton.textContent = 'Save';
+    document.body.appendChild(saveButton);
+    
+    const togglrButton = document.createElement('button');
+    togglrButton.id = 'togglr';
+    togglrButton.textContent = 'Show Advanced';
+    document.body.appendChild(togglrButton);
+    
+    const formattingDiv = document.createElement('div');
+    formattingDiv.id = 'formatting';
+    formattingDiv.style.display = 'none';
+    document.body.appendChild(formattingDiv);
 
     // Mock window.close so it doesn't throw error in tests
     window.close = jest.fn();
@@ -55,9 +56,6 @@ describe('FormHandler Storage Error UI Tests', () => {
       };
       return messages[key] || key;
     });
-
-    // Reset all mocks
-    jest.clearAllMocks();
   });
 
   afterEach(() => {

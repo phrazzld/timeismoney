@@ -2,25 +2,17 @@
  * Direct tests for storage error handling in the form handler UI
  * These tests focus on directly testing the error handlers in formHandler.js
  */
+/* global setupTestDom, resetTestMocks */
 import * as storage from '../../utils/storage.js';
 import * as validator from '../../options/validator.js';
 
 describe('FormHandler Storage Error Direct Tests', () => {
   beforeEach(() => {
+    // Reset all mocks
+    resetTestMocks();
+    
     // Set up DOM elements needed by the tests
-    document.body.innerHTML = `
-      <div id="status"></div>
-      <input id="currency-symbol" value="$" />
-      <input id="currency-code" value="USD" />
-      <select id="frequency" value="hourly">
-        <option value="hourly">Hourly</option>
-      </select>
-      <input id="amount" value="15.00" />
-      <input id="thousands" value="commas" />
-      <input id="decimal" value="dot" />
-      <input id="debounce-interval" value="200" />
-      <input id="enable-dynamic-scanning" type="checkbox" checked />
-    `;
+    setupTestDom();
 
     // Mock window.close so it doesn't throw error in tests
     window.close = jest.fn();
@@ -39,9 +31,6 @@ describe('FormHandler Storage Error Direct Tests', () => {
       };
       return messages[key] || key;
     });
-
-    // Reset all mocks
-    jest.clearAllMocks();
   });
 
   afterEach(() => {
@@ -60,17 +49,22 @@ describe('FormHandler Storage Error Direct Tests', () => {
       jest.spyOn(validator, 'validateAmount').mockReturnValue(true);
       jest.spyOn(validator, 'validateDebounceInterval').mockReturnValue(true);
 
-      // Mock the saveSettings function to reject
-      jest.spyOn(storage, 'saveSettings').mockRejectedValue(new Error('Storage test error'));
+      // Create a mock Promise with a manually controllable catch handler
+      const mockCatchFn = jest.fn();
+      const mockPromise = {
+        then: jest.fn().mockReturnThis(),
+        catch: mockCatchFn
+      };
+      
+      // Mock the saveSettings function to return our controllable promise
+      jest.spyOn(storage, 'saveSettings').mockReturnValue(mockPromise);
 
       // Call the function directly
       saveOptions();
-
-      // Get access to the promise to manually execute the catch handler
-      const savePromise = storage.saveSettings.mock.results[0].value;
-
-      // Manually call the catch handler
-      await savePromise.catch.mock.calls[0][0](new Error('Storage test error'));
+      
+      // Now simulate the promise rejection by calling the catch handler directly
+      const errorObj = new Error('Storage test error');
+      mockCatchFn.mock.calls[0][0](errorObj);
 
       // Now check that the UI was updated
       const status = document.getElementById('status');

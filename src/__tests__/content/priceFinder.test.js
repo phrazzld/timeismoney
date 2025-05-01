@@ -1,6 +1,7 @@
 /**
  * Tests for the priceFinder module
  */
+/* global setupTestDom, resetTestMocks */
 
 // Import mock functions for special test cases
 import { mockBuildMatchPattern, mockBuildReverseMatchPattern } from './priceFinder.test.patch.js';
@@ -13,61 +14,19 @@ import {
   findPrices,
 } from '../../content/priceFinder';
 
-describe('buildThousandsString', () => {
-  test('returns correct pattern for commas', () => {
-    expect(buildThousandsString('commas')).toBe(',');
+// Basic pattern tests moved to separate test file to reduce worker load
+// See priceFinder.basic-patterns.test.js
+
+describe('Match Pattern Tests', () => {
+  beforeEach(() => {
+    // Reset mocks
+    resetTestMocks();
+    
+    // Set up DOM elements
+    setupTestDom();
   });
 
-  test('returns correct pattern for spacesAndDots', () => {
-    expect(buildThousandsString('spacesAndDots')).toBe('(\\s|\\.)');
-  });
-
-  test('throws error for invalid delimiter', () => {
-    expect(() => buildThousandsString('invalid')).toThrow('Not a recognized delimiter');
-  });
-
-  test('uses cache for repeated calls', () => {
-    // Call once to add to cache
-    buildThousandsString('commas');
-
-    // Spy on Map.prototype.get to verify cache usage
-    const getSpy = jest.spyOn(Map.prototype, 'get');
-
-    buildThousandsString('commas');
-
-    expect(getSpy).toHaveBeenCalledWith('commas');
-    getSpy.mockRestore();
-  });
-});
-
-describe('buildDecimalString', () => {
-  test('returns correct pattern for dot', () => {
-    expect(buildDecimalString('dot')).toBe('\\.');
-  });
-
-  test('returns correct pattern for comma', () => {
-    expect(buildDecimalString('comma')).toBe(',');
-  });
-
-  test('throws error for invalid delimiter', () => {
-    expect(() => buildDecimalString('invalid')).toThrow('Not a recognized delimiter');
-  });
-
-  test('uses cache for repeated calls', () => {
-    // Call once to add to cache
-    buildDecimalString('dot');
-
-    // Spy on Map.prototype.get to verify cache usage
-    const getSpy = jest.spyOn(Map.prototype, 'get');
-
-    buildDecimalString('dot');
-
-    expect(getSpy).toHaveBeenCalledWith('dot');
-    getSpy.mockRestore();
-  });
-});
-
-describe('buildMatchPattern', () => {
+  describe('buildMatchPattern', () => {
   test('returns correct regex pattern for dollar symbol', () => {
     // Use our mock function for special test cases
     const pattern = mockBuildMatchPattern('$', 'USD', ',', '\\.');
