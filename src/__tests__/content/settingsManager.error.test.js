@@ -11,11 +11,13 @@ describe('SettingsManager Error Handling', () => {
   beforeEach(() => {
     // Set up document body
     document.body = document.createElement('body');
-    
+
     // Mock document.hidden as a getter (since it's read-only)
     Object.defineProperty(document, 'hidden', {
       configurable: true,
-      get: function() { return false; }
+      get: function () {
+        return false;
+      },
     });
 
     // Mock chrome runtime

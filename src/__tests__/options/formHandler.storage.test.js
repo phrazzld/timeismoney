@@ -132,13 +132,13 @@ describe('FormHandler Storage Error UI Tests', () => {
 
     it('should display network error message when saving settings fails due to network issues', async () => {
       // Mock saveSettings to reject with a network error
-      jest.spyOn(storage, 'saveSettings').mockRejectedValue(
-        new Error('A network error occurred. (Error code: ERR_DISCONNECTED)')
-      );
+      jest
+        .spyOn(storage, 'saveSettings')
+        .mockRejectedValue(new Error('A network error occurred. (Error code: ERR_DISCONNECTED)'));
 
       // Call saveOptions
       saveOptions();
-      
+
       // We need to manually trigger the Promise handlers
       // This is a way to make the asynchronous code run synchronously in tests
       await jest.runAllTimersAsync();
@@ -167,13 +167,11 @@ describe('FormHandler Storage Error UI Tests', () => {
 
     it('should display a permission error message when saving settings fails due to permissions', async () => {
       // Mock saveSettings to reject with a permission error
-      jest.spyOn(storage, 'saveSettings').mockRejectedValue(
-        new Error('Permission denied')
-      );
+      jest.spyOn(storage, 'saveSettings').mockRejectedValue(new Error('Permission denied'));
 
       // Call saveOptions
       saveOptions();
-      
+
       // We need to manually trigger the Promise handlers
       await jest.runAllTimersAsync();
 
@@ -193,13 +191,13 @@ describe('FormHandler Storage Error UI Tests', () => {
 
     it('should display a quota exceeded error message when saving settings fails due to storage quota', async () => {
       // Mock saveSettings to reject with a quota exceeded error
-      jest.spyOn(storage, 'saveSettings').mockRejectedValue(
-        new Error('QUOTA_BYTES quota exceeded')
-      );
+      jest
+        .spyOn(storage, 'saveSettings')
+        .mockRejectedValue(new Error('QUOTA_BYTES quota exceeded'));
 
       // Call saveOptions
       saveOptions();
-      
+
       // We need to manually trigger the Promise handlers
       await jest.runAllTimersAsync();
 
@@ -223,7 +221,7 @@ describe('FormHandler Storage Error UI Tests', () => {
 
       // Call saveOptions
       saveOptions();
-      
+
       // We need to manually trigger the Promise handlers
       await jest.runAllTimersAsync();
 

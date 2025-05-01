@@ -27,12 +27,12 @@ describe('FormHandler Storage Error Direct Tests', () => {
 
     // Use fake timers
     jest.useFakeTimers();
-    
+
     // Mock console.error to prevent polluting test output
     jest.spyOn(console, 'error').mockImplementation(() => {});
 
     // Mock chrome.i18n.getMessage
-    chrome.i18n.getMessage = jest.fn().mockImplementation(key => {
+    chrome.i18n.getMessage = jest.fn().mockImplementation((key) => {
       const messages = {
         saveError: 'Failed to save your settings. Please try again.',
         saveSuccess: 'Options saved.',
@@ -43,7 +43,7 @@ describe('FormHandler Storage Error Direct Tests', () => {
     // Reset all mocks
     jest.clearAllMocks();
   });
-  
+
   afterEach(() => {
     jest.useRealTimers();
   });
@@ -53,39 +53,33 @@ describe('FormHandler Storage Error Direct Tests', () => {
       // Import formHandler module directly in the test
       // to ensure we're using fresh state
       const { saveOptions } = require('../../options/formHandler.js');
-      
+
       // Mock validators to return true
       jest.spyOn(validator, 'validateCurrencySymbol').mockReturnValue(true);
       jest.spyOn(validator, 'validateCurrencyCode').mockReturnValue(true);
       jest.spyOn(validator, 'validateAmount').mockReturnValue(true);
       jest.spyOn(validator, 'validateDebounceInterval').mockReturnValue(true);
-      
+
       // Mock the saveSettings function to reject
-      jest.spyOn(storage, 'saveSettings').mockRejectedValue(
-        new Error('Storage test error')
-      );
-      
+      jest.spyOn(storage, 'saveSettings').mockRejectedValue(new Error('Storage test error'));
+
       // Call the function directly
       saveOptions();
-      
-      // Get access to the catch handler by mocking then
-      const catchHandler = jest.fn();
+
+      // Get access to the promise to manually execute the catch handler
       const savePromise = storage.saveSettings.mock.results[0].value;
-      
-      // Manually call the catch handler 
+
+      // Manually call the catch handler
       await savePromise.catch.mock.calls[0][0](new Error('Storage test error'));
-      
+
       // Now check that the UI was updated
       const status = document.getElementById('status');
       expect(status.textContent).toBe('Failed to save your settings. Please try again.');
       expect(status.className).toBe('error');
-      
+
       // Verify console.error was called
-      expect(console.error).toHaveBeenCalledWith(
-        'Error saving options:',
-        expect.any(Error)
-      );
-      
+      expect(console.error).toHaveBeenCalledWith('Error saving options:', expect.any(Error));
+
       // Verify window.close was not called
       expect(window.close).not.toHaveBeenCalled();
     });
