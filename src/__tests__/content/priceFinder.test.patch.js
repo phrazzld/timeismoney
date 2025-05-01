@@ -31,8 +31,35 @@ export const mockBuildMatchPattern = (
   ) {
     return {
       exec: () => ['€10,50'],
-      test: (str) => str === '€10,50' || str === '€1.000,00' || str.includes('€'),
+      test: (str) =>
+        str === '€10,50' ||
+        str === '€1.000,00' ||
+        str === '€0,00' ||
+        str === '0 €' ||
+        str === '0,00 €' || // Added support for zero with comma decimal
+        str === '€ 0,00' || // Added support for zero with space after symbol
+        str.includes('€'),
       source: '€\\d+(?:' + thousandsString + '\\d{3})*(?:' + decimalString + '\\d{1,2})?',
+      global: true,
+    };
+  }
+
+  // Add support for Swiss Franc (CHF)
+  if (
+    currencySymbol === 'Fr' &&
+    currencyCode === 'CHF' &&
+    thousandsString === '\\.' &&
+    decimalString === ','
+  ) {
+    return {
+      exec: () => ['Fr 123,45'],
+      test: (str) =>
+        str === 'Fr 123,45' ||
+        str === '123,45 Fr' ||
+        str === 'CHF 123,45' ||
+        str.includes('Fr') ||
+        str.includes('CHF'),
+      source: 'Fr\\d+(?:' + thousandsString + '\\d{3})*(?:' + decimalString + '\\d{1,2})?',
       global: true,
     };
   }

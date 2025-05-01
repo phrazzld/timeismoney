@@ -1,6 +1,7 @@
 /**
  * Unit tests for options form validation
  */
+/* global setupTestDom, resetTestMocks */
 
 // Import the modules we want to test
 import {
@@ -22,14 +23,15 @@ describe('Options Form Validation', () => {
   beforeAll(() => {
     // Mock getMessage to return the key itself
     chrome.i18n.getMessage = jest.fn((key) => key);
-
-    // Set up document object if it doesn't exist (Jest environment)
-    if (!global.document) {
-      global.document = {};
-    }
   });
 
   beforeEach(() => {
+    // Reset mocks
+    resetTestMocks();
+
+    // Set up DOM elements
+    setupTestDom();
+
     jest.clearAllMocks();
   });
 
@@ -269,18 +271,22 @@ describe('Options Form Validation', () => {
     });
 
     test('window.close() is called immediately after successful save', async () => {
-      // Mock all the DOM elements and values with valid data
-      document.getElementById = jest.fn((id) => {
-        if (id === 'currency-symbol') return { value: '$' };
-        if (id === 'currency-code') return { value: 'USD' };
-        if (id === 'frequency') return { value: 'hourly' };
-        if (id === 'amount') return { value: '15.00' };
-        if (id === 'thousands') return { value: 'commas' };
-        if (id === 'decimal') return { value: 'dot' };
-        if (id === 'debounce-interval') return { value: '200' };
-        if (id === 'status') return { textContent: '' };
-        return { value: '' };
-      });
+      // Create a simple DOM mock for this test
+      global.document = {
+        body: {},
+        createElement: () => ({}),
+        getElementById: jest.fn((id) => {
+          if (id === 'currency-symbol') return { value: '$' };
+          if (id === 'currency-code') return { value: 'USD' };
+          if (id === 'frequency') return { value: 'hourly' };
+          if (id === 'amount') return { value: '15.00' };
+          if (id === 'thousands') return { value: 'commas' };
+          if (id === 'decimal') return { value: 'dot' };
+          if (id === 'debounce-interval') return { value: '200' };
+          if (id === 'status') return { textContent: '' };
+          return { value: '' };
+        }),
+      };
 
       // Spy on window.close
       const originalWindowClose = window.close;
@@ -359,18 +365,22 @@ describe('Options Form Validation', () => {
       // Create a simple test to show that sanitization happens
       // Skip full mocking which is causing test problems
 
-      // Mock getElementById to return predictable values
-      document.getElementById = jest.fn((id) => {
-        if (id === 'currency-symbol') return { value: '<script>$</script>' };
-        if (id === 'currency-code') return { value: 'USD<script>' };
-        if (id === 'frequency') return { value: 'hourly' };
-        if (id === 'amount') return { value: '<b>15.00</b>' };
-        if (id === 'thousands') return { value: 'commas' };
-        if (id === 'decimal') return { value: 'dot' };
-        if (id === 'debounce-interval') return { value: '200<script>' };
-        if (id === 'status') return { textContent: '' };
-        return { value: '' };
-      });
+      // Create a simple DOM mock for this test
+      global.document = {
+        body: {},
+        createElement: () => ({}),
+        getElementById: jest.fn((id) => {
+          if (id === 'currency-symbol') return { value: '<script>$</script>' };
+          if (id === 'currency-code') return { value: 'USD<script>' };
+          if (id === 'frequency') return { value: 'hourly' };
+          if (id === 'amount') return { value: '<b>15.00</b>' };
+          if (id === 'thousands') return { value: 'commas' };
+          if (id === 'decimal') return { value: 'dot' };
+          if (id === 'debounce-interval') return { value: '200<script>' };
+          if (id === 'status') return { textContent: '' };
+          return { value: '' };
+        }),
+      };
 
       // Verify at minimum that all inputs are read
       saveOptions();

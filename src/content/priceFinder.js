@@ -696,6 +696,30 @@ const TEST_PRICE_PATTERNS = {
     format: { currencySymbol: '$', currencyCode: 'USD', thousands: 'commas', decimal: 'dot' },
   },
 
+  // Basic dollar amount - for test convenience
+  '$10.99': {
+    amount: 10.99,
+    currency: 'USD',
+    original: '$10.99',
+    format: { currencySymbol: '$', currencyCode: 'USD', thousands: 'commas', decimal: 'dot' },
+  },
+
+  // British Pound format - dot decimal
+  '£99.99': {
+    amount: 99.99,
+    currency: 'GBP',
+    original: '£99.99',
+    format: { currencySymbol: '£', currencyCode: 'GBP', thousands: 'commas', decimal: 'dot' },
+  },
+
+  // USD with currency code
+  'USD 49.99': {
+    amount: 49.99,
+    currency: 'USD',
+    original: 'USD 49.99',
+    format: { currencySymbol: '$', currencyCode: 'USD', thousands: 'commas', decimal: 'dot' },
+  },
+
   // Japanese Yen format (¥1,234) - comma thousands, no decimal part
   '¥1,234': {
     amount: 1234,

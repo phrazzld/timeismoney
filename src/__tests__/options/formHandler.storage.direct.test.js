@@ -10,7 +10,7 @@ describe('FormHandler Storage Error Direct Tests', () => {
   beforeEach(() => {
     // Reset all mocks
     resetTestMocks();
-    
+
     // Set up DOM elements needed by the tests
     setupTestDom();
 
@@ -53,15 +53,15 @@ describe('FormHandler Storage Error Direct Tests', () => {
       const mockCatchFn = jest.fn();
       const mockPromise = {
         then: jest.fn().mockReturnThis(),
-        catch: mockCatchFn
+        catch: mockCatchFn,
       };
-      
+
       // Mock the saveSettings function to return our controllable promise
       jest.spyOn(storage, 'saveSettings').mockReturnValue(mockPromise);
 
       // Call the function directly
       saveOptions();
-      
+
       // Now simulate the promise rejection by calling the catch handler directly
       const errorObj = new Error('Storage test error');
       mockCatchFn.mock.calls[0][0](errorObj);

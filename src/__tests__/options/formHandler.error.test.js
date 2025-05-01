@@ -9,7 +9,7 @@ describe('FormHandler Error Handling', () => {
   beforeEach(() => {
     // Reset all mocks
     resetTestMocks();
-    
+
     // Set up DOM elements needed by the code
     setupTestDom();
 

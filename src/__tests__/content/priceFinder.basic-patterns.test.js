@@ -4,16 +4,13 @@
  */
 /* global setupTestDom, resetTestMocks */
 
-import {
-  buildThousandsString,
-  buildDecimalString,
-} from '../../content/priceFinder';
+import { buildThousandsString, buildDecimalString } from '../../content/priceFinder';
 
 describe('Basic Pattern Tests', () => {
   beforeEach(() => {
     // Reset mocks
     resetTestMocks();
-    
+
     // Set up DOM elements
     setupTestDom();
   });

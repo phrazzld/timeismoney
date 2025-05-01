@@ -12,13 +12,13 @@
 // Import mock functions for special test cases
 import { mockBuildMatchPattern } from './priceFinder.test.patch.js';
 
-import { getPriceInfo, findPrices, detectFormatFromText } from '../../content/priceFinder.js';
+import { getPriceInfo, detectFormatFromText } from '../../content/priceFinder.js';
 
 describe('Currency Format Detection', () => {
   beforeEach(() => {
     // Reset mocks
     resetTestMocks();
-    
+
     // Set up DOM elements
     setupTestDom();
   });

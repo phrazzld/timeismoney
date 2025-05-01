@@ -60,3 +60,4 @@ yarn-debug.log*
 yarn-error.log*
 
 **/.claude/settings.local.json
+CI-FAILURE-ANALYSIS.md

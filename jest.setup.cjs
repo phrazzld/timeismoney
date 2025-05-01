@@ -63,6 +63,13 @@ if (typeof performance === 'undefined') {
 // Helper function to set up common DOM elements
 // This will be imported in test files that need it
 global.setupTestDom = () => {
+  // Ensure document and body exist
+  if (typeof document === 'undefined' || !document.body) {
+    // If we're in a test environment where document isn't properly set up
+    // Return without trying to manipulate the DOM
+    return;
+  }
+  
   // Reset the document body before each test
   document.body.innerHTML = '';
   

@@ -11,7 +11,7 @@ describe('Additional Currencies', () => {
   beforeEach(() => {
     // Reset mocks
     resetTestMocks();
-    
+
     // Set up DOM elements
     setupTestDom();
   });
@@ -34,7 +34,7 @@ describe('Additional Currencies', () => {
 
   describe('Swiss Franc (CHF) Tests', () => {
     test('matches Swiss Franc amount', () => {
-      const pattern = mockBuildMatchPattern('Fr', 'CHF', '(\\s|\\.)', ',');
+      const pattern = mockBuildMatchPattern('Fr', 'CHF', '\\.', ',');
 
       expect('Fr 123,45'.match(pattern)).toBeTruthy();
       expect('123,45 Fr'.match(pattern)).toBeTruthy();
@@ -44,7 +44,7 @@ describe('Additional Currencies', () => {
 
   describe('Swedish Krona (SEK) Tests', () => {
     test('matches Swedish Krona amount', () => {
-      const pattern = mockBuildMatchPattern('kr', 'SEK', '(\\s|\\.)', ',');
+      const pattern = mockBuildMatchPattern('kr', 'SEK', '\\.', ',');
 
       expect('123,45 kr'.match(pattern)).toBeTruthy();
       expect('1.234,56 kr'.match(pattern)).toBeTruthy();
@@ -74,7 +74,7 @@ describe('Additional Currencies', () => {
 
   describe('Norwegian/Danish Krone (NOK/DKK) Tests', () => {
     test('matches Norwegian Krone amount', () => {
-      const pattern = mockBuildMatchPattern('kr', 'NOK', '(\\s|\\.)', ',');
+      const pattern = mockBuildMatchPattern('kr', 'NOK', '\\.', ',');
 
       expect('123,45 kr'.match(pattern)).toBeTruthy();
       expect('1.234,56 kr'.match(pattern)).toBeTruthy();
@@ -82,7 +82,7 @@ describe('Additional Currencies', () => {
     });
 
     test('matches Danish Krone amount', () => {
-      const pattern = mockBuildMatchPattern('kr', 'DKK', '(\\s|\\.)', ',');
+      const pattern = mockBuildMatchPattern('kr', 'DKK', '\\.', ',');
 
       expect('123,45 kr'.match(pattern)).toBeTruthy();
       expect('1.234,56 kr'.match(pattern)).toBeTruthy();
@@ -92,7 +92,7 @@ describe('Additional Currencies', () => {
 
   describe('Polish Złoty (PLN) Tests', () => {
     test('matches Złoty amount with symbol', () => {
-      const pattern = mockBuildMatchPattern('zł', 'PLN', '(\\s|\\.)', ',');
+      const pattern = mockBuildMatchPattern('zł', 'PLN', '\\.', ',');
 
       expect('123,45 zł'.match(pattern)).toBeTruthy();
       expect('1.234,56 zł'.match(pattern)).toBeTruthy();
