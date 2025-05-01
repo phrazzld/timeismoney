@@ -19,7 +19,8 @@ In each test file, you need to:
 Here's an example of how to update your test files:
 
 ```javascript
-// At the top of your test file, inside your describe block:
+// At the top of your test file, add this global comment to tell ESLint about the global helpers
+/* global setupTestDom, resetTestMocks */
 
 describe('Your Test Suite', () => {
   beforeEach(() => {
