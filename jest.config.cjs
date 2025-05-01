@@ -12,7 +12,11 @@ module.exports = {
   testMatch: ['**/__tests__/**/*.js', '**/?(*.)+(spec|test).js'],
 
   // Ignore patterns for tests
-  testPathIgnorePatterns: ['/node_modules/'],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    'test-helpers.js',
+    'priceFinder.test.patch.js'
+  ],
 
   // Module file extensions
   moduleFileExtensions: ['js', 'json', 'mjs'],
