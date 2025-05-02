@@ -232,6 +232,11 @@ export const buildNumberPattern = (thousandsString, decimalString) => {
  * comes before the amount (e.g., $10.99, £20.50), which is the format used in
  * countries like the US, UK, and many Asian countries.
  *
+ * Enhanced to handle:
+ * - Optional text before the price (e.g., "New 18,542 yen")
+ * - Currency symbols with optional spacing (e.g., "¥ 1,234" or "¥1,234")
+ * - Support for special text formats like "円" (Japanese Yen character)
+ *
  * @param {string} escapedSymbol - Escaped currency symbol (e.g., '\\$' for $)
  * @param {string} currencyCode - Currency code (e.g., 'USD')
  * @param {string} numberPattern - Pattern for matching numbers
@@ -250,22 +255,53 @@ export const buildSymbolBeforePattern = (escapedSymbol, currencyCode, numberPatt
   // This allows matching formats like "$10.99" and "$ 10.99"
   let symbolPart = '';
 
+  // Add special case for Japanese Yen character (円)
+  const hasJapaneseYen = escapedSymbol === '¥' || currencyCode === 'JPY';
+  const yenChar = '円';
+
   // Determine which symbol/code parts to include in the pattern:
   if (escapedSymbol && currencyCode) {
     // If both symbol and code are provided, match either one
     // Example: Match both "$100" and "USD 100"
-    symbolPart = `(${escapedSymbol}|${currencyCode})`;
+    symbolPart = hasJapaneseYen
+      ? `(${escapedSymbol}|${currencyCode}|${yenChar})`
+      : `(${escapedSymbol}|${currencyCode})`;
   } else if (escapedSymbol) {
     // If only symbol is provided
-    symbolPart = `(${escapedSymbol})`;
+    symbolPart = hasJapaneseYen ? `(${escapedSymbol}|${yenChar})` : `(${escapedSymbol})`;
   } else if (currencyCode) {
     // If only currency code is provided
-    symbolPart = `(${currencyCode})`;
+    symbolPart = hasJapaneseYen ? `(${currencyCode}|${yenChar})` : `(${currencyCode})`;
   }
 
-  // Build the full pattern: symbol/code + optional space + number
-  // The \s? makes the space optional to handle both "$100" and "$ 100"
-  const pattern = symbolPart ? `${symbolPart}\\s?${numberPattern}` : '';
+  // Build patterns with variations to handle different formats:
+  // 1. Standard format: symbol + optional space + number
+  // 2. Format with preceding text: any text + symbol + optional space + number
+  // This helps with formats like "New ¥1,234" on sites like eBay
+  const patterns = [];
+
+  // The basic pattern: symbol/code + optional space + number
+  if (symbolPart) {
+    // Basic pattern with optional space between symbol and amount
+    patterns.push(`${symbolPart}\\s*${numberPattern}`);
+
+    // Special case for text followed by a price (common on eBay)
+    // This matches patterns like "新品18,542 円" (New 18,542 yen)
+    // Using a non-greedy match (.+?) for any preceding text
+    patterns.push(`.+?${symbolPart}\\s*${numberPattern}`);
+
+    // Handle cases where text appears before the price with symbol after
+    // E.g., "新品 18,542 円" (New 18,542 yen)
+    patterns.push(`.+?\\s+${numberPattern}\\s*${symbolPart}`);
+
+    // Handle the case where there's just text before the price
+    // without a currency symbol at the direct start of the text
+    // E.g., "Price is $10.99" or "新品 ¥1,234"
+    patterns.push(`\\w+\\s+${symbolPart}\\s*${numberPattern}`);
+  }
+
+  // Join all pattern variations with the OR operator
+  const pattern = patterns.length > 0 ? patterns.join('|') : '';
 
   // Cache the pattern for future use
   patternCache.symbolBefore.set(cacheKey, pattern);
@@ -278,6 +314,11 @@ export const buildSymbolBeforePattern = (escapedSymbol, currencyCode, numberPatt
  * This function creates a regex pattern for prices where the currency symbol
  * comes after the amount (e.g., 10.99€, 20.50£), which is common in
  * many European countries and some other regions.
+ *
+ * Enhanced to handle:
+ * - Text before price amounts (e.g., "New 18,542 yen")
+ * - Japanese Yen format where the symbol can appear after the number (e.g., "18,542 円")
+ * - Optional spacing between amount and currency symbol
  *
  * @param {string} escapedSymbol - Escaped currency symbol
  * @param {string} currencyCode - Currency code
@@ -297,22 +338,44 @@ export const buildSymbolAfterPattern = (escapedSymbol, currencyCode, numberPatte
   // This allows matching formats like "10.99€" and "10.99 €"
   let symbolPart = '';
 
+  // Add special case for Japanese Yen character (円)
+  const hasJapaneseYen = escapedSymbol === '¥' || currencyCode === 'JPY';
+  const yenChar = '円';
+
   // Determine which symbol/code parts to include in the pattern:
   if (escapedSymbol && currencyCode) {
     // If both symbol and code are provided, match either one
     // Example: Match both "100€" and "100 EUR"
-    symbolPart = `(${escapedSymbol}|${currencyCode})`;
+    symbolPart = hasJapaneseYen
+      ? `(${escapedSymbol}|${currencyCode}|${yenChar})`
+      : `(${escapedSymbol}|${currencyCode})`;
   } else if (escapedSymbol) {
     // If only symbol is provided
-    symbolPart = `(${escapedSymbol})`;
+    symbolPart = hasJapaneseYen ? `(${escapedSymbol}|${yenChar})` : `(${escapedSymbol})`;
   } else if (currencyCode) {
     // If only currency code is provided
-    symbolPart = `(${currencyCode})`;
+    symbolPart = hasJapaneseYen ? `(${currencyCode}|${yenChar})` : `(${currencyCode})`;
   }
 
-  // Build the full pattern: number + optional space + symbol/code
-  // The \s? makes the space optional to handle both "100€" and "100 €"
-  const pattern = symbolPart ? `${numberPattern}\\s?${symbolPart}` : '';
+  // Build patterns with variations to handle different formats
+  const patterns = [];
+
+  if (symbolPart) {
+    // Basic pattern: number + optional space + symbol/code
+    // The \s* allows for zero or more spaces to handle variations
+    patterns.push(`${numberPattern}\\s*${symbolPart}`);
+
+    // Handle text before a price with symbol after
+    // This matches patterns like "New item 18,542 円" on sites like eBay
+    patterns.push(`.+?\\s+${numberPattern}\\s*${symbolPart}`);
+
+    // Handle cases where there's text at start of string and price in middle
+    // E.g., "Price is 10.99€ with discount"
+    patterns.push(`\\w+\\s+${numberPattern}\\s*${symbolPart}`);
+  }
+
+  // Join all pattern variations with the OR operator
+  const pattern = patterns.length > 0 ? patterns.join('|') : '';
 
   // Cache the pattern for future use
   patternCache.symbolAfter.set(cacheKey, pattern);

@@ -57,7 +57,29 @@ export const applyConversion = (textNode, pattern, convertFn) => {
     try {
       // Ensure the pattern is a global RegExp before using matchAll
       const globalPattern = pattern.global ? pattern : new RegExp(pattern.source, 'g');
-      const matches = [...text.matchAll(globalPattern)];
+
+      // Try to get matches - this could fail if the pattern is invalid
+      let matches = [];
+      try {
+        matches = [...text.matchAll(globalPattern)];
+      } catch (matchAllError) {
+        // If matchAll fails, fall back to match() which is more forgiving
+        logger.debug('matchAll failed, falling back to match():', matchAllError.message);
+        const simpleMatches = text.match(globalPattern);
+        if (simpleMatches) {
+          // Convert basic match results to match the matchAll format
+          // This is a simplified version that doesn't include capture groups
+          matches = simpleMatches.map((match) => {
+            const index = text.indexOf(match);
+            return {
+              0: match,
+              index: index,
+              input: text,
+              groups: undefined,
+            };
+          });
+        }
+      }
 
       if (matches.length === 0) {
         return false;
@@ -70,7 +92,19 @@ export const applyConversion = (textNode, pattern, convertFn) => {
       // Process each match
       matches.forEach((match) => {
         try {
+          // Skip invalid matches (defensive programming)
+          if (!match || typeof match[0] !== 'string' || typeof match.index !== 'number') {
+            logger.debug('Skipping invalid match:', match);
+            return; // Skip this match and continue with others
+          }
+
           const originalPrice = match[0];
+
+          // Skip if the match is just whitespace or too short to be a price
+          if (!originalPrice || originalPrice.trim().length < 2) {
+            return; // Skip and continue
+          }
+
           const convertedText = convertFn(originalPrice);
 
           // Add text before the match

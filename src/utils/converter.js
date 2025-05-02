@@ -16,15 +16,37 @@ import * as logger from './logger.js';
  * @returns {number} Normalized price as a number
  */
 export function normalizePrice(priceString, thousands, decimal) {
-  let normalized = priceString
-    .replace(thousands, '@')
-    .replace(decimal, '~')
-    .replace('~', '.')
-    .replace('@', '');
+  // First strip any non-essential characters like currency symbols and codes
+  // Keep only digits, decimal points, commas, spaces, dots
+  let cleaned = priceString.replace(/[^\d.,\s]/g, '');
 
-  // Extract just the numerical value
-  normalized = parseFloat(normalized.replace(/[^\d.]/g, '')).toFixed(2);
-  return parseFloat(normalized);
+  // Trim any leading/trailing whitespace that might be left
+  cleaned = cleaned.trim();
+
+  // Now proceed with the normal replacement logic but with better error handling
+  try {
+    let normalized = cleaned
+      .replace(thousands, '@')
+      .replace(decimal, '~')
+      .replace(/~/g, '.') // Replace all decimal separators, not just the first one
+      .replace(/@/g, ''); // Remove all thousands separators, not just the first one
+
+    // Extract just the numerical value - only digits and decimal point
+    // This handles cases where the regex replacements might not have caught everything
+    normalized = normalized.replace(/[^\d.]/g, '');
+
+    // Handle special case for currencies like JPY that typically don't have decimal places
+    if (normalized.indexOf('.') === -1) {
+      // No decimal point found - this is likely a whole number currency like Yen
+      return parseInt(normalized, 10);
+    }
+
+    return parseFloat(parseFloat(normalized).toFixed(2));
+  } catch (error) {
+    // Fallback to basic parsing if the regex replacements fail
+    const numericValue = parseFloat(cleaned.replace(/[^\d.]/g, ''));
+    return isNaN(numericValue) ? 0 : numericValue;
+  }
 }
 
 /**

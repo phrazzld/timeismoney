@@ -103,7 +103,7 @@ export const CURRENCY_FORMATS = {
     localeId: 'ja-JP',
     thousands: 'commas',
     decimal: 'dot',
-    currencySymbols: ['¥', '₩', '元', '￥'],
+    currencySymbols: ['¥', '₩', '元', '￥', '円'],
     currencyCodes: ['JPY', 'KRW', 'CNY'],
     symbolsBeforeAmount: true,
   },
@@ -127,6 +127,7 @@ export const CURRENCY_SYMBOL_TO_FORMAT = {
   '₩': 'JP',
   元: 'JP',
   '￥': 'JP',
+  円: 'JP',
 };
 
 /**
