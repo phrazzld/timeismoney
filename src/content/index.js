@@ -363,6 +363,7 @@ const convert = (textNode, preloadedSettings) => {
           };
 
           // STEP 2: Use priceFinder to identify prices in the text
+          // First get the price patterns and formatters
           let priceMatch;
           try {
             priceMatch = findPrices(textNode.nodeValue, formatSettings);
@@ -374,18 +375,32 @@ const convert = (textNode, preloadedSettings) => {
             return; // Skip this node on price finding error
           }
 
-          // Exit if no price was found (not an error condition)
+          // Exit if no price patterns were found (not an error condition)
           if (!priceMatch) {
             return;
           }
 
-          // Additional validation of the price match result
-          if (
-            !priceMatch.value ||
-            typeof priceMatch.value !== 'number' ||
-            isNaN(priceMatch.value)
-          ) {
-            logger.debug('Invalid price value detected:', priceMatch);
+          // STEP 2b: Extract actual price information using the patterns
+          // Import getPriceInfo from priceFinder to extract the actual price value
+          try {
+            // Use the pattern to check if there are matches in the text
+            const matches = textNode.nodeValue.match(priceMatch.pattern);
+            if (!matches || matches.length === 0) {
+              // No actual price matches in the text
+              return;
+            }
+
+            // We know there are matches, so we're good to proceed
+            logger.debug('Found price match in text:', matches[0], {
+              pattern: priceMatch.pattern.toString(),
+              thousands: priceMatch.thousands.toString(),
+              decimal: priceMatch.decimal.toString(),
+              formatInfo: priceMatch.formatInfo,
+            });
+          } catch (matchError) {
+            logger.error('Error matching prices in text:', matchError.message, {
+              textContent: textNode?.nodeValue?.substring(0, 50) + '...',
+            });
             return;
           }
 
@@ -393,8 +408,8 @@ const convert = (textNode, preloadedSettings) => {
           const conversionInfo = {
             convertFn: convertPriceToTimeString,
             formatters: {
-              thousands: priceMatch.thousands || formatSettings.thousands,
-              decimal: priceMatch.decimal || formatSettings.decimal,
+              thousands: priceMatch.thousands,
+              decimal: priceMatch.decimal,
             },
             wageInfo: {
               frequency: settings.frequency || 'hourly',
@@ -414,11 +429,26 @@ const convert = (textNode, preloadedSettings) => {
 
           // STEP 4: Use domModifier to update the DOM with the converted prices
           try {
-            processTextNode(textNode, priceMatch, conversionInfo, formatSettings.isReverseSearch);
+            const result = processTextNode(
+              textNode,
+              priceMatch,
+              conversionInfo,
+              formatSettings.isReverseSearch
+            );
+            if (result) {
+              logger.debug('Successfully converted price in DOM');
+            } else {
+              logger.warn('Failed to convert price in DOM - processTextNode returned false', {
+                textContent: textNode?.nodeValue?.substring(0, 50) + '...',
+              });
+            }
           } catch (domModifierError) {
             logger.error('Error in DOM modification:', domModifierError.message, {
               textContent: textNode?.nodeValue?.substring(0, 50) + '...',
-              priceMatch,
+              priceMatch:
+                typeof priceMatch === 'object'
+                  ? { pattern: priceMatch.pattern?.toString() }
+                  : 'Invalid priceMatch',
               errorDetails: domModifierError.stack,
             });
           }
