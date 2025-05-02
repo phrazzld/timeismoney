@@ -1,0 +1,173 @@
+/**
+ * Unified Converter module for converting prices to equivalent working time.
+ * Combines functionality from the original converter.js and priceConverter.js.
+ *
+ * @module utils/converter
+ */
+
+import * as logger from './logger.js';
+
+/**
+ * Normalizes a price string by removing formatting characters
+ *
+ * @param {string} priceString - The price string to normalize
+ * @param {RegExp} thousands - Regex for thousands delimiter
+ * @param {RegExp} decimal - Regex for decimal delimiter
+ * @returns {number} Normalized price as a number
+ */
+export function normalizePrice(priceString, thousands, decimal) {
+  // First strip any non-essential characters like currency symbols and codes
+  // Keep only digits, decimal points, commas, spaces, dots
+  let cleaned = priceString.replace(/[^\d.,\s]/g, '');
+
+  // Trim any leading/trailing whitespace that might be left
+  cleaned = cleaned.trim();
+
+  // Now proceed with the normal replacement logic but with better error handling
+  try {
+    let normalized = cleaned
+      .replace(thousands, '@')
+      .replace(decimal, '~')
+      .replace(/~/g, '.') // Replace all decimal separators, not just the first one
+      .replace(/@/g, ''); // Remove all thousands separators, not just the first one
+
+    // Extract just the numerical value - only digits and decimal point
+    // This handles cases where the regex replacements might not have caught everything
+    normalized = normalized.replace(/[^\d.]/g, '');
+
+    // Handle special case for currencies like JPY that typically don't have decimal places
+    if (normalized.indexOf('.') === -1) {
+      // No decimal point found - this is likely a whole number currency like Yen
+      return parseInt(normalized, 10);
+    }
+
+    return parseFloat(parseFloat(normalized).toFixed(2));
+  } catch (error) {
+    // Fallback to basic parsing if the regex replacements fail
+    const numericValue = parseFloat(cleaned.replace(/[^\d.]/g, ''));
+    return isNaN(numericValue) ? 0 : numericValue;
+  }
+}
+
+/**
+ * Calculates the hourly wage based on frequency and amount
+ *
+ * @param {string} frequency - Wage frequency ('hourly' or 'yearly')
+ * @param {string|number} amount - Wage amount as string or number
+ * @returns {number} Hourly wage as a number
+ */
+export function calculateHourlyWage(frequency, amount) {
+  let hourlyWage = parseFloat(amount);
+  if (frequency === 'yearly') {
+    hourlyWage = hourlyWage / 2080; // 40 hours * 52 weeks
+  }
+  return hourlyWage;
+}
+
+/**
+ * Converts a monetary amount to equivalent time based on hourly rate
+ *
+ * @param {number} priceValue - The price to convert
+ * @param {number} hourlyRate - The hourly wage rate
+ * @returns {object} Object containing hours and minutes
+ */
+export function convertToTime(priceValue, hourlyRate) {
+  const totalHours = priceValue / hourlyRate;
+  const hours = Math.floor(totalHours);
+  const minutes = Math.round((totalHours - hours) * 60);
+
+  // Handle case where minutes rounds up to 60
+  if (minutes === 60) {
+    return { hours: hours + 1, minutes: 0 };
+  }
+
+  return { hours, minutes };
+}
+
+/**
+ * Formats time data into a readable verbose snippet
+ *
+ * @param {number} hours - Number of hours
+ * @param {number} minutes - Number of minutes
+ * @returns {string} Formatted time string (e.g., "5 hours, 30 minutes")
+ */
+export function formatTimeSnippet(hours, minutes) {
+  const hourText = hours === 1 ? 'hour' : 'hours';
+  const minuteText = minutes === 1 ? 'minute' : 'minutes';
+
+  if (hours === 0) {
+    return `${minutes} ${minuteText}`;
+  } else if (minutes === 0) {
+    return `${hours} ${hourText}`;
+  } else {
+    return `${hours} ${hourText}, ${minutes} ${minuteText}`;
+  }
+}
+
+/**
+ * Formats time data into a compact snippet
+ *
+ * @param {number} hours - Number of hours
+ * @param {number} minutes - Number of minutes
+ * @returns {string} Formatted time string (e.g., "5h 30m")
+ */
+export function formatTimeCompact(hours, minutes) {
+  return `${hours}h ${minutes}m`;
+}
+
+/**
+ * Combines original price with equivalent time format
+ *
+ * @param {string} originalPrice - The original price string
+ * @param {number} hours - Number of hours
+ * @param {number} minutes - Number of minutes
+ * @param {boolean} [useCompactFormat] - Whether to use compact formatting (5h 30m) or verbose (5 hours, 30 minutes)
+ * @returns {string} Combined string with original price and time (e.g., "$10 (2h 30m)")
+ */
+export function formatPriceWithTime(originalPrice, hours, minutes, useCompactFormat = true) {
+  const timeFormat = useCompactFormat
+    ? formatTimeCompact(hours, minutes)
+    : formatTimeSnippet(hours, minutes);
+
+  return `${originalPrice} (${timeFormat})`;
+}
+
+/**
+ * Main function to convert a price string to time representation
+ *
+ * @param {string} priceString - The original price string
+ * @param {object} formatters - Formatting regex patterns
+ * @param {RegExp} formatters.thousands - Regex for thousands delimiter
+ * @param {RegExp} formatters.decimal - Regex for decimal delimiter
+ * @param {object} wageInfo - Information about wage
+ * @param {string} wageInfo.frequency - Wage frequency ('hourly' or 'yearly')
+ * @param {string|number} wageInfo.amount - Wage amount as string or number
+ * @param {boolean} [useCompactFormat] - Whether to use compact formatting (5h 30m) or verbose (5 hours, 30 minutes)
+ * @returns {string} Formatted string with price and equivalent working time
+ */
+export function convertPriceToTimeString(
+  priceString,
+  formatters,
+  wageInfo,
+  useCompactFormat = true
+) {
+  // Handle invalid inputs
+  if (!priceString || !formatters || !wageInfo) {
+    return priceString;
+  }
+
+  try {
+    const normalizedPrice = normalizePrice(priceString, formatters.thousands, formatters.decimal);
+    const hourlyWage = calculateHourlyWage(wageInfo.frequency, wageInfo.amount);
+
+    if (isNaN(normalizedPrice) || isNaN(hourlyWage) || hourlyWage <= 0) {
+      return priceString;
+    }
+
+    const { hours, minutes } = convertToTime(normalizedPrice, hourlyWage);
+    return formatPriceWithTime(priceString, hours, minutes, useCompactFormat);
+  } catch (error) {
+    logger.error('Error converting price:', error);
+    return priceString;
+  }
+}

@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body>
+    <p id="ext-desc"></p>
+    <p id="ext-instructions"></p>
+    <div id="form">
+      <div id="master-tooltip"></div>
+      <input type="text" id="currency-code" placeholder="USD" />
+      <input type="text" id="currency-symbol" placeholder="$" />
+      <input type="number" id="amount" min="0" step="any" placeholder="15.00" />
+      <select id="frequency">
+        <option id="hourly" value="hourly"></option>
+        <option id="yearly" value="yearly"></option>
+      </select>
+      <div id="togglr-wrapper">
+        <a href="#" id="togglr"></a>
+      </div>
+      <div id="formatting">
+        <h4 id="formatting-header"></h4>
+        <div id="thousands-wrapper" class="advanced-option">
+          <p id="thousands-label"></p>
+          <select id="thousands" title="Symbols representing the thousand's place">
+            <option id="commas" value="commas"></option>
+            <option id="spaces-and-dots" value="spacesAndDots"></option>
+          </select>
+        </div>
+        <div id="decimal-wrapper" class="advanced-option">
+          <p id="decimal-label"></p>
+          <select id="decimal" title="Symbols representing the decimal place">
+            <option id="dot" value="dot"></option>
+            <option id="comma" value="comma"></option>
+          </select>
+        </div>
+        <div id="debounce-wrapper" class="advanced-option">
+          <p id="debounce-label"></p>
+          <input
+            type="number"
+            id="debounce-interval"
+            min="50"
+            max="5000"
+            step="50"
+            title="Delay in milliseconds after DOM changes before scanning (50-5000). Lower=faster but more CPU, Higher=slower but less CPU."
+          />
+        </div>
+        <div id="dynamic-scanning-wrapper" class="advanced-option">
+          <p id="dynamic-scanning-label"></p>
+          <input
+            type="checkbox"
+            id="enable-dynamic-scanning"
+            title="When enabled, prices are updated as new content loads on the page. When disabled, only initially visible prices are converted."
+          />
+        </div>
+      </div>
+      <button id="save"></button>
+      <div id="status"></div>
+    </div>
+    <script src="index.js" type="module"></script>
+  </body>
+</html>

@@ -1,5 +1,7 @@
 # Time Is Money 💰⌛
 
+[![CI](https://github.com/[username]/timeismoney/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/[username]/timeismoney/actions/workflows/ci.yml?query=branch%3Amaster)
+
 Time Is Money is a Chrome extension that automatically converts prices online into hours of work, helping you make better-informed purchasing decisions by understanding the true value of your time.
 
 ## Features ✨
@@ -25,6 +27,8 @@ Time Is Money is a Chrome extension that automatically converts prices online in
 ## Contribute 🤝
 
 We welcome contributions to Time Is Money! If you have ideas for new features, bug fixes, or other improvements, please feel free to submit a pull request or create an issue. Your input and collaboration are highly appreciated.
+
+Please follow our [Contributing Guidelines](CONTRIBUTING.md) and [Versioning Guidelines](VERSIONING.md) when making contributions to this project. We use Conventional Commits and Semantic Versioning to maintain a clear project history and versioning scheme.
 
 ## License ⚖️
 

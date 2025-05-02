@@ -3,6 +3,18 @@
     "message": "Time Is Money",
     "description": "Extension name."
   },
+  "storageError": {
+    "message": "Failed to access extension storage. Please try again later.",
+    "description": "Error message shown when the extension can't access Chrome storage API."
+  },
+  "loadError": {
+    "message": "Failed to load your settings. Please try again.",
+    "description": "Error message shown when the extension can't load user settings."
+  },
+  "saveError": {
+    "message": "Failed to save your settings. Please try again.",
+    "description": "Error message shown when the extension can't save user settings."
+  },
   "extDesc": {
     "message": "Automatically converts prices online into hours of work.",
     "description": "Brief description of the extension's function."
@@ -34,7 +46,7 @@
   },
   "currencyFormat": {
     "message": "Currency format",
-    "description": "Header for the form section that configures symbols for the thousands' place and the decimal place Time Is Money will use to identify currency values online." 
+    "description": "Header for the form section that configures symbols for the thousands' place and the decimal place Time Is Money will use to identify currency values online."
   },
   "thousandsPlace": {
     "message": "Thousands' place"
@@ -62,6 +74,10 @@
     "message": "Error! Invalid amount entered.",
     "description": "Tell the user that the value entered for 'Income amount' is invalid and the form was not saved."
   },
+  "negativeAmountErr": {
+    "message": "Amount must be non-negative.",
+    "description": "Tell the user that the income amount must be greater than or equal to zero."
+  },
   "saveSuccess": {
     "message": "Options saved.",
     "description": "Let the user know their preferences were successfully saved."
@@ -87,5 +103,21 @@
   "enable": {
     "message": "Enable",
     "description": "Option to resume the extension if it is currently paused."
+  },
+  "debounceLabel": {
+    "message": "DOM Scan Delay (ms)",
+    "description": "Label for the debounce interval setting that controls how quickly the extension processes DOM changes."
+  },
+  "debounceTooltip": {
+    "message": "Delay in milliseconds before processing DOM changes. Lower values (50-100ms) make conversions appear faster but use more CPU. Higher values (500-1000ms) use less CPU but may feel slower. Default: 200ms",
+    "description": "Tooltip text explaining the debounce interval setting."
+  },
+  "debounceIntervalErr": {
+    "message": "Please enter a valid delay value.",
+    "description": "Error shown when the debounce interval input is invalid."
+  },
+  "debounceRangeErr": {
+    "message": "Delay must be between 50ms and 5000ms.",
+    "description": "Error shown when the debounce interval is outside the allowed range."
   }
 }
