@@ -30,7 +30,7 @@ export const AMAZON_PRICE_CLASSES = {
  *
  * @type {number}
  */
-export const MAX_PENDING_NODES = 1000;
+export const MAX_PENDING_NODES = 2000; // Increased from 1000 to reduce warnings while still providing safety
 
 /**
  * Default debounce interval for MutationObserver in milliseconds

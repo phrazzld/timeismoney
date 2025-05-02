@@ -6,6 +6,7 @@
  */
 
 import { DEFAULT_SETTINGS } from './constants.js';
+import * as logger from './logger.js';
 
 /**
  * Gets the current settings from Chrome storage
@@ -15,13 +16,29 @@ import { DEFAULT_SETTINGS } from './constants.js';
  */
 export function getSettings() {
   return new Promise((resolve, reject) => {
-    chrome.storage.sync.get(DEFAULT_SETTINGS, (items) => {
-      if (chrome.runtime.lastError) {
-        reject(chrome.runtime.lastError);
-      } else {
-        resolve(items);
+    try {
+      // Check if Chrome runtime is valid before proceeding
+      if (!isValidChromeRuntime()) {
+        reject(new Error('Extension context invalidated'));
+        return;
       }
-    });
+
+      chrome.storage.sync.get(DEFAULT_SETTINGS, (items) => {
+        // Check inside callback in case context was invalidated during async operation
+        if (!isValidChromeRuntime()) {
+          reject(new Error('Extension context invalidated'));
+          return;
+        }
+
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+        } else {
+          resolve(items);
+        }
+      });
+    } catch (error) {
+      reject(new Error(`Failed to access storage: ${error.message}`));
+    }
   });
 }
 
@@ -34,13 +51,29 @@ export function getSettings() {
  */
 export function saveSettings(newSettings) {
   return new Promise((resolve, reject) => {
-    chrome.storage.sync.set(newSettings, () => {
-      if (chrome.runtime.lastError) {
-        reject(chrome.runtime.lastError);
-      } else {
-        resolve();
+    try {
+      // Check if Chrome runtime is valid before proceeding
+      if (!isValidChromeRuntime()) {
+        reject(new Error('Extension context invalidated'));
+        return;
       }
-    });
+
+      chrome.storage.sync.set(newSettings, () => {
+        // Check inside callback in case context was invalidated during async operation
+        if (!isValidChromeRuntime()) {
+          reject(new Error('Extension context invalidated'));
+          return;
+        }
+
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+        } else {
+          resolve();
+        }
+      });
+    } catch (error) {
+      reject(new Error(`Failed to save settings: ${error.message}`));
+    }
   });
 }
 
@@ -53,11 +86,45 @@ export function saveSettings(newSettings) {
  * @returns {void}
  */
 export function onSettingsChanged(callback) {
-  chrome.storage.onChanged.addListener((changes) => {
-    const updated = {};
-    for (const key in changes) {
-      updated[key] = changes[key].newValue;
+  chrome.storage.onChanged.addListener((changes, areaName) => {
+    try {
+      // Don't proceed if Chrome runtime is invalid
+      if (!isValidChromeRuntime()) {
+        return;
+      }
+
+      // Only process 'sync' storage changes
+      if (areaName !== 'sync') {
+        return;
+      }
+
+      const updated = {};
+      for (const key in changes) {
+        updated[key] = changes[key].newValue;
+      }
+      callback(updated);
+    } catch (error) {
+      logger.error('Error handling settings change:', error);
     }
-    callback(updated);
   });
+}
+
+/**
+ * Checks if the Chrome runtime is valid and accessible
+ * Used to ensure the extension API is available before attempting to use it
+ *
+ * @returns {boolean} True if Chrome runtime and manifest are accessible, false otherwise
+ * @private
+ */
+function isValidChromeRuntime() {
+  try {
+    return (
+      typeof chrome !== 'undefined' &&
+      chrome.runtime &&
+      !!chrome.runtime.getManifest &&
+      !!chrome.runtime.getManifest()
+    );
+  } catch (e) {
+    return false;
+  }
 }

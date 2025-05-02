@@ -261,9 +261,12 @@ function handleUnload(state = domScannerState) {
       );
     }
 
-    // Now try using the stopObserver as a fallback
+    // Now try using the stopObserver for additional cleanup, but only if we haven't already cleared everything
     try {
-      stopObserver(localState);
+      // Make a safety check before calling stopObserver to avoid errors on null properties
+      if (localState && localState.domObserver) {
+        stopObserver(localState);
+      }
     } catch (stopError) {
       logger.debug('TimeIsMoney: stopObserver failed during unload:', stopError.message);
     }

@@ -6,6 +6,7 @@
  */
 
 import { getSettings, saveSettings } from '../utils/storage.js';
+import * as logger from '../utils/logger.js';
 
 /**
  * Restores the enabled/disabled state of the extension toggle
@@ -23,7 +24,7 @@ export const restoreOptions = () => {
       status.classList.remove('error');
     })
     .catch((error) => {
-      console.error('Storage operation failed:', error);
+      logger.error('Storage operation failed:', error.message);
       // Show user-friendly error message
       status.textContent =
         chrome.i18n.getMessage('loadError') || 'Failed to load your settings. Please try again.';
@@ -55,7 +56,7 @@ export function handleEnableToggle(event) {
       status.classList.remove('error');
     })
     .catch((error) => {
-      console.error('Storage operation failed:', error);
+      logger.error('Storage operation failed:', error.message);
 
       // Show user-friendly error message
       status.textContent =

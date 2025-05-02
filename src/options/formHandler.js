@@ -134,7 +134,9 @@ export async function loadForm() {
     // Clear any previous error messages
     status.textContent = '';
   } catch (error) {
-    console.error('Error loading options form:', error);
+    // Import logger implicitly available when bundled
+    const logger = await import('../utils/logger.js');
+    logger.error('Error loading options form:', error.message);
 
     // Display user-facing error message
     status.textContent =
@@ -225,8 +227,10 @@ export function saveOptions() {
         status.textContent = '';
       }, 2000);
     })
-    .catch((error) => {
-      console.error('Error saving options:', error);
+    .catch(async (error) => {
+      // Import logger implicitly available when bundled
+      const logger = await import('../utils/logger.js');
+      logger.error('Error saving options:', error.message);
 
       // Display a user-friendly error message
       status.textContent =

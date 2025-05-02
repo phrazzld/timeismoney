@@ -335,11 +335,27 @@ export const processMutations = (
           }
 
           if (!isConvertedPrice) {
+            // Skip elements that are unlikely to contain prices (script, style, etc.)
+            const skipNodeTypes = ['SCRIPT', 'STYLE', 'SVG', 'IFRAME', 'NOSCRIPT', 'META', 'LINK'];
+            if (node.nodeName && skipNodeTypes.includes(node.nodeName.toUpperCase())) {
+              continue;
+            }
+
+            // Filter out elements with very little text that are unlikely to contain prices
+            // This helps reduce the queue size while still catching actual prices
+            if (node.textContent && node.textContent.trim().length < 3) {
+              continue;
+            }
+
             // Check if we've reached the size limit
             if (state.pendingNodes.size >= MAX_PENDING_NODES) {
-              logger.warn(
-                `Pending nodes limit (${MAX_PENDING_NODES}) reached, processing immediately`
-              );
+              // But don't log a warning for every node, just once per batch to reduce log spam
+              if (state.pendingNodes.size === MAX_PENDING_NODES) {
+                logger.warn(
+                  `Pending nodes limit (${MAX_PENDING_NODES}) reached, processing batch immediately`
+                );
+              }
+
               // Cancel any pending debounce timer
               clearTimeout(state.debounceTimer);
               // Process pending nodes immediately if not already processing
@@ -371,11 +387,21 @@ export const processMutations = (
       }
 
       if (!isInConvertedPrice) {
+        // Skip text nodes with very little content that are unlikely to contain prices
+        const textContent = mutation.target.nodeValue || '';
+        if (textContent.trim().length < 3) {
+          continue;
+        }
+
         // Check if we've reached the size limit
         if (state.pendingTextNodes.size >= MAX_PENDING_NODES) {
-          logger.warn(
-            `Pending text nodes limit (${MAX_PENDING_NODES}) reached, processing immediately`
-          );
+          // But don't log a warning for every node, just once per batch to reduce log spam
+          if (state.pendingTextNodes.size === MAX_PENDING_NODES) {
+            logger.warn(
+              `Pending text nodes limit (${MAX_PENDING_NODES}) reached, processing batch immediately`
+            );
+          }
+
           // Cancel any pending debounce timer
           clearTimeout(state.debounceTimer);
           // Process pending nodes immediately if not already processing
@@ -599,25 +625,101 @@ export const processPendingNodes = (callback, options = {}, state = defaultState
  */
 export const stopObserver = (state = defaultState) => {
   try {
-    // Clear any pending debounce timer
-    if (state.debounceTimer) {
-      clearTimeout(state.debounceTimer);
-      state.debounceTimer = null;
+    // Check if state exists
+    if (!state) {
+      logger.error('Invalid state passed to stopObserver');
+      return false;
     }
 
-    // Clear any pending nodes
-    state.pendingNodes.clear();
-    state.pendingTextNodes.clear();
+    // Safe cleanup of resources, checking existence of each property
+    try {
+      // Clear any pending debounce timer
+      if (state.debounceTimer) {
+        clearTimeout(state.debounceTimer);
+        state.debounceTimer = null;
+      }
+    } catch (timerError) {
+      logger.error('Error clearing debounce timer:', timerError.message);
+    }
+
+    try {
+      // Clear any pending nodes, safely handling case where sets might not exist
+      // First explicitly check for null or undefined
+      if (state.pendingNodes !== null && state.pendingNodes !== undefined) {
+        // Then check if it has a clear method
+        if (typeof state.pendingNodes.clear === 'function') {
+          state.pendingNodes.clear();
+        } else {
+          // If no clear method, just set to a new empty Set
+          state.pendingNodes = new Set();
+        }
+      } else {
+        // Initialize if it doesn't exist
+        state.pendingNodes = new Set();
+      }
+
+      // Do the same for pendingTextNodes
+      if (state.pendingTextNodes !== null && state.pendingTextNodes !== undefined) {
+        if (typeof state.pendingTextNodes.clear === 'function') {
+          state.pendingTextNodes.clear();
+        } else {
+          state.pendingTextNodes = new Set();
+        }
+      } else {
+        state.pendingTextNodes = new Set();
+      }
+    } catch (nodesError) {
+      logger.error('Error clearing pending nodes:', nodesError.message);
+      // Try to recover by resetting to new empty Sets
+      try {
+        state.pendingNodes = new Set();
+        state.pendingTextNodes = new Set();
+      } catch (recoveryError) {
+        logger.error('Failed to recover from nodes error:', recoveryError.message);
+      }
+    }
 
     // Reset processing flag
-    state.isProcessing = false;
-
-    // Disconnect the observer
-    if (state.domObserver) {
-      state.domObserver.disconnect();
-      state.domObserver = null;
-      return true;
+    try {
+      state.isProcessing = false;
+    } catch (flagError) {
+      logger.error('Error resetting processing flag:', flagError.message);
     }
+
+    // Disconnect the observer, safely with multiple checks
+    try {
+      // Check if state.domObserver exists and is an object
+      if (state.domObserver && typeof state.domObserver === 'object') {
+        // Check if disconnect method exists and is a function
+        if (typeof state.domObserver.disconnect === 'function') {
+          try {
+            // Call disconnect in a separate try block
+            state.domObserver.disconnect();
+          } catch (disconnectCallError) {
+            // Just log but continue execution
+            logger.error(
+              'Error calling MutationObserver.disconnect():',
+              disconnectCallError.message
+            );
+          }
+        }
+        // Always null out the reference to prevent future errors
+        state.domObserver = null;
+        return true;
+      }
+      // If we reach here, either the observer doesn't exist or its disconnect method is not a function
+      state.domObserver = null; // Make sure to clean up the reference anyway
+    } catch (disconnectError) {
+      logger.error('Error disconnecting observer:', disconnectError.message);
+      // Attempt to clean up reference even if an error occurred
+      try {
+        state.domObserver = null;
+      } catch (finalCleanupError) {
+        // Last resort error handler
+        logger.error('Error in final observer cleanup:', finalCleanupError.message);
+      }
+    }
+
     return false;
   } catch (error) {
     logger.error('Error stopping MutationObserver:', error.message, error.stack);
