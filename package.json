@@ -1,6 +1,6 @@
 {
   "name": "timeismoney",
-  "version": "1.0.0",
+  "version": "4.1.5",
   "description": "Chrome extension that converts prices to equivalent working hours",
   "private": true,
   "type": "module",
