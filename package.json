@@ -18,7 +18,12 @@
     "smoke-test": "node scripts/smoke-test.js",
     "start": "./scripts/load-extension.sh",
     "prepare": "husky",
-    "format:staged": "lint-staged"
+    "format:staged": "lint-staged",
+    "release": "node scripts/version-sync.js && standard-version",
+    "release:patch": "node scripts/version-sync.js && standard-version --release-as patch",
+    "release:minor": "node scripts/version-sync.js && standard-version --release-as minor",
+    "release:major": "node scripts/version-sync.js && standard-version --release-as major",
+    "release:beta": "node scripts/version-sync.js && standard-version --prerelease beta"
   },
   "lint-staged": {
     "*.{js,jsx}": [
@@ -34,6 +39,8 @@
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-syntax-import-meta": "^7.10.4",
     "@babel/preset-env": "^7.26.9",
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
     "@types/jest": "^29.5.14",
     "babel-jest": "^29.7.0",
     "esbuild": "^0.25.3",
@@ -46,6 +53,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "lint-staged": "^15.5.1",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "standard-version": "^9.5.0"
   }
 }
