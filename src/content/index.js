@@ -46,8 +46,15 @@ const domScannerState = createDomScannerState();
  */
 function processPage(root, settings) {
   try {
-    if (!root) {
+    // Validate inputs first to avoid deeper errors
+    if (!root || !(root instanceof Node)) {
       logger.error('processPage called with invalid root node');
+      return;
+    }
+
+    // Also check document.body availability as fallback
+    if (!document || !document.body) {
+      logger.error('processPage called but document.body is not available');
       return;
     }
 
@@ -55,22 +62,50 @@ function processPage(root, settings) {
     if (!settings) {
       getSettings()
         .then((fetchedSettings) => {
-          walk(
-            root,
-            (textNode, nodeSettings) => convert(textNode, nodeSettings),
-            fetchedSettings,
-            {}
-          );
+          // Validate settings before proceeding
+          if (!fetchedSettings || typeof fetchedSettings !== 'object') {
+            logger.error('Invalid settings received in processPage');
+            return;
+          }
+
+          try {
+            walk(
+              root,
+              (textNode, nodeSettings) => convert(textNode, nodeSettings),
+              fetchedSettings,
+              {}
+            );
+          } catch (walkError) {
+            logger.error('Error in DOM walker:', walkError.message, walkError.stack);
+            // Important: Do not re-throw here, as it would break the promise chain
+          }
         })
         .catch((error) => {
           logger.error('Error fetching settings in processPage:', error.message, error.stack);
+          // No recovery needed - just log and let the page continue without price conversion
         });
     } else {
-      // Use the provided settings
-      walk(root, (textNode, nodeSettings) => convert(textNode, nodeSettings), settings, {});
+      // Validate settings before proceeding with provided settings
+      if (typeof settings !== 'object') {
+        logger.error('Invalid settings object provided to processPage');
+        return;
+      }
+
+      try {
+        // Use the provided settings
+        walk(root, (textNode, nodeSettings) => convert(textNode, nodeSettings), settings, {});
+      } catch (walkError) {
+        logger.error(
+          'Error in DOM walker with pre-loaded settings:',
+          walkError.message,
+          walkError.stack
+        );
+        // Important: Errors in this block are already caught by the outer try-catch
+      }
     }
   } catch (error) {
     logger.error('Error processing page:', error.message, error.stack);
+    // Continue page execution - do not re-throw
   }
 }
 
@@ -178,16 +213,83 @@ handleVisibilityChange(processPage);
  */
 function handleUnload(state = domScannerState) {
   try {
-    // Disconnect the MutationObserver and clean up resources
-    stopObserver(state);
+    // First check if the state is valid at all
+    if (!state) {
+      logger.debug('TimeIsMoney: No valid state to clean up during unload');
+      return;
+    }
+
+    // Create a local copy of the domScannerState to prevent any reference issues
+    const localState = state;
+
+    // Safeguard against potential reference issues - manually clean up critical properties
+    try {
+      // Manually handle the debounce timer first
+      if (localState.debounceTimer) {
+        clearTimeout(localState.debounceTimer);
+        localState.debounceTimer = null;
+      }
+    } catch (timerError) {
+      logger.debug('TimeIsMoney: Error clearing timer during unload:', timerError.message);
+    }
+
+    // Try to safely disconnect the observer
+    try {
+      if (localState.domObserver) {
+        // Extra safety check for disconnect method
+        if (typeof localState.domObserver.disconnect === 'function') {
+          localState.domObserver.disconnect();
+        }
+        localState.domObserver = null;
+      }
+    } catch (observerError) {
+      logger.debug('TimeIsMoney: Error with observer during unload:', observerError.message);
+    }
+
+    // Try to clear collections safely
+    try {
+      if (localState.pendingNodes && typeof localState.pendingNodes.clear === 'function') {
+        localState.pendingNodes.clear();
+      }
+      if (localState.pendingTextNodes && typeof localState.pendingTextNodes.clear === 'function') {
+        localState.pendingTextNodes.clear();
+      }
+    } catch (collectionError) {
+      logger.debug(
+        'TimeIsMoney: Error clearing collections during unload:',
+        collectionError.message
+      );
+    }
+
+    // Now try using the stopObserver as a fallback
+    try {
+      stopObserver(localState);
+    } catch (stopError) {
+      logger.debug('TimeIsMoney: stopObserver failed during unload:', stopError.message);
+    }
   } catch (error) {
-    logger.error('Error during unload cleanup:', error.message, error.stack);
+    // Don't use logger here as it may cause additional errors during page unload
+    // Use logger.debug to avoid cluttering the console with non-critical errors during unload
+    logger.debug('TimeIsMoney: Error during unload cleanup:', error.message);
   }
 }
 
-// Add unload event listeners to clean up resources when the page is unloaded
-window.addEventListener('unload', handleUnload);
-window.addEventListener('beforeunload', handleUnload);
+// More robust set of event listeners for various cleanup scenarios
+// 'pagehide' works better than 'unload' in many cases, especially for modern browsers
+window.addEventListener('pagehide', handleUnload, { passive: true });
+window.addEventListener('unload', handleUnload, { passive: true });
+window.addEventListener('beforeunload', handleUnload, { passive: true });
+
+// For the case when browser navigation happens without triggering unload events
+document.addEventListener(
+  'visibilitychange',
+  () => {
+    if (document.visibilityState === 'hidden') {
+      handleUnload();
+    }
+  },
+  { passive: true }
+);
 
 /**
  * Orchestrates the price conversion pipeline by separating the process into discrete steps:
@@ -209,62 +311,135 @@ window.addEventListener('beforeunload', handleUnload);
  * @returns {void}
  */
 const convert = (textNode, preloadedSettings) => {
-  // Use the domModifier's validation function to check if this node is valid for processing
-  if (!isValidForProcessing(textNode)) {
-    return;
+  try {
+    // Validate text node
+    if (!textNode || !textNode.nodeValue || textNode.nodeType !== 3) {
+      return; // Silently return for invalid text nodes
+    }
+
+    // Use the domModifier's validation function to check if this node is valid for processing
+    if (!isValidForProcessing(textNode)) {
+      return;
+    }
+
+    // Verify we have access to the node content
+    if (typeof textNode.nodeValue !== 'string') {
+      return; // Silently return if we can't access the node's text content
+    }
+
+    // Security: Check the text node size to prevent excessive processing
+    if (textNode.nodeValue.length > 10000) {
+      // Skip extremely large text nodes to prevent slowdowns
+      logger.debug(
+        'Skipping excessively large text node:',
+        textNode.nodeValue.substring(0, 50) + '...'
+      );
+      return;
+    }
+
+    // Use preloaded settings if provided, otherwise fetch them
+    // The MutationObserver in domScanner.js will now always provide preloadedSettings
+    const settingsPromise = preloadedSettings ? Promise.resolve(preloadedSettings) : getSettings();
+
+    settingsPromise
+      .then((settings) => {
+        try {
+          // Validate settings
+          if (!settings || typeof settings !== 'object') {
+            logger.error('Invalid or missing settings for conversion');
+            return;
+          }
+
+          // STEP 1: Prepare the format settings for price finding
+          const formatSettings = {
+            currencySymbol: settings.currencySymbol || '$', // Fallback to defaults if missing
+            currencyCode: settings.currencyCode || 'USD',
+            thousands: settings.thousands || 'commas',
+            decimal: settings.decimal || 'dot',
+            isReverseSearch: settings.disabled === true,
+          };
+
+          // STEP 2: Use priceFinder to identify prices in the text
+          let priceMatch;
+          try {
+            priceMatch = findPrices(textNode.nodeValue, formatSettings);
+          } catch (priceFinderError) {
+            logger.error('Error in price finding algorithm:', priceFinderError.message, {
+              textContent: textNode?.nodeValue?.substring(0, 50) + '...',
+              formatSettings,
+            });
+            return; // Skip this node on price finding error
+          }
+
+          // Exit if no price was found (not an error condition)
+          if (!priceMatch) {
+            return;
+          }
+
+          // Additional validation of the price match result
+          if (
+            !priceMatch.value ||
+            typeof priceMatch.value !== 'number' ||
+            isNaN(priceMatch.value)
+          ) {
+            logger.debug('Invalid price value detected:', priceMatch);
+            return;
+          }
+
+          // STEP 3: Prepare conversion information for the converter
+          const conversionInfo = {
+            convertFn: convertPriceToTimeString,
+            formatters: {
+              thousands: priceMatch.thousands || formatSettings.thousands,
+              decimal: priceMatch.decimal || formatSettings.decimal,
+            },
+            wageInfo: {
+              frequency: settings.frequency || 'hourly',
+              amount: settings.amount || '10', // Provide a reasonable default for amount
+            },
+          };
+
+          // Verify the wage amount is provided and valid
+          if (
+            !conversionInfo.wageInfo.amount ||
+            isNaN(parseFloat(conversionInfo.wageInfo.amount)) ||
+            parseFloat(conversionInfo.wageInfo.amount) <= 0
+          ) {
+            logger.warn('Invalid wage amount, using default');
+            conversionInfo.wageInfo.amount = '10';
+          }
+
+          // STEP 4: Use domModifier to update the DOM with the converted prices
+          try {
+            processTextNode(textNode, priceMatch, conversionInfo, formatSettings.isReverseSearch);
+          } catch (domModifierError) {
+            logger.error('Error in DOM modification:', domModifierError.message, {
+              textContent: textNode?.nodeValue?.substring(0, 50) + '...',
+              priceMatch,
+              errorDetails: domModifierError.stack,
+            });
+          }
+        } catch (error) {
+          logger.error('Error converting price in text node:', error.message, {
+            textContent: textNode?.nodeValue?.substring(0, 50) + '...',
+            errorDetails: error.stack,
+          });
+        }
+      })
+      .catch((error) => {
+        // Handle settings retrieval errors separately to aid in debugging
+        if (error && error.message === 'Extension context invalidated') {
+          logger.debug('Conversion skipped: Extension context invalidated');
+        } else {
+          logger.error('Failed to get settings:', error?.message || 'Unknown error', error?.stack);
+        }
+      });
+  } catch (topLevelError) {
+    // Catch all unexpected errors to prevent extension from breaking
+    logger.error(
+      'Unexpected error in convert function:',
+      topLevelError.message,
+      topLevelError.stack
+    );
   }
-
-  // Use preloaded settings if provided, otherwise fetch them
-  // The MutationObserver in domScanner.js will now always provide preloadedSettings
-  const settingsPromise = preloadedSettings ? Promise.resolve(preloadedSettings) : getSettings();
-
-  settingsPromise
-    .then((settings) => {
-      try {
-        if (!settings) {
-          logger.error('No settings available for conversion');
-          return;
-        }
-
-        // STEP 1: Prepare the format settings for price finding
-        const formatSettings = {
-          currencySymbol: settings.currencySymbol,
-          currencyCode: settings.currencyCode,
-          thousands: settings.thousands,
-          decimal: settings.decimal,
-          isReverseSearch: settings.disabled === true,
-        };
-
-        // STEP 2: Use priceFinder to identify prices in the text
-        const priceMatch = findPrices(textNode.nodeValue, formatSettings);
-        if (!priceMatch) {
-          // Not an error, just no prices found
-          return;
-        }
-
-        // STEP 3: Prepare conversion information for the converter
-        const conversionInfo = {
-          convertFn: convertPriceToTimeString,
-          formatters: {
-            thousands: priceMatch.thousands,
-            decimal: priceMatch.decimal,
-          },
-          wageInfo: {
-            frequency: settings.frequency,
-            amount: settings.amount,
-          },
-        };
-
-        // STEP 4: Use domModifier to update the DOM with the converted prices
-        processTextNode(textNode, priceMatch, conversionInfo, formatSettings.isReverseSearch);
-      } catch (error) {
-        logger.error('Error converting price in text node:', error.message, {
-          textContent: textNode?.nodeValue?.substring(0, 50) + '...',
-          errorDetails: error.stack,
-        });
-      }
-    })
-    .catch((error) => {
-      logger.error('Failed to get settings:', error?.message || 'Unknown error');
-    });
 };

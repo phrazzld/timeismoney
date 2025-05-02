@@ -6,6 +6,7 @@
  */
 
 import { getSettings, onSettingsChanged } from '../utils/storage.js';
+import * as logger from '../utils/logger.js';
 
 /**
  * Tracks whether the extension is currently disabled on the page
@@ -27,20 +28,53 @@ let disabledOnPage = true;
  * @throws {Error} Will throw if there's an issue fetching settings (handled in catch block)
  */
 export function initSettings(callback) {
-  return getSettings()
-    .then((settings) => {
-      if (!settings.disabled) {
-        callback(document.body, settings);
-        disabledOnPage = false;
-      } else {
-        disabledOnPage = true;
-      }
-      return settings;
-    })
-    .catch((error) => {
-      console.error('Storage operation failed:', error);
-      return { disabled: true }; // Safe default if settings can't be loaded
-    });
+  try {
+    // Check if document is valid and available
+    if (!document || !document.body) {
+      logger.warn('TimeIsMoney: Document or body not available in initSettings');
+      return Promise.resolve({ disabled: true }); // Safely default to disabled
+    }
+
+    // Validate callback is a function
+    if (typeof callback !== 'function') {
+      logger.error('TimeIsMoney: Invalid callback passed to initSettings');
+      return Promise.resolve({ disabled: true });
+    }
+
+    return getSettings()
+      .then((settings) => {
+        // Validate settings
+        if (!settings || typeof settings !== 'object') {
+          logger.error('TimeIsMoney: Invalid settings object received in initSettings');
+          return { disabled: true };
+        }
+
+        try {
+          if (!settings.disabled) {
+            callback(document.body, settings);
+            disabledOnPage = false;
+          } else {
+            disabledOnPage = true;
+          }
+          return settings;
+        } catch (callbackError) {
+          logger.error('TimeIsMoney: Error in settings callback:', callbackError);
+          disabledOnPage = true;
+          return { ...settings, disabled: true }; // Safely disable if callback fails
+        }
+      })
+      .catch((error) => {
+        if (error && error.message === 'Extension context invalidated') {
+          logger.debug('TimeIsMoney: Extension context invalidated during initSettings');
+        } else {
+          logger.error('TimeIsMoney: Storage operation failed:', error);
+        }
+        return { disabled: true }; // Safe default if settings can't be loaded
+      });
+  } catch (error) {
+    logger.error('TimeIsMoney: Unexpected error in initSettings:', error);
+    return Promise.resolve({ disabled: true }); // Safe default for any errors
+  }
 }
 
 /**
@@ -54,20 +88,60 @@ export function initSettings(callback) {
  * @returns {void}
  */
 export function onSettingsChange(callback) {
-  onSettingsChanged((updatedSettings) => {
-    if (
-      !document.hidden &&
-      ('disabled' in updatedSettings || 'debounceIntervalMs' in updatedSettings)
-    ) {
-      // Call the callback when disabled state or debounce interval changes
-      callback(document.body, updatedSettings);
-
-      // Update the disabled state if it was changed
-      if ('disabled' in updatedSettings) {
-        disabledOnPage = updatedSettings.disabled;
-      }
+  try {
+    // Validate callback is a function
+    if (typeof callback !== 'function') {
+      logger.error('TimeIsMoney: Invalid callback passed to onSettingsChange');
+      return;
     }
-  });
+
+    onSettingsChanged((updatedSettings) => {
+      try {
+        // Validate document and body exist
+        if (!document) {
+          logger.warn('TimeIsMoney: Document not available in settings change handler');
+          return;
+        }
+
+        // Validate updated settings
+        if (!updatedSettings || typeof updatedSettings !== 'object') {
+          logger.error('TimeIsMoney: Invalid settings object in onSettingsChanged');
+          return;
+        }
+
+        // Only process if document is visible and relevant settings changed
+        if (
+          !document.hidden &&
+          ('disabled' in updatedSettings || 'debounceIntervalMs' in updatedSettings)
+        ) {
+          try {
+            // Ensure document.body exists before calling callback
+            if (!document.body) {
+              logger.warn('TimeIsMoney: Document body not available in settings change handler');
+              return;
+            }
+
+            // Call the callback safely when disabled state or debounce interval changes
+            callback(document.body, updatedSettings);
+
+            // Update the disabled state if it was changed
+            if ('disabled' in updatedSettings) {
+              disabledOnPage = updatedSettings.disabled;
+            }
+          } catch (callbackError) {
+            logger.error('TimeIsMoney: Error in settings change callback:', callbackError);
+            // Continue execution, don't rethrow
+          }
+        }
+      } catch (handlerError) {
+        logger.error('TimeIsMoney: Error in settings change handler:', handlerError);
+        // Continue execution, don't rethrow
+      }
+    });
+  } catch (error) {
+    logger.error('TimeIsMoney: Unexpected error in onSettingsChange:', error);
+    // Continue execution, don't rethrow
+  }
 }
 
 /**
@@ -81,39 +155,106 @@ export function onSettingsChange(callback) {
  * @returns {void}
  */
 export function handleVisibilityChange(callback) {
-  // Keep track of the last known debounce interval for comparison
-  let lastKnownDebounceInterval = null;
-
-  document.addEventListener('visibilitychange', () => {
-    if (!isValidChromeRuntime()) {
-      // Error log removed - consider adding proper error handling in the future
-      // or using chrome.runtime.lastError
-    } else if (!document.hidden) {
-      getSettings()
-        .then((settings) => {
-          // Check if important settings have changed
-          const disabledChanged = disabledOnPage !== settings.disabled;
-          const debounceChanged =
-            lastKnownDebounceInterval !== null &&
-            lastKnownDebounceInterval !== settings.debounceIntervalMs;
-
-          if (disabledChanged || debounceChanged) {
-            // Update the tracked settings
-            disabledOnPage = settings.disabled;
-            lastKnownDebounceInterval = settings.debounceIntervalMs;
-
-            // Process the page with the current settings
-            callback(document.body, settings);
-          } else {
-            // Always update the tracked debounce interval even if we don't call the callback
-            lastKnownDebounceInterval = settings.debounceIntervalMs;
-          }
-        })
-        .catch((error) => {
-          console.error('Storage operation failed:', error);
-        });
+  try {
+    // Validate callback is a function
+    if (typeof callback !== 'function') {
+      logger.error('TimeIsMoney: Invalid callback passed to handleVisibilityChange');
+      return;
     }
-  });
+
+    // Keep track of the last known debounce interval for comparison
+    let lastKnownDebounceInterval = null;
+
+    document.addEventListener(
+      'visibilitychange',
+      () => {
+        try {
+          // Skip if Chrome runtime is not valid
+          if (!isValidChromeRuntime()) {
+            logger.debug('TimeIsMoney: Extension context invalidated in visibility change handler');
+            return;
+          }
+
+          // Only process when document becomes visible
+          if (!document.hidden) {
+            getSettings()
+              .then((settings) => {
+                try {
+                  // Validate settings
+                  if (!settings || typeof settings !== 'object') {
+                    logger.error('TimeIsMoney: Invalid settings in visibility change handler');
+                    return;
+                  }
+
+                  // Check if important settings have changed
+                  const disabledChanged = disabledOnPage !== settings.disabled;
+                  const debounceChanged =
+                    lastKnownDebounceInterval !== null &&
+                    lastKnownDebounceInterval !== settings.debounceIntervalMs;
+
+                  // Store current settings for future comparison
+                  const previousDisabled = disabledOnPage;
+                  disabledOnPage = !!settings.disabled; // Force boolean type
+                  lastKnownDebounceInterval = settings.debounceIntervalMs;
+
+                  if (disabledChanged || debounceChanged) {
+                    // Log the change for debugging
+                    if (disabledChanged) {
+                      logger.debug(
+                        `TimeIsMoney: Extension ${settings.disabled ? 'disabled' : 'enabled'} after visibility change`
+                      );
+                    }
+
+                    // Ensure document.body exists before calling callback
+                    if (!document.body) {
+                      logger.warn(
+                        'TimeIsMoney: Document body not available in visibility change handler'
+                      );
+                      return;
+                    }
+
+                    try {
+                      // Process the page with the current settings
+                      callback(document.body, settings);
+                    } catch (callbackError) {
+                      logger.error(
+                        'TimeIsMoney: Error in visibility change callback:',
+                        callbackError
+                      );
+                      // Revert state change if callback fails to avoid inconsistent state
+                      disabledOnPage = previousDisabled;
+                    }
+                  }
+                } catch (settingsError) {
+                  logger.error(
+                    'TimeIsMoney: Error processing settings in visibility change:',
+                    settingsError
+                  );
+                }
+              })
+              .catch((error) => {
+                if (error && error.message === 'Extension context invalidated') {
+                  logger.debug(
+                    'TimeIsMoney: Extension context invalidated during visibility change'
+                  );
+                } else {
+                  logger.error(
+                    'TimeIsMoney: Storage operation failed in visibility change:',
+                    error
+                  );
+                }
+              });
+          }
+        } catch (visibilityError) {
+          logger.error('TimeIsMoney: Error in visibility change handler:', visibilityError);
+          // Don't rethrow to allow page to continue functioning
+        }
+      },
+      { passive: true }
+    ); // Add passive flag for better performance
+  } catch (setupError) {
+    logger.error('TimeIsMoney: Error setting up visibility change listener:', setupError);
+  }
 }
 
 /**
