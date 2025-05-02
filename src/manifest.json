@@ -1,12 +1,10 @@
 {
   "manifest_version": 3,
-
   "name": "__MSG_extName__",
   "short_name": "timeismoney",
   "description": "__MSG_extDesc__",
   "default_locale": "en",
-  "version": "4.1.5",
-
+  "version": "4.2.0",
   "action": {
     "default_title": "__MSG_extName__",
     "default_icon": {
@@ -15,14 +13,11 @@
     },
     "default_popup": "popup/index.html"
   },
-
   "background": {
     "service_worker": "background/background.bundle.js",
     "type": "module"
   },
-
   "permissions": ["storage"],
-
   "host_permissions": [
     "*://*.amazon.com/*",
     "*://*.amazon.co.uk/*",
@@ -44,7 +39,6 @@
     "*://*.shopify.com/*",
     "*://*.wayfair.com/*"
   ],
-
   "content_scripts": [
     {
       "js": ["content/content.bundle.js"],
@@ -72,7 +66,6 @@
       "run_at": "document_end"
     }
   ],
-
   "web_accessible_resources": [
     {
       "resources": ["content/content.bundle.js", "content/content.bundle.js.map"],
@@ -99,12 +92,10 @@
       ]
     }
   ],
-
   "options_ui": {
     "page": "options/index.html",
     "open_in_tab": false
   },
-
   "icons": {
     "16": "/images/icon_16.png",
     "48": "/images/icon_48.png",
