@@ -4,7 +4,18 @@ This backlog outlines planned work for the extension, balancing feature developm
 
 ## High Priority
 
+- **[Test] Address Root Cause of Jest Performance Issues**: Investigate the underlying reasons for high memory usage and slow test execution in Jest. Implement architectural changes (e.g., refining mocks, optimizing DOM-heavy tests, separating pure logic tests from DOM tests) or configuration fixes to achieve efficient testing without workarounds. Consider potential solutions like environment changes, faster transformers (SWC/esbuild), or alternative runners (Vitest).
+
+  - **Type**: Enhancement/Refactor
+  - **Complexity**: Complex
+  - **Rationale**: Essential for a reliable and fast feedback loop during development (Developer Experience), improves CI efficiency (Operational Excellence), and avoids brittle test setups (Technical Excellence).
+  - **Expected Outcome**: The test suite runs efficiently and reliably on typical development machines and CI environments without excessive resource consumption or manual file splitting workarounds. Test structure reflects code architecture.
+  - **Dependencies**: Requires deep dive into tests, especially DOM-related ones. Impacts CI setup.
+  - **Note**: We should switch to Vitest.
+
 ### Security & Stability
+
+- migrate from npm to pnpm
 
 - **[Security] Implement Systematic Input Sanitization & Validation**: Refactor all user input processing (options form, popup settings) to ensure every input is rigorously sanitized (especially currency symbols, custom regex) and validated against a defined schema _before_ being saved to storage or used in logic, preventing XSS and invalid states.
 
@@ -56,22 +67,12 @@ This backlog outlines planned work for the extension, balancing feature developm
 
 ### Testing & Dependencies
 
-- **[Test] Address Root Cause of Jest Performance Issues**: Investigate the underlying reasons for high memory usage and slow test execution in Jest. Implement architectural changes (e.g., refining mocks, optimizing DOM-heavy tests, separating pure logic tests from DOM tests) or configuration fixes to achieve efficient testing without workarounds. Consider potential solutions like environment changes, faster transformers (SWC/esbuild), or alternative runners (Vitest).
-
-  - **Type**: Enhancement/Refactor
-  - **Complexity**: Complex
-  - **Rationale**: Essential for a reliable and fast feedback loop during development (Developer Experience), improves CI efficiency (Operational Excellence), and avoids brittle test setups (Technical Excellence).
-  - **Expected Outcome**: The test suite runs efficiently and reliably on typical development machines and CI environments without excessive resource consumption or manual file splitting workarounds. Test structure reflects code architecture.
-  - **Dependencies**: Requires deep dive into tests, especially DOM-related ones. Impacts CI setup.
-
 - **[Chore] Audit and Update Dependencies**: Perform a thorough audit of all production and development dependencies listed in `package.json`. Remove unused packages, update outdated ones (verifying compatibility and security advisories), and ensure license compliance.
   - **Type**: Chore/Enhancement
   - **Complexity**: Medium
   - **Rationale**: Ensures security, stability, and maintainability by using up-to-date and necessary dependencies. Reduces potential vulnerabilities and build issues (Technical Excellence, Operational Excellence).
   - **Expected Outcome**: Project dependencies are minimal, up-to-date, secure, and properly licensed. `package-lock.json` reflects audited state.
   - **Dependencies**: None
-
-### Build & CI/CD
 
 ## Medium Priority
 
