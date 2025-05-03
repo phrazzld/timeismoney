@@ -70,3 +70,8 @@ TODO-*.md
 # One-time utility scripts
 scripts/fix-imports.sh
 scripts/rename-test-files.sh
+
+# Refactored test examples (reference implementations)
+**/*.refactored.*.test.js
+T*-task.md
+T*-completed.md
