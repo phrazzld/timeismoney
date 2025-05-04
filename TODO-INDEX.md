@@ -4,7 +4,7 @@ This index lists the split TODO files for the Vitest migration project, outlinin
 
 1.  ✅ **Phase 1: Audit-Structure** - Completed: Audited tests, categorized, and established new directory structure (T001-T003).
 2.  ✅ **Phase 2: Mocking** - Completed: Reviewed current mocks, identified external dependencies, created centralized mocks, and refactored tests to use them (T004-T006).
-3.  **[TODO-03-Vitest-Setup.md](./TODO-03-Vitest-Setup.md)**: Install Vitest, create basic configuration, validate setup, and configure environments/coverage (T007-T010).
+3.  ✅ **Phase 3: Vitest Setup** - Completed: Installed Vitest, created configuration, validated setup, and configured environments/coverage (T007-T010).
 4.  **[TODO-04-Scripts-CI.md](./TODO-04-Scripts-CI.md)**: Update `package.json` scripts and the CI workflow to use Vitest (T011-T012).
 5.  **[TODO-05-Migration.md](./TODO-05-Migration.md)**: Migrate test code from Jest to Vitest syntax, refactor mocks, and remove workarounds (T013-T016).
 6.  **[TODO-06-Validation.md](./TODO-06-Validation.md)**: Validate test coverage and performance after migration (T017-T018).
