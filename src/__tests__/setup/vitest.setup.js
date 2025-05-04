@@ -33,7 +33,9 @@ if (typeof performance === 'undefined') {
 // Helper function to set up common DOM elements
 // Exportable function to be imported in test files
 /**
+ * Sets up common DOM elements for testing
  *
+ * @returns {void}
  */
 export const setupTestDom = () => {
   // Also set as global for backward compatibility
@@ -75,7 +77,9 @@ export const setupTestDom = () => {
 
 // Create a helper that can be used in each test file to reset mocks
 /**
+ * Resets all mocks used in tests
  *
+ * @returns {void}
  */
 export const resetTestMocks = () => {
   // Also set as global for backward compatibility
