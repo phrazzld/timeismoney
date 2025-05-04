@@ -27,7 +27,7 @@
     2. `src/__tests__/setup/vitest.setup.js` exists with essential global setup.
   - **Depends‑on:** [✅ T002, ✅ T005, ✅ T007]
 
-- [ ] **T009 · Test · P1: validate basic vitest setup with one unit test**
+- [x] **T009 · Test · P1: validate basic vitest setup with one unit test**
 
   - **Context:** PLAN.md - Detailed Build Steps - 4. Spike: Vitest Basic Setup & Compatibility
   - **Action:**
