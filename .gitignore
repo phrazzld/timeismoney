@@ -62,10 +62,6 @@ yarn-error.log*
 **/.claude/settings.local.json
 CI-FAILURE-ANALYSIS.md
 SCOPE-RESULT.md
-*_PLAN.md
-PLAN.md
-TODO.md
-TODO-*.md
 
 # One-time utility scripts
 scripts/fix-imports.sh
