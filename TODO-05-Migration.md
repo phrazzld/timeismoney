@@ -26,7 +26,7 @@
     1. Convert Jest APIs to Vitest in `src/__tests__/integration/`. Use explicit imports.
     2. Ensure correct JSDOM environment usage and centralized mock application (T005). Refactor flagged tests (T001).
     3. Fix failures, check async behavior and timers (`vi.useFakeTimers`).
-    4. **PROGRESS:** Migrated 5 integration tests (dom-conversion, formHandler.error, settingsManager.error, amazonHandler, price-conversion-flow)
+    4. **PROGRESS:** Migrated 10 integration tests (dom-conversion, domScanner, formHandler.error, formHandler.storage, formHandler.storage.direct, formHandler.xss, settingsManager.error, amazonHandler, price-conversion-flow, popup.error)
   - **Done‑when:**
     1. All tests in `src/__tests__/integration/` pass via `npm run test:integration`.
     2. Jest APIs replaced; JSDOM env used; mocks centralized.

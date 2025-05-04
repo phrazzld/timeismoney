@@ -31,8 +31,13 @@ if (typeof performance === 'undefined') {
 }
 
 // Helper function to set up common DOM elements
-// This will be imported in test files that need it
-globalThis.setupTestDom = () => {
+// Exportable function to be imported in test files
+/**
+ *
+ */
+export const setupTestDom = () => {
+  // Also set as global for backward compatibility
+  globalThis.setupTestDom = setupTestDom;
   // Ensure document and body exist
   if (typeof document === 'undefined' || !document.body) {
     // If we're in a test environment where document isn't properly set up
@@ -69,7 +74,12 @@ globalThis.setupTestDom = () => {
 };
 
 // Create a helper that can be used in each test file to reset mocks
-globalThis.resetTestMocks = () => {
+/**
+ *
+ */
+export const resetTestMocks = () => {
+  // Also set as global for backward compatibility
+  globalThis.resetTestMocks = resetTestMocks;
   vi.clearAllMocks();
   resetChromeMocks();
 };
