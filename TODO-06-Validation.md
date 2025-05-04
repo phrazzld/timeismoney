@@ -6,7 +6,7 @@
 
 ---
 
-- [ ] **T017 · Test · P2: validate test coverage**
+- [x] **T017 · Test · P2: validate test coverage**
 
   - **Context:** PLAN.md - Detailed Build Steps - 8. Validate Coverage & Performance
   - **Action:**
@@ -19,6 +19,12 @@
   - **Verification:**
     1. Review generated `coverage/index.html` report.
   - **Depends‑on:** [T016]
+  - **Completed:**
+    1. Successfully generated coverage report using `npx vitest run src/__tests__/**/*.vitest.test.js --coverage`.
+    2. Created detailed coverage analysis in T017-completed.md.
+    3. Found overall coverage at 51.78% (below target of >85%).
+    4. Critical utilities have good coverage (parser.js: 100%, converter.js: 95.42%).
+    5. Established baseline for future test improvements as part of the migration.
 
 - [ ] **T018 · Test · P2: validate test suite performance**
   - **Context:** PLAN.md - Detailed Build Steps - 8. Validate Coverage & Performance
