@@ -19,14 +19,14 @@
     2. Jest APIs replaced; internal mocks removed; external mocks centralized.
   - **Depends‑on:** [T006, ✅ T010, ✅ T011]
 
-- [~] **T014 · Refactor · P1: migrate integration tests to vitest**
+- [x] **T014 · Refactor · P1: migrate integration tests to vitest**
 
   - **Context:** PLAN.md - Detailed Build Steps - 7. Iterative Test Migration & Refactoring (Integration Tests)
   - **Action:**
     1. Convert Jest APIs to Vitest in `src/__tests__/integration/`. Use explicit imports.
     2. Ensure correct JSDOM environment usage and centralized mock application (T005). Refactor flagged tests (T001).
     3. Fix failures, check async behavior and timers (`vi.useFakeTimers`).
-    4. **PROGRESS:** Migrated 11 integration tests (dom-conversion, domScanner, formHandler.error, formHandler.storage, formHandler.storage.direct, formHandler.xss, formHandler.refactored, settingsManager.error, amazonHandler, price-conversion-flow, popup.error)
+    4. **COMPLETED:** Migrated all integration tests to Vitest (dom-conversion, domScanner, formHandler.error, formHandler.storage, formHandler.storage.direct, formHandler.xss, formHandler.refactored, settingsManager.error, amazonHandler, price-conversion-flow, popup.error)
   - **Done‑when:**
     1. All tests in `src/__tests__/integration/` pass via `npm run test:integration`.
     2. Jest APIs replaced; JSDOM env used; mocks centralized.
