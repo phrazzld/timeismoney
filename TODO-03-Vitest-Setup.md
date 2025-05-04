@@ -41,7 +41,7 @@
     2. Observe successful test pass message in the console output.
   - **Depends‑on:** [T008]
 
-- [ ] **T010 · Feature · P1: configure vitest environments, setup, coverage, and transformer**
+- [x] **T010 · Feature · P1: configure vitest environments, setup, coverage, and transformer**
   - **Context:** PLAN.md - Detailed Build Steps - 5. Configure Vitest (`vitest.config.js`)
   - **Action:**
     1. Update `vitest.config.js` to define environments (`node`, `jsdom`) based on directory paths (`unit/` vs `integration/`, `dom/`).
