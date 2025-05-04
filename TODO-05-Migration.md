@@ -6,7 +6,7 @@
 
 ---
 
-- [~] **T013 · Refactor · P1: migrate unit tests to vitest**
+- [x] **T013 · Refactor · P1: migrate unit tests to vitest**
 
   - **Context:** PLAN.md - Detailed Build Steps - 7. Iterative Test Migration & Refactoring (Unit Tests)
   - **Action:**
@@ -19,7 +19,7 @@
     2. Jest APIs replaced; internal mocks removed; external mocks centralized.
   - **Depends‑on:** [T006, ✅ T010, ✅ T011]
 
-- [ ] **T014 · Refactor · P1: migrate integration tests to vitest**
+- [~] **T014 · Refactor · P1: migrate integration tests to vitest**
 
   - **Context:** PLAN.md - Detailed Build Steps - 7. Iterative Test Migration & Refactoring (Integration Tests)
   - **Action:**
@@ -29,7 +29,7 @@
   - **Done‑when:**
     1. All tests in `src/__tests__/integration/` pass via `npm run test:integration`.
     2. Jest APIs replaced; JSDOM env used; mocks centralized.
-  - **Depends‑on:** [T006, ✅ T010, ✅ T011, T013]
+  - **Depends‑on:** [T006, ✅ T010, ✅ T011, ✅ T013]
 
 - [ ] **T015 · Refactor · P1: migrate dom tests to vitest**
 
