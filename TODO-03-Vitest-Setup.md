@@ -16,7 +16,7 @@
     1. Packages are listed in `package.json` and installed in `node_modules`.
   - **Depends‑on:** none
 
-- [ ] **T008 · Feature · P1: create minimal vitest config and setup files**
+- [x] **T008 · Feature · P1: create minimal vitest config and setup files**
 
   - **Context:** PLAN.md - Detailed Build Steps - 4. Spike: Vitest Basic Setup & Compatibility
   - **Action:**
