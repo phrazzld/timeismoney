@@ -48,25 +48,35 @@ describe('FormHandler Error Handling', () => {
       expect(status.className).toBe('error');
 
       // Verify console.error was called
-      expect(console.error).toHaveBeenCalledWith('Error loading options form:', expect.any(Error));
+      expect(console.error).toHaveBeenCalledWith(
+        'TimeIsMoney:',
+        'Error loading options form:',
+        'Storage error'
+      );
     });
   });
 
   describe('saveOptions', () => {
     it('should show error message when saveSettings fails', async () => {
-      // Mock necessary validation functions to return true
-      vi.mock('../../../options/validator.js', async (importOriginal) => {
-        const actual = await importOriginal();
-        return {
-          ...actual,
-          validateCurrencySymbol: vi.fn().mockReturnValue(true),
-          validateCurrencyCode: vi.fn().mockReturnValue(true),
-          validateAmount: vi.fn().mockReturnValue(true),
-          validateDebounceInterval: vi.fn().mockReturnValue(true)
-        };
-      });
+      // Set up the environment for the saveOptions function
+      // Populate input fields with valid values
+      document.getElementById('currency-symbol').value = '$';
+      document.getElementById('currency-code').value = 'USD';
+      document.getElementById('amount').value = '20.00';
+      document.getElementById('frequency').value = 'hourly';
+      document.getElementById('thousands').value = 'commas';
+      document.getElementById('decimal').value = 'dot';
+      document.getElementById('debounce-interval').value = '200';
 
-      // Mock saveSettings to reject
+      // Mock the validator functions to ensure validation passes
+      vi.mock('../../../options/validator.js', () => ({
+        validateCurrencySymbol: () => true,
+        validateCurrencyCode: () => true,
+        validateAmount: () => true,
+        validateDebounceInterval: () => true,
+      }));
+
+      // Mock saveSettings to reject with an error
       vi.spyOn(storage, 'saveSettings').mockImplementation(() => {
         return Promise.reject(new Error('Storage error during save'));
       });
@@ -74,8 +84,8 @@ describe('FormHandler Error Handling', () => {
       // Call saveOptions
       saveOptions();
 
-      // Wait for promises to resolve
-      await new Promise(process.nextTick);
+      // Wait for the promise chain to complete and DOM updates
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Verify error is displayed
       const status = document.getElementById('status');
@@ -83,7 +93,11 @@ describe('FormHandler Error Handling', () => {
       expect(status.className).toBe('error');
 
       // Verify console.error was called
-      expect(console.error).toHaveBeenCalledWith('Error saving options:', expect.any(Error));
+      expect(console.error).toHaveBeenCalledWith(
+        'TimeIsMoney:',
+        'Error saving options:',
+        'Storage error during save'
+      );
     });
   });
 });
