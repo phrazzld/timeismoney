@@ -46,10 +46,14 @@
        - `@babel/preset-env`
     4. Verified that lint still passes (tests failures expected as they're still being migrated from Jest to Vitest)
 
-- [ ] **T022 · Chore · P3: prune orphaned packages**
+- [x] **T022 · Chore · P3: prune orphaned packages**
   - **Context:** PLAN.md - Detailed Build Steps - 11. Cleanup
   - **Action:**
     1. Run `npm prune` (or equivalent package manager command) to remove packages no longer listed in `package.json`.
   - **Done‑when:**
     1. `node_modules` directory is cleaned of unneeded packages.
   - **Depends‑on:** [T020, T021]
+  - **Completed:**
+    1. Ran `npm prune` to remove packages not listed in package.json
+    2. Successfully removed 285 orphaned packages, including all Babel and Jest-related packages
+    3. Verified that only the required dependencies remain in node_modules
