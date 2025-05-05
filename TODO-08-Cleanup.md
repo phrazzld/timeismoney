@@ -28,7 +28,7 @@
        - jest.setup.cjs
     3. Updated ESLint configuration to remove Jest-specific rules but maintain compatibility with old tests during migration
 
-- [ ] **T021 · Chore · P3: remove babel configuration if confirmed unnecessary**
+- [x] **T021 · Chore · P3: remove babel configuration if confirmed unnecessary**
 
   - **Context:** PLAN.md - Detailed Build Steps - 11. Cleanup & Open Question Q002
   - **Action:**
@@ -36,6 +36,15 @@
   - **Done‑when:**
     1. `babel.config.cjs` is deleted (if applicable).
   - **Depends‑on:** [T020, Q002]
+  - **Completed:**
+    1. Resolved Q002, confirming that Babel was used exclusively for Jest transpilation
+    2. Deleted `babel.config.cjs` file
+    3. Removed Babel dependencies from package.json:
+       - `@babel/core`
+       - `@babel/plugin-syntax-dynamic-import`
+       - `@babel/plugin-syntax-import-meta`
+       - `@babel/preset-env`
+    4. Verified that lint still passes (tests failures expected as they're still being migrated from Jest to Vitest)
 
 - [ ] **T022 · Chore · P3: prune orphaned packages**
   - **Context:** PLAN.md - Detailed Build Steps - 11. Cleanup

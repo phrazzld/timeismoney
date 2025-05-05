@@ -13,12 +13,12 @@
   - **Blocking?:** no
   - **Resolution:** `[Record resolution here]`
 
-- [ ] **Q002: Confirm Babel's role (Jest only vs. Build process)**
+- [x] **Q002: Confirm Babel's role (Jest only vs. Build process)**
 
   - **Context:** PLAN.md - Open Questions
   - **Issue:** Is `babel.config.cjs` used _only_ for Jest transpilation, or is it required for the main application build process? (Assumption: Only for Jest)
   - **Blocking?:** yes (Blocks T021)
-  - **Resolution:** `[Record resolution here]`
+  - **Resolution:** After thorough investigation, Babel is confirmed to be used exclusively for Jest transpilation. The main build process uses esbuild for all bundling and transpilation tasks, as evidenced in package.json scripts and build-extension.sh. The babel.config.cjs file itself explicitly mentions Jest compatibility in comments. Since Jest has been removed (T020), Babel is no longer needed.
 
 - [ ] **Q003: Define specific performance benchmarks/goals**
 
