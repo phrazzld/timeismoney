@@ -5,13 +5,8 @@
     "webextensions": true,
     "node": true
   },
-  "extends": [
-    "eslint:recommended",
-    "plugin:prettier/recommended",
-    "plugin:jest/recommended",
-    "plugin:jsdoc/recommended"
-  ],
-  "plugins": ["prettier", "jest", "jsdoc"],
+  "extends": ["eslint:recommended", "plugin:prettier/recommended", "plugin:jsdoc/recommended"],
+  "plugins": ["prettier", "jsdoc"],
   "parserOptions": {
     "ecmaVersion": 2020,
     "sourceType": "module"
@@ -46,18 +41,34 @@
     "jsdoc/check-param-names": "error",
     "jsdoc/tag-lines": ["warn", "any", { "startLines": 1 }]
   },
-  "ignorePatterns": [
-    "node_modules/",
-    "dist/",
-    "jest.config.js",
-    "jest.setup.js",
-    "babel.config.js"
-  ],
+  "ignorePatterns": ["node_modules/", "dist/", "babel.config.js"],
   "overrides": [
     {
-      "files": ["**/*.test.js", "**/*.spec.js"],
-      "env": {
-        "jest": true
+      "files": ["**/*.vitest.test.js"],
+      "rules": {
+        "jsdoc/require-jsdoc": "off",
+        "jsdoc/require-description": "off",
+        "jsdoc/require-param-description": "off",
+        "jsdoc/require-returns-description": "off"
+      }
+    },
+    {
+      "files": [
+        "**/*.test.js",
+        "**/*.spec.js",
+        "**/__tests__/setup/**/*.js",
+        "**/__tests__/test-setup-example.js"
+      ],
+      "globals": {
+        "describe": "readonly",
+        "it": "readonly",
+        "test": "readonly",
+        "expect": "readonly",
+        "beforeEach": "readonly",
+        "afterEach": "readonly",
+        "beforeAll": "readonly",
+        "afterAll": "readonly",
+        "jest": "readonly"
       },
       "rules": {
         "jsdoc/require-jsdoc": "off",

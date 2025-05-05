@@ -6,7 +6,7 @@
 
 ---
 
-- [ ] **T020 · Chore · P2: remove jest dependencies and configuration files**
+- [x] **T020 · Chore · P2: remove jest dependencies and configuration files**
 
   - **Context:** PLAN.md - Detailed Build Steps - 11. Cleanup
   - **Action:**
@@ -16,6 +16,17 @@
     1. Jest dependencies are removed from `package.json`.
     2. Jest configuration files are deleted from the repository.
   - **Depends‑on:** [T018]
+  - **Completed:**
+    1. Removed Jest packages from package.json:
+       - jest
+       - jest-environment-jsdom
+       - @types/jest
+       - babel-jest
+       - eslint-plugin-jest
+    2. Deleted Jest configuration files:
+       - jest.config.cjs
+       - jest.setup.cjs
+    3. Updated ESLint configuration to remove Jest-specific rules but maintain compatibility with old tests during migration
 
 - [ ] **T021 · Chore · P3: remove babel configuration if confirmed unnecessary**
 
