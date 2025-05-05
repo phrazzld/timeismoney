@@ -47,12 +47,39 @@
 
     These targets provide a clear benchmark for validating the Vitest migration. Performance should be monitored regularly, and any test exceeding these thresholds should be optimized or documented as an exception.
 
-- [ ] **Q004: Define definitive code coverage target percentage**
+- [x] **Q004: Define definitive code coverage target percentage**
 
   - **Context:** PLAN.md - Open Questions
   - **Issue:** What is the precise minimum code coverage percentage required? (Assumption: Maintain/improve, aiming >85% combined)
   - **Blocking?:** no (Affects validation criteria for T017)
-  - **Resolution:** `[Record resolution here]`
+  - **Resolution:** After analyzing the current code coverage data and reviewing project documentation, the following definitive code coverage targets are established:
+
+    1. **Overall Codebase**:
+
+       - Minimum Combined Line Coverage: 85%
+       - Statement Coverage: 85%
+       - Branch Coverage: 80%
+       - Function Coverage: 90%
+
+    2. **Module-Specific Targets**:
+
+       - Critical Utility Modules (`converter.js`, `parser.js`, `constants.js`): 100% line and function coverage, ≥95% branch coverage
+       - Core Logic Modules (src/content): 90% line and function coverage, ≥85% branch coverage
+       - UI Components (src/options, src/popup): 85% line coverage, ≥80% branch coverage
+       - Background Scripts: 80% line coverage
+
+    3. **Test Category Targets**:
+
+       - Unit Tests: 95% coverage for units under test
+       - Integration Tests: 80% coverage for integrated modules
+       - DOM Tests: 70% coverage focused on critical DOM interactions
+
+    4. **Exclusions**:
+       - Build/configuration files (not part of production code)
+       - Generated code or boilerplate
+       - Error-handling branches that cannot be triggered in normal conditions
+
+    These targets are appropriate for a Chrome extension with critical price calculation functionality while acknowledging the challenges in testing browser-specific features. The current T017 results (51.78% overall coverage) establish the baseline, with incremental progress expected as more tests are migrated from Jest to Vitest.
 
 - [ ] **Q005: Decide handling for resource-intensive tests**
   - **Context:** PLAN.md - Open Questions
