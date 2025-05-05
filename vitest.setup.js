@@ -1,6 +1,6 @@
 /**
  * Setup file for Vitest tests
- * 
+ *
  * Provides DOM setup utilities and helpers for running tests with Vitest.
  * Includes functions to manage DOM elements and reset mock implementations.
  */
@@ -13,6 +13,14 @@ globalThis.chrome = chromeMock;
 
 // Helper function to set up common DOM elements for tests
 // This will be imported in test files that need it
+/**
+ * Sets up common DOM elements for testing
+ *
+ * Creates a standard set of form elements and DOM structure used
+ * by multiple tests, ensuring consistent test environment
+ *
+ * @returns {void} Nothing is returned
+ */
 export const setupTestDom = () => {
   // Ensure document and body exist
   if (typeof document === 'undefined' || !document.body) {
@@ -20,15 +28,15 @@ export const setupTestDom = () => {
     // Return without trying to manipulate the DOM
     return;
   }
-  
+
   // Reset the document body before each test
   document.body.innerHTML = '';
-  
+
   // Create status element used by many tests
   const statusElement = document.createElement('div');
   statusElement.id = 'status';
   document.body.appendChild(statusElement);
-  
+
   // Create common form elements used in options tests
   const createFormElement = (id, type = 'text', value = '') => {
     const element = document.createElement('input');
@@ -38,7 +46,7 @@ export const setupTestDom = () => {
     document.body.appendChild(element);
     return element;
   };
-  
+
   createFormElement('currency-symbol', 'text', '$');
   createFormElement('currency-code', 'text', 'USD');
   createFormElement('amount', 'text', '15.00');
@@ -51,7 +59,7 @@ export const setupTestDom = () => {
 
 /**
  * Resets all mocks between tests
- * 
+ *
  * Clears all mock implementation data to ensure test isolation
  */
 export const resetTestMocks = () => {

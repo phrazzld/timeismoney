@@ -28,7 +28,7 @@ Time Is Money is a Chrome extension that automatically converts prices online in
 
 We welcome contributions to Time Is Money! If you have ideas for new features, bug fixes, or other improvements, please feel free to submit a pull request or create an issue. Your input and collaboration are highly appreciated.
 
-Please follow our [Contributing Guidelines](CONTRIBUTING.md) and [Versioning Guidelines](VERSIONING.md) when making contributions to this project. We use Conventional Commits and Semantic Versioning to maintain a clear project history and versioning scheme.
+Please follow our [Contributing Guidelines](CONTRIBUTING.md), [Testing Guidelines](TESTING_GUIDE.md), and [Versioning Guidelines](VERSIONING.md) when making contributions to this project. We use Conventional Commits and Semantic Versioning to maintain a clear project history and versioning scheme.
 
 ## License ⚖️
 
