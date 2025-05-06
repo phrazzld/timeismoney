@@ -26,7 +26,7 @@
 - [x] Add `resetTestMocks` import to all priceFinder unit test files
 - [x] Fix mock assertions in `priceFinder.vitest.test.js` to match Vitest's argument format
 - [x] Update `priceFinder.enhanced.unit.test.js` to fix the NaN value issue
-- [ ] Fix Jest references in `options/formHandler.unit.test.js`
+- [x] Fix Jest references in `options/formHandler.unit.test.js`
 - [ ] Fix Jest references in `utils/converter.edge.unit.test.js`
 - [ ] Fix Jest references in `utils/storage.error.unit.test.js`
 - [ ] Fix Jest references in `utils/storage.unit.test.js`
