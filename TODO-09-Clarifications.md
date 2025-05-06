@@ -81,8 +81,33 @@
 
     These targets are appropriate for a Chrome extension with critical price calculation functionality while acknowledging the challenges in testing browser-specific features. The current T017 results (51.78% overall coverage) establish the baseline, with incremental progress expected as more tests are migrated from Jest to Vitest.
 
-- [ ] **Q005: Decide handling for resource-intensive tests**
+- [x] **Q005: Decide handling for resource-intensive tests**
+
   - **Context:** PLAN.md - Open Questions
   - **Issue:** If specific tests remain resource-intensive, should they be excluded from the default `npm test` run?
   - **Blocking?:** no (Affects T018 and potentially T011)
-  - **Resolution:** `[Record resolution here]`
+  - **Resolution:** Based on analysis of T018 results and Vitest capabilities, the following approach is established for handling resource-intensive tests:
+
+    1. **Definition of "Resource-Intensive"**:
+       Tests are considered resource-intensive if they:
+       - Take >200ms to execute individually (as established in Q003)
+       - Consume excessive memory or CPU resources
+       - Create complex DOM structures or many mutations
+       - Use extensive timer simulations
+    2. **Implementation Approach**:
+       - Resource-intensive tests should be INCLUDED in the default `npm test` run for complete validation
+       - Tests exceeding the 500ms threshold (established in Q003) must be documented with an `@performance` JSDoc tag
+       - A new test script will be added: `test:fast` that excludes these marked tests for quicker development cycles
+    3. **Configuration**:
+       - Update vitest.config.js to define a new "fast" workspace that excludes tests marked as resource-intensive
+       - Add an npm script: `"test:fast": "vitest run --workspace=fast"`
+       - Use existing `test:unit` and `test:integration` scripts for targeted testing during development
+    4. **Documentation**:
+       - Document resource-intensive tests in code with JSDoc comments explaining why they're slow
+       - Maintain a list of such tests in TESTING_GUIDE.md
+       - Include clear instructions for when to use different test commands
+    5. **CI Integration**:
+       - CI will always run the full test suite (`npm test`) including resource-intensive tests
+       - Resource-intensive tests should have CI-specific timeout adjustments if needed
+
+    This approach balances complete validation with developer experience by including all tests in CI while providing faster feedback loops during development.
