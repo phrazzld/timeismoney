@@ -16,7 +16,7 @@
 
 ## Integration Test Fixes
 
-- [ ] Fix `formHandler.storage.integration.test.js` by adding proper Vitest imports
+- [x] Fix `formHandler.storage.integration.test.js` by adding proper Vitest imports
 - [ ] Fix `formHandler.storage.integration.test.js` by replacing Jest references with `vi`
 - [ ] Update `formHandler.xss.integration.test.js` to use Vitest mocking patterns
 - [ ] Fix `popup.error.integration.test.js` by replacing Jest global references
