@@ -1,60 +1,119 @@
-# CI Failure Audit for PR #55 (Scripts & CI Update for Vitest)
+# CI Failure Audit: PR #55
 
-## Summary of Failure
+## Overview
 
-The CI job for the "Update scripts and CI config for Vitest" PR (#55) has failed. The failure happened in the newly added test job, while the lint and build jobs passed successfully.
+PR #55 "Update scripts and CI config for Vitest" has failed in the CI pipeline. Two checks passed (Build and Lint), but the Test check failed with multiple errors related to Jest-to-Vitest migration issues.
 
-## Error Analysis
+## CI Details
 
-The main issues identified in the test failures are:
+- **PR Number**: 55
+- **PR Title**: Update scripts and CI config for Vitest
+- **Branch**: todo-04-scripts-ci
+- **CI Run ID**: 14850645609
+- **Date**: May 6, 2025
 
-1. **Jest References**: Most failures are `ReferenceError: jest is not defined` errors. These occur because we've updated the scripts to use Vitest, but the test files themselves still use Jest APIs/globals.
+## Status of Checks
 
-2. **Test Assertion Failures**: There are some assertion failures like:
-   - `expected 'Item 1: $10.99 (7h 24m)' to contain '0h 44m'`
-   - `expected { amount: NaN, currency: 'USD', …(2) } to have property "amount" with value 99.95`
-   - `expected [ 'Items: $12.34', ', $56.78', …(2) ] to have a length of 5 but got 4`
+| Check | Status  | Duration |
+| ----- | ------- | -------- |
+| Build | ✅ Pass | 12s      |
+| Lint  | ✅ Pass | 20s      |
+| Test  | ❌ Fail | 43s      |
+
+## Test Failures Analysis
+
+The test failures are consistently related to two main issues:
+
+### 1. Missing Jest Global References
+
+Many tests are still referencing Jest globals that don't exist in the Vitest environment:
+
+```
+ReferenceError: jest is not defined
+```
+
+This occurs in multiple test files:
+
+- `src/__tests__/integration/options/formHandler.storage.integration.test.js:64:5`
+- `src/__tests__/integration/options/formHandler.xss.integration.test.js:40:5`
+- `src/__tests__/integration/popup/popup.error.integration.test.js:16:5`
+- `src/__tests__/unit/options/formHandler.unit.test.js:25:30`
+- `src/__tests__/unit/utils/converter.edge.unit.test.js:17:1`
+- `src/__tests__/unit/utils/storage.error.unit.test.js:11:5`
+- `src/__tests__/unit/utils/storage.unit.test.js:9:5`
+
+### 2. Missing Helper Function References
+
+Many tests are referencing a helper function that doesn't exist:
+
+```
+ReferenceError: resetTestMocks is not defined
+```
+
+This occurs in multiple test files:
+
+- `src/__tests__/integration/options/formHandler.storage.integration.test.js:15:5`
+- `src/__tests__/unit/content/priceFinder.advanced.unit.test.js:12:5`
+- `src/__tests__/unit/content/priceFinder.basic-patterns.unit.test.js:12:5`
+- `src/__tests__/unit/content/priceFinder.findPrices.unit.test.js:12:5`
+
+### 3. Test Logic Failures
+
+There are also failures related to test assertions not passing:
+
+```
+AssertionError: expected { amount: NaN, currency: 'USD', …(2) } to have property "amount" with value 99.95
+```
+
+In `src/__tests__/unit/content/priceFinder.enhanced.unit.test.js:141:20`
+
+```
+AssertionError: expected "get" to be called with arguments: [ '$|USD' ]
+Received: [ "$|USD|undefined|undefined" ]
+```
+
+In `src/__tests__/unit/content/priceFinder.vitest.test.js:121:22` and `162:22`
 
 ## Root Causes
 
-1. **Test Migration Not Complete**: We updated the npm scripts and CI workflow to use Vitest, but we haven't migrated the actual test files from Jest to Vitest syntax yet.
+1. **Incomplete Jest to Vitest Migration**: The test files have been updated to use Vitest for running, but the test code itself still contains Jest-specific references.
 
-2. **Incomplete Task Sequence**: We're running ahead of the planned sequence. According to the TODO files, after T011 and T012 (Scripts & CI), we should complete T013, T014, and T015 to migrate the unit, integration, and DOM tests to Vitest before running them.
+2. **Missing Mock Setup**: The `resetTestMocks` function appears to be a custom helper that was either:
 
-## Recommended Actions
+   - Not migrated from Jest to Vitest
+   - Not properly imported in the test files
+   - Renamed during migration but references not updated
 
-1. **Revert or Skip Test Job**: Either temporarily revert the test job in CI or have it skip tests until the migration is complete.
+3. **API Differences**: Some Vitest mocks behave differently than Jest mocks, causing assertion failures (particularly in the `priceFinder.vitest.test.js` file).
 
-2. **Complete Migration Tasks**: Proceed with tasks T013, T014, and T015 to migrate the test code from Jest to Vitest.
+## Required Fixes
 
-3. **Update PR Description**: Add a note that this PR only updates the scripts and CI configuration, but doesn't include the test migration yet, so test failures are expected.
+1. Replace Jest references with Vitest equivalents:
 
-## Detailed Error Breakdown
+   - Import Vitest's functions explicitly: `import { expect, vi } from 'vitest'`
+   - Replace `jest.fn()` with `vi.fn()`
+   - Replace `jest.spyOn()` with `vi.spyOn()`
 
-### Most Common Errors
+2. Create or import the missing `resetTestMocks` helper:
 
-1. **ReferenceError: jest is not defined** (40+ occurrences)
+   - Implement this function in a test helper file
+   - Ensure it's properly imported in all test files that use it
 
-   - These errors occur in test files that use Jest's mocking API (`jest.mock`, `jest.fn`, etc.)
-   - They need to be replaced with Vitest equivalents (`vi.mock`, `vi.fn`, etc.)
+3. Update test assertions to match Vitest's behavior:
+   - Fix the mock expectations in `priceFinder.vitest.test.js`
+   - Address the NaN value in price conversion tests
 
-2. **AssertionError: expected ... to ...** (3 occurrences)
-   - These are likely due to differences in how Vitest and Jest handle assertions
-   - May also be related to test environment differences
+## Recommendations
 
-### Affected File Categories
+1. Create a comprehensive Jest-to-Vitest migration guide for the codebase
+2. Implement a shared test setup file that provides all common test utilities
+3. Add more detailed Vitest configuration to handle test environment setup
+4. Consider a phased migration approach if the test suite is large
 
-- **Integration tests**: Most failures are in integration tests, particularly:
+## Next Steps
 
-  - Content integration tests
-  - Options integration tests
-  - Popup integration tests
-
-- **Unit tests**: Several unit test files also have failures:
-  - Content unit tests
-  - Options unit tests
-  - Utils unit tests
-
-## Conclusion
-
-The CI failure is expected at this stage of the migration process. The current PR (T011-T012) correctly updates the configuration and scripts, but the test files themselves need to be migrated to use Vitest APIs (T013-T016), which are subsequent tasks in the migration plan.
+1. Fix the `resetTestMocks` function issue as the highest priority
+2. Update all Jest references to use Vitest's API
+3. Fix the assertion failures in the price finder tests
+4. Add comprehensive test setup for the Vitest environment
+5. Re-run the CI to verify all tests pass

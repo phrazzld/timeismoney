@@ -1,6 +1,6 @@
 /**
- * Setup file for Vitest tests
- * Provides global test configuration and Chrome API mocks
+ * Internal setup file for Vitest tests
+ * This file is loaded by vitest.config.js for the internal test environment
  */
 
 import { vi } from 'vitest';
@@ -9,29 +9,7 @@ import chromeMock, { resetChromeMocks } from '../mocks/chrome-api.mock.js';
 // Make Chrome mock globally available
 globalThis.chrome = chromeMock;
 
-// Fix JSDOM window.location issue
-if (typeof window !== 'undefined') {
-  // Only do this if we're in a JSDOM environment
-  if (!window.location) {
-    delete window.location;
-    window.location = new URL('http://localhost');
-  }
-}
-
-// Mock Performance API for tests that need it
-if (typeof performance === 'undefined') {
-  globalThis.performance = {
-    mark: vi.fn(),
-    measure: vi.fn(),
-    clearMarks: vi.fn(),
-    clearMeasures: vi.fn(),
-    getEntriesByType: vi.fn().mockReturnValue([]),
-    getEntriesByName: vi.fn().mockReturnValue([]),
-  };
-}
-
-// Helper function to set up common DOM elements
-// Exportable function to be imported in test files
+// Helper function to set up common DOM elements for testing
 /**
  * Sets up common DOM elements for testing
  *
@@ -40,6 +18,7 @@ if (typeof performance === 'undefined') {
 export const setupTestDom = () => {
   // Also set as global for backward compatibility
   globalThis.setupTestDom = setupTestDom;
+
   // Ensure document and body exist
   if (typeof document === 'undefined' || !document.body) {
     // If we're in a test environment where document isn't properly set up

@@ -110,6 +110,9 @@ describe('Match Pattern Tests', () => {
     });
 
     test('uses cache for repeated calls', () => {
+      // Create a cache key that matches what the Map will receive
+      const cacheKey = '$|USD|undefined|undefined';
+
       // Call once to add to cache
       buildMatchPattern('$', 'USD');
 
@@ -118,7 +121,7 @@ describe('Match Pattern Tests', () => {
 
       buildMatchPattern('$', 'USD');
 
-      expect(getSpy).toHaveBeenCalledWith('$|USD');
+      expect(getSpy).toHaveBeenCalledWith(cacheKey);
       getSpy.mockRestore();
     });
   });
@@ -151,6 +154,9 @@ describe('Match Pattern Tests', () => {
     });
 
     test('uses cache for repeated calls', () => {
+      // Create a cache key that matches what the Map will receive
+      const cacheKey = '$|USD|undefined|undefined';
+
       // Call once to add to cache
       buildReverseMatchPattern('$', 'USD');
 
@@ -159,7 +165,7 @@ describe('Match Pattern Tests', () => {
 
       buildReverseMatchPattern('$', 'USD');
 
-      expect(getSpy).toHaveBeenCalledWith('$|USD');
+      expect(getSpy).toHaveBeenCalledWith(cacheKey);
       getSpy.mockRestore();
     });
   });

@@ -1,25 +1,78 @@
 /**
- * Setup file for Vitest tests
+ * Global setup file for Vitest tests
  *
- * Provides DOM setup utilities and helpers for running tests with Vitest.
- * Includes functions to manage DOM elements and reset mock implementations.
+ * Provides Jest compatibility layer and DOM setup utilities
+ * This file is loaded by vitest.config.js for all test environments
  */
 
-import { vi } from 'vitest';
-import chromeMock from './src/__tests__/mocks/chrome-api.mock.js';
+import { vi, expect, afterEach, beforeEach, beforeAll, afterAll, describe, it, test } from 'vitest';
+import chromeMock, { resetChromeMocks } from './src/__tests__/mocks/chrome-api.mock.js';
 
 // Make chrome mock available globally
 globalThis.chrome = chromeMock;
 
-// Helper function to set up common DOM elements for tests
-// This will be imported in test files that need it
+// =====================================================
+// JEST COMPATIBILITY LAYER
+// =====================================================
+
+// 1. Make Vitest APIs globally available
+globalThis.vi = vi;
+globalThis.expect = expect;
+globalThis.afterEach = afterEach;
+globalThis.beforeEach = beforeEach;
+globalThis.beforeAll = beforeAll;
+globalThis.afterAll = afterAll;
+globalThis.describe = describe;
+globalThis.it = it;
+globalThis.test = test;
+
+// 2. Create Jest compatibility object
+globalThis.jest = {
+  fn: vi.fn,
+  spyOn: vi.spyOn,
+  mock: vi.mock,
+  unmock: vi.unmock,
+  doMock: vi.doMock,
+  resetAllMocks: vi.resetAllMocks,
+  clearAllMocks: vi.clearAllMocks,
+  restoreAllMocks: vi.restoreAllMocks,
+  useFakeTimers: vi.useFakeTimers,
+  useRealTimers: vi.useRealTimers,
+  advanceTimersByTime: (ms) => vi.advanceTimersByTime(ms),
+  runAllTimers: () => vi.runAllTimers(),
+  runAllTimersAsync: () => vi.runAllTimersAsync(),
+  runOnlyPendingTimers: () => vi.runOnlyPendingTimers(),
+  runOnlyPendingTimersAsync: () => vi.runOnlyPendingTimersAsync(),
+  advanceTimersToNextTimer: () => vi.advanceTimersToNextTimer(),
+  getTimerCount: () => vi.getTimerCount(),
+};
+
+// =====================================================
+// TEST HELPERS
+// =====================================================
+
+/**
+ * Resets all mocks between tests
+ *
+ * Clears all mock implementation data to ensure test isolation
+ * This is exported and also made available globally for older tests
+ */
+export const resetTestMocks = () => {
+  vi.resetAllMocks();
+  vi.clearAllMocks();
+  resetChromeMocks();
+};
+
+// Make resetTestMocks available globally for tests that expect it
+globalThis.resetTestMocks = resetTestMocks;
+
 /**
  * Sets up common DOM elements for testing
  *
  * Creates a standard set of form elements and DOM structure used
  * by multiple tests, ensuring consistent test environment
  *
- * @returns {void} Nothing is returned
+ * @returns {void}
  */
 export const setupTestDom = () => {
   // Ensure document and body exist
@@ -57,11 +110,53 @@ export const setupTestDom = () => {
   createFormElement('enable-dynamic-scanning', 'checkbox').checked = true;
 };
 
-/**
- * Resets all mocks between tests
- *
- * Clears all mock implementation data to ensure test isolation
- */
-export const resetTestMocks = () => {
-  vi.clearAllMocks();
+// Make setupTestDom available globally for tests that expect it
+globalThis.setupTestDom = setupTestDom;
+
+// Fix JSDOM window.location issue for DOM tests
+if (typeof window !== 'undefined') {
+  // Only do this if we're in a JSDOM environment
+  if (!window.location) {
+    delete window.location;
+    window.location = new URL('http://localhost');
+  }
+}
+
+// Enhanced Performance API mock for tests that need it
+const mockPerformance = {
+  mark: vi.fn(),
+  measure: vi.fn(),
+  clearMarks: vi.fn(),
+  clearMeasures: vi.fn(),
+  now: vi.fn().mockReturnValue(Date.now()),
+  getEntriesByType: vi.fn().mockReturnValue([]),
+  getEntriesByName: vi.fn().mockImplementation((name) => {
+    // Return mock entries for specific test cases
+    if (name === 'batch-start') {
+      return [{ startTime: 0, duration: 10 }];
+    }
+    if (name === 'batch-end') {
+      return [{ startTime: 10, duration: 0 }];
+    }
+    return [];
+  }),
+  // Additional performance methods that might be needed
+  timing: {
+    navigationStart: Date.now(),
+    domComplete: Date.now() + 500,
+  },
+  timeOrigin: Date.now() - 1000,
+  toJSON: vi.fn().mockReturnValue({}),
 };
+
+// Conditionally set the performance mock
+if (typeof performance === 'undefined') {
+  globalThis.performance = mockPerformance;
+} else {
+  // If performance exists but is missing methods, add them
+  Object.entries(mockPerformance).forEach(([key, value]) => {
+    if (typeof performance[key] === 'undefined') {
+      performance[key] = value;
+    }
+  });
+}
