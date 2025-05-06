@@ -4,7 +4,7 @@
  * NOTE: This file handles complex regex patterns with simplified mocks to avoid memory issues.
  * Run with increased Node memory if needed: NODE_OPTIONS=--max-old-space-size=4096 npx vitest run [file]
  */
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { describe, test, expect, vi, beforeEach } from '../../setup/vitest-imports.js';
 import { buildMatchPattern, buildReverseMatchPattern } from '../../../content/priceFinder';
 
 // Mock implementation for buildMatchPattern with simplified implementations for memory efficiency

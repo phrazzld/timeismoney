@@ -12,7 +12,7 @@
 - [x] Create `src/__tests__/setup/vitest-helpers.js` file for shared test utilities
 - [x] Implement `resetTestMocks` function with proper Vitest implementation
 - [x] Add function to convert Jest mock patterns to Vitest equivalents
-- [ ] Create import helper for easy test file migration
+- [x] Create import helper for easy test file migration
 
 ## Integration Test Fixes
 
