@@ -1,5 +1,2 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Run lint-staged to automatically format and fix linting issues
 npm run format:staged
