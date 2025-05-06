@@ -89,14 +89,21 @@ describe('Observer Stress and Cleanup Tests', () => {
     // Reset the DOM
     document.body.innerHTML = '<div id="root"></div>';
 
-    // Mock performance API
+    // Mock performance API with more comprehensive implementation
     global.performance = {
       mark: vi.fn(),
       measure: vi.fn(),
-      getEntriesByName: vi.fn().mockReturnValue([{ duration: 10 }]),
+      getEntriesByName: vi.fn().mockImplementation((name) => {
+        // Add handling for the specific case causing errors in domScanner.js
+        if (name === 'Total Processing Time (Error)') {
+          return [{ name, duration: 500, startTime: 0 }];
+        }
+        return [{ name, duration: 10, startTime: 0 }];
+      }),
       clearMarks: vi.fn(),
       clearMeasures: vi.fn(),
       now: vi.fn().mockReturnValue(Date.now()),
+      getEntriesByType: vi.fn().mockReturnValue([]),
     };
 
     // Use fake timers for debounce testing

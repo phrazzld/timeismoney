@@ -27,26 +27,34 @@ export default defineConfig({
       // Unit tests run in Node environment (faster, no DOM needed)
       unit: {
         environment: 'node',
-        include: ['src/__tests__/unit/**/*vitest*test.js'],
+        include: [
+          'src/__tests__/unit/**/*.vitest.test.js',
+          'src/__tests__/unit/**/*vitest*test.js',
+        ],
       },
       // Integration and DOM tests run in JSDOM environment
       integration: {
         environment: 'jsdom',
         include: [
+          'src/__tests__/integration/**/*.vitest.test.js',
           'src/__tests__/integration/**/*vitest*test.js',
+          'src/__tests__/dom/**/*.vitest.test.js',
           'src/__tests__/dom/**/*vitest*test.js',
         ],
       },
     },
 
-    // Where to look for test files - ONLY include Vitest-compatible files for CI
-    include: ['src/**/*vitest*test.js'],
+    // Where to look for test files for Vitest
+    include: ['src/**/*.vitest.test.js', 'src/**/*vitest*test.js'],
 
-    // Files to exclude - keep only vitest tests
+    // Files to exclude - but allow all Vitest tests
     exclude: [
       '**/node_modules/**',
-      'src/**/*.test.js',
-      '!src/**/*vitest*test.js', // Don't exclude Vitest tests
+      '**/dist/**',
+      // Allow Vitest tests
+      '!src/**/*.vitest.test.js',
+      '!src/**/*vitest*test.js',
+      // Exclude test helpers and patches
       'src/**/*.test.patch.js',
       'src/**/*test-helpers.js',
     ],
