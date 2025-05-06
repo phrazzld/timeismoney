@@ -7,7 +7,9 @@
  * Tests ensure that the regex patterns correctly match all supported currency formats,
  * handle edge cases properly, and don't produce false positives or negatives.
  */
-/* global setupTestDom, resetTestMocks */
+
+import { describe, test, expect, beforeEach } from '../../setup/vitest-imports.js';
+import { resetTestMocks, setupTestDom } from '../../setup/vitest.setup.js';
 
 // Import mock functions for special test cases
 import { mockBuildMatchPattern } from './priceFinder.test.patch.js';

@@ -2,8 +2,9 @@
  * Basic pattern tests for the priceFinder module
  * Split from main test file to reduce worker load and prevent timeouts
  */
-/* global setupTestDom, resetTestMocks */
 
+import { describe, test, expect, beforeEach } from '../../setup/vitest-imports.js';
+import { resetTestMocks, setupTestDom } from '../../setup/vitest.setup.js';
 import { buildThousandsString, buildDecimalString } from '../../../content/priceFinder';
 
 describe('Basic Pattern Tests', () => {

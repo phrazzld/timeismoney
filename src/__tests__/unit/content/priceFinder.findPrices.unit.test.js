@@ -2,7 +2,9 @@
  * Tests for the findPrices function in priceFinder module
  * Extracted to a separate file to prevent worker termination
  */
-/* global setupTestDom, resetTestMocks */
+
+import { describe, test, expect, beforeEach } from '../../setup/vitest-imports.js';
+import { resetTestMocks, setupTestDom } from '../../setup/vitest.setup.js';
 
 import { findPrices } from '../../../content/priceFinder';
 
