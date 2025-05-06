@@ -243,33 +243,47 @@ const mockPerformance = {
 
 // Helper function removed - using direct assignment instead
 
-// Handle performance API directly to ensure getEntriesByName is always mocked
-// This is a more forceful approach but necessary for the tests
+// Use a safer approach for performance API to avoid issues with read-only objects
 if (typeof performance === 'undefined') {
   // If no performance object exists, create one entirely
   globalThis.performance = mockPerformance;
 } else {
-  // If performance exists, ensure all our mock methods are present
-  // Instead of conditionally applying them, always override with our mock implementations
-  performance.mark = mockPerformance.mark;
-  performance.measure = mockPerformance.measure;
-  performance.clearMarks = mockPerformance.clearMarks;
-  performance.clearMeasures = mockPerformance.clearMeasures;
-  performance.now = mockPerformance.now;
-  performance.getEntriesByType = mockPerformance.getEntriesByType;
-  performance.getEntriesByName = mockPerformance.getEntriesByName;
+  // For CI environments where performance object is read-only, use a more defensive approach
 
-  // For nested objects, do conditional assignment
-  if (!performance.timing) {
-    performance.timing = mockPerformance.timing;
-  }
-  if (!performance.memory) {
-    performance.memory = mockPerformance.memory;
-  }
-  if (!performance.timeOrigin) {
-    performance.timeOrigin = mockPerformance.timeOrigin;
-  }
-  if (!performance.toJSON) {
-    performance.toJSON = mockPerformance.toJSON;
+  // Create a global mock for test files to use
+  globalThis.__MOCK_PERFORMANCE__ = mockPerformance;
+
+  // Create a helper function to safely use the mock performance API
+  globalThis.useMockPerformance = () => {
+    // Return mock implementations that match the Performance API
+    return {
+      mark: (...args) => mockPerformance.mark(...args),
+      measure: (...args) => mockPerformance.measure(...args),
+      clearMarks: (...args) => mockPerformance.clearMarks(...args),
+      clearMeasures: (...args) => mockPerformance.clearMeasures(...args),
+      now: () => mockPerformance.now(),
+      getEntriesByType: (type) => mockPerformance.getEntriesByType(type),
+      getEntriesByName: (name) => mockPerformance.getEntriesByName(name),
+      timing: mockPerformance.timing,
+      memory: mockPerformance.memory,
+      timeOrigin: mockPerformance.timeOrigin,
+      toJSON: () => mockPerformance.toJSON(),
+    };
+  };
+
+  // Monkey patch the observer-stress.vitest.test.js test specifically
+  // The test sets its own performance mock, so we can't override it globally
+  if (typeof window !== 'undefined') {
+    // In JSDOM environments, ensure the window.performance mock works properly
+    const originalPerformanceDesc = Object.getOwnPropertyDescriptor(window, 'performance');
+    if (originalPerformanceDesc && originalPerformanceDesc.configurable) {
+      // Only modify if the property is configurable
+      Object.defineProperty(window, 'performance', {
+        get: function () {
+          return globalThis.__MOCK_PERFORMANCE__;
+        },
+        configurable: true,
+      });
+    }
   }
 }

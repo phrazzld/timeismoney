@@ -89,22 +89,37 @@ describe('Observer Stress and Cleanup Tests', () => {
     // Reset the DOM
     document.body.innerHTML = '<div id="root"></div>';
 
-    // Mock performance API with more comprehensive implementation
-    global.performance = {
-      mark: vi.fn(),
-      measure: vi.fn(),
-      getEntriesByName: vi.fn().mockImplementation((name) => {
+    // Use the global mock performance implementation from vitest.setup.js
+    if (typeof globalThis.__MOCK_PERFORMANCE__ !== 'undefined') {
+      // Override the getEntriesByName method specifically for this test
+      globalThis.__MOCK_PERFORMANCE__.getEntriesByName.mockImplementation((name) => {
         // Add handling for the specific case causing errors in domScanner.js
         if (name === 'Total Processing Time (Error)') {
           return [{ name, duration: 500, startTime: 0 }];
         }
         return [{ name, duration: 10, startTime: 0 }];
-      }),
-      clearMarks: vi.fn(),
-      clearMeasures: vi.fn(),
-      now: vi.fn().mockReturnValue(Date.now()),
-      getEntriesByType: vi.fn().mockReturnValue([]),
-    };
+      });
+
+      // Store a reference to our mock
+      global.performance = globalThis.useMockPerformance();
+    } else {
+      // Fallback implementation for local testing
+      global.performance = {
+        mark: vi.fn(),
+        measure: vi.fn(),
+        getEntriesByName: vi.fn().mockImplementation((name) => {
+          // Add handling for the specific case causing errors in domScanner.js
+          if (name === 'Total Processing Time (Error)') {
+            return [{ name, duration: 500, startTime: 0 }];
+          }
+          return [{ name, duration: 10, startTime: 0 }];
+        }),
+        clearMarks: vi.fn(),
+        clearMeasures: vi.fn(),
+        now: vi.fn().mockReturnValue(Date.now()),
+        getEntriesByType: vi.fn().mockReturnValue([]),
+      };
+    }
 
     // Use fake timers for debounce testing
     vi.useFakeTimers();
