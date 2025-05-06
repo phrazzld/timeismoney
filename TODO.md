@@ -28,7 +28,7 @@
 - [x] Update `priceFinder.enhanced.unit.test.js` to fix the NaN value issue
 - [x] Fix Jest references in `options/formHandler.unit.test.js`
 - [x] Fix Jest references in `utils/converter.edge.unit.test.js`
-- [ ] Fix Jest references in `utils/storage.error.unit.test.js`
+- [x] Fix Jest references in `utils/storage.error.unit.test.js`
 - [ ] Fix Jest references in `utils/storage.unit.test.js`
 
 ## Documentation and Standards
