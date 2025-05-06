@@ -32,7 +32,10 @@ describe('Storage Error Handling', () => {
       });
 
       await expect(getSettings()).rejects.toEqual(mockError);
-      expect(chromeMock.storage.sync.get).toHaveBeenCalledWith(DEFAULT_SETTINGS, expect.any(Function));
+      expect(chromeMock.storage.sync.get).toHaveBeenCalledWith(
+        DEFAULT_SETTINGS,
+        expect.any(Function)
+      );
     });
 
     it('should reject with quota exceeded error', async () => {
@@ -43,7 +46,10 @@ describe('Storage Error Handling', () => {
       });
 
       await expect(getSettings()).rejects.toEqual(mockError);
-      expect(chromeMock.storage.sync.get).toHaveBeenCalledWith(DEFAULT_SETTINGS, expect.any(Function));
+      expect(chromeMock.storage.sync.get).toHaveBeenCalledWith(
+        DEFAULT_SETTINGS,
+        expect.any(Function)
+      );
     });
 
     it('should reject with permission error', async () => {
@@ -54,7 +60,10 @@ describe('Storage Error Handling', () => {
       });
 
       await expect(getSettings()).rejects.toEqual(mockError);
-      expect(chromeMock.storage.sync.get).toHaveBeenCalledWith(DEFAULT_SETTINGS, expect.any(Function));
+      expect(chromeMock.storage.sync.get).toHaveBeenCalledWith(
+        DEFAULT_SETTINGS,
+        expect.any(Function)
+      );
     });
 
     it('should reject with sync error', async () => {
@@ -65,7 +74,10 @@ describe('Storage Error Handling', () => {
       });
 
       await expect(getSettings()).rejects.toEqual(mockError);
-      expect(chromeMock.storage.sync.get).toHaveBeenCalledWith(DEFAULT_SETTINGS, expect.any(Function));
+      expect(chromeMock.storage.sync.get).toHaveBeenCalledWith(
+        DEFAULT_SETTINGS,
+        expect.any(Function)
+      );
     });
   });
 
@@ -130,9 +142,9 @@ describe('Storage Error Handling', () => {
   describe('onSettingsChanged', () => {
     it('should register a listener when callback is provided', () => {
       const mockCallback = vi.fn();
-      
+
       onSettingsChanged(mockCallback);
-      
+
       // Verify the listener was registered properly
       expect(chromeMock.storage.onChanged.addListener).toHaveBeenCalled();
     });
