@@ -29,7 +29,7 @@
 - [x] Fix Jest references in `options/formHandler.unit.test.js`
 - [x] Fix Jest references in `utils/converter.edge.unit.test.js`
 - [x] Fix Jest references in `utils/storage.error.unit.test.js`
-- [ ] Fix Jest references in `utils/storage.unit.test.js`
+- [x] Fix Jest references in `utils/storage.unit.test.js`
 
 ## Documentation and Standards
 
