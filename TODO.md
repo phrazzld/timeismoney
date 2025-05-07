@@ -35,7 +35,7 @@
 
 - [x] Create documentation on Jest vs Vitest differences specific to this project
 - [x] Document the preferred pattern for writing new Vitest tests
-- [ ] Add ESLint rule to enforce Vitest patterns in new test files
+- [x] Add ESLint rule to enforce Vitest patterns in new test files
 - [ ] Create pull request template with migration checklist for test files
 
 ## Optional Automation Tools

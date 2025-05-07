@@ -5,11 +5,23 @@
     "webextensions": true,
     "node": true
   },
-  "extends": ["eslint:recommended", "plugin:prettier/recommended", "plugin:jsdoc/recommended"],
-  "plugins": ["prettier", "jsdoc"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:prettier/recommended",
+    "plugin:jsdoc/recommended",
+    "plugin:import/recommended"
+  ],
+  "plugins": ["prettier", "jsdoc", "import"],
   "parserOptions": {
     "ecmaVersion": 2020,
     "sourceType": "module"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js"]
+      }
+    }
   },
   "rules": {
     "prettier/prettier": "error",
@@ -49,7 +61,91 @@
         "jsdoc/require-jsdoc": "off",
         "jsdoc/require-description": "off",
         "jsdoc/require-param-description": "off",
-        "jsdoc/require-returns-description": "off"
+        "jsdoc/require-returns-description": "off",
+        "no-restricted-globals": [
+          "error",
+          {
+            "name": "describe",
+            "message": "Import 'describe' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "it",
+            "message": "Import 'it' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "test",
+            "message": "Import 'test' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "expect",
+            "message": "Import 'expect' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "beforeEach",
+            "message": "Import 'beforeEach' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "afterEach",
+            "message": "Import 'afterEach' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "beforeAll",
+            "message": "Import 'beforeAll' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "afterAll",
+            "message": "Import 'afterAll' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "jest",
+            "message": "Use 'vi' from vitest-imports.js instead of 'jest'"
+          }
+        ],
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "CallExpression[callee.name='jest.fn']",
+            "message": "Use 'vi.fn()' from vitest-imports.js instead of 'jest.fn()'"
+          },
+          {
+            "selector": "CallExpression[callee.name='jest.mock']",
+            "message": "Use 'vi.mock()' from vitest-imports.js instead of 'jest.mock()'"
+          },
+          {
+            "selector": "CallExpression[callee.name='jest.spyOn']",
+            "message": "Use 'vi.spyOn()' from vitest-imports.js instead of 'jest.spyOn()'"
+          },
+          {
+            "selector": "CallExpression[callee.name='jest.clearAllMocks']",
+            "message": "Use 'resetTestMocks()' from vitest.setup.js instead of 'jest.clearAllMocks()'"
+          },
+          {
+            "selector": "CallExpression[callee.name='jest.resetAllMocks']",
+            "message": "Use 'resetTestMocks()' from vitest.setup.js instead of 'jest.resetAllMocks()'"
+          },
+          {
+            "selector": "CallExpression[callee.object.name='vi'][callee.property.name='clearAllMocks']",
+            "message": "Use 'resetTestMocks()' from vitest.setup.js instead of 'vi.clearAllMocks()'"
+          },
+          {
+            "selector": "CallExpression[callee.object.name='vi'][callee.property.name='resetAllMocks']",
+            "message": "Use 'resetTestMocks()' from vitest.setup.js instead of 'vi.resetAllMocks()'"
+          }
+        ],
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "vitest",
+                "message": "Import from vitest-imports.js helper instead of directly from vitest"
+              }
+            ]
+          }
+        ],
+        "require-await": "error",
+        "consistent-return": "error",
+        "import/no-unresolved": "off"
       }
     },
     {
