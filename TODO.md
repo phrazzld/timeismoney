@@ -57,7 +57,7 @@
 
 - [x] Migrate `src/__tests__/content/amazonHandler.test.js` using the codemod script
 - [x] Migrate `src/__tests__/content/dom-conversion.test.js` using the codemod script
-- [ ] Migrate `src/__tests__/content/domModifier.test.js` using the codemod script
+- [x] Migrate `src/__tests__/content/domModifier.test.js` using the codemod script
 - [ ] Migrate `src/__tests__/content/domScanner.test.js` using the codemod script
 - [ ] Migrate `src/__tests__/content/observer-stress.test.js` using the codemod script
 - [ ] Migrate `src/__tests__/content/performance.test.js` using the codemod script
