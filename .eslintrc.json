@@ -53,7 +53,7 @@
     "jsdoc/check-param-names": "error",
     "jsdoc/tag-lines": ["warn", "any", { "startLines": 1 }]
   },
-  "ignorePatterns": ["node_modules/", "dist/", "babel.config.js"],
+  "ignorePatterns": ["node_modules/", "dist/", "babel.config.js", "test-files/"],
   "overrides": [
     {
       "files": ["**/*.vitest.test.js"],

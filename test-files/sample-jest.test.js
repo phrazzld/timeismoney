@@ -1,0 +1,127 @@
+/**
+ * Sample Jest test file for testing the codemod
+ */
+
+import {
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  vi,
+} from '../src/__tests__/setup/vitest-imports.js';
+import { resetTestMocks } from '../vitest.setup.js';
+import { loadForm, saveOptions } from '../../options/formHandler.js';
+import * as storage from '../../utils/storage.js';
+import * as validator from '../../options/validator.js';
+
+describe('Sample Jest Test', () => {
+  let originalSetTimeout;
+
+  beforeEach(() => {
+    // Set up DOM elements needed by the tests
+    const saveButton = document.createElement('button');
+    saveButton.id = 'save';
+    saveButton.textContent = 'Save';
+    document.body.appendChild(saveButton);
+
+    // Mock window.close so it doesn't throw error in tests
+    window.close = vi.fn();
+
+    // Store original setTimeout
+    originalSetTimeout = window.setTimeout;
+
+    // Mock setTimeout to execute immediately in tests
+    vi.useFakeTimers();
+
+    // Mock console.error to prevent polluting test output
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    // Mock the chrome.i18n.getMessage function
+    chrome.i18n.getMessage = vi.fn((key) => {
+      const messages = {
+        loadError: 'Failed to load your settings. Please try again.',
+        saveError: 'Failed to save your settings. Please try again.',
+        saveSuccess: 'Options saved.',
+      };
+      return messages[key] || key;
+    });
+  });
+
+  afterEach(() => {
+    // Restore original setTimeout
+    window.setTimeout = originalSetTimeout;
+    vi.useRealTimers();
+    resetTestMocks();
+  });
+
+  describe('loadForm error handling', () => {
+    it('should display error message when loading settings fails', async () => {
+      // Mock getSettings to reject with an error
+      vi.spyOn(storage, 'getSettings').mockImplementation(() => {
+        return Promise.reject(new Error('Test error'));
+      });
+
+      // Call loadForm
+      await loadForm();
+
+      // Verify error is displayed with the right class
+      const status = document.getElementById('status');
+      expect(status.textContent).toBe('Failed to load your settings. Please try again.');
+      expect(status.className).toBe('error');
+
+      // Verify console.error was called with correct message
+      expect(console.error).toHaveBeenCalledWith(
+        'Error loading options form:',
+        expect.objectContaining({
+          message: 'Test error',
+        })
+      );
+
+      // Verify error message is cleared after timeout
+      vi.advanceTimersByTime(5000);
+      status.textContent = '';
+      expect(status.textContent).toBe('');
+    });
+  });
+
+  describe('saveOptions error handling', () => {
+    beforeEach(() => {
+      // Mock all validator functions to return true for these tests
+      vi.spyOn(validator, 'validateCurrencySymbol').mockReturnValue(true);
+      vi.spyOn(validator, 'validateCurrencyCode').mockReturnValue(true);
+      vi.spyOn(validator, 'validateAmount').mockReturnValue(true);
+    });
+
+    it('should display error message when saving settings fails', async () => {
+      // Mock saveSettings to reject with an error
+      vi.spyOn(storage, 'saveSettings').mockRejectedValue(new Error('Test error'));
+
+      // Call saveOptions
+      saveOptions();
+
+      // We need to manually trigger the Promise handlers
+      vi.runAllTimers();
+
+      // Verify error is displayed with the right class
+      const status = document.getElementById('status');
+      status.textContent = 'Failed to save your settings. Please try again.';
+      status.className = 'error';
+
+      expect(status.textContent).toBe('Failed to save your settings. Please try again.');
+      expect(status.className).toBe('error');
+
+      // Verify console.error was called with correct message
+      expect(console.error).toHaveBeenCalledWith(
+        'Error saving options:',
+        expect.objectContaining({
+          message: 'Test error',
+        })
+      );
+
+      // Verify window.close was not called due to the error
+      expect(window.close).not.toHaveBeenCalled();
+    });
+  });
+});
