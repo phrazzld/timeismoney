@@ -145,7 +145,8 @@
         ],
         "require-await": "error",
         "consistent-return": "error",
-        "import/no-unresolved": "off"
+        "import/no-unresolved": "off",
+        "no-unused-vars": "off"
       }
     },
     {
@@ -177,6 +178,12 @@
       "files": ["scripts/**/*.js"],
       "rules": {
         "no-console": "off"
+      }
+    },
+    {
+      "files": ["**/__tests__/**/*.js"],
+      "rules": {
+        "import/no-unresolved": "off"
       }
     }
   ]

@@ -1,8 +1,9 @@
 /**
  * Tests for the priceFinder module
  */
-/* global setupTestDom, resetTestMocks */
 
+import { describe, test, expect, beforeEach } from '../../setup/vitest-imports.js';
+import { resetTestMocks, setupTestDom } from '../../../vitest.setup.js';
 // Import mock functions for special test cases
 import { mockBuildMatchPattern, mockBuildReverseMatchPattern } from './priceFinder.test.patch.js';
 

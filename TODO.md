@@ -40,7 +40,7 @@
 
 ## Optional Automation Tools
 
-- [ ] Create script to identify remaining Jest references in the codebase
+- [x] Create script to identify remaining Jest references in the codebase
 - [ ] Implement codemod to automatically convert simple Jest patterns to Vitest
 - [ ] Add migration status tracking to identify progress
 

@@ -2,16 +2,18 @@
 
 This backlog outlines planned work for the extension, balancing feature development, technical improvements, operational excellence, and innovation, aligned with our development philosophy and informed by codebase analysis.
 
+- redesign work hours conversion ui to be a clean badge with a clock icon
+
 ## High Priority
 
-- **[Test] Address Root Cause of Jest Performance Issues**: Investigate the underlying reasons for high memory usage and slow test execution in Jest. Implement architectural changes (e.g., refining mocks, optimizing DOM-heavy tests, separating pure logic tests from DOM tests) or configuration fixes to achieve efficient testing without workarounds. Consider potential solutions like environment changes, faster transformers (SWC/esbuild), or alternative runners (Vitest).
+- ✅ **[Test] Migrate from Jest to Vitest**: Successfully migrated the test suite from Jest to Vitest, implementing proper test categorization (unit, integration, DOM), reducing memory usage, and improving test execution speed. The migration includes proper separation of environments and optimized configuration for each test type.
 
   - **Type**: Enhancement/Refactor
   - **Complexity**: Complex
   - **Rationale**: Essential for a reliable and fast feedback loop during development (Developer Experience), improves CI efficiency (Operational Excellence), and avoids brittle test setups (Technical Excellence).
   - **Expected Outcome**: The test suite runs efficiently and reliably on typical development machines and CI environments without excessive resource consumption or manual file splitting workarounds. Test structure reflects code architecture.
-  - **Dependencies**: Requires deep dive into tests, especially DOM-related ones. Impacts CI setup.
-  - **Note**: We should switch to Vitest.
+  - **Dependencies**: None - completed
+  - **Status**: Completed - All tests have been migrated to Vitest with proper structure and patterns
 
 ### Security & Stability
 
