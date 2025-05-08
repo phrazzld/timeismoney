@@ -60,7 +60,7 @@
 - [x] Migrate `src/__tests__/content/domModifier.test.js` using the codemod script
 - [x] Migrate `src/__tests__/content/domScanner.test.js` using the codemod script
 - [x] Migrate `src/__tests__/content/observer-stress.test.js` using the codemod script and fix ESLint errors
-- [ ] Migrate `src/__tests__/content/performance.test.js` using the codemod script
+- [x] Migrate `src/__tests__/content/performance.test.js` using the codemod script and fix performance API mocking
 - [ ] Migrate `src/__tests__/content/price-conversion-flow.test.js` using the codemod script
 - [ ] Migrate `src/__tests__/content/priceFinder.currency.part2.test.js` using the codemod script
 - [ ] Migrate `src/__tests__/content/priceFinder.edge-cases.test.js` using the codemod script
