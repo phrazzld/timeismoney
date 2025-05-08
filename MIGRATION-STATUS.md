@@ -4,8 +4,8 @@
 
 - Total test files: 104
 - Fully migrated: 1 (0.96%)
-- Partially migrated: 65 (62.50%)
-- Not migrated: 36 (34.62%)
+- Partially migrated: 66 (63.46%)
+- Not migrated: 35 (33.65%)
 - Unknown status: 2
 
 ## Migration Progress
@@ -20,6 +20,7 @@
 
 These files contain both Jest and Vitest patterns and should be cleaned up:
 
+- src/**tests**/content/amazonHandler.vitest.test.js
 - src/**tests**/content/observer-callback.test.js
 - src/**tests**/content/priceFinder.additional-currencies.test.js
 - src/**tests**/content/priceFinder.basic-patterns.test.js
@@ -88,7 +89,6 @@ These files contain both Jest and Vitest patterns and should be cleaned up:
 
 ## Unmigrated Files
 
-- src/**tests**/content/amazonHandler.test.js
 - src/**tests**/content/dom-conversion.test.js
 - src/**tests**/content/domModifier.test.js
 - src/**tests**/content/domScanner.test.js
