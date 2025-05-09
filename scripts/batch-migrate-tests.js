@@ -10,7 +10,11 @@
  * 4. Generating a report of the migration results
  *
  * Usage:
- *   node scripts/batch-migrate-tests.js [options] <batch-name>
+ *   node scripts/batch-migrate-tests.js [options] <batch-name> [file-path]
+ *
+ * Arguments:
+ *   batch-name         Name of the batch to process (unit, dom, integration, etc.)
+ *   file-path          Optional specific file path to process instead of the entire batch
  *
  * Options:
  *   -d, --dry-run      Show transformations without modifying files
@@ -34,6 +38,7 @@ const __dirname = path.dirname(__filename);
 // Set up command line arguments
 program
   .argument('<batch-name>', 'Name of the batch to process (unit, dom, integration, etc.)')
+  .argument('[file-path]', 'Optional specific file path to process')
   .option('-d, --dry-run', 'Show transformations without modifying files', false)
   .option('-v, --verbose', 'Show detailed logs during transformation', false)
   .option('-b, --backup', 'Create backup files before applying transformations', false)
@@ -43,6 +48,7 @@ program
 
 const options = program.opts();
 const batchName = program.args[0];
+const specificFilePath = program.args[1];
 
 // Define batch configurations
 const batchConfigs = {
@@ -85,6 +91,10 @@ const batchConfigs = {
   observer: {
     pattern: 'src/__tests__/**/observer*.test.js',
     description: 'Observer tests',
+  },
+  sample: {
+    pattern: '**/*.test.js',
+    description: 'Sample test files (for testing the migration script)',
   },
   // Add more batch configurations as needed
 };
@@ -173,11 +183,20 @@ function runCodemod(files, options) {
 
       const output = execSync(codemodCommand, { encoding: 'utf8' });
 
-      if (output.includes('Error') || output.includes('error')) {
+      // Count as success even if no transformations were needed
+      if (output.includes('Error:') || output.includes('error:')) {
         results.failure++;
         results.details[file] = { status: 'failure', output };
         console.error(`Error running codemod on ${file}:`);
         console.error(output);
+      } else if (output.includes('No transformations applied')) {
+        // File was already migrated or doesn't need changes
+        results.success++;
+        results.details[file] = { status: 'success', output, notes: 'No changes needed' };
+        if (options.verbose) {
+          console.log(`${file}: No transformations needed (already migrated or not a Jest file)`);
+          console.log(output);
+        }
       } else {
         results.success++;
         results.details[file] = { status: 'success', output };
@@ -236,11 +255,18 @@ function runStandardization(files, options) {
 
       const output = execSync(standardizeCommand, { encoding: 'utf8' });
 
-      if (output.includes('Error') || output.includes('error')) {
+      if (output.includes('Error:') || output.includes('error:')) {
         results.failure++;
         results.details[actualFile] = { status: 'failure', output };
         console.error(`Error standardizing ${actualFile}:`);
         console.error(output);
+      } else if (output.includes('No standardizations needed')) {
+        // File was already standardized
+        results.success++;
+        results.details[actualFile] = { status: 'success', output, notes: 'Already standardized' };
+        if (options.verbose) {
+          console.log(`${actualFile}: Already standardized`);
+        }
       } else {
         results.success++;
         results.details[actualFile] = { status: 'success', output };
@@ -492,10 +518,15 @@ async function main() {
 
   // Get batch configuration
   const batchConfig = batchConfigs[batchName];
-  console.log(`Processing ${batchConfig.description}: ${batchConfig.pattern}`);
 
-  // Find files matching the pattern
-  const files = findFiles(batchConfig.pattern);
+  if (specificFilePath) {
+    console.log(`Processing specific file: ${specificFilePath}`);
+  } else {
+    console.log(`Processing ${batchConfig.description}: ${batchConfig.pattern}`);
+  }
+
+  // Find files matching the pattern or use the specific file path if provided
+  const files = specificFilePath ? [specificFilePath] : findFiles(batchConfig.pattern);
   console.log(`Found ${files.length} files to process`);
 
   if (files.length === 0) {
