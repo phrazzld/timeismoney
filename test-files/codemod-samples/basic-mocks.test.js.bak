@@ -1,0 +1,49 @@
+/**
+ * Sample Jest test file with basic mocks
+ */
+
+import { loadForm, saveOptions } from '../../src/options/formHandler.js';
+import * as storage from '../../src/utils/storage.js';
+
+describe('Basic Mocks Sample', () => {
+  beforeEach(() => {
+    // Clear mocks before each test
+    jest.clearAllMocks();
+  });
+
+  test('simple mock function', () => {
+    // Mock function
+    const mockFn = jest.fn().mockReturnValue('test');
+    
+    // Call the function
+    const result = mockFn();
+    
+    // Assertions
+    expect(result).toBe('test');
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  test('spy on method', () => {
+    // Spy on console.log
+    const spy = jest.spyOn(console, 'log');
+    
+    // Call console.log
+    console.log('test message');
+    
+    // Assertions
+    expect(spy).toHaveBeenCalledWith('test message');
+  });
+
+  test('simple mock implementation', () => {
+    // Mock with implementation
+    const mockImplementation = jest.fn().mockImplementation(value => {
+      return value * 2;
+    });
+    
+    // Call the mock
+    const result = mockImplementation(5);
+    
+    // Assertions
+    expect(result).toBe(10);
+  });
+});
