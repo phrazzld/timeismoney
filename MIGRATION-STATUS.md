@@ -4,13 +4,13 @@
 
 - Total test files: 104
 - Fully migrated: 1 (0.96%)
-- Partially migrated: 70 (67.31%)
-- Not migrated: 31 (29.81%)
+- Partially migrated: 71 (68.27%)
+- Not migrated: 30 (28.85%)
 - Unknown status: 2
 
 ## Migration Progress
 
-[--------------------------------- ] 0.96%
+[---------------------------------- ] 0.96%
 
 ## Fully Migrated Files
 
@@ -26,6 +26,7 @@ These files contain both Jest and Vitest patterns and should be cleaned up:
 - src/**tests**/content/domScanner.vitest.test.js
 - src/**tests**/content/observer-callback.test.js
 - src/**tests**/content/observer-stress.vitest.test.js
+- src/**tests**/content/performance.vitest.test.js
 - src/**tests**/content/priceFinder.additional-currencies.test.js
 - src/**tests**/content/priceFinder.basic-patterns.test.js
 - src/**tests**/content/priceFinder.currency.part1.test.js
@@ -93,7 +94,6 @@ These files contain both Jest and Vitest patterns and should be cleaned up:
 
 ## Unmigrated Files
 
-- src/**tests**/content/performance.test.js
 - src/**tests**/content/price-conversion-flow.test.js
 - src/**tests**/content/priceFinder.currency.part2.test.js
 - src/**tests**/content/priceFinder.edge-cases.test.js
