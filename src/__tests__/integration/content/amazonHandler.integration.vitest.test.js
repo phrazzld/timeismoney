@@ -2,12 +2,27 @@
  * Tests for the Amazon Price Handler module
  */
 
+import { describe, it, test, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../../vitest.setup.js';
+
+
 import {
   createPriceState,
   isAmazonPriceNode,
   handleAmazonPrice,
   processIfAmazon,
 } from '../../../content/amazonHandler';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  resetTestMocks();
+
+});
+
+
+
 
 // Mock DOM elements for testing
 const createNodeWithClass = (className) => {
@@ -68,7 +83,7 @@ describe('Amazon Price Handler', () => {
   describe('handleAmazonPrice', () => {
     test('processes currency node and updates state', () => {
       const node = createNodeWithClass('sx-price-currency');
-      const callback = jest.fn();
+      const callback = vi.fn();
       const state = createPriceState();
 
       const result = handleAmazonPrice(node, callback, state);
@@ -82,7 +97,7 @@ describe('Amazon Price Handler', () => {
 
     test('processes whole part node when currency is set', () => {
       const node = createNodeWithClass('sx-price-whole');
-      const callback = jest.fn();
+      const callback = vi.fn();
       const state = createPriceState();
 
       // Set up state as if currency node was processed
@@ -100,7 +115,7 @@ describe('Amazon Price Handler', () => {
 
     test('ignores whole part node when currency is not set', () => {
       const node = createNodeWithClass('sx-price-whole');
-      const callback = jest.fn();
+      const callback = vi.fn();
       const state = createPriceState();
 
       const result = handleAmazonPrice(node, callback, state);
@@ -111,7 +126,7 @@ describe('Amazon Price Handler', () => {
 
     test('processes fractional part and resets state', () => {
       const node = createNodeWithClass('sx-price-fractional');
-      const callback = jest.fn();
+      const callback = vi.fn();
       const state = createPriceState();
 
       // Set up state as if previous nodes were processed
@@ -127,7 +142,7 @@ describe('Amazon Price Handler', () => {
 
     test('ignores fractional part when not active', () => {
       const node = createNodeWithClass('sx-price-fractional');
-      const callback = jest.fn();
+      const callback = vi.fn();
       const state = createPriceState();
 
       const result = handleAmazonPrice(node, callback, state);
@@ -138,7 +153,7 @@ describe('Amazon Price Handler', () => {
 
     test('returns false for non-Amazon price classes', () => {
       const node = createNodeWithClass('other-class');
-      const callback = jest.fn();
+      const callback = vi.fn();
       const state = createPriceState();
 
       const result = handleAmazonPrice(node, callback, state);
@@ -151,7 +166,7 @@ describe('Amazon Price Handler', () => {
   describe('processIfAmazon', () => {
     test('creates a new state object if none provided', () => {
       const node = createNodeWithClass('sx-price-currency');
-      const callback = jest.fn();
+      const callback = vi.fn();
 
       const result = processIfAmazon(node, callback);
 
@@ -161,7 +176,7 @@ describe('Amazon Price Handler', () => {
 
     test('uses provided state object if given', () => {
       const node = createNodeWithClass('sx-price-currency');
-      const callback = jest.fn();
+      const callback = vi.fn();
       const state = createPriceState();
 
       const result = processIfAmazon(node, callback, state);
@@ -173,7 +188,7 @@ describe('Amazon Price Handler', () => {
 
     test('resets state when encountering non-Amazon node with active state', () => {
       const node = createNodeWithClass('other-class');
-      const callback = jest.fn();
+      const callback = vi.fn();
       const state = createPriceState();
 
       // Set state as active
@@ -186,7 +201,7 @@ describe('Amazon Price Handler', () => {
     });
 
     test('processes complete Amazon price component sequence', () => {
-      const callback = jest.fn();
+      const callback = vi.fn();
       const state = createPriceState();
 
       // Process currency node

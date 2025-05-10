@@ -79,30 +79,31 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
 
 ### Batch 3: DOM Tests (Heavy DOM Interaction)
 
-- [ ] Migrate all DOM tests:
+- [x] Migrate all DOM tests:
   ```
   node scripts/batch-migrate-tests.js -v -r -t dom
   ```
-  - [ ] `src/__tests__/dom/content/domModifier.dom.test.js`
-  - [ ] `src/__tests__/dom/content/observer-stress.dom.test.js`
-  - [ ] `src/__tests__/dom/content/performance.dom.test.js`
-- [ ] Verify tests pass and fix any issues
-- [ ] Commit migration changes
+  - [x] `src/__tests__/dom/content/domModifier.dom.test.js`
+  - [x] `src/__tests__/dom/content/observer-stress.dom.test.js`
+  - [x] `src/__tests__/dom/content/performance.dom.test.js`
+- [x] Verify tests pass and fix any issues
+- [x] Commit migration changes
 
 ### Batch 4: Integration Tests
 
-- [ ] Migrate all Integration tests:
+- [x] Migrate all Integration tests:
   ```
   node scripts/batch-migrate-tests.js -v -r -t integration
   ```
-  - [ ] `src/__tests__/integration/content/amazonHandler.integration.test.js`
-  - [ ] `src/__tests__/integration/content/dom-conversion.integration.test.js`
-  - [ ] `src/__tests__/integration/content/domScanner.integration.test.js`
-  - [ ] `src/__tests__/integration/content/price-conversion-flow.integration.test.js`
-  - [ ] `src/__tests__/integration/content/settingsManager.error.integration.test.js`
+  - [x] `src/__tests__/integration/content/amazonHandler.integration.test.js`
+  - [x] `src/__tests__/integration/content/dom-conversion.integration.test.js`
+  - [x] `src/__tests__/integration/content/domScanner.integration.test.js`
+  - [x] `src/__tests__/integration/content/price-conversion-flow.integration.test.js`
+  - [x] `src/__tests__/integration/content/settingsManager.error.integration.test.js`
   - [ ] `src/__tests__/integration/options/formHandler.xss.integration.test.js`
   - [ ] `src/__tests__/integration/popup/popup.error.integration.test.js`
-- [ ] Verify tests pass and fix any issues
+- [x] Verify content module tests pass and fix issues
+- [ ] Verify options/popup module tests pass and fix issues
 - [ ] Commit migration changes
 
 ### Batch 5: Options and Popup Tests

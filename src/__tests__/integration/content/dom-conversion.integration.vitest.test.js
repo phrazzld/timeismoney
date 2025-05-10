@@ -3,6 +3,7 @@
  * Tests the DOM modification and reversion process
  */
 
+import { describe, test, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
 import { applyConversion, revertAll } from '../../../content/domModifier';
 
 // Simple regex pattern for testing

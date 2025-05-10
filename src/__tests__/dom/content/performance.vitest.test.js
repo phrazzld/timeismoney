@@ -2,8 +2,20 @@
  * Performance tests for DOM scanning optimizations
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from '../../setup/vitest-imports.js';
 import { walk, startObserver, stopObserver } from '../../../content/domScanner';
+import { resetTestMocks } from '../../../../vitest.setup.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  vi.useRealTimers();
+  resetTestMocks();
+});
+
+
+
 
 // Mocks for Chrome API
 beforeEach(() => {

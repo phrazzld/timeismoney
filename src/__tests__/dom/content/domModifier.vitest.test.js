@@ -2,7 +2,7 @@
  * Tests for the DOM Modifier Module
  */
 
-import { describe, test, expect, beforeEach } from 'vitest';
+import { describe, test, expect, beforeEach } from '../../setup/vitest-imports.js';
 import {
   isValidForProcessing,
   applyConversion,

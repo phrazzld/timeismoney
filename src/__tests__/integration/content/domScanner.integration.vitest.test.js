@@ -3,11 +3,27 @@
  * Focuses on testing the MutationObserver dependency injection functionality
  */
 
+import { describe, it, test, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../../vitest.setup.js';
+
+
 import {
   observeDomChanges,
   startObserver,
   createDomScannerState,
 } from '../../../content/domScanner.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  vi.useRealTimers();
+  resetTestMocks();
+
+});
+
+
+
 
 // Create a mock MutationObserver class
 class MockMutationObserver {
@@ -39,7 +55,7 @@ describe('domScanner module', () => {
   describe('observeDomChanges', () => {
     it('should accept a custom MutationObserver constructor', () => {
       // Create a simple callback function
-      const callback = jest.fn();
+      const callback = vi.fn();
       const state = createDomScannerState();
 
       // Create an observer with our mock
@@ -52,7 +68,7 @@ describe('domScanner module', () => {
     it('should invoke the callback when mutations occur', () => {
       // Create a callback that records calls
       const processedNodes = [];
-      const callback = jest.fn((node) => {
+      const callback = vi.fn((node) => {
         processedNodes.push(node);
         return true;
       });
@@ -85,7 +101,7 @@ describe('domScanner module', () => {
       expect(state.pendingTextNodes.has(mockTextNode)).toBe(true);
 
       // Note: The actual callback won't be called immediately due to debouncing
-      // In a real test, you would use jest.useFakeTimers() to advance timers
+      // In a real test, you would use vi.useFakeTimers() to advance timers
       // This is just a demonstration of how the API works
     });
   });
@@ -93,7 +109,7 @@ describe('domScanner module', () => {
   describe('startObserver', () => {
     it('should accept a custom MutationObserver constructor', () => {
       // Create a simple callback function
-      const callback = jest.fn();
+      const callback = vi.fn();
       const state = createDomScannerState();
       const mockElement = document.createElement('div');
 

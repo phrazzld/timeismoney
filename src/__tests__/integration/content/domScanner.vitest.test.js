@@ -8,7 +8,19 @@ import {
   startObserver,
   createDomScannerState,
 } from '../../../content/domScanner.js';
-import { describe, test, expect, vi } from 'vitest';
+import { describe, test, expect, vi } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../../vitest.setup.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  vi.useRealTimers();
+  resetTestMocks();
+});
+
+
+
 
 // Create a mock MutationObserver class
 class MockMutationObserver {

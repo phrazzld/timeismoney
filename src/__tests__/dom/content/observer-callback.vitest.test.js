@@ -3,7 +3,7 @@
  * Shows how to test the observer callback logic independently
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
 import {
   processMutations,
   processPendingNodes,
@@ -11,6 +11,11 @@ import {
 } from '../../../content/domScanner.js';
 import { CONVERTED_PRICE_CLASS } from '../../../utils/constants.js';
 import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+
 
 // Mock the getSettings function
 vi.mock('../../../utils/storage.js', () => ({
@@ -157,7 +162,9 @@ describe('Observer callback logic', () => {
 
     afterEach(() => {
       vi.useRealTimers();
-    });
+    
+  resetTestMocks();
+});
 
     it('should process pending nodes and text nodes', async () => {
       // Create a state object with some pending nodes

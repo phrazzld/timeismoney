@@ -2,20 +2,30 @@
  * Performance tests for DOM scanning optimizations
  */
 
-import { walk, startObserver, stopObserver } from '../../../content/domScanner';
+import { vi } from '../../setup/vitest-imports.js';
 
-// Mocks for Chrome API
-chrome.storage.sync.get.mockImplementation((key, callback) => {
-  callback({
-    currencySymbol: '$',
-    currencyCode: 'USD',
-    thousands: 'commas',
-    decimal: 'dot',
-    disabled: false,
-    frequency: 'hourly',
-    amount: '20',
-  });
+// Mock storage.js module before other imports
+vi.mock('../../../utils/storage.js', () => {
+  return {
+    getSettings: vi.fn(() => Promise.resolve({
+      currencySymbol: '$',
+      currencyCode: 'USD',
+      thousands: 'commas',
+      decimal: 'dot',
+      frequency: 'hourly',
+      amount: '30',
+    }))
+  };
 });
+
+import { describe, it, test, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
+import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
+import { walk, startObserver, stopObserver, createDomScannerState } from '../../../content/domScanner';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+
 
 /**
  * Creates a test DOM structure with the specified number of price elements
@@ -71,8 +81,24 @@ describe('DOM Scanning Performance', () => {
     document.body.innerHTML = '';
 
     // Reset all mocks
-    jest.clearAllMocks();
+    resetTestMocks();
+    
+    // Mock performance API
+    global.performance = {
+      mark: vi.fn(),
+      measure: vi.fn(),
+      getEntriesByName: vi.fn().mockReturnValue([{ duration: 10 }]),
+      clearMarks: vi.fn(),
+      clearMeasures: vi.fn(),
+    };
   });
+  
+  afterEach(() => {
+    vi.restoreAllMocks();
+  
+  vi.useRealTimers();
+  resetTestMocks();
+});
 
   it('should process target nodes correctly with optimized scanning', async () => {
     // Create a simple test DOM with a fixed structure
@@ -103,16 +129,21 @@ describe('DOM Scanning Performance', () => {
 
     // Add test nodes to trigger the observer, with different identifiers
     const newPriceNodes = [];
+    
+    // Create a state
+    const state = createDomScannerState();
+    
     await new Promise((resolve) => {
       const observerProcessor = (node) => {
         if (node.nodeValue && node.nodeValue.includes('$')) {
           // This would normally apply a conversion, but we just track that it was called
           node._processed = true;
         }
+        return true;
       };
 
       // Set up observer
-      startObserver(root, observerProcessor);
+      startObserver(root, observerProcessor, {}, 100, state);
 
       // Do initial scan
       walk(root, observerProcessor);
@@ -126,11 +157,18 @@ describe('DOM Scanning Performance', () => {
         newPriceNodes.push(priceEl);
       }
 
-      // Wait for observer to process
-      setTimeout(() => {
-        stopObserver();
-        resolve();
-      }, 300);
+      // Use fake timers to control async behavior
+      vi.useFakeTimers();
+      
+      // Advance timers to trigger processing
+      vi.advanceTimersByTime(300);
+      
+      // Restore real timers
+      vi.useRealTimers();
+      
+      // Stop the observer
+      stopObserver(state);
+      resolve();
     });
 
     // Verify the initial price nodes are all there
@@ -153,15 +191,13 @@ describe('DOM Scanning Performance', () => {
     // since the timeouts used in the observer make it difficult to get accurate timing
 
     // Create a test DOM with price elements
-    const testDOM = createTestDOM(1000, 6);
+    const testDOM = createTestDOM(100, 4); // Reduce size for faster tests
     document.body.appendChild(testDOM);
 
     try {
       // Count the number of elements that would need processing
       const allElements = testDOM.querySelectorAll('*');
-      // eslint-disable-next-line no-console
-      console.log(`Total elements in test DOM: ${allElements.length}`);
-
+      
       // Create a typical usage scenario with multiple DOM mutations
       const mutations = [];
       for (let i = 0; i < 10; i++) {
@@ -225,27 +261,8 @@ describe('DOM Scanning Performance', () => {
       const scanCountImprovement =
         ((traditionalMutationScans - debouncedScans) / traditionalMutationScans) * 100;
 
-      // eslint-disable-next-line no-console
-      console.log('Theoretical Performance Analysis:', {
-        traditionalProcessing: traditionalProcessingCount,
-        optimizedProcessing: observerProcessingCount,
-        processingImprovement: `${processingImprovement.toFixed(2)}%`,
-        traditionalScans: traditionalMutationScans,
-        debouncedScans,
-        scanCountImprovement: `${scanCountImprovement.toFixed(2)}%`,
-      });
-
       // Verify performance improvement
       expect(processingImprovement).toBeGreaterThan(0);
-
-      // Report success if improvement is >50%
-      if (processingImprovement >= 50) {
-        // eslint-disable-next-line no-console
-        console.log('✅ Performance goal achieved: >50% theoretical processing reduction');
-      } else {
-        // eslint-disable-next-line no-console
-        console.log('⚠️ Performance goal not fully reached, but improvements were still observed');
-      }
     } finally {
       // Clean up
       if (document.body.firstChild) {

@@ -20,6 +20,11 @@ import {
 } from '../../content/domScanner.js';
 import { MAX_PENDING_NODES } from '../../utils/constants.js';
 
+beforeEach(() => {
+  resetTestMocks();
+});
+
+
 // Create a mock MutationObserver class
 class MockMutationObserver {
   constructor(callback) {
@@ -102,7 +107,8 @@ describe('Observer Stress and Cleanup Tests', () => {
 
     // Clear mocks
     resetTestMocks();
-  });
+  
+});
 
   describe('stopObserver cleanup functionality', () => {
     it('should properly clean up all resources when stopping the observer', () => {

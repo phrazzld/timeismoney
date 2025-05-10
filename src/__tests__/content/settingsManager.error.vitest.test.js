@@ -51,7 +51,8 @@ describe('SettingsManager Error Handling', () => {
     document.addEventListener = originalDocumentAddEventListener;
 
     resetTestMocks();
-  });
+  
+});
 
   describe('initSettings', () => {
     it('should handle getSettings error and return disabled state', async () => {

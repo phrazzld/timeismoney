@@ -10,6 +10,17 @@ import {
   handleAmazonPrice,
   processIfAmazon,
 } from '../../content/amazonHandler';
+import { resetTestMocks } from '../../../vitest.setup.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  resetTestMocks();
+});
+
+
+
 
 // Mock DOM elements for testing
 const createNodeWithClass = (className) => {

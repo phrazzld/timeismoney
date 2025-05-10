@@ -4,7 +4,20 @@
  */
 /* global setupTestDom, resetTestMocks */
 
+import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../vitest.setup.js';
 import { buildThousandsString, buildDecimalString } from '../../content/priceFinder';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  resetTestMocks();
+
+});
+
+
+
 
 describe('Basic Pattern Tests', () => {
   beforeEach(() => {
@@ -33,7 +46,7 @@ describe('Basic Pattern Tests', () => {
       buildThousandsString('commas');
 
       // Spy on Map.prototype.get to verify cache usage
-      const getSpy = jest.spyOn(Map.prototype, 'get');
+      const getSpy = vi.spyOn(Map.prototype, 'get');
 
       buildThousandsString('commas');
 
@@ -60,7 +73,7 @@ describe('Basic Pattern Tests', () => {
       buildDecimalString('dot');
 
       // Spy on Map.prototype.get to verify cache usage
-      const getSpy = jest.spyOn(Map.prototype, 'get');
+      const getSpy = vi.spyOn(Map.prototype, 'get');
 
       buildDecimalString('dot');
 

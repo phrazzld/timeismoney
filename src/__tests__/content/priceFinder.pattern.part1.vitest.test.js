@@ -5,9 +5,22 @@
 /* global setupTestDom, resetTestMocks */
 
 // Import mock functions for special test cases
+import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../vitest.setup.js';
 import { mockBuildMatchPattern } from './priceFinder.test.patch.js';
 
 import { buildMatchPattern } from '../../content/priceFinder';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  resetTestMocks();
+
+});
+
+
+
 
 describe('Match Pattern Tests Part 1', () => {
   beforeEach(() => {
@@ -56,7 +69,7 @@ describe('Match Pattern Tests Part 1', () => {
       buildMatchPattern('$', 'USD', ',', '\\.');
 
       // Spy on Map.prototype.get to verify cache usage
-      const getSpy = jest.spyOn(Map.prototype, 'get');
+      const getSpy = vi.spyOn(Map.prototype, 'get');
 
       buildMatchPattern('$', 'USD', ',', '\\.');
 

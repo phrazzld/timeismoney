@@ -5,7 +5,7 @@
  */
 
 import { applyConversion, revertAll } from '../../../content/domModifier';
-import { describe, test, expect, beforeEach, afterEach } from 'vitest';
+import { describe, test, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
 
 // Simple regex pattern for testing
 const testPricePattern = /\$\d+(\.\d+)?/g;

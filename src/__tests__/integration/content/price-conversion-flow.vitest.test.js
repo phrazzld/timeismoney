@@ -9,7 +9,7 @@ import { findPrices } from '../../../content/priceFinder.js';
 import { convertPriceToTimeString } from '../../../utils/converter.js';
 import { processTextNode } from '../../../content/domModifier.js';
 import { CONVERTED_PRICE_CLASS } from '../../../utils/constants.js';
-import { describe, test, expect, beforeEach } from 'vitest';
+import { describe, test, expect, beforeEach } from '../../setup/vitest-imports.js';
 
 describe('Price Conversion Integration Flow', () => {
   beforeEach(() => {

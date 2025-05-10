@@ -1,15 +1,30 @@
 /**
- * Match pattern tests (part 2) split from the original file
- * to prevent worker termination
+ * Tests for the priceFinder module
  */
 /* global setupTestDom, resetTestMocks */
 
 // Import mock functions for special test cases
+import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../vitest.setup.js';
 import { mockBuildMatchPattern, mockBuildReverseMatchPattern } from './priceFinder.test.patch.js';
 
-import { buildReverseMatchPattern } from '../../content/priceFinder';
+import { buildMatchPattern, buildReverseMatchPattern } from '../../content/priceFinder';
 
-describe('Match Pattern Tests Part 2', () => {
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  resetTestMocks();
+
+});
+
+
+
+
+// Basic pattern tests moved to separate test file to reduce worker load
+// See priceFinder.basic-patterns.test.js
+
+describe('Match Pattern Tests', () => {
   beforeEach(() => {
     // Reset mocks
     resetTestMocks();
@@ -18,7 +33,39 @@ describe('Match Pattern Tests Part 2', () => {
     setupTestDom();
   });
 
-  describe('buildMatchPattern additional tests', () => {
+  describe('buildMatchPattern', () => {
+    test('returns correct regex pattern for dollar symbol', () => {
+      // Use our mock function for special test cases
+      const pattern = mockBuildMatchPattern('$', 'USD', ',', '\\.');
+
+      // Should match prices like $12.34
+      expect('$12.34'.match(pattern)).toBeTruthy();
+      expect('$1,234.56'.match(pattern)).toBeTruthy();
+
+      // Should match prices like 12.34$
+      expect('12.34$'.match(pattern)).toBeTruthy();
+      expect('1,234.56$'.match(pattern)).toBeTruthy();
+
+      // Should not match other text
+      expect('no price here'.match(pattern)).toBeNull();
+    });
+
+    test('matches prices with currency symbol before amount', () => {
+      // Use our mock function for special test cases
+      const pattern = mockBuildMatchPattern('€', 'EUR', '\\.', ',');
+
+      expect('€10,50'.match(pattern)).toBeTruthy();
+      expect('€1.000,00'.match(pattern)).toBeTruthy();
+    });
+
+    test('matches prices with currency symbol after amount', () => {
+      // Use our mock function for special test cases
+      const pattern = mockBuildMatchPattern('€', 'EUR', '\\.', ',');
+
+      expect('10,50€'.match(pattern)).toBeTruthy();
+      expect('1.000,00€'.match(pattern)).toBeTruthy();
+    });
+
     test('matches prices with currency code', () => {
       // Use our mock function for special test cases
       const pattern = mockBuildMatchPattern('$', 'USD', ',', '\\.');
@@ -33,6 +80,19 @@ describe('Match Pattern Tests Part 2', () => {
 
       expect('$ 12.34'.match(pattern)).toBeTruthy();
       expect('12.34 $'.match(pattern)).toBeTruthy();
+    });
+
+    test('uses cache for repeated calls', () => {
+      // Call once to add to cache
+      buildMatchPattern('$', 'USD', ',', '\\.');
+
+      // Spy on Map.prototype.get to verify cache usage
+      const getSpy = vi.spyOn(Map.prototype, 'get');
+
+      buildMatchPattern('$', 'USD', ',', '\\.');
+
+      expect(getSpy).toHaveBeenCalledWith('$|USD|,|\\.');
+      getSpy.mockRestore();
     });
   });
 
@@ -68,7 +128,7 @@ describe('Match Pattern Tests Part 2', () => {
       buildReverseMatchPattern('$', 'USD', ',', '\\.');
 
       // Spy on Map.prototype.get to verify cache usage
-      const getSpy = jest.spyOn(Map.prototype, 'get');
+      const getSpy = vi.spyOn(Map.prototype, 'get');
 
       buildReverseMatchPattern('$', 'USD', ',', '\\.');
 
@@ -77,3 +137,6 @@ describe('Match Pattern Tests Part 2', () => {
     });
   });
 });
+
+// Main pattern tests remain in this file
+// Finder tests split into separate file to prevent worker termination

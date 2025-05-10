@@ -7,7 +7,7 @@
  * 4. Resource cleanup to prevent memory leaks
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
 import {
   // Removing unused imports to fix linting issues
   startObserver,
@@ -16,6 +16,12 @@ import {
   createDomScannerState,
 } from '../../../content/domScanner.js';
 import { MAX_PENDING_NODES } from '../../../utils/constants.js';
+import { resetTestMocks } from '../../../../vitest.setup.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+
 
 // Mock the getSettings function
 vi.mock('../../../utils/storage.js', () => ({
@@ -134,7 +140,9 @@ describe('Observer Stress and Cleanup Tests', () => {
 
     // Clear mocks
     vi.clearAllMocks();
-  });
+  
+  resetTestMocks();
+});
 
   describe('stopObserver cleanup functionality', () => {
     it('should properly clean up all resources when stopping the observer', () => {

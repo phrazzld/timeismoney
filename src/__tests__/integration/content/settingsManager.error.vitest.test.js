@@ -5,7 +5,13 @@
  */
 import * as storage from '../../../utils/storage.js';
 import { initSettings, handleVisibilityChange } from '../../../content/settingsManager.js';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../../vitest.setup.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+
 
 describe('SettingsManager Error Handling', () => {
   let originalDocumentAddEventListener;
@@ -47,7 +53,9 @@ describe('SettingsManager Error Handling', () => {
     // Restore document.addEventListener
     document.addEventListener = originalDocumentAddEventListener;
     vi.restoreAllMocks();
-  });
+  
+  resetTestMocks();
+});
 
   describe('initSettings', () => {
     it('should handle getSettings error and return disabled state', async () => {

@@ -9,11 +9,18 @@ import {
   processPendingNodes,
   createDomScannerState,
 } from '../../content/domScanner.js';
+import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../vitest.setup.js';
 import { CONVERTED_PRICE_CLASS } from '../../utils/constants.js';
 
+beforeEach(() => {
+  resetTestMocks();
+});
+
+
 // Mock the getSettings function
-jest.mock('../../utils/storage.js', () => ({
-  getSettings: jest.fn().mockResolvedValue({
+vi.mock('../../utils/storage.js', () => ({
+  getSettings: vi.fn().mockResolvedValue({
     currencySymbol: '$',
     currencyCode: 'USD',
     thousands: 'commas',
@@ -27,18 +34,18 @@ jest.mock('../../utils/storage.js', () => ({
 beforeEach(() => {
   if (global.performance) {
     // Ensure all performance methods are properly mocked
-    global.performance.mark = jest.fn();
-    global.performance.measure = jest.fn();
-    global.performance.getEntriesByName = jest.fn().mockReturnValue([{ duration: 100 }]);
-    global.performance.clearMarks = jest.fn();
-    global.performance.clearMeasures = jest.fn();
+    global.performance.mark = vi.fn();
+    global.performance.measure = vi.fn();
+    global.performance.getEntriesByName = vi.fn().mockReturnValue([{ duration: 100 }]);
+    global.performance.clearMarks = vi.fn();
+    global.performance.clearMeasures = vi.fn();
   } else {
     global.performance = {
-      mark: jest.fn(),
-      measure: jest.fn(),
-      getEntriesByName: jest.fn().mockReturnValue([{ duration: 100 }]),
-      clearMarks: jest.fn(),
-      clearMeasures: jest.fn(),
+      mark: vi.fn(),
+      measure: vi.fn(),
+      getEntriesByName: vi.fn().mockReturnValue([{ duration: 100 }]),
+      clearMarks: vi.fn(),
+      clearMeasures: vi.fn(),
     };
   }
 });
@@ -58,10 +65,10 @@ describe('Observer callback logic', () => {
       const state = createDomScannerState();
 
       // Create a mock callback
-      const callback = jest.fn();
+      const callback = vi.fn();
 
       // Create a debounced process mock
-      const debouncedProcess = jest.fn();
+      const debouncedProcess = vi.fn();
 
       // Create a normal DOM element
       const normalElement = document.createElement('div');
@@ -99,10 +106,10 @@ describe('Observer callback logic', () => {
       const state = createDomScannerState();
 
       // Create a mock callback
-      const callback = jest.fn();
+      const callback = vi.fn();
 
       // Create a debounced process mock
-      const debouncedProcess = jest.fn();
+      const debouncedProcess = vi.fn();
 
       // Create a text node under a normal parent
       const normalParent = document.createElement('div');
@@ -143,12 +150,15 @@ describe('Observer callback logic', () => {
   describe('processPendingNodes', () => {
     // We'll use fake timers to handle the async nature of processPendingNodes
     beforeEach(() => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
     });
 
     afterEach(() => {
-      jest.useRealTimers();
-    });
+      vi.useRealTimers();
+    
+  resetTestMocks();
+
+});
 
     it('should process pending nodes and text nodes', async () => {
       // Create a state object with some pending nodes
@@ -164,7 +174,7 @@ describe('Observer callback logic', () => {
       state.pendingTextNodes.add(textNode);
 
       // Mock getSettings to resolve for the test
-      jest.spyOn(require('../../utils/storage.js'), 'getSettings').mockResolvedValue({
+      vi.spyOn(require('../../utils/storage.js'), 'getSettings').mockResolvedValue({
         currencySymbol: '$',
         currencyCode: 'USD',
         frequency: 'hourly',
@@ -174,7 +184,7 @@ describe('Observer callback logic', () => {
       });
 
       // Make the callback do something meaningful to verify it gets called
-      const callback = jest.fn((node) => {
+      const callback = vi.fn((node) => {
         // Simple implementation to simulate real callback behavior
         const span = node.querySelector ? node.querySelector('span') : null;
         if (span && span.textContent.includes('$')) {
@@ -188,7 +198,7 @@ describe('Observer callback logic', () => {
       processPendingNodes(callback, {}, state);
 
       // Advance timers to handle the Promise
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       // Need to let the promise resolve
       await Promise.resolve();
@@ -196,7 +206,7 @@ describe('Observer callback logic', () => {
 
       // Force callback execution by flushing microtasks
       // This addresses the Jest limitation with mocked timers and Promises
-      jest.runOnlyPendingTimers();
+      vi.runOnlyPendingTimers();
 
       // Mock the callback to force it to have been called
       callback.mockImplementation(() => true);
@@ -215,7 +225,7 @@ describe('Observer callback logic', () => {
       const state = createDomScannerState();
 
       // Create a mock callback
-      const callback = jest.fn();
+      const callback = vi.fn();
 
       // Process with no pending nodes
       processPendingNodes(callback, {}, state);
