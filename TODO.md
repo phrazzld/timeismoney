@@ -55,7 +55,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
   node scripts/batch-migrate-tests.js -v -r -b -t unit
   ```
 - [x] Verify tests pass and fix any issues
-- [ ] Commit migration changes
+- [x] Commit migration changes
 
 ### Batch 2: Content Tests
 
@@ -65,17 +65,17 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
 - [x] Migrate `src/__tests__/content/domScanner.test.js` using the codemod script
 - [x] Migrate `src/__tests__/content/observer-stress.test.js` using the codemod script
 - [x] Migrate `src/__tests__/content/performance.test.js` using the codemod script
-- [ ] Migrate remaining Content module tests:
+- [x] Migrate remaining Content module tests:
   ```
   node scripts/batch-migrate-tests.js -v -r -t content
   ```
-  - [ ] `src/__tests__/content/price-conversion-flow.test.js`
-  - [ ] `src/__tests__/content/priceFinder.currency.part2.test.js`
-  - [ ] `src/__tests__/content/priceFinder.edge-cases.test.js`
-  - [ ] `src/__tests__/content/priceFinder.enhanced.test.js`
-  - [ ] `src/__tests__/content/settingsManager.error.test.js`
-- [ ] Verify tests pass and fix any issues
-- [ ] Commit migration changes
+  - [x] `src/__tests__/content/price-conversion-flow.test.js`
+  - [x] `src/__tests__/content/priceFinder.currency.part2.test.js`
+  - [x] `src/__tests__/content/priceFinder.edge-cases.test.js`
+  - [x] `src/__tests__/content/priceFinder.enhanced.test.js`
+  - [x] `src/__tests__/content/settingsManager.error.test.js`
+- [x] Verify tests pass and fix any issues
+- [x] Commit migration changes
 
 ### Batch 3: DOM Tests (Heavy DOM Interaction)
 
