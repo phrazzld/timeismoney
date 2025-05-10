@@ -71,3 +71,11 @@ scripts/rename-test-files.sh
 **/*.refactored.*.test.js
 T*-task.md
 T*-completed.md
+
+# Migration temporary files
+**/*.bak
+**/*.bak.bak
+codemod-report-*.md
+migration-report-*.md
+*-plan.md
+*-task.md

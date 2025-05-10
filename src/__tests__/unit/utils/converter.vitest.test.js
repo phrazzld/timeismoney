@@ -3,7 +3,7 @@
  */
 
 import { convertToTime, formatTimeSnippet } from '../../../utils/converter.js';
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect } from '../../setup/vitest-imports.js';
 
 describe('convertToTime', () => {
   // Hourly wage conversion tests

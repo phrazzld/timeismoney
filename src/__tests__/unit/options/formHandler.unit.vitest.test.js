@@ -12,7 +12,7 @@ import {
   afterEach,
   vi,
 } from '../../../setup/vitest-imports.js';
-import { setupTestDom, resetTestMocks } from '../../../../vitest.setup.js';
+import { setupTestDom, resetTestMocks } from '../../../setup/vitest.setup.js';
 
 // Import the modules we want to test
 import {
@@ -30,6 +30,10 @@ import {
   validateDebounceInterval,
 } from '../../../options/validator';
 
+beforeEach(() => {
+  resetTestMocks();
+});
+
 describe('Options Form Validation', () => {
   beforeAll(() => {
     // Mock getMessage to return the key itself
@@ -42,8 +46,6 @@ describe('Options Form Validation', () => {
 
     // Set up DOM elements
     setupTestDom();
-
-    vi.clearAllMocks();
   });
 
   describe('Comprehensive validation tests', () => {
@@ -135,6 +137,8 @@ describe('Options Form Validation', () => {
     afterEach(() => {
       // Clean up mock
       vi.restoreAllMocks();
+
+      resetTestMocks();
     });
 
     test('saveSettings is not called when currency symbol validation fails', () => {

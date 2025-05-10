@@ -2,6 +2,7 @@
  * Tests for the parser.js utility
  */
 
+import { describe, test, expect } from '../../setup/vitest-imports.js';
 import { normalizeAmountString } from '../../../utils/parser';
 
 describe('normalizeAmountString', () => {

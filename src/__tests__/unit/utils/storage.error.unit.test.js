@@ -2,13 +2,15 @@
  * Comprehensive error simulation tests for storage.js
  * Tests error handling for Chrome storage operations
  */
+import { describe, it, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../setup/vitest.setup.js';
 import { getSettings, saveSettings, onSettingsChanged } from '../../../utils/storage.js';
 import { DEFAULT_SETTINGS } from '../../../utils/constants.js';
 
 describe('Storage Error Handling', () => {
   beforeEach(() => {
     // Clear all mocks before each test
-    jest.clearAllMocks();
+    resetTestMocks();
 
     // Remove any lastError that might be set from previous tests
     if (chrome.runtime.lastError) {
@@ -129,7 +131,7 @@ describe('Storage Error Handling', () => {
 
   describe('onSettingsChanged', () => {
     it('should call callback when settings change', () => {
-      const mockCallback = jest.fn();
+      const mockCallback = vi.fn();
       const mockChanges = {
         currencySymbol: { newValue: '€', oldValue: '$' },
         amount: { newValue: '25.00', oldValue: '20.00' },
@@ -149,7 +151,7 @@ describe('Storage Error Handling', () => {
     });
 
     it('should handle empty changes object', () => {
-      const mockCallback = jest.fn();
+      const mockCallback = vi.fn();
 
       onSettingsChanged(mockCallback);
 
@@ -162,7 +164,7 @@ describe('Storage Error Handling', () => {
     });
 
     it('should handle undefined or null new values', () => {
-      const mockCallback = jest.fn();
+      const mockCallback = vi.fn();
       const mockChanges = {
         currencySymbol: { newValue: null, oldValue: '$' },
         amount: { newValue: undefined, oldValue: '20.00' },

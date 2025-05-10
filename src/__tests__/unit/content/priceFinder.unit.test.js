@@ -2,8 +2,8 @@
  * Tests for the priceFinder module
  */
 
-import { describe, test, expect, beforeEach } from '../../setup/vitest-imports.js';
-import { resetTestMocks, setupTestDom } from '../../../vitest.setup.js';
+import { describe, test, expect, vi, beforeEach } from '../../setup/vitest-imports.js';
+import { resetTestMocks, setupTestDom } from '../../setup/vitest.setup.js';
 // Import mock functions for special test cases
 import { mockBuildMatchPattern, mockBuildReverseMatchPattern } from './priceFinder.test.patch.js';
 
@@ -75,7 +75,7 @@ describe('Match Pattern Tests', () => {
       buildMatchPattern('$', 'USD', ',', '\\.');
 
       // Spy on Map.prototype.get to verify cache usage
-      const getSpy = jest.spyOn(Map.prototype, 'get');
+      const getSpy = vi.spyOn(Map.prototype, 'get');
 
       buildMatchPattern('$', 'USD', ',', '\\.');
 
@@ -116,7 +116,7 @@ describe('Match Pattern Tests', () => {
       buildReverseMatchPattern('$', 'USD', ',', '\\.');
 
       // Spy on Map.prototype.get to verify cache usage
-      const getSpy = jest.spyOn(Map.prototype, 'get');
+      const getSpy = vi.spyOn(Map.prototype, 'get');
 
       buildReverseMatchPattern('$', 'USD', ',', '\\.');
 

@@ -3,7 +3,7 @@
  * Split from main test file to reduce worker load and prevent timeouts
  */
 
-import { describe, test, expect, beforeEach } from '../../setup/vitest-imports.js';
+import { describe, test, expect, beforeEach, vi } from '../../setup/vitest-imports.js';
 import { resetTestMocks, setupTestDom } from '../../setup/vitest.setup.js';
 import { buildThousandsString, buildDecimalString } from '../../../content/priceFinder';
 
@@ -34,7 +34,7 @@ describe('Basic Pattern Tests', () => {
       buildThousandsString('commas');
 
       // Spy on Map.prototype.get to verify cache usage
-      const getSpy = jest.spyOn(Map.prototype, 'get');
+      const getSpy = vi.spyOn(Map.prototype, 'get');
 
       buildThousandsString('commas');
 
@@ -61,7 +61,7 @@ describe('Basic Pattern Tests', () => {
       buildDecimalString('dot');
 
       // Spy on Map.prototype.get to verify cache usage
-      const getSpy = jest.spyOn(Map.prototype, 'get');
+      const getSpy = vi.spyOn(Map.prototype, 'get');
 
       buildDecimalString('dot');
 

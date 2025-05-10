@@ -4,13 +4,14 @@
  * NOTE: This file replaces the original priceFinder.vitest.test.js which caused memory issues
  * due to complex regex patterns. Further optimization will be done in T016 phase.
  */
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { describe, test, expect, vi, beforeEach } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../setup/vitest.setup.js';
 import { buildMatchPattern, buildReverseMatchPattern } from '../../../content/priceFinder';
 
 describe('Match Pattern Tests (Simplified)', () => {
   beforeEach(() => {
     // Reset mocks
-    vi.clearAllMocks();
+    resetTestMocks();
   });
 
   describe('buildMatchPattern', () => {

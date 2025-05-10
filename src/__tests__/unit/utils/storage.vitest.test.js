@@ -2,7 +2,7 @@
  * Tests for the storage utility functions with Vitest
  */
 import { getSettings, saveSettings } from '../../../utils/storage';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from '../../setup/vitest-imports.js';
 import chromeMock, { resetChromeMocks } from '../../mocks/chrome-api.mock.js';
 
 // Make the mock available as a global

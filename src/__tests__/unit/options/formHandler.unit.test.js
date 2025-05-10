@@ -1,7 +1,17 @@
 /**
  * Unit tests for options form validation
  */
-/* global setupTestDom, resetTestMocks */
+
+import {
+  describe,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  vi,
+  beforeAll,
+} from '../../setup/vitest-imports.js';
+import { resetTestMocks, setupTestDom } from '../../setup/vitest.setup.js';
 
 // Import the modules we want to test
 import {
@@ -22,7 +32,7 @@ import {
 describe('Options Form Validation', () => {
   beforeAll(() => {
     // Mock getMessage to return the key itself
-    chrome.i18n.getMessage = jest.fn((key) => key);
+    chrome.i18n.getMessage = vi.fn((key) => key);
   });
 
   beforeEach(() => {
@@ -31,8 +41,6 @@ describe('Options Form Validation', () => {
 
     // Set up DOM elements
     setupTestDom();
-
-    jest.clearAllMocks();
   });
 
   describe('Comprehensive validation tests', () => {
@@ -116,19 +124,19 @@ describe('Options Form Validation', () => {
   describe('Validation and saving behavior tests', () => {
     beforeEach(() => {
       // Mock saveSettings so we can verify it's called or not called
-      jest.spyOn(require('../../utils/storage.js'), 'saveSettings').mockImplementation(() => {
+      vi.spyOn(require('../../../utils/storage.js'), 'saveSettings').mockImplementation(() => {
         return Promise.resolve();
       });
     });
 
     afterEach(() => {
       // Clean up mock
-      jest.restoreAllMocks();
+      vi.restoreAllMocks();
     });
 
     test('saveSettings is not called when currency symbol validation fails', () => {
       // Mock all the DOM elements and values
-      document.getElementById = jest.fn((id) => {
+      document.getElementById = vi.fn((id) => {
         if (id === 'currency-symbol') return { value: '' }; // Invalid value to trigger validation error
         if (id === 'currency-code') return { value: 'USD' };
         if (id === 'frequency') return { value: 'hourly' };
@@ -144,13 +152,13 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings was NOT called due to validation failure
-      const { saveSettings } = require('../../utils/storage.js');
+      const { saveSettings } = require('../../../utils/storage.js');
       expect(saveSettings).not.toHaveBeenCalled();
     });
 
     test('saveSettings is not called when currency code validation fails', () => {
       // Mock all the DOM elements and values
-      document.getElementById = jest.fn((id) => {
+      document.getElementById = vi.fn((id) => {
         if (id === 'currency-symbol') return { value: '$' };
         if (id === 'currency-code') return { value: 'USDT' }; // Invalid: 4 chars instead of 3
         if (id === 'frequency') return { value: 'hourly' };
@@ -166,13 +174,13 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings was NOT called due to validation failure
-      const { saveSettings } = require('../../utils/storage.js');
+      const { saveSettings } = require('../../../utils/storage.js');
       expect(saveSettings).not.toHaveBeenCalled();
     });
 
     test('saveSettings is not called when amount validation fails', () => {
       // Mock all the DOM elements and values
-      document.getElementById = jest.fn((id) => {
+      document.getElementById = vi.fn((id) => {
         if (id === 'currency-symbol') return { value: '$' };
         if (id === 'currency-code') return { value: 'USD' };
         if (id === 'frequency') return { value: 'hourly' };
@@ -188,13 +196,13 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings was NOT called due to validation failure
-      const { saveSettings } = require('../../utils/storage.js');
+      const { saveSettings } = require('../../../utils/storage.js');
       expect(saveSettings).not.toHaveBeenCalled();
     });
 
     test('saveSettings is not called when debounce interval validation fails', () => {
       // Mock all the DOM elements and values
-      document.getElementById = jest.fn((id) => {
+      document.getElementById = vi.fn((id) => {
         if (id === 'currency-symbol') return { value: '$' };
         if (id === 'currency-code') return { value: 'USD' };
         if (id === 'frequency') return { value: 'hourly' };
@@ -210,13 +218,13 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings was NOT called due to validation failure
-      const { saveSettings } = require('../../utils/storage.js');
+      const { saveSettings } = require('../../../utils/storage.js');
       expect(saveSettings).not.toHaveBeenCalled();
     });
 
     test('window.close() is not called when validation fails', () => {
       // Mock all the DOM elements and values
-      document.getElementById = jest.fn((id) => {
+      document.getElementById = vi.fn((id) => {
         if (id === 'currency-symbol') return { value: '' }; // Invalid value to trigger validation error
         if (id === 'currency-code') return { value: 'USD' };
         if (id === 'frequency') return { value: 'hourly' };
@@ -230,7 +238,7 @@ describe('Options Form Validation', () => {
 
       // Spy on window.close
       const originalWindowClose = window.close;
-      window.close = jest.fn();
+      window.close = vi.fn();
 
       // Call saveOptions
       saveOptions();
@@ -244,7 +252,7 @@ describe('Options Form Validation', () => {
 
     test('saveSettings is called when all validations pass', () => {
       // Mock all the DOM elements and values with valid data
-      document.getElementById = jest.fn((id) => {
+      document.getElementById = vi.fn((id) => {
         if (id === 'currency-symbol') return { value: '$' };
         if (id === 'currency-code') return { value: 'USD' };
         if (id === 'frequency') return { value: 'hourly' };
@@ -260,7 +268,7 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings WAS called with valid settings
-      const { saveSettings } = require('../../utils/storage.js');
+      const { saveSettings } = require('../../../utils/storage.js');
       expect(saveSettings).toHaveBeenCalledWith(
         expect.objectContaining({
           currencySymbol: '$',
@@ -275,7 +283,7 @@ describe('Options Form Validation', () => {
       global.document = {
         body: {},
         createElement: () => ({}),
-        getElementById: jest.fn((id) => {
+        getElementById: vi.fn((id) => {
           if (id === 'currency-symbol') return { value: '$' };
           if (id === 'currency-code') return { value: 'USD' };
           if (id === 'frequency') return { value: 'hourly' };
@@ -290,10 +298,10 @@ describe('Options Form Validation', () => {
 
       // Spy on window.close
       const originalWindowClose = window.close;
-      window.close = jest.fn();
+      window.close = vi.fn();
 
       // Mock saveSettings to resolve successfully
-      jest.spyOn(require('../../utils/storage.js'), 'saveSettings').mockImplementation(() => {
+      vi.spyOn(require('../../../utils/storage.js'), 'saveSettings').mockImplementation(() => {
         return Promise.resolve();
       });
 
@@ -369,7 +377,7 @@ describe('Options Form Validation', () => {
       global.document = {
         body: {},
         createElement: () => ({}),
-        getElementById: jest.fn((id) => {
+        getElementById: vi.fn((id) => {
           if (id === 'currency-symbol') return { value: '<script>$</script>' };
           if (id === 'currency-code') return { value: 'USD<script>' };
           if (id === 'frequency') return { value: 'hourly' };

@@ -3,6 +3,7 @@
  * Ensures all functions from both original modules work correctly
  */
 
+import { describe, test, expect } from '../../setup/vitest-imports.js';
 import {
   normalizePrice,
   calculateHourlyWage,

@@ -3,6 +3,8 @@
  * Specifically focused on extreme values, unusual inputs, and boundary conditions
  */
 
+import { describe, test, expect, vi } from '../../setup/vitest-imports.js';
+
 import {
   normalizePrice,
   calculateHourlyWage,
@@ -14,11 +16,11 @@ import {
 } from '../../../utils/converter';
 
 // Mock logger to prevent console output during tests
-jest.mock('../../utils/logger', () => ({
-  error: jest.fn(),
-  warn: jest.fn(),
-  info: jest.fn(),
-  debug: jest.fn(),
+vi.mock('../../utils/logger', () => ({
+  error: vi.fn(),
+  warn: vi.fn(),
+  info: vi.fn(),
+  debug: vi.fn(),
 }));
 
 describe('Edge cases: normalizePrice', () => {

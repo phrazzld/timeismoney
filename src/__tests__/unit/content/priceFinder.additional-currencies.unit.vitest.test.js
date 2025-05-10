@@ -22,15 +22,15 @@ describe('Additional Currencies', () => {
     test('matches Rupee with ₹ symbol', () => {
       const pattern = mockBuildMatchPattern('₹', 'INR', ',', '\\.');
 
-      expect('₹123.45'.match(pattern)).toBeTruthy();
-      expect('₹1,23,456.78'.match(pattern)).toBeTruthy(); // Indian format can use different grouping
+      expect(pattern.test('₹123.45')).toBeTruthy();
+      expect(pattern.test('₹1,23,456.78')).toBeTruthy(); // Indian format can use different grouping
     });
 
     test('matches Rupee with currency code', () => {
       const pattern = mockBuildMatchPattern('₹', 'INR', ',', '\\.');
 
-      expect('INR 123.45'.match(pattern)).toBeTruthy();
-      expect('123.45 INR'.match(pattern)).toBeTruthy();
+      expect(pattern.test('INR 123.45')).toBeTruthy();
+      expect(pattern.test('123.45 INR')).toBeTruthy();
     });
   });
 
@@ -38,9 +38,9 @@ describe('Additional Currencies', () => {
     test('matches Swiss Franc amount', () => {
       const pattern = mockBuildMatchPattern('Fr', 'CHF', '\\.', ',');
 
-      expect('Fr 123,45'.match(pattern)).toBeTruthy();
-      expect('123,45 Fr'.match(pattern)).toBeTruthy();
-      expect('CHF 123,45'.match(pattern)).toBeTruthy();
+      expect(pattern.test('Fr 123,45')).toBeTruthy();
+      expect(pattern.test('123,45 Fr')).toBeTruthy();
+      expect(pattern.test('CHF 123,45')).toBeTruthy();
     });
   });
 
@@ -48,9 +48,9 @@ describe('Additional Currencies', () => {
     test('matches Swedish Krona amount', () => {
       const pattern = mockBuildMatchPattern('kr', 'SEK', '\\.', ',');
 
-      expect('123,45 kr'.match(pattern)).toBeTruthy();
-      expect('1.234,56 kr'.match(pattern)).toBeTruthy();
-      expect('SEK 123,45'.match(pattern)).toBeTruthy();
+      expect(pattern.test('123,45 kr')).toBeTruthy();
+      expect(pattern.test('1.234,56 kr')).toBeTruthy();
+      expect(pattern.test('SEK 123,45')).toBeTruthy();
     });
   });
 
@@ -58,9 +58,9 @@ describe('Additional Currencies', () => {
     test('matches Yuan amount with symbol', () => {
       const pattern = mockBuildMatchPattern('元', 'CNY', ',', '\\.');
 
-      expect('123.45 元'.match(pattern)).toBeTruthy();
-      expect('元 123.45'.match(pattern)).toBeTruthy();
-      expect('CNY 123.45'.match(pattern)).toBeTruthy();
+      expect(pattern.test('123.45 元')).toBeTruthy();
+      expect(pattern.test('元 123.45')).toBeTruthy();
+      expect(pattern.test('CNY 123.45')).toBeTruthy();
     });
   });
 
@@ -68,9 +68,9 @@ describe('Additional Currencies', () => {
     test('matches Won amount with symbol', () => {
       const pattern = mockBuildMatchPattern('₩', 'KRW', ',', '\\.');
 
-      expect('₩1000'.match(pattern)).toBeTruthy();
-      expect('₩1,000'.match(pattern)).toBeTruthy();
-      expect('KRW 1000'.match(pattern)).toBeTruthy();
+      expect(pattern.test('₩1000')).toBeTruthy();
+      expect(pattern.test('₩1,000')).toBeTruthy();
+      expect(pattern.test('KRW 1000')).toBeTruthy();
     });
   });
 
@@ -78,17 +78,17 @@ describe('Additional Currencies', () => {
     test('matches Norwegian Krone amount', () => {
       const pattern = mockBuildMatchPattern('kr', 'NOK', '\\.', ',');
 
-      expect('123,45 kr'.match(pattern)).toBeTruthy();
-      expect('1.234,56 kr'.match(pattern)).toBeTruthy();
-      expect('NOK 123,45'.match(pattern)).toBeTruthy();
+      expect(pattern.test('123,45 kr')).toBeTruthy();
+      expect(pattern.test('1.234,56 kr')).toBeTruthy();
+      expect(pattern.test('NOK 123,45')).toBeTruthy();
     });
 
     test('matches Danish Krone amount', () => {
       const pattern = mockBuildMatchPattern('kr', 'DKK', '\\.', ',');
 
-      expect('123,45 kr'.match(pattern)).toBeTruthy();
-      expect('1.234,56 kr'.match(pattern)).toBeTruthy();
-      expect('DKK 123,45'.match(pattern)).toBeTruthy();
+      expect(pattern.test('123,45 kr')).toBeTruthy();
+      expect(pattern.test('1.234,56 kr')).toBeTruthy();
+      expect(pattern.test('DKK 123,45')).toBeTruthy();
     });
   });
 
@@ -96,9 +96,9 @@ describe('Additional Currencies', () => {
     test('matches Złoty amount with symbol', () => {
       const pattern = mockBuildMatchPattern('zł', 'PLN', '\\.', ',');
 
-      expect('123,45 zł'.match(pattern)).toBeTruthy();
-      expect('1.234,56 zł'.match(pattern)).toBeTruthy();
-      expect('PLN 123,45'.match(pattern)).toBeTruthy();
+      expect(pattern.test('123,45 zł')).toBeTruthy();
+      expect(pattern.test('1.234,56 zł')).toBeTruthy();
+      expect(pattern.test('PLN 123,45')).toBeTruthy();
     });
   });
 });

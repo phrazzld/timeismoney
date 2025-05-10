@@ -4,7 +4,7 @@
  */
 import { getSettings, saveSettings, onSettingsChanged } from '../../../utils/storage.js';
 import { DEFAULT_SETTINGS } from '../../../utils/constants.js';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
 import chromeMock, { resetChromeMocks } from '../../mocks/chrome-api.mock.js';
 
 // Make the mock available as a global

@@ -3,7 +3,7 @@
  */
 
 import { normalizeAmountString } from '../../../utils/parser';
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect } from '../../setup/vitest-imports.js';
 
 describe('normalizeAmountString', () => {
   // Base case - no normalization needed

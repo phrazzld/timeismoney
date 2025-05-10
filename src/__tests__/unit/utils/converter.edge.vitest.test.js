@@ -12,7 +12,7 @@ import {
   formatPriceWithTime,
   convertPriceToTimeString,
 } from '../../../utils/converter';
-import { describe, test, expect, vi } from 'vitest';
+import { describe, test, expect, vi } from '../../setup/vitest-imports.js';
 
 // Mock logger to prevent console output during tests
 vi.mock('../../../utils/logger', () => ({

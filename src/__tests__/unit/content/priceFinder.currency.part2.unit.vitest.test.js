@@ -41,14 +41,14 @@ describe('British Pound Format Tests', () => {
   test('matches Pound amount with symbol before', () => {
     const pattern = mockBuildMatchPattern('£', 'GBP', ',', '\\.');
 
-    expect('£12.34'.match(pattern)).toBeTruthy();
-    expect('£0.99'.match(pattern)).toBeTruthy();
+    expect(pattern.test('£12.34')).toBeTruthy();
+    expect(pattern.test('£0.99')).toBeTruthy();
   });
 
   test('matches Pound amount with thousands separator', () => {
     const pattern = mockBuildMatchPattern('£', 'GBP', ',', '\\.');
 
-    expect('£1,234.56'.match(pattern)).toBeTruthy();
-    expect('£1,234,567.89'.match(pattern)).toBeTruthy();
+    expect(pattern.test('£1,234.56')).toBeTruthy();
+    expect(pattern.test('£1,234,567.89')).toBeTruthy();
   });
 });

@@ -3,18 +3,33 @@
 ## Summary
 
 - Total test files: 104
-- Fully migrated: 1 (0.96%)
+- Fully migrated: 16 (15.38%)
 - Partially migrated: 71 (68.27%)
-- Not migrated: 30 (28.85%)
+- Not migrated: 15 (14.42%)
 - Unknown status: 2
 
 ## Migration Progress
 
-[---------------------------------- ] 0.96%
+[######-------------------------- ] 15.38%
 
 ## Fully Migrated Files
 
 - src/**tests**/integration/content/domScanner.vitest.test.js
+- src/**tests**/unit/content/priceFinder.additional-currencies.unit.vitest.test.js
+- src/**tests**/unit/content/priceFinder.advanced.unit.vitest.test.js
+- src/**tests**/unit/content/priceFinder.basic-patterns.unit.vitest.test.js
+- src/**tests**/unit/content/priceFinder.currency.part1.unit.vitest.test.js
+- src/**tests**/unit/content/priceFinder.currency.part2.unit.vitest.test.js
+- src/**tests**/unit/content/priceFinder.currency.part3.unit.vitest.test.js
+- src/**tests**/unit/content/priceFinder.currency.unit.vitest.test.js
+- src/**tests**/unit/content/priceFinder.edge-cases.unit.vitest.test.js
+- src/**tests**/unit/content/priceFinder.enhanced.unit.vitest.test.js
+- src/**tests**/unit/content/priceFinder.findPrices.unit.vitest.test.js
+- src/**tests**/unit/content/priceFinder.pattern.part1.unit.vitest.test.js
+- src/**tests**/unit/content/priceFinder.pattern.part2.unit.vitest.test.js
+- src/**tests**/unit/content/priceFinder.simple.vitest.test.js
+- src/**tests**/unit/content/priceFinder.unit.vitest.test.js
+- src/**tests**/unit/content/priceFinder.vitest.test.js
 
 ## Partially Migrated Files
 
@@ -63,22 +78,6 @@ These files contain both Jest and Vitest patterns and should be cleaned up:
 - src/**tests**/options/formHandler.storage.direct.test.js
 - src/**tests**/options/formHandler.storage.test.js
 - src/**tests**/options/formHandler.test.js
-- src/**tests**/unit/content/priceFinder.additional-currencies.unit.test.js
-- src/**tests**/unit/content/priceFinder.advanced.unit.test.js
-- src/**tests**/unit/content/priceFinder.basic-patterns.unit.test.js
-- src/**tests**/unit/content/priceFinder.currency.part1.unit.test.js
-- src/**tests**/unit/content/priceFinder.currency.part2.unit.test.js
-- src/**tests**/unit/content/priceFinder.currency.part3.unit.test.js
-- src/**tests**/unit/content/priceFinder.currency.unit.test.js
-- src/**tests**/unit/content/priceFinder.edge-cases.unit.test.js
-- src/**tests**/unit/content/priceFinder.enhanced.unit.test.js
-- src/**tests**/unit/content/priceFinder.findPrices.unit.test.js
-- src/**tests**/unit/content/priceFinder.pattern.part1.unit.test.js
-- src/**tests**/unit/content/priceFinder.pattern.part2.unit.test.js
-- src/**tests**/unit/content/priceFinder.simple.vitest.test.js
-- src/**tests**/unit/content/priceFinder.unit.test.js
-- src/**tests**/unit/content/priceFinder.unit.vitest.test.js
-- src/**tests**/unit/content/priceFinder.vitest.test.js
 - src/**tests**/unit/options/formHandler.unit.test.js
 - src/**tests**/unit/options/formHandler.unit.vitest.test.js
 - src/**tests**/unit/utils/converter.edge.unit.vitest.test.js

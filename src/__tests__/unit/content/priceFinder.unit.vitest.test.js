@@ -2,10 +2,18 @@
  * Tests for the priceFinder module
  */
 
-import { describe, test, expect, beforeEach, vi } from '../../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../../vitest.setup.js';
+import { describe, test, expect, beforeEach, vi, afterEach } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../setup/vitest.setup.js';
 // Import mock implementations from the Vitest test file
 import { buildMatchPattern, buildReverseMatchPattern } from '../../../content/priceFinder';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+
+afterEach(() => {
+  resetTestMocks();
+});
 
 // Simplified mock implementation for buildMatchPattern
 // eslint-disable-next-line no-unused-vars

@@ -3,9 +3,13 @@
  * Tests error handling for Chrome storage operations
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from '../../../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../../vitest.setup.js';
+import { resetTestMocks } from '../../../setup/vitest.setup.js';
 import { getSettings, saveSettings, onSettingsChanged } from '../../../utils/storage.js';
 import { DEFAULT_SETTINGS } from '../../../utils/constants.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
 
 describe('Storage Error Handling', () => {
   beforeEach(() => {

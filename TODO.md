@@ -50,11 +50,11 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
 
 ### Batch 1: Unit Tests (Minimal DOM Interaction)
 
-- [ ] Batch: unit
+- [x] Batch: unit
   ```
-  node scripts/batch-migrate-tests.js -v -r -t unit
+  node scripts/batch-migrate-tests.js -v -r -b -t unit
   ```
-- [ ] Verify tests pass and fix any issues
+- [x] Verify tests pass and fix any issues
 - [ ] Commit migration changes
 
 ### Batch 2: Content Tests

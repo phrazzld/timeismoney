@@ -78,23 +78,23 @@ describe('US Dollar Format Tests', () => {
   test('matches plain dollar amount', () => {
     const pattern = mockBuildMatchPattern('$', 'USD', ',', '\\.');
 
-    expect('$12.34'.match(pattern)).toBeTruthy();
-    expect('$0.99'.match(pattern)).toBeTruthy();
-    expect('$1'.match(pattern)).toBeTruthy();
+    expect(pattern.test('$12.34')).toBeTruthy();
+    expect(pattern.test('$0.99')).toBeTruthy();
+    expect(pattern.test('$1')).toBeTruthy();
   });
 
   test('matches dollar amount with thousands separator', () => {
     const pattern = mockBuildMatchPattern('$', 'USD', ',', '\\.');
 
-    expect('$1,234.56'.match(pattern)).toBeTruthy();
-    expect('$1,234,567.89'.match(pattern)).toBeTruthy();
+    expect(pattern.test('$1,234.56')).toBeTruthy();
+    expect(pattern.test('$1,234,567.89')).toBeTruthy();
   });
 
   test('matches dollar amount with dollar sign after the amount', () => {
     const pattern = mockBuildMatchPattern('$', 'USD', ',', '\\.');
 
-    expect('12.34$'.match(pattern)).toBeTruthy();
-    expect('1,234.56$'.match(pattern)).toBeTruthy();
+    expect(pattern.test('12.34$')).toBeTruthy();
+    expect(pattern.test('1,234.56$')).toBeTruthy();
   });
 
   test('extracts correct amount from dollar prices', () => {
@@ -111,29 +111,29 @@ describe('Euro Format Tests', () => {
   test('matches Euro amount with symbol before', () => {
     const pattern = mockBuildMatchPattern('€', 'EUR', '(\\s|\\.)', ',');
 
-    expect('€12,34'.match(pattern)).toBeTruthy();
-    expect('€0,99'.match(pattern)).toBeTruthy();
+    expect(pattern.test('€12,34')).toBeTruthy();
+    expect(pattern.test('€0,99')).toBeTruthy();
   });
 
   test('matches Euro amount with symbol after', () => {
     const pattern = mockBuildMatchPattern('€', 'EUR', '(\\s|\\.)', ',');
 
-    expect('12,34€'.match(pattern)).toBeTruthy();
-    expect('0,99€'.match(pattern)).toBeTruthy();
+    expect(pattern.test('12,34€')).toBeTruthy();
+    expect(pattern.test('0,99€')).toBeTruthy();
   });
 
   test('matches Euro amount with thousands separator (dot)', () => {
     const pattern = mockBuildMatchPattern('€', 'EUR', '(\\s|\\.)', ',');
 
-    expect('€1.234,56'.match(pattern)).toBeTruthy();
-    expect('1.234,56€'.match(pattern)).toBeTruthy();
+    expect(pattern.test('€1.234,56')).toBeTruthy();
+    expect(pattern.test('1.234,56€')).toBeTruthy();
   });
 
   test('matches Euro amount with thousands separator (space)', () => {
     const pattern = mockBuildMatchPattern('€', 'EUR', '(\\s|\\.)', ',');
 
-    expect('€1 234,56'.match(pattern)).toBeTruthy();
-    expect('1 234,56€'.match(pattern)).toBeTruthy();
+    expect(pattern.test('€1 234,56')).toBeTruthy();
+    expect(pattern.test('1 234,56€')).toBeTruthy();
   });
 
   test('extracts correct amount from Euro prices', () => {
@@ -151,15 +151,15 @@ describe('British Pound Format Tests', () => {
   test('matches Pound amount with symbol before', () => {
     const pattern = mockBuildMatchPattern('£', 'GBP', ',', '\\.');
 
-    expect('£12.34'.match(pattern)).toBeTruthy();
-    expect('£0.99'.match(pattern)).toBeTruthy();
+    expect(pattern.test('£12.34')).toBeTruthy();
+    expect(pattern.test('£0.99')).toBeTruthy();
   });
 
   test('matches Pound amount with thousands separator', () => {
     const pattern = mockBuildMatchPattern('£', 'GBP', ',', '\\.');
 
-    expect('£1,234.56'.match(pattern)).toBeTruthy();
-    expect('£1,234,567.89'.match(pattern)).toBeTruthy();
+    expect(pattern.test('£1,234.56')).toBeTruthy();
+    expect(pattern.test('£1,234,567.89')).toBeTruthy();
   });
 });
 
@@ -167,8 +167,8 @@ describe('Japanese Yen Format Tests', () => {
   test('matches Yen amount with symbol before', () => {
     const pattern = mockBuildMatchPattern('¥', 'JPY', ',', '\\.');
 
-    expect('¥1234'.match(pattern)).toBeTruthy();
-    expect('¥1,234'.match(pattern)).toBeTruthy();
+    expect(pattern.test('¥1234')).toBeTruthy();
+    expect(pattern.test('¥1,234')).toBeTruthy();
   });
 
   test('Yen typically has no decimal part', () => {
@@ -182,17 +182,17 @@ describe('Japanese Yen Format Tests', () => {
   test('matches large Yen amounts', () => {
     const pattern = mockBuildMatchPattern('¥', 'JPY', ',', '\\.');
 
-    expect('¥10000'.match(pattern)).toBeTruthy();
-    expect('¥1,000,000'.match(pattern)).toBeTruthy();
-    expect('¥1,234,567,890'.match(pattern)).toBeTruthy();
+    expect(pattern.test('¥10000')).toBeTruthy();
+    expect(pattern.test('¥1,000,000')).toBeTruthy();
+    expect(pattern.test('¥1,234,567,890')).toBeTruthy();
   });
 
   test('handles JPY currency code format', () => {
     const pattern = mockBuildMatchPattern('¥', 'JPY', ',', '\\.');
 
-    expect('JPY 1234'.match(pattern)).toBeTruthy();
-    expect('1234 JPY'.match(pattern)).toBeTruthy();
-    expect('JPY 1,234,567'.match(pattern)).toBeTruthy();
+    expect(pattern.test('JPY 1234')).toBeTruthy();
+    expect(pattern.test('1234 JPY')).toBeTruthy();
+    expect(pattern.test('JPY 1,234,567')).toBeTruthy();
   });
 });
 
@@ -203,22 +203,22 @@ describe('Currency Code Format Tests', () => {
   test('matches price with currency code before amount', () => {
     const pattern = mockBuildMatchPattern('$', 'USD', ',', '\\.');
 
-    expect('USD 12.34'.match(pattern)).toBeTruthy();
-    expect('USD 1,234.56'.match(pattern)).toBeTruthy();
+    expect(pattern.test('USD 12.34')).toBeTruthy();
+    expect(pattern.test('USD 1,234.56')).toBeTruthy();
   });
 
   test('matches price with currency code after amount', () => {
     const pattern = mockBuildMatchPattern('$', 'USD', ',', '\\.');
 
-    expect('12.34 USD'.match(pattern)).toBeTruthy();
-    expect('1,234.56 USD'.match(pattern)).toBeTruthy();
+    expect(pattern.test('12.34 USD')).toBeTruthy();
+    expect(pattern.test('1,234.56 USD')).toBeTruthy();
   });
 
   test('matches Euro with currency code', () => {
     const pattern = mockBuildMatchPattern('€', 'EUR', '(\\s|\\.)', ',');
 
-    expect('EUR 12,34'.match(pattern)).toBeTruthy();
-    expect('12,34 EUR'.match(pattern)).toBeTruthy();
+    expect(pattern.test('EUR 12,34')).toBeTruthy();
+    expect(pattern.test('12,34 EUR')).toBeTruthy();
   });
 });
 

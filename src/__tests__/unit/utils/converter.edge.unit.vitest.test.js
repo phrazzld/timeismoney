@@ -3,8 +3,15 @@
  * Specifically focused on extreme values, unusual inputs, and boundary conditions
  */
 
-import { describe, test, expect, vi, beforeEach } from '../../../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../../vitest.setup.js';
+import {
+  describe,
+  test,
+  expect,
+  vi,
+  beforeEach,
+  afterEach,
+} from '../../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../setup/vitest.setup.js';
 
 import {
   normalizePrice,
@@ -15,6 +22,14 @@ import {
   formatPriceWithTime,
   convertPriceToTimeString,
 } from '../../../utils/converter';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+
+afterEach(() => {
+  resetTestMocks();
+});
 
 // Mock logger to prevent console output during tests
 vi.mock('../../../utils/logger', () => ({

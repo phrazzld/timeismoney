@@ -3,7 +3,7 @@
  * to prevent worker termination
  */
 
-import { describe, test, expect, beforeEach } from '../../setup/vitest-imports.js';
+import { describe, test, expect, beforeEach, vi } from '../../setup/vitest-imports.js';
 import { resetTestMocks, setupTestDom } from '../../setup/vitest.setup.js';
 
 // Import mock functions for special test cases
@@ -25,16 +25,16 @@ describe('Match Pattern Tests Part 2', () => {
       // Use our mock function for special test cases
       const pattern = mockBuildMatchPattern('$', 'USD', ',', '\\.');
 
-      expect('USD 12.34'.match(pattern)).toBeTruthy();
-      expect('12.34 USD'.match(pattern)).toBeTruthy();
+      expect(pattern.test('USD 12.34')).toBeTruthy();
+      expect(pattern.test('12.34 USD')).toBeTruthy();
     });
 
     test('handles spaces between currency and amount', () => {
       // Use our mock function for special test cases
       const pattern = mockBuildMatchPattern('$', 'USD', ',', '\\.');
 
-      expect('$ 12.34'.match(pattern)).toBeTruthy();
-      expect('12.34 $'.match(pattern)).toBeTruthy();
+      expect(pattern.test('$ 12.34')).toBeTruthy();
+      expect(pattern.test('12.34 $')).toBeTruthy();
     });
   });
 
@@ -43,26 +43,26 @@ describe('Match Pattern Tests Part 2', () => {
       // Use our mock function for special test cases
       const pattern = mockBuildReverseMatchPattern('$', 'USD', ',', '\\.');
 
-      expect('$12.34 (0h 37m)'.match(pattern)).toBeTruthy();
-      expect('12.34$ (0h 37m)'.match(pattern)).toBeTruthy();
-      expect('$1,234.56 (8h 15m)'.match(pattern)).toBeTruthy();
+      expect(pattern.test('$12.34 (0h 37m)')).toBeTruthy();
+      expect(pattern.test('12.34$ (0h 37m)')).toBeTruthy();
+      expect(pattern.test('$1,234.56 (8h 15m)')).toBeTruthy();
     });
 
     test('does not match regular prices without annotations', () => {
       // Use our mock function for special test cases
       const pattern = mockBuildReverseMatchPattern('$', 'USD', ',', '\\.');
 
-      expect('$12.34'.match(pattern)).toBeNull();
-      expect('12.34$'.match(pattern)).toBeNull();
+      expect(pattern.test('$12.34')).toBeFalsy();
+      expect(pattern.test('12.34$')).toBeFalsy();
     });
 
     test('handles different currency formats', () => {
       // Use our mock function for special test cases
       const patternEuro = mockBuildReverseMatchPattern('€', 'EUR', '\\.', ',');
 
-      expect('€10,50 (2h 30m)'.match(patternEuro)).toBeTruthy();
-      expect('10,50€ (2h 30m)'.match(patternEuro)).toBeTruthy();
-      expect('EUR 10,50 (2h 30m)'.match(patternEuro)).toBeTruthy();
+      expect(patternEuro.test('€10,50 (2h 30m)')).toBeTruthy();
+      expect(patternEuro.test('10,50€ (2h 30m)')).toBeTruthy();
+      expect(patternEuro.test('EUR 10,50 (2h 30m)')).toBeTruthy();
     });
 
     test('uses cache for repeated calls', () => {
@@ -70,7 +70,7 @@ describe('Match Pattern Tests Part 2', () => {
       buildReverseMatchPattern('$', 'USD', ',', '\\.');
 
       // Spy on Map.prototype.get to verify cache usage
-      const getSpy = jest.spyOn(Map.prototype, 'get');
+      const getSpy = vi.spyOn(Map.prototype, 'get');
 
       buildReverseMatchPattern('$', 'USD', ',', '\\.');
 

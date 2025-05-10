@@ -1,12 +1,14 @@
 /**
  * Tests for the storage utility functions
  */
+import { describe, it, expect, beforeEach } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../setup/vitest.setup.js';
 import { getSettings, saveSettings } from '../../../utils/storage';
 
 describe('Storage Utilities', () => {
   beforeEach(() => {
     // Clear all mocks before each test
-    jest.clearAllMocks();
+    resetTestMocks();
   });
 
   describe('getSettings', () => {
