@@ -3,19 +3,29 @@
 ## Summary
 
 - Total test files: 104
-- Fully migrated: 2 (1.92%)
+- Fully migrated: 12 (11.54%)
 - Partially migrated: 88 (84.62%)
-- Not migrated: 13 (12.50%)
+- Not migrated: 3 (2.88%)
 - Unknown status: 1
 
 ## Migration Progress
 
-[------------------------------------------ ] 1.92%
+[####------------------------------------ ] 11.54%
 
 ## Fully Migrated Files
 
 - src/**tests**/content/priceFinder.advanced.vitest.test.js
 - src/**tests**/integration/content/domScanner.integration.vitest.test.js
+- src/**tests**/dom/content/performance.dom.vitest.test.js
+- src/**tests**/dom/content/observer-stress.dom.vitest.test.js
+- src/**tests**/dom/content/observer-callback.dom.vitest.test.js
+- src/**tests**/dom/content/observer-callback.refactored.dom.vitest.test.js
+- src/**tests**/content/observer-stress.vitest.test.js
+- src/**tests**/content/performance.vitest.test.js
+- src/**tests**/utils/converter.edge.vitest.test.js
+- src/**tests**/utils/storage.vitest.test.js
+- src/**tests**/utils/storage.error.vitest.test.js
+- src/**tests**/utils/parser.vitest.test.js
 
 ## Partially Migrated Files
 
@@ -112,19 +122,9 @@ These files contain both Jest and Vitest patterns and should be cleaned up:
 
 ## Unmigrated Files
 
-- src/**tests**/content/priceFinder.currency.part2.vitest.test.js
-- src/**tests**/content/priceFinder.edge-cases.vitest.test.js
-- src/**tests**/content/priceFinder.enhanced.vitest.test.js
-- src/**tests**/options/formHandler.error.test.js
-- src/**tests**/options/formHandler.xss.test.js
-- src/**tests**/popup/popup.error.test.js
-- src/**tests**/unit/utils/converter.edge.refactored.unit.vitest.test.js
-- src/**tests**/utils/converter.edge.test.js
-- src/**tests**/utils/converter.test.js
-- src/**tests**/utils/converter.unified.test.js
-- src/**tests**/utils/parser.test.js
-- src/**tests**/utils/storage.error.test.js
-- src/**tests**/utils/storage.test.js
+- src/**tests**/options/formHandler.test.js
+- src/**tests**/setup.test.js
+- src/**tests**/integration/options/formHandler.storage.integration.test.js
 
 ## Next Steps
 

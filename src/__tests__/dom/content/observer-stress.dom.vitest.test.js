@@ -7,21 +7,29 @@
  * 4. Resource cleanup to prevent memory leaks
  */
 
-import { vi } from '../../setup/vitest-imports.js';
+// Import vitest functions first
+import {
+  vi,
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+} from '../../setup/vitest-imports.js';
 
-// Mock storage.js module
+// Mocks must come after imports but before importing the modules they mock
 vi.mock('../../../utils/storage.js', () => ({
-  getSettings: vi.fn(() => Promise.resolve({
+  getSettings: vi.fn().mockResolvedValue({
     currencySymbol: '$',
     currencyCode: 'USD',
     thousands: 'commas',
     decimal: 'dot',
     frequency: 'hourly',
     amount: '30',
-  })),
+  }),
 }));
-
-import { describe, it, test, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
+import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
 import {
   // Removing unused imports to fix linting issues
   startObserver,
@@ -29,13 +37,11 @@ import {
   processMutations,
   createDomScannerState,
 } from '../../../content/domScanner.js';
-import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
 import { MAX_PENDING_NODES } from '../../../utils/constants.js';
 
 beforeEach(() => {
   resetTestMocks();
 });
-
 
 // Create a mock MutationObserver class
 class MockMutationObserver {
@@ -96,7 +102,7 @@ describe('Observer Stress and Cleanup Tests', () => {
   beforeEach(() => {
     // Reset test mocks
     resetTestMocks();
-    
+
     // Reset the DOM
     document.body.innerHTML = '<div id="root"></div>';
 
@@ -129,8 +135,7 @@ describe('Observer Stress and Cleanup Tests', () => {
 
     // Clear mocks
     resetTestMocks();
-  
-});
+  });
 
   describe('stopObserver cleanup functionality', () => {
     it('should properly clean up all resources when stopping the observer', () => {
@@ -199,7 +204,7 @@ describe('Observer Stress and Cleanup Tests', () => {
       state.domObserver = {
         disconnect: () => {
           throw new Error('Simulated disconnect error');
-        }
+        },
       };
 
       // Add some pending nodes
@@ -221,7 +226,7 @@ describe('Observer Stress and Cleanup Tests', () => {
   });
 
   describe('Stress test with rapid mutations', () => {
-    it('should handle many mutations in quick succession', async () => {
+    it('should handle many mutations in quick succession', () => {
       // Create a state with an active observer
       const state = createDomScannerState();
       const processedNodes = [];
@@ -261,9 +266,6 @@ describe('Observer Stress and Cleanup Tests', () => {
 
       // Advance timers to trigger the debounced processing
       vi.advanceTimersByTime(200);
-
-      // Wait for the Promise in processPendingNodes to resolve
-      await Promise.resolve();
 
       // Verify queues were processed and cleared
       expect(state.pendingNodes.size).toBe(0);
@@ -311,7 +313,7 @@ describe('Observer Stress and Cleanup Tests', () => {
       try {
         // Clear the pendingNodes to ensure we start with an empty set
         state.pendingNodes.clear();
-        
+
         // Process the mutations with our mock debounced function
         processMutations(mutations, callback, {}, state, mockDebouncedFn);
 
@@ -333,7 +335,7 @@ describe('Observer Stress and Cleanup Tests', () => {
   });
 
   describe('Edge cases and resource management', () => {
-    it('should handle stopping the observer during active processing', async () => {
+    it('should handle stopping the observer during active processing', () => {
       // Create a state with an active observer
       const state = createDomScannerState();
       const callback = vi.fn();

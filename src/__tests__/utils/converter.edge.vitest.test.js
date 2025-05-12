@@ -2,19 +2,7 @@
  * Edge case tests for converter.js
  * Specifically focused on extreme values, unusual inputs, and boundary conditions
  */
-
-// IMPORTANT: vi.mock must be called before any imports
 import { vi, describe, it, test, expect, beforeEach, afterEach } from '../setup/vitest-imports.js';
-
-// Mock logger to prevent console output during tests
-vi.mock('../../utils/logger', () => {
-  return {
-    error: vi.fn(),
-    warn: vi.fn(),
-    info: vi.fn(),
-    debug: vi.fn(),
-  };
-});
 import { resetTestMocks } from '../../../vitest.setup.js';
 
 import {
@@ -30,6 +18,7 @@ import {
 beforeEach(() => {
   resetTestMocks();
 });
+
 afterEach(() => {
   resetTestMocks();
 });

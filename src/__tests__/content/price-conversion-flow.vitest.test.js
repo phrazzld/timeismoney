@@ -142,7 +142,6 @@ describe('Price Conversion Integration Flow', () => {
     const convertedElements = document.querySelectorAll(`.${CONVERTED_PRICE_CLASS}`);
     expect(convertedElements.length).toBe(3);
 
-    // The actual calculated value may be different in Vitest vs Jest
     // Let's make the test more flexible to handle implementation differences
     expect(convertedElements[0].textContent).toContain('$10.99');
 

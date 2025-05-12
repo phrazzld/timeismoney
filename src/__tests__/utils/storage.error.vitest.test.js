@@ -5,17 +5,11 @@
 import { vi, describe, it, test, expect, beforeEach, afterEach } from '../setup/vitest-imports.js';
 import { resetTestMocks } from '../../../vitest.setup.js';
 import { DEFAULT_SETTINGS } from '../../utils/constants.js';
-
-// Need to mock before import to avoid actual Chrome API calls
-vi.mock('../../utils/logger', () => ({
-  error: vi.fn(),
-  warn: vi.fn(),
-  info: vi.fn(),
-  debug: vi.fn(),
-}));
-
-// Import after mocking dependencies
 import { getSettings, saveSettings, onSettingsChanged } from '../../utils/storage.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
 
 describe('Storage Error Handling', () => {
   beforeEach(() => {

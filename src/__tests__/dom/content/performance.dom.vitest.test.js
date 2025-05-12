@@ -2,30 +2,39 @@
  * Performance tests for DOM scanning optimizations
  */
 
-import { vi } from '../../setup/vitest-imports.js';
+// Import vitest functions first
+import {
+  vi,
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+} from '../../setup/vitest-imports.js';
 
-// Mock storage.js module before other imports
-vi.mock('../../../utils/storage.js', () => {
-  return {
-    getSettings: vi.fn(() => Promise.resolve({
-      currencySymbol: '$',
-      currencyCode: 'USD',
-      thousands: 'commas',
-      decimal: 'dot',
-      frequency: 'hourly',
-      amount: '30',
-    }))
-  };
-});
-
-import { describe, it, test, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
+// Mocks must come after imports but before importing the modules they mock
+vi.mock('../../../utils/storage.js', () => ({
+  getSettings: vi.fn().mockResolvedValue({
+    currencySymbol: '$',
+    currencyCode: 'USD',
+    thousands: 'commas',
+    decimal: 'dot',
+    frequency: 'hourly',
+    amount: '30',
+  }),
+}));
 import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
-import { walk, startObserver, stopObserver, createDomScannerState } from '../../../content/domScanner';
+import {
+  walk,
+  startObserver,
+  stopObserver,
+  createDomScannerState,
+} from '../../../content/domScanner';
 
 beforeEach(() => {
   resetTestMocks();
 });
-
 
 /**
  * Creates a test DOM structure with the specified number of price elements
@@ -82,7 +91,7 @@ describe('DOM Scanning Performance', () => {
 
     // Reset all mocks
     resetTestMocks();
-    
+
     // Mock performance API
     global.performance = {
       mark: vi.fn(),
@@ -92,13 +101,13 @@ describe('DOM Scanning Performance', () => {
       clearMeasures: vi.fn(),
     };
   });
-  
+
   afterEach(() => {
     vi.restoreAllMocks();
-  
-  vi.useRealTimers();
-  resetTestMocks();
-});
+
+    vi.useRealTimers();
+    resetTestMocks();
+  });
 
   it('should process target nodes correctly with optimized scanning', async () => {
     // Create a simple test DOM with a fixed structure
@@ -129,10 +138,10 @@ describe('DOM Scanning Performance', () => {
 
     // Add test nodes to trigger the observer, with different identifiers
     const newPriceNodes = [];
-    
+
     // Create a state
     const state = createDomScannerState();
-    
+
     await new Promise((resolve) => {
       const observerProcessor = (node) => {
         if (node.nodeValue && node.nodeValue.includes('$')) {
@@ -159,13 +168,13 @@ describe('DOM Scanning Performance', () => {
 
       // Use fake timers to control async behavior
       vi.useFakeTimers();
-      
+
       // Advance timers to trigger processing
       vi.advanceTimersByTime(300);
-      
+
       // Restore real timers
       vi.useRealTimers();
-      
+
       // Stop the observer
       stopObserver(state);
       resolve();
@@ -186,7 +195,7 @@ describe('DOM Scanning Performance', () => {
     expect(totalPriceNodes).toBe(initialPriceNodeCount + newPriceNodes.length);
   });
 
-  it('should verify performance benefits of optimized scanning', async () => {
+  it('should verify performance benefits of optimized scanning', () => {
     // For this test, we'll focus on a theoretical analysis instead of timing tests
     // since the timeouts used in the observer make it difficult to get accurate timing
 
@@ -197,7 +206,7 @@ describe('DOM Scanning Performance', () => {
     try {
       // Count the number of elements that would need processing
       const allElements = testDOM.querySelectorAll('*');
-      
+
       // Create a typical usage scenario with multiple DOM mutations
       const mutations = [];
       for (let i = 0; i < 10; i++) {

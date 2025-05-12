@@ -2,22 +2,28 @@
  * Tests for the MutationObserver callback logic in domScanner
  * Shows how to test the observer callback logic independently
  */
-
-import { vi } from '../../setup/vitest-imports.js';
+// Import all Vitest functions from the helper file
+import {
+  vi,
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+} from '../../setup/vitest-imports.js';
 
 // Mock storage.js module
 vi.mock('../../../utils/storage.js', () => ({
-  getSettings: vi.fn(() => Promise.resolve({
+  getSettings: vi.fn().mockResolvedValue({
     currencySymbol: '$',
     currencyCode: 'USD',
     thousands: 'commas',
     decimal: 'dot',
     frequency: 'hourly',
     amount: '30',
-  })),
+  }),
 }));
-
-import { describe, it, test, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
 import {
   processMutations,
   processPendingNodes,
@@ -30,7 +36,6 @@ beforeEach(() => {
   resetTestMocks();
 });
 
-
 describe('Observer callback logic', () => {
   beforeEach(() => {
     // Reset mocks
@@ -38,7 +43,7 @@ describe('Observer callback logic', () => {
 
     // Set up DOM elements
     setupTestDom();
-    
+
     // Create/reset a mock for the performance API to ensure consistent behavior
     // This handles both success and error cases
     const mockEntry = { duration: 100 };
@@ -153,8 +158,7 @@ describe('Observer callback logic', () => {
     afterEach(() => {
       vi.useRealTimers();
       resetTestMocks();
-    
-});
+    });
 
     it('should process pending nodes and text nodes', async () => {
       // Create a state object with some pending nodes
@@ -183,15 +187,8 @@ describe('Observer callback logic', () => {
       // Process pending nodes
       processPendingNodes(callback, {}, state);
 
-      // Advance timers to handle the Promise
-      vi.runAllTimers();
-
-      // Need to let the promise resolve
-      await Promise.resolve();
-      await Promise.resolve();
-
-      // Force callback execution by flushing microtasks
-      vi.runOnlyPendingTimers();
+      // Run all timers and await any pending promises
+      await vi.runAllTimersAsync();
 
       // Call the callback directly (simulating it being called)
       callback('test', {});

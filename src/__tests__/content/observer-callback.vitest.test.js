@@ -2,23 +2,10 @@
  * Tests for the MutationObserver callback logic in domScanner
  * Shows how to test the observer callback logic independently
  */
-/* global setupTestDom, resetTestMocks */
+// Import all Vitest functions from the helper file
+// Hoisting of vi.mock will still work with this approach
+import { vi, describe, it, test, expect, beforeEach, afterEach } from '../setup/vitest-imports.js';
 
-import {
-  processMutations,
-  processPendingNodes,
-  createDomScannerState,
-} from '../../content/domScanner.js';
-import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../vitest.setup.js';
-import { CONVERTED_PRICE_CLASS } from '../../utils/constants.js';
-
-beforeEach(() => {
-  resetTestMocks();
-});
-
-
-// Mock the getSettings function
 vi.mock('../../utils/storage.js', () => ({
   getSettings: vi.fn().mockResolvedValue({
     currencySymbol: '$',
@@ -29,6 +16,19 @@ vi.mock('../../utils/storage.js', () => ({
     amount: '30',
   }),
 }));
+
+// Import dependencies and constants after mocks
+import { CONVERTED_PRICE_CLASS } from '../../utils/constants.js';
+import { resetTestMocks } from '../../../vitest.setup.js';
+import {
+  processMutations,
+  processPendingNodes,
+  createDomScannerState,
+} from '../../content/domScanner.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
 
 // Mock performance API
 beforeEach(() => {
@@ -55,8 +55,8 @@ describe('Observer callback logic', () => {
     // Reset mocks
     resetTestMocks();
 
-    // Set up DOM elements
-    setupTestDom();
+    // Set up DOM elements for tests
+    document.body.innerHTML = '<div id="test-container"></div>';
   });
 
   describe('processMutations', () => {
@@ -155,10 +155,8 @@ describe('Observer callback logic', () => {
 
     afterEach(() => {
       vi.useRealTimers();
-    
-  resetTestMocks();
-
-});
+      resetTestMocks();
+    });
 
     it('should process pending nodes and text nodes', async () => {
       // Create a state object with some pending nodes
@@ -173,15 +171,8 @@ describe('Observer callback logic', () => {
       state.pendingNodes.add(element);
       state.pendingTextNodes.add(textNode);
 
-      // Mock getSettings to resolve for the test
-      vi.spyOn(require('../../utils/storage.js'), 'getSettings').mockResolvedValue({
-        currencySymbol: '$',
-        currencyCode: 'USD',
-        frequency: 'hourly',
-        amount: '15.00',
-        thousands: 'commas',
-        decimal: 'dot',
-      });
+      // No need to mock here again, we can update the test settings in the callback
+      // The mock is already set up from the vi.mock call at the top of the file
 
       // Make the callback do something meaningful to verify it gets called
       const callback = vi.fn((node) => {
@@ -197,17 +188,8 @@ describe('Observer callback logic', () => {
       // Process pending nodes
       processPendingNodes(callback, {}, state);
 
-      // Advance timers to handle the Promise
-      vi.runAllTimers();
-
-      // Need to let the promise resolve
-      await Promise.resolve();
-      await Promise.resolve();
-
-      // Force callback execution by flushing microtasks
-      // This addresses the Jest limitation with mocked timers and Promises
-      vi.runOnlyPendingTimers();
-
+      // Run all timers and await any pending promises
+      await vi.runAllTimersAsync();
       // Mock the callback to force it to have been called
       callback.mockImplementation(() => true);
       callback('test', {});
