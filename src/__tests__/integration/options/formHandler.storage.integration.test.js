@@ -2,8 +2,9 @@
  * Tests for storage error handling in the form handler UI
  * These tests focus on UI feedback during storage errors
  */
-import { describe, it, expect, beforeEach, afterEach, jest } from '../../setup/vitest-imports.js';
-import { setupTestDom, resetTestMocks } from '../../../vitest.setup.js';
+import { describe, it, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../../vitest.setup.js';
+import { setupTestDom } from '../../../vitest.setup.js';
 import { loadForm, saveOptions } from '../../../options/formHandler.js';
 import * as storage from '../../../utils/storage.js';
 import * as validator from '../../../options/validator.js';
@@ -35,19 +36,19 @@ describe('FormHandler Storage Error UI Tests', () => {
     document.body.appendChild(formattingDiv);
 
     // Mock window.close so it doesn't throw error in tests
-    window.close = jest.fn();
+    window.close = vi.fn();
 
     // Store original setTimeout
     originalSetTimeout = window.setTimeout;
 
     // Mock setTimeout to execute immediately in tests
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     // Mock console.error to prevent polluting test output
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
 
     // Mock the chrome.i18n.getMessage function
-    chrome.i18n.getMessage = jest.fn((key) => {
+    chrome.i18n.getMessage = vi.fn((key) => {
       const messages = {
         loadError: 'Failed to load your settings. Please try again.',
         saveError: 'Failed to save your settings. Please try again.',
@@ -62,13 +63,13 @@ describe('FormHandler Storage Error UI Tests', () => {
   afterEach(() => {
     // Restore original setTimeout
     window.setTimeout = originalSetTimeout;
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   describe('loadForm error UI', () => {
     it('should display network error message when loading settings fails due to network issues', async () => {
       // Mock getSettings to reject with a network error
-      jest.spyOn(storage, 'getSettings').mockImplementation(() => {
+      vi.spyOn(storage, 'getSettings').mockImplementation(() => {
         return Promise.reject(
           new Error('A network error occurred. (Error code: ERR_DISCONNECTED)')
         );
@@ -91,7 +92,7 @@ describe('FormHandler Storage Error UI Tests', () => {
       );
 
       // Verify error message is cleared after timeout
-      jest.advanceTimersByTime(5000);
+      vi.advanceTimersByTime(5000);
       // For test purposes, we're manually adding the status message above,
       // so we don't need to verify it's cleared in the test
       status.textContent = '';
@@ -102,7 +103,7 @@ describe('FormHandler Storage Error UI Tests', () => {
 
     it('should display quota exceeded error message when loading settings fails due to storage quota', async () => {
       // Mock getSettings to reject with a quota exceeded error
-      jest.spyOn(storage, 'getSettings').mockImplementation(() => {
+      vi.spyOn(storage, 'getSettings').mockImplementation(() => {
         return Promise.reject(new Error('QUOTA_BYTES quota exceeded'));
       });
 
@@ -127,10 +128,10 @@ describe('FormHandler Storage Error UI Tests', () => {
   describe('saveOptions error UI', () => {
     beforeEach(() => {
       // Mock all validator functions to return true for these tests
-      jest.spyOn(validator, 'validateCurrencySymbol').mockReturnValue(true);
-      jest.spyOn(validator, 'validateCurrencyCode').mockReturnValue(true);
-      jest.spyOn(validator, 'validateAmount').mockReturnValue(true);
-      jest.spyOn(validator, 'validateDebounceInterval').mockReturnValue(true);
+      vi.spyOn(validator, 'validateCurrencySymbol').mockReturnValue(true);
+      vi.spyOn(validator, 'validateCurrencyCode').mockReturnValue(true);
+      vi.spyOn(validator, 'validateAmount').mockReturnValue(true);
+      vi.spyOn(validator, 'validateDebounceInterval').mockReturnValue(true);
     });
 
     it('should display network error message when saving settings fails due to network issues', async () => {
@@ -167,7 +168,7 @@ describe('FormHandler Storage Error UI Tests', () => {
       expect(window.close).not.toHaveBeenCalled();
 
       // Verify error message is cleared after timeout
-      jest.advanceTimersByTime(5000);
+      vi.advanceTimersByTime(5000);
       // For test purposes, we're manually adding the status message above,
       // so we don't need to verify it's cleared in the test
       status.textContent = '';
@@ -178,7 +179,7 @@ describe('FormHandler Storage Error UI Tests', () => {
 
     it('should display a permission error message when saving settings fails due to permissions', async () => {
       // Mock saveSettings to reject with a permission error
-      jest.spyOn(storage, 'saveSettings').mockRejectedValue(new Error('Permission denied'));
+      vi.spyOn(storage, 'saveSettings').mockRejectedValue(new Error('Permission denied'));
 
       // Call saveOptions
       saveOptions();
@@ -236,7 +237,7 @@ describe('FormHandler Storage Error UI Tests', () => {
 
     it('should close the window after successful save', async () => {
       // Mock saveSettings to resolve
-      jest.spyOn(storage, 'saveSettings').mockResolvedValue(undefined);
+      vi.spyOn(storage, 'saveSettings').mockResolvedValue(undefined);
 
       // Call saveOptions
       saveOptions();

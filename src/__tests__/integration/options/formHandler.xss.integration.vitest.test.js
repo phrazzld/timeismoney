@@ -5,7 +5,7 @@
  * to prevent cross-site scripting (XSS) attacks.
  */
 
-import { describe, test, expect, beforeEach, vi, afterEach } from '../../setup/vitest-imports.js';
+import { describe, test, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
 import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
 import {
   sanitizeTextInput,
@@ -16,6 +16,10 @@ import {
 } from '../../../options/formHandler.js';
 import * as storage from '../../../utils/storage.js';
 import * as validator from '../../../options/validator.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
 
 describe('FormHandler XSS Protection', () => {
   beforeEach(() => {
@@ -67,6 +71,8 @@ describe('FormHandler XSS Protection', () => {
   afterEach(() => {
     // Restore all mocks
     vi.restoreAllMocks();
+
+    resetTestMocks();
   });
 
   describe('Sanitization function security', () => {

@@ -13,7 +13,16 @@ import {
   saveOptions,
 } from '../../options/formHandler';
 
+import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../vitest.setup.js';
 import * as storage from '../../utils/storage';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  resetTestMocks();
+});
 
 // Create a document with a body if it doesn't exist
 if (!document.body) {
@@ -37,10 +46,10 @@ describe('FormHandler XSS Protection', () => {
     `;
 
     // Mock console.error
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
 
     // Mock the chrome.i18n.getMessage function
-    chrome.i18n.getMessage = jest.fn((key) => {
+    chrome.i18n.getMessage = vi.fn((key) => {
       const messages = {
         loadError: 'Failed to load your settings. Please try again.',
         saveError: 'Failed to save your settings. Please try again.',
@@ -59,11 +68,11 @@ describe('FormHandler XSS Protection', () => {
 
     // Mock window.close
     if (typeof window.close === 'undefined') {
-      window.close = jest.fn();
+      window.close = vi.fn();
     }
 
     // Reset all mocks
-    jest.clearAllMocks();
+    resetTestMocks();
   });
 
   describe('Sanitization function security', () => {
@@ -324,24 +333,20 @@ describe('FormHandler XSS Protection', () => {
         status: { textContent: '' },
       };
 
-      document.getElementById = jest.fn((id) => mockElements[id] || { value: '' });
+      document.getElementById = vi.fn((id) => mockElements[id] || { value: '' });
 
       // Mock validation to always return true for this test
-      jest
-        .spyOn(require('../../options/validator.js'), 'validateCurrencySymbol')
-        .mockReturnValue(true);
-      jest
-        .spyOn(require('../../options/validator.js'), 'validateCurrencyCode')
-        .mockReturnValue(true);
-      jest.spyOn(require('../../options/validator.js'), 'validateAmount').mockReturnValue(true);
-      jest
-        .spyOn(require('../../options/validator.js'), 'validateDebounceInterval')
-        .mockReturnValue(true);
+      vi.spyOn(require('../../options/validator.js'), 'validateCurrencySymbol').mockReturnValue(
+        true
+      );
+      vi.spyOn(require('../../options/validator.js'), 'validateCurrencyCode').mockReturnValue(true);
+      vi.spyOn(require('../../options/validator.js'), 'validateAmount').mockReturnValue(true);
+      vi.spyOn(require('../../options/validator.js'), 'validateDebounceInterval').mockReturnValue(
+        true
+      );
 
       // Mock saveSettings to capture what gets saved
-      jest
-        .spyOn(storage, 'saveSettings')
-        .mockImplementation((settings) => Promise.resolve(settings));
+      vi.spyOn(storage, 'saveSettings').mockImplementation((settings) => Promise.resolve(settings));
 
       // Call saveOptions
       saveOptions();

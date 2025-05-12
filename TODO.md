@@ -100,11 +100,11 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
   - [x] `src/__tests__/integration/content/domScanner.integration.test.js`
   - [x] `src/__tests__/integration/content/price-conversion-flow.integration.test.js`
   - [x] `src/__tests__/integration/content/settingsManager.error.integration.test.js`
-  - [ ] `src/__tests__/integration/options/formHandler.xss.integration.test.js`
-  - [ ] `src/__tests__/integration/popup/popup.error.integration.test.js`
+  - [x] `src/__tests__/integration/options/formHandler.xss.integration.test.js`
+  - [x] `src/__tests__/integration/popup/popup.error.integration.test.js`
 - [x] Verify content module tests pass and fix issues
-- [ ] Verify options/popup module tests pass and fix issues
-- [ ] Commit migration changes
+- [x] Verify options/popup module tests pass and fix issues
+- [x] Commit migration changes
 
 ### Batch 5: Options and Popup Tests
 
@@ -150,6 +150,11 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
   - [ ] DOM Module Cleanup
   - [ ] PriceFinder Unit Tests Cleanup
   - [ ] Utils Module Cleanup
+- [ ] Fix ESLint issues in migrated test files:
+  - [ ] Fix no-restricted-globals issues (import Vitest functions from vitest-imports.js)
+  - [ ] Fix vi.clearAllMocks() usage (use resetTestMocks() instead)
+  - [ ] Fix async arrow functions with no await
+  - [ ] Fix missing imports and unused variables
 - [ ] Run ESLint to ensure all files follow project standards
   ```
   npm run lint

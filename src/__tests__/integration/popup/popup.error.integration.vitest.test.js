@@ -1,10 +1,14 @@
 /**
  * Tests for error handling in the popup
  */
-import { describe, it, expect, beforeEach, vi, afterEach } from '../../setup/vitest-imports.js';
+import { describe, it, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
 import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
 import * as storage from '../../../utils/storage.js';
 import { restoreOptions, handleEnableToggle } from '../../../popup/popup.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
 
 describe('Popup Error Handling', () => {
   beforeEach(() => {
@@ -33,6 +37,8 @@ describe('Popup Error Handling', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+
+    resetTestMocks();
   });
 
   describe('restoreOptions', () => {

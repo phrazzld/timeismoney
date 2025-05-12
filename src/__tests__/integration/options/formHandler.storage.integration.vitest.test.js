@@ -8,6 +8,10 @@ import { loadForm, saveOptions } from '../../../options/formHandler.js';
 import * as storage from '../../../utils/storage.js';
 import * as validator from '../../../options/validator.js';
 
+beforeEach(() => {
+  resetTestMocks();
+});
+
 describe('FormHandler Storage Error UI Tests', () => {
   let originalSetTimeout;
 
@@ -63,6 +67,8 @@ describe('FormHandler Storage Error UI Tests', () => {
     // Restore original setTimeout
     window.setTimeout = originalSetTimeout;
     vi.useRealTimers();
+
+    resetTestMocks();
   });
 
   describe('loadForm error UI', () => {
