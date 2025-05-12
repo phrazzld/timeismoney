@@ -108,15 +108,15 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
 
 ### Batch 5: Options and Popup Tests
 
-- [ ] Batch: options and popup
+- [x] Batch: options and popup
   ```
   node scripts/batch-migrate-tests.js -v -r -t options
   node scripts/batch-migrate-tests.js -v -r -t popup
   ```
-  - [ ] `src/__tests__/options/formHandler.xss.test.js`
-  - [ ] `src/__tests__/popup/popup.error.test.js`
-- [ ] Verify tests pass and fix any issues
-- [ ] Commit migration changes
+  - [x] `src/__tests__/options/formHandler.xss.test.js` → `formHandler.xss.vitest.test.js`
+  - [x] `src/__tests__/popup/popup.error.test.js` → `popup.error.vitest.test.js`
+- [x] Verify tests pass and fix any issues
+- [x] Commit migration changes
 
 ### Batch 6: Utils Tests
 
