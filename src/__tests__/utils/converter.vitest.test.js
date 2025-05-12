@@ -1,7 +1,7 @@
 /**
  * Tests for the converter.js utility
  */
-
+import { describe, test, expect } from '../setup/vitest-imports.js';
 import { convertToTime, formatTimeSnippet } from '../../utils/converter';
 
 describe('convertToTime', () => {

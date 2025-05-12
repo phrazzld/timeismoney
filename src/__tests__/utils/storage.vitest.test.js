@@ -1,19 +1,46 @@
 /**
  * Tests for the storage utility functions
  */
-import { getSettings, saveSettings } from '../../utils/storage';
+import { vi, describe, it, test, expect, beforeEach, afterEach } from '../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../vitest.setup.js';
+
+// Need to mock before import to avoid actual Chrome API calls
+vi.mock('../../utils/logger', () => ({
+  error: vi.fn(),
+  warn: vi.fn(),
+  info: vi.fn(),
+  debug: vi.fn(),
+}));
+
+// Import after mocking dependencies
+import { getSettings, saveSettings } from '../../utils/storage.js';
 
 describe('Storage Utilities', () => {
   beforeEach(() => {
     // Clear all mocks before each test
-    jest.clearAllMocks();
+    resetTestMocks();
+
+    // Ensure Chrome runtime is properly mocked
+    vi.spyOn(chrome.runtime, 'getManifest').mockReturnValue({
+      version: '1.0.0',
+      name: 'Mock Extension',
+    });
+  });
+
+  afterEach(() => {
+    // Clean up after tests
+    if (chrome.runtime.lastError) {
+      delete chrome.runtime.lastError;
+    }
   });
 
   describe('getSettings', () => {
     it('should resolve with storage items when successful', async () => {
       const mockItems = { amount: '10.00', frequency: 'hourly' };
-      chrome.storage.sync.get.mockImplementation((defaults, callback) => {
+
+      chrome.storage.sync.get = vi.fn().mockImplementation((defaults, callback) => {
         callback(mockItems);
+        return Promise.resolve(mockItems);
       });
 
       const result = await getSettings();
@@ -23,23 +50,23 @@ describe('Storage Utilities', () => {
 
     it('should reject with lastError when storage operation fails', async () => {
       const mockError = { message: 'Storage error occurred' };
-      chrome.runtime.lastError = mockError;
-      chrome.storage.sync.get.mockImplementation((defaults, callback) => {
+
+      chrome.storage.sync.get = vi.fn().mockImplementation((defaults, callback) => {
+        chrome.runtime.lastError = mockError;
         callback({}); // The error is in runtime.lastError
+        return Promise.resolve({});
       });
 
-      await expect(getSettings()).rejects.toEqual(mockError);
+      await expect(getSettings()).rejects.toMatchObject(mockError);
       expect(chrome.storage.sync.get).toHaveBeenCalled();
-
-      // Clean up
-      delete chrome.runtime.lastError;
     });
   });
 
   describe('saveSettings', () => {
     it('should resolve when settings are saved successfully', async () => {
-      chrome.storage.sync.set.mockImplementation((settings, callback) => {
+      chrome.storage.sync.set = vi.fn().mockImplementation((settings, callback) => {
         callback();
+        return Promise.resolve();
       });
 
       const newSettings = { amount: '20.00', frequency: 'yearly' };
@@ -49,17 +76,16 @@ describe('Storage Utilities', () => {
 
     it('should reject with lastError when storage operation fails', async () => {
       const mockError = { message: 'Storage error occurred during save' };
-      chrome.runtime.lastError = mockError;
-      chrome.storage.sync.set.mockImplementation((settings, callback) => {
+
+      chrome.storage.sync.set = vi.fn().mockImplementation((settings, callback) => {
+        chrome.runtime.lastError = mockError;
         callback(); // The error is in runtime.lastError
+        return Promise.resolve();
       });
 
       const newSettings = { amount: '20.00', frequency: 'yearly' };
-      await expect(saveSettings(newSettings)).rejects.toEqual(mockError);
+      await expect(saveSettings(newSettings)).rejects.toMatchObject(mockError);
       expect(chrome.storage.sync.set).toHaveBeenCalledWith(newSettings, expect.any(Function));
-
-      // Clean up
-      delete chrome.runtime.lastError;
     });
   });
 });

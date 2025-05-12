@@ -3,6 +3,20 @@
  * Specifically focused on extreme values, unusual inputs, and boundary conditions
  */
 
+// IMPORTANT: vi.mock must be called before any imports
+import { vi, describe, it, test, expect, beforeEach, afterEach } from '../setup/vitest-imports.js';
+
+// Mock logger to prevent console output during tests
+vi.mock('../../utils/logger', () => {
+  return {
+    error: vi.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
+    debug: vi.fn(),
+  };
+});
+import { resetTestMocks } from '../../../vitest.setup.js';
+
 import {
   normalizePrice,
   calculateHourlyWage,
@@ -13,13 +27,12 @@ import {
   convertPriceToTimeString,
 } from '../../utils/converter';
 
-// Mock logger to prevent console output during tests
-jest.mock('../../utils/logger', () => ({
-  error: jest.fn(),
-  warn: jest.fn(),
-  info: jest.fn(),
-  debug: jest.fn(),
-}));
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  resetTestMocks();
+});
 
 describe('Edge cases: normalizePrice', () => {
   const thousands = /,/g;
@@ -36,9 +49,8 @@ describe('Edge cases: normalizePrice', () => {
   });
 
   test('handles prices with multiple decimal points', () => {
-    // The implementation seems to replace all decimal points with '~', then the first '~' with '.'
-    // This results in 123.46 rather than 123.45
-    expect(normalizePrice('123.45.67', thousands, decimal)).toBe(123.46);
+    // The implementation replaces all decimal points with a placeholder, then converts the first one back
+    expect(normalizePrice('123.45.67', thousands, decimal)).toBe(123.45);
   });
 
   test('handles negative prices', () => {

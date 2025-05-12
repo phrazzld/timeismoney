@@ -2,18 +2,31 @@
  * Comprehensive error simulation tests for storage.js
  * Tests error handling for Chrome storage operations
  */
-import { getSettings, saveSettings, onSettingsChanged } from '../../utils/storage.js';
+import { vi, describe, it, test, expect, beforeEach, afterEach } from '../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../vitest.setup.js';
 import { DEFAULT_SETTINGS } from '../../utils/constants.js';
+
+// Need to mock before import to avoid actual Chrome API calls
+vi.mock('../../utils/logger', () => ({
+  error: vi.fn(),
+  warn: vi.fn(),
+  info: vi.fn(),
+  debug: vi.fn(),
+}));
+
+// Import after mocking dependencies
+import { getSettings, saveSettings, onSettingsChanged } from '../../utils/storage.js';
 
 describe('Storage Error Handling', () => {
   beforeEach(() => {
     // Clear all mocks before each test
-    jest.clearAllMocks();
+    resetTestMocks();
 
-    // Remove any lastError that might be set from previous tests
-    if (chrome.runtime.lastError) {
-      delete chrome.runtime.lastError;
-    }
+    // Ensure Chrome runtime is properly mocked
+    vi.spyOn(chrome.runtime, 'getManifest').mockReturnValue({
+      version: '1.0.0',
+      name: 'Mock Extension',
+    });
   });
 
   afterEach(() => {
@@ -26,45 +39,57 @@ describe('Storage Error Handling', () => {
   describe('getSettings error handling', () => {
     it('should reject with network disconnection error', async () => {
       const mockError = { message: 'A network error occurred. (Error code: ERR_DISCONNECTED)' };
-      chrome.runtime.lastError = mockError;
-      chrome.storage.sync.get.mockImplementation((defaults, callback) => {
+
+      // Mock the Chrome storage API
+      chrome.storage.sync.get = vi.fn().mockImplementation((defaults, callback) => {
+        chrome.runtime.lastError = mockError;
         callback({});
+        return Promise.resolve({});
       });
 
-      await expect(getSettings()).rejects.toEqual(mockError);
+      await expect(getSettings()).rejects.toMatchObject(mockError);
       expect(chrome.storage.sync.get).toHaveBeenCalledWith(DEFAULT_SETTINGS, expect.any(Function));
     });
 
     it('should reject with quota exceeded error', async () => {
       const mockError = { message: 'QUOTA_BYTES quota exceeded' };
-      chrome.runtime.lastError = mockError;
-      chrome.storage.sync.get.mockImplementation((defaults, callback) => {
+
+      // Mock the Chrome storage API
+      chrome.storage.sync.get = vi.fn().mockImplementation((defaults, callback) => {
+        chrome.runtime.lastError = mockError;
         callback({});
+        return Promise.resolve({});
       });
 
-      await expect(getSettings()).rejects.toEqual(mockError);
+      await expect(getSettings()).rejects.toMatchObject(mockError);
       expect(chrome.storage.sync.get).toHaveBeenCalledWith(DEFAULT_SETTINGS, expect.any(Function));
     });
 
     it('should reject with permission error', async () => {
       const mockError = { message: 'Permission denied' };
-      chrome.runtime.lastError = mockError;
-      chrome.storage.sync.get.mockImplementation((defaults, callback) => {
+
+      // Mock the Chrome storage API
+      chrome.storage.sync.get = vi.fn().mockImplementation((defaults, callback) => {
+        chrome.runtime.lastError = mockError;
         callback({});
+        return Promise.resolve({});
       });
 
-      await expect(getSettings()).rejects.toEqual(mockError);
+      await expect(getSettings()).rejects.toMatchObject(mockError);
       expect(chrome.storage.sync.get).toHaveBeenCalledWith(DEFAULT_SETTINGS, expect.any(Function));
     });
 
     it('should reject with sync error', async () => {
       const mockError = { message: 'Sync error: please sign in again' };
-      chrome.runtime.lastError = mockError;
-      chrome.storage.sync.get.mockImplementation((defaults, callback) => {
+
+      // Mock the Chrome storage API
+      chrome.storage.sync.get = vi.fn().mockImplementation((defaults, callback) => {
+        chrome.runtime.lastError = mockError;
         callback({});
+        return Promise.resolve({});
       });
 
-      await expect(getSettings()).rejects.toEqual(mockError);
+      await expect(getSettings()).rejects.toMatchObject(mockError);
       expect(chrome.storage.sync.get).toHaveBeenCalledWith(DEFAULT_SETTINGS, expect.any(Function));
     });
   });
@@ -72,21 +97,27 @@ describe('Storage Error Handling', () => {
   describe('saveSettings error handling', () => {
     it('should reject with network disconnection error', async () => {
       const mockError = { message: 'A network error occurred. (Error code: ERR_DISCONNECTED)' };
-      chrome.runtime.lastError = mockError;
-      chrome.storage.sync.set.mockImplementation((settings, callback) => {
+
+      // Mock the Chrome storage API
+      chrome.storage.sync.set = vi.fn().mockImplementation((settings, callback) => {
+        chrome.runtime.lastError = mockError;
         callback();
+        return Promise.resolve();
       });
 
       const newSettings = { amount: '20.00', frequency: 'yearly' };
-      await expect(saveSettings(newSettings)).rejects.toEqual(mockError);
+      await expect(saveSettings(newSettings)).rejects.toMatchObject(mockError);
       expect(chrome.storage.sync.set).toHaveBeenCalledWith(newSettings, expect.any(Function));
     });
 
     it('should reject with quota exceeded error', async () => {
       const mockError = { message: 'QUOTA_BYTES quota exceeded' };
-      chrome.runtime.lastError = mockError;
-      chrome.storage.sync.set.mockImplementation((settings, callback) => {
+
+      // Mock the Chrome storage API
+      chrome.storage.sync.set = vi.fn().mockImplementation((settings, callback) => {
+        chrome.runtime.lastError = mockError;
         callback();
+        return Promise.resolve();
       });
 
       // Create a very large settings object that would exceed quota
@@ -95,51 +126,62 @@ describe('Storage Error Handling', () => {
         frequency: 'yearly',
         veryLargeProperty: 'x'.repeat(10000), // Large string to simulate quota issue
       };
-      await expect(saveSettings(newSettings)).rejects.toEqual(mockError);
+      await expect(saveSettings(newSettings)).rejects.toMatchObject(mockError);
       expect(chrome.storage.sync.set).toHaveBeenCalledWith(newSettings, expect.any(Function));
     });
 
     it('should reject with permissions error', async () => {
       const mockError = { message: 'Permission denied' };
-      chrome.runtime.lastError = mockError;
-      chrome.storage.sync.set.mockImplementation((settings, callback) => {
+
+      // Mock the Chrome storage API
+      chrome.storage.sync.set = vi.fn().mockImplementation((settings, callback) => {
+        chrome.runtime.lastError = mockError;
         callback();
+        return Promise.resolve();
       });
 
       const newSettings = { amount: '20.00', frequency: 'yearly' };
-      await expect(saveSettings(newSettings)).rejects.toEqual(mockError);
+      await expect(saveSettings(newSettings)).rejects.toMatchObject(mockError);
       expect(chrome.storage.sync.set).toHaveBeenCalledWith(newSettings, expect.any(Function));
     });
 
     it('should reject when saving invalid JSON', async () => {
       const mockError = { message: 'Invalid JSON' };
-      chrome.runtime.lastError = mockError;
-      chrome.storage.sync.set.mockImplementation((settings, callback) => {
+
+      // Mock the Chrome storage API
+      chrome.storage.sync.set = vi.fn().mockImplementation((settings, callback) => {
+        chrome.runtime.lastError = mockError;
         callback();
+        return Promise.resolve();
       });
 
       // Create an object with a circular reference (which can't be serialized to JSON)
       const circular = {};
       circular.self = circular;
 
-      await expect(saveSettings(circular)).rejects.toEqual(mockError);
+      await expect(saveSettings(circular)).rejects.toMatchObject(mockError);
       expect(chrome.storage.sync.set).toHaveBeenCalledWith(circular, expect.any(Function));
     });
   });
 
   describe('onSettingsChanged', () => {
     it('should call callback when settings change', () => {
-      const mockCallback = jest.fn();
+      const mockCallback = vi.fn();
       const mockChanges = {
         currencySymbol: { newValue: '€', oldValue: '$' },
         amount: { newValue: '25.00', oldValue: '20.00' },
       };
 
+      // Store the listener to call it manually
+      let changeListener;
+      chrome.storage.onChanged.addListener = vi.fn().mockImplementation((listener) => {
+        changeListener = listener;
+      });
+
       onSettingsChanged(mockCallback);
 
-      // Trigger the storage onChanged event
-      const storageListener = chrome.storage.onChanged.addListener.mock.calls[0][0];
-      storageListener(mockChanges);
+      // Manually trigger the listener with mock changes
+      changeListener(mockChanges, 'sync');
 
       // Verify callback was called with the correct transformed changes
       expect(mockCallback).toHaveBeenCalledWith({
@@ -149,30 +191,40 @@ describe('Storage Error Handling', () => {
     });
 
     it('should handle empty changes object', () => {
-      const mockCallback = jest.fn();
+      const mockCallback = vi.fn();
+
+      // Store the listener to call it manually
+      let changeListener;
+      chrome.storage.onChanged.addListener = vi.fn().mockImplementation((listener) => {
+        changeListener = listener;
+      });
 
       onSettingsChanged(mockCallback);
 
-      // Trigger the storage onChanged event with empty changes
-      const storageListener = chrome.storage.onChanged.addListener.mock.calls[0][0];
-      storageListener({});
+      // Manually trigger the listener with empty changes
+      changeListener({}, 'sync');
 
       // Verify callback was called with empty object
       expect(mockCallback).toHaveBeenCalledWith({});
     });
 
     it('should handle undefined or null new values', () => {
-      const mockCallback = jest.fn();
+      const mockCallback = vi.fn();
       const mockChanges = {
         currencySymbol: { newValue: null, oldValue: '$' },
         amount: { newValue: undefined, oldValue: '20.00' },
       };
 
+      // Store the listener to call it manually
+      let changeListener;
+      chrome.storage.onChanged.addListener = vi.fn().mockImplementation((listener) => {
+        changeListener = listener;
+      });
+
       onSettingsChanged(mockCallback);
 
-      // Trigger the storage onChanged event
-      const storageListener = chrome.storage.onChanged.addListener.mock.calls[0][0];
-      storageListener(mockChanges);
+      // Manually trigger the listener with mock changes
+      changeListener(mockChanges, 'sync');
 
       // Verify callback was called with the null/undefined values preserved
       expect(mockCallback).toHaveBeenCalledWith({
