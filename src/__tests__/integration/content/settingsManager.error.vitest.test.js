@@ -8,12 +8,10 @@ import { initSettings, handleVisibilityChange } from '../../../content/settingsM
 import { describe, it, expect, vi, beforeEach, afterEach } from '../../setup/vitest-imports.js';
 import { resetTestMocks } from '../../../../vitest.setup.js';
 
-beforeEach(() => {
-  resetTestMocks();
-});
-
-
 describe('SettingsManager Error Handling', () => {
+  beforeEach(() => {
+    resetTestMocks();
+  });
   let originalDocumentAddEventListener;
   let visibilityChangeCallback;
 
@@ -46,16 +44,16 @@ describe('SettingsManager Error Handling', () => {
     });
 
     // Reset all mocks
-    vi.clearAllMocks();
+    resetTestMocks();
   });
 
   afterEach(() => {
     // Restore document.addEventListener
     document.addEventListener = originalDocumentAddEventListener;
     vi.restoreAllMocks();
-  
-  resetTestMocks();
-});
+
+    resetTestMocks();
+  });
 
   describe('initSettings', () => {
     it('should handle getSettings error and return disabled state', async () => {

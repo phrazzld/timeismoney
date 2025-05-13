@@ -10,32 +10,28 @@ import {
   handleAmazonPrice,
   processIfAmazon,
 } from '../../../content/amazonHandler';
-import { describe, test, expect, vi } from '../../setup/vitest-imports.js';
+import { describe, test, expect, vi, beforeEach, afterEach } from '../../setup/vitest-imports.js';
 import { resetTestMocks } from '../../../../vitest.setup.js';
 
-beforeEach(() => {
-  resetTestMocks();
-});
-afterEach(() => {
-  resetTestMocks();
-});
-
-
-
-
-// Mock DOM elements for testing
-const createNodeWithClass = (className) => {
-  const node = document.createElement('span');
-  node.classList.add(className);
-
-  // Add text content
-  const textNode = document.createTextNode(className === 'sx-price-currency' ? '$' : '10');
-  node.appendChild(textNode);
-
-  return node;
-};
-
 describe('Amazon Price Handler', () => {
+  beforeEach(() => {
+    resetTestMocks();
+  });
+  afterEach(() => {
+    resetTestMocks();
+  });
+
+  // Mock DOM elements for testing
+  const createNodeWithClass = (className) => {
+    const node = document.createElement('span');
+    node.classList.add(className);
+
+    // Add text content
+    const textNode = document.createTextNode(className === 'sx-price-currency' ? '$' : '10');
+    node.appendChild(textNode);
+
+    return node;
+  };
   describe('createPriceState', () => {
     test('creates a new price state object with expected properties', () => {
       const state = createPriceState();

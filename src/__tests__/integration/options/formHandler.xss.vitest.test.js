@@ -15,14 +15,21 @@ import {
 
 import * as storage from '../../../utils/storage';
 import * as validator from '../../../options/validator';
-import { describe, test, expect, beforeEach, vi } from 'vitest';
-
-// Create a document with a body if it doesn't exist
-if (!document.body) {
-  document.body = document.createElement('body');
-}
+import { describe, test, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../../vitest.setup.js';
 
 describe('FormHandler XSS Protection', () => {
+  beforeEach(() => {
+    resetTestMocks();
+  });
+  afterEach(() => {
+    resetTestMocks();
+  });
+
+  // Create a document with a body if it doesn't exist
+  if (!document.body) {
+    document.body = document.createElement('body');
+  }
   beforeEach(() => {
     // Set up DOM elements needed by the code
     document.body.innerHTML = `
@@ -65,7 +72,7 @@ describe('FormHandler XSS Protection', () => {
     }
 
     // Reset all mocks
-    vi.clearAllMocks();
+    resetTestMocks();
   });
 
   describe('Sanitization function security', () => {

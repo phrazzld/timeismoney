@@ -8,47 +8,44 @@ import {
   startObserver,
   createDomScannerState,
 } from '../../../content/domScanner.js';
-import { describe, test, expect, vi } from '../../setup/vitest-imports.js';
+import { describe, test, expect, vi, beforeEach, afterEach } from '../../setup/vitest-imports.js';
 import { resetTestMocks } from '../../../../vitest.setup.js';
 
-beforeEach(() => {
-  resetTestMocks();
-});
-afterEach(() => {
-  vi.useRealTimers();
-  resetTestMocks();
-});
-
-
-
-
-// Create a mock MutationObserver class
-class MockMutationObserver {
-  constructor(callback) {
-    this.callback = callback;
-    this.observeOptions = null;
-    this.target = null;
-    this.disconnected = false;
-  }
-
-  // Mock the observe method
-  observe(target, options) {
-    this.target = target;
-    this.observeOptions = options;
-  }
-
-  // Mock the disconnect method
-  disconnect() {
-    this.disconnected = true;
-  }
-
-  // Helper method to simulate mutations
-  simulateMutations(mutations) {
-    this.callback(mutations);
-  }
-}
-
 describe('domScanner module', () => {
+  beforeEach(() => {
+    resetTestMocks();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+    resetTestMocks();
+  });
+
+  // Create a mock MutationObserver class
+  class MockMutationObserver {
+    constructor(callback) {
+      this.callback = callback;
+      this.observeOptions = null;
+      this.target = null;
+      this.disconnected = false;
+    }
+
+    // Mock the observe method
+    observe(target, options) {
+      this.target = target;
+      this.observeOptions = options;
+    }
+
+    // Mock the disconnect method
+    disconnect() {
+      this.disconnected = true;
+    }
+
+    // Helper method to simulate mutations
+    simulateMutations(mutations) {
+      this.callback(mutations);
+    }
+  }
+
   describe('observeDomChanges', () => {
     test('should accept a custom MutationObserver constructor', () => {
       // Create a simple callback function

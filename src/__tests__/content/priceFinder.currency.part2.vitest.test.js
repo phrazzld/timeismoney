@@ -2,7 +2,11 @@
  * Currency format tests (part 2) split from the original file
  * to prevent worker termination
  */
-/* global setupTestDom, resetTestMocks */
+/* global setupTestDom */
+
+// Import Vitest functions
+import { describe, test, expect, beforeEach } from '../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../vitest.setup.js';
 
 // Import mock functions for special test cases
 import { mockBuildMatchPattern } from './priceFinder.test.patch.js';

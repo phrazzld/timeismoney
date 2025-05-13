@@ -165,7 +165,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
   - [x] Fix setupTestDom undefined errors
   - [x] Fix vi.runOnlyPendingTimers (replaced with vi.runAllTimersAsync)
   - [x] Fix formatting issues in afterEach blocks
-  - [~] Fix no-restricted-globals issues (import Vitest functions from vitest-imports.js)
+  - [x] Fix no-restricted-globals issues (import Vitest functions from vitest-imports.js)
     - [x] Fixed in priceFinder.advanced.vitest.test.js
     - [x] Fixed in converter.edge.vitest.test.js
     - [x] Fixed in test-eslint-vitest-fixed.vitest.test.js
@@ -180,7 +180,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     - [x] Fixed in priceFinder.pattern.part2.unit.vitest.test.js
     - [x] Fixed in priceFinder.simple.vitest.test.js
     - [x] Fixed in priceFinder.vitest.test.js
-    - [ ] Need to fix in remaining test files
+    - [x] Fixed in all remaining test files
   - [~] Fix vi.clearAllMocks() usage (use resetTestMocks() instead)
     - [x] Fixed in performance.vitest.test.js
     - [x] Fixed in observer-stress.vitest.test.js
@@ -211,9 +211,9 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
   - [x] src/**tests**/content/priceFinder.edge-cases.vitest.test.js
   - [x] src/**tests**/content/priceFinder.enhanced.vitest.test.js
   - [x] src/**tests**/unit/utils/converter.edge.refactored.unit.vitest.test.js
-- [ ] Remove duplicate test files where both Jest and Vitest versions exist
-- [ ] Standardize file naming to follow `.vitest.test.js` pattern
-- [ ] Create script to consolidate similar test files
+- [x] Remove duplicate test files where both Jest and Vitest versions exist
+- [x] Standardize file naming to follow `.vitest.test.js` pattern (verified all files already follow this pattern)
+- [~] Create script to consolidate similar test files
 - [ ] Verify test coverage is maintained or improved
 - [ ] Remove Jest dependencies and configuration files
 - [ ] Update package.json to remove Jest dependencies

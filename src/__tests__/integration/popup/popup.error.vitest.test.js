@@ -3,12 +3,19 @@
  */
 import * as storage from '../../../utils/storage';
 import { restoreOptions, handleEnableToggle } from '../../../popup/popup';
-import { describe, test, expect, beforeEach, vi } from 'vitest';
+import { describe, test, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../../vitest.setup.js';
 
 describe('Popup Error Handling', () => {
   beforeEach(() => {
+    resetTestMocks();
+  });
+  afterEach(() => {
+    resetTestMocks();
+  });
+  beforeEach(() => {
     // Reset all mocks
-    vi.resetAllMocks();
+    resetTestMocks();
 
     // Set up DOM elements needed by the code
     document.body.innerHTML = `
