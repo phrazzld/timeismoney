@@ -192,6 +192,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     - [x] Fixed in observer-stress.vitest.test.js
     - [ ] Need to fix in remaining test files
   - [ ] Fix missing imports and unused variables
+  - [ ] Move global-level hooks inside describe blocks to fix partially migrated status
 - [~] Run ESLint to ensure all files follow project standards
   ```
   npm run lint
@@ -199,7 +200,17 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
 
 ### Cleanup Tasks
 
-- [ ] Run migration status script to verify progress
+- [x] Run migration status script to verify progress
+  - Generated MIGRATION-STATUS.md with detailed report
+  - Found 104 total test files with only 2 (1.92%) fully migrated
+  - 97 files (93.27%) are partially migrated with both Jest and Vitest patterns
+  - 4 files (3.85%) remain unmigrated and need conversion
+  - Need to clean up global-level hooks in most files
+- [ ] Migrate remaining unmigrated files:
+  - [ ] src/**tests**/content/priceFinder.currency.part3.vitest.test.js
+  - [ ] src/**tests**/content/priceFinder.edge-cases.vitest.test.js
+  - [ ] src/**tests**/content/priceFinder.enhanced.vitest.test.js
+  - [ ] src/**tests**/unit/utils/converter.edge.refactored.unit.vitest.test.js
 - [ ] Remove duplicate test files where both Jest and Vitest versions exist
 - [ ] Standardize file naming to follow `.vitest.test.js` pattern
 - [ ] Create script to consolidate similar test files

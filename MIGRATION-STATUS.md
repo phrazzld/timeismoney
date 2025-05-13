@@ -3,29 +3,19 @@
 ## Summary
 
 - Total test files: 104
-- Fully migrated: 12 (11.54%)
-- Partially migrated: 88 (84.62%)
-- Not migrated: 3 (2.88%)
+- Fully migrated: 2 (1.92%)
+- Partially migrated: 97 (93.27%)
+- Not migrated: 4 (3.85%)
 - Unknown status: 1
 
 ## Migration Progress
 
-[####------------------------------------ ] 11.54%
+[---------------------------------------------- ] 1.92%
 
 ## Fully Migrated Files
 
 - src/**tests**/content/priceFinder.advanced.vitest.test.js
 - src/**tests**/integration/content/domScanner.integration.vitest.test.js
-- src/**tests**/dom/content/performance.dom.vitest.test.js
-- src/**tests**/dom/content/observer-stress.dom.vitest.test.js
-- src/**tests**/dom/content/observer-callback.dom.vitest.test.js
-- src/**tests**/dom/content/observer-callback.refactored.dom.vitest.test.js
-- src/**tests**/content/observer-stress.vitest.test.js
-- src/**tests**/content/performance.vitest.test.js
-- src/**tests**/utils/converter.edge.vitest.test.js
-- src/**tests**/utils/storage.vitest.test.js
-- src/**tests**/utils/storage.error.vitest.test.js
-- src/**tests**/utils/parser.vitest.test.js
 
 ## Partially Migrated Files
 
@@ -42,7 +32,7 @@ These files contain both Jest and Vitest patterns and should be cleaned up:
 - src/**tests**/content/priceFinder.additional-currencies.vitest.test.js
 - src/**tests**/content/priceFinder.basic-patterns.vitest.test.js
 - src/**tests**/content/priceFinder.currency.part1.vitest.test.js
-- src/**tests**/content/priceFinder.currency.part3.vitest.test.js
+- src/**tests**/content/priceFinder.currency.part2.vitest.test.js
 - src/**tests**/content/priceFinder.currency.vitest.test.js
 - src/**tests**/content/priceFinder.findPrices.vitest.test.js
 - src/**tests**/content/priceFinder.pattern.part1.vitest.test.js
@@ -82,9 +72,12 @@ These files contain both Jest and Vitest patterns and should be cleaned up:
 - src/**tests**/integration/popup/popup.error.integration.test.js
 - src/**tests**/integration/popup/popup.error.integration.vitest.test.js
 - src/**tests**/integration/popup/popup.error.vitest.test.js
-- src/**tests**/options/formHandler.storage.direct.test.js
-- src/**tests**/options/formHandler.storage.test.js
-- src/**tests**/options/formHandler.test.js
+- src/**tests**/options/formHandler.error.vitest.test.js
+- src/**tests**/options/formHandler.storage.direct.vitest.test.js
+- src/**tests**/options/formHandler.storage.vitest.test.js
+- src/**tests**/options/formHandler.vitest.test.js
+- src/**tests**/options/formHandler.xss.vitest.test.js
+- src/**tests**/popup/popup.error.vitest.test.js
 - src/**tests**/unit/content/priceFinder.additional-currencies.unit.vitest.test.js
 - src/**tests**/unit/content/priceFinder.advanced.unit.vitest.test.js
 - src/**tests**/unit/content/priceFinder.basic-patterns.unit.vitest.test.js
@@ -119,12 +112,19 @@ These files contain both Jest and Vitest patterns and should be cleaned up:
 - src/**tests**/unit/utils/storage.unit.vitest.test.js
 - src/**tests**/unit/utils/storage.vitest.test.js
 - src/**tests**/unit/utils/test-eslint-vitest-fixed.vitest.test.js
+- src/**tests**/utils/converter.edge.vitest.test.js
+- src/**tests**/utils/converter.unified.vitest.test.js
+- src/**tests**/utils/converter.vitest.test.js
+- src/**tests**/utils/parser.vitest.test.js
+- src/**tests**/utils/storage.error.vitest.test.js
+- src/**tests**/utils/storage.vitest.test.js
 
 ## Unmigrated Files
 
-- src/**tests**/options/formHandler.test.js
-- src/**tests**/setup.test.js
-- src/**tests**/integration/options/formHandler.storage.integration.test.js
+- src/**tests**/content/priceFinder.currency.part3.vitest.test.js
+- src/**tests**/content/priceFinder.edge-cases.vitest.test.js
+- src/**tests**/content/priceFinder.enhanced.vitest.test.js
+- src/**tests**/unit/utils/converter.edge.refactored.unit.vitest.test.js
 
 ## Next Steps
 
