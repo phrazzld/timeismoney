@@ -6,7 +6,7 @@
 import { loadForm, saveOptions } from '../../../options/formHandler.js';
 import * as storage from '../../../utils/storage.js';
 import * as validator from '../../../options/validator.js';
-import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, test, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
 // Import the test setup file with explicit imports
 import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
 
@@ -15,8 +15,7 @@ describe('FormHandler Storage Error UI Tests', () => {
 
   beforeEach(() => {
     // Reset all mocks
-    resetTestMocks();
-    vi.resetAllMocks(); // This is important to avoid multiple mock calls accumulating
+    resetTestMocks(); // This resets all mocks to avoid multiple mock calls accumulating
 
     // Set up DOM elements needed by the tests
     setupTestDom();
@@ -66,6 +65,8 @@ describe('FormHandler Storage Error UI Tests', () => {
     // Restore original setTimeout
     window.setTimeout = originalSetTimeout;
     vi.useRealTimers();
+
+    resetTestMocks();
   });
 
   describe('loadForm error UI', () => {
@@ -82,6 +83,7 @@ describe('FormHandler Storage Error UI Tests', () => {
 
       // Manually set the status text for test purposes since async import of logger won't work in test
       const status = document.getElementById('status');
+
       status.textContent = 'Failed to load your settings. Please try again.';
       status.className = 'error';
 

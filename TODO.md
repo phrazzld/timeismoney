@@ -189,10 +189,11 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     - [x] Fixed in formHandler.refactored.integration.vitest.test.js
     - [x] Fixed in formHandler.xss.vitest.test.js
     - [x] Fixed in all remaining test files
-  - [~] Fix async arrow functions with no await
+  - [x] Fix async arrow functions with no await
     - [x] Fixed in performance.vitest.test.js
     - [x] Fixed in observer-stress.vitest.test.js
-    - [ ] Need to fix in remaining test files
+    - [x] Fixed vi.resetAllMocks() in formHandler.storage.vitest.test.js
+    - [x] Verified other files use await properly
   - [ ] Fix missing imports and unused variables
   - [ ] Move global-level hooks inside describe blocks to fix partially migrated status
 - [~] Run ESLint to ensure all files follow project standards
