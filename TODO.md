@@ -181,12 +181,14 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     - [x] Fixed in priceFinder.simple.vitest.test.js
     - [x] Fixed in priceFinder.vitest.test.js
     - [x] Fixed in all remaining test files
-  - [~] Fix vi.clearAllMocks() usage (use resetTestMocks() instead)
+  - [x] Fix vi.clearAllMocks() usage (use resetTestMocks() instead)
     - [x] Fixed in performance.vitest.test.js
     - [x] Fixed in observer-stress.vitest.test.js
     - [x] Fixed in observer-callback.refactored.dom.vitest.test.js
     - [x] Fixed in priceFinder.vitest.test.js
-    - [ ] Need to fix in remaining test files
+    - [x] Fixed in formHandler.refactored.integration.vitest.test.js
+    - [x] Fixed in formHandler.xss.vitest.test.js
+    - [x] Fixed in all remaining test files
   - [~] Fix async arrow functions with no await
     - [x] Fixed in performance.vitest.test.js
     - [x] Fixed in observer-stress.vitest.test.js
