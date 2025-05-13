@@ -158,18 +158,41 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
 - [x] Batch clean up partially migrated files by category:
   - [x] Content Module Cleanup (fixed observer-callback and price-conversion-flow tests)
   - [x] DOM Module Cleanup (fixed observer-callback.dom and observer-callback.refactored.dom tests)
-  - [ ] PriceFinder Unit Tests Cleanup
-  - [ ] Utils Module Cleanup
+  - [x] PriceFinder Unit Tests Cleanup
+  - [x] Utils Module Cleanup (fixed converter.edge, storage, and storage.error tests)
 - [~] Fix ESLint issues in migrated test files:
   - [x] Fix import duplication issues
   - [x] Fix setupTestDom undefined errors
   - [x] Fix vi.runOnlyPendingTimers (replaced with vi.runAllTimersAsync)
   - [x] Fix formatting issues in afterEach blocks
-  - [ ] Fix no-restricted-globals issues (import Vitest functions from vitest-imports.js)
-  - [ ] Fix vi.clearAllMocks() usage (use resetTestMocks() instead)
-  - [ ] Fix async arrow functions with no await
+  - [~] Fix no-restricted-globals issues (import Vitest functions from vitest-imports.js)
+    - [x] Fixed in priceFinder.advanced.vitest.test.js
+    - [x] Fixed in converter.edge.vitest.test.js
+    - [x] Fixed in test-eslint-vitest-fixed.vitest.test.js
+    - [x] Fixed in priceFinder.currency.part1.vitest.test.js
+    - [x] Fixed in priceFinder.findPrices.vitest.test.js
+    - [x] Fixed in performance.vitest.test.js
+    - [x] Fixed in observer-stress.vitest.test.js
+    - [x] Fixed in observer-callback.vitest.test.js
+    - [x] Fixed in observer-callback.refactored.dom.vitest.test.js
+    - [x] Fixed in priceFinder.basic-patterns.unit.vitest.test.js
+    - [x] Fixed in priceFinder.pattern.part1.unit.vitest.test.js
+    - [x] Fixed in priceFinder.pattern.part2.unit.vitest.test.js
+    - [x] Fixed in priceFinder.simple.vitest.test.js
+    - [x] Fixed in priceFinder.vitest.test.js
+    - [ ] Need to fix in remaining test files
+  - [~] Fix vi.clearAllMocks() usage (use resetTestMocks() instead)
+    - [x] Fixed in performance.vitest.test.js
+    - [x] Fixed in observer-stress.vitest.test.js
+    - [x] Fixed in observer-callback.refactored.dom.vitest.test.js
+    - [x] Fixed in priceFinder.vitest.test.js
+    - [ ] Need to fix in remaining test files
+  - [~] Fix async arrow functions with no await
+    - [x] Fixed in performance.vitest.test.js
+    - [x] Fixed in observer-stress.vitest.test.js
+    - [ ] Need to fix in remaining test files
   - [ ] Fix missing imports and unused variables
-- [ ] Run ESLint to ensure all files follow project standards
+- [~] Run ESLint to ensure all files follow project standards
   ```
   npm run lint
   ```

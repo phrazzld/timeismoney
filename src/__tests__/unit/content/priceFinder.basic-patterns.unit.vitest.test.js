@@ -3,9 +3,16 @@
  * Split from main test file to reduce worker load and prevent timeouts
  */
 
-import { describe, test, expect, beforeEach, vi } from '../../setup/vitest-imports.js';
+import { describe, test, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
 import { resetTestMocks, setupTestDom } from '../../setup/vitest.setup.js';
 import { buildThousandsString, buildDecimalString } from '../../../content/priceFinder';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  resetTestMocks();
+});
 
 describe('Basic Pattern Tests', () => {
   beforeEach(() => {

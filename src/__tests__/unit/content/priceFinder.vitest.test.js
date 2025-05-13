@@ -4,8 +4,16 @@
  * NOTE: This file handles complex regex patterns with simplified mocks to avoid memory issues.
  * Run with increased Node memory if needed: NODE_OPTIONS=--max-old-space-size=4096 npx vitest run [file]
  */
-import { describe, test, expect, vi, beforeEach } from '../../setup/vitest-imports.js';
+import { describe, test, expect, vi, beforeEach, afterEach } from '../../setup/vitest-imports.js';
 import { buildMatchPattern, buildReverseMatchPattern } from '../../../content/priceFinder';
+import { resetTestMocks } from '../../../../vitest.setup.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  resetTestMocks();
+});
 
 // Mock implementation for buildMatchPattern with simplified implementations for memory efficiency
 
@@ -51,7 +59,7 @@ const mockBuildReverseMatchPattern = (currencySymbol, currencyCode) => {
 describe('Match Pattern Tests', () => {
   beforeEach(() => {
     // Reset mocks
-    vi.clearAllMocks();
+    resetTestMocks();
 
     // Set up test DOM using the global helper if it's available
     if (typeof global.setupTestDom === 'function') {

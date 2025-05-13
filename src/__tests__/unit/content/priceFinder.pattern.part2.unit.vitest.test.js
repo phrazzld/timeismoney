@@ -3,13 +3,20 @@
  * to prevent worker termination
  */
 
-import { describe, test, expect, beforeEach, vi } from '../../setup/vitest-imports.js';
+import { describe, test, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
 import { resetTestMocks, setupTestDom } from '../../setup/vitest.setup.js';
 
 // Import mock functions for special test cases
 import { mockBuildMatchPattern, mockBuildReverseMatchPattern } from './priceFinder.test.patch.js';
 
 import { buildReverseMatchPattern } from '../../../content/priceFinder';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  resetTestMocks();
+});
 
 describe('Match Pattern Tests Part 2', () => {
   beforeEach(() => {
