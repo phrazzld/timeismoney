@@ -1,9 +1,17 @@
 /**
  * Tests for error handling in the form handler
  */
-/* global setupTestDom, resetTestMocks */
-import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../vitest.setup.js';
+import {
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  vi,
+  resetTestMocks,
+  setupTestDom,
+} from '../setup/vitest-imports.js';
 import { loadForm, saveOptions } from '../../options/formHandler';
 import * as storage from '../../utils/storage';
 import * as validator from '../../options/validator.js';
@@ -40,6 +48,8 @@ describe('FormHandler Error Handling', () => {
   afterEach(() => {
     // Restore console.error
     vi.restoreAllMocks();
+
+    resetTestMocks();
   });
 
   describe('loadForm', () => {

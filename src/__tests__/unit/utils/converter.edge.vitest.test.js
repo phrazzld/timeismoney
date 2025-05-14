@@ -4,6 +4,15 @@
  */
 
 import {
+  describe,
+  test,
+  expect,
+  vi,
+  beforeEach,
+  afterEach,
+  resetTestMocks,
+} from '../../setup/vitest-imports.js';
+import {
   normalizePrice,
   calculateHourlyWage,
   convertToTime,
@@ -12,7 +21,13 @@ import {
   formatPriceWithTime,
   convertPriceToTimeString,
 } from '../../../utils/converter';
-import { describe, test, expect, vi } from '../../setup/vitest-imports.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  resetTestMocks();
+});
 
 // Mock logger to prevent console output during tests
 vi.mock('../../../utils/logger', () => ({

@@ -18,7 +18,9 @@
  * @module vitest-imports
  */
 
+/* eslint-disable import/named */
 import { describe, it, test, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+/* eslint-enable import/named */
 
 // Export all Vitest testing functions with JSDoc for better IDE support
 
@@ -89,7 +91,7 @@ export { afterAll };
  * Utility for resetting mocks between tests
  * Resets all Vitest mocks and Chrome API mocks
  */
-export { resetTestMocks } from '../../../vitest.setup.js';
+export { resetTestMocks, setupTestDom } from '../../../vitest.setup.js';
 
 /**
  * Creates a spy on an object's method, similar to jest.spyOn

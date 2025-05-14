@@ -2,10 +2,18 @@
  * Unit tests for options form validation
  */
 
-import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../vitest.setup.js';
-
-/* global setupTestDom, resetTestMocks */
+import {
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  vi,
+  resetTestMocks,
+  setupTestDom,
+  beforeAll,
+} from '../setup/vitest-imports.js';
 
 // Import the modules we want to test
 import {
@@ -28,9 +36,6 @@ beforeEach(() => {
 });
 
 describe('Options Form Validation', () => {
-  // Import beforeAll from vitest-imports
-  const { beforeAll } = require('../setup/vitest-imports.js');
-
   beforeAll(() => {
     // Mock getMessage to return the key itself
     chrome.i18n.getMessage = vi.fn((key) => key);

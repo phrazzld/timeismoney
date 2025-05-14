@@ -194,7 +194,11 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     - [x] Fixed in observer-stress.vitest.test.js
     - [x] Fixed vi.resetAllMocks() in formHandler.storage.vitest.test.js
     - [x] Verified other files use await properly
-  - [ ] Fix missing imports and unused variables
+  - [x] Fix missing imports and unused variables
+    - [x] Fixed duplicate resetTestMocks import in multiple test files
+    - [x] Imported setupTestDom from vitest-imports.js
+    - [x] Fixed missing function imports in formHandler.vitest.test.js
+    - [x] Updated vitest-imports.js to export setupTestDom
   - [ ] Move global-level hooks inside describe blocks to fix partially migrated status
 - [~] Run ESLint to ensure all files follow project standards
   ```

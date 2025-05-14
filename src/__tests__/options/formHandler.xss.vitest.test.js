@@ -13,8 +13,16 @@ import {
   saveOptions,
 } from '../../options/formHandler';
 
-import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../vitest.setup.js';
+import {
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  vi,
+  resetTestMocks,
+} from '../setup/vitest-imports.js';
 import * as storage from '../../utils/storage';
 
 beforeEach(() => {

@@ -2,9 +2,17 @@
  * Direct tests for storage error handling in the form handler UI
  * These tests focus on directly testing the error handlers in formHandler.js
  */
-/* global setupTestDom, resetTestMocks */
-import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../vitest.setup.js';
+import {
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  vi,
+  resetTestMocks,
+  setupTestDom,
+} from '../setup/vitest-imports.js';
 import * as storage from '../../utils/storage.js';
 import * as validator from '../../options/validator.js';
 

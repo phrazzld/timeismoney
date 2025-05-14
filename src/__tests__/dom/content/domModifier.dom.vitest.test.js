@@ -9,8 +9,14 @@ import {
   processTextNode,
 } from '../../../content/domModifier.js';
 import { CONVERTED_PRICE_CLASS } from '../../../utils/constants.js';
-import { describe, test, expect, beforeEach } from '../../setup/vitest-imports.js';
-import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
+import {
+  describe,
+  test,
+  expect,
+  beforeEach,
+  setupTestDom,
+  resetTestMocks,
+} from '../../setup/vitest-imports.js';
 
 describe('DOM Modifier Module', () => {
   beforeEach(() => {
@@ -63,11 +69,11 @@ describe('DOM Modifier Module', () => {
 
       // Check that text node was replaced with a fragment that may contain multiple nodes
       // In the implementation, the fragment can have multiple nodes: text before match, span, text after match
-      const span = Array.from(parentNode.childNodes).find(node => 
-        node.nodeType === Node.ELEMENT_NODE && 
-        node.classList.contains(CONVERTED_PRICE_CLASS)
+      const span = Array.from(parentNode.childNodes).find(
+        (node) =>
+          node.nodeType === Node.ELEMENT_NODE && node.classList.contains(CONVERTED_PRICE_CLASS)
       );
-      
+
       expect(span).toBeTruthy();
       expect(span.tagName).toBe('SPAN');
       expect(span.className).toBe(CONVERTED_PRICE_CLASS);
@@ -114,11 +120,11 @@ describe('DOM Modifier Module', () => {
       expect(result).toBe(true);
 
       // Check that text node was replaced with a fragment that may contain multiple nodes
-      const span = Array.from(parentNode.childNodes).find(node => 
-        node.nodeType === Node.ELEMENT_NODE && 
-        node.classList.contains(CONVERTED_PRICE_CLASS)
+      const span = Array.from(parentNode.childNodes).find(
+        (node) =>
+          node.nodeType === Node.ELEMENT_NODE && node.classList.contains(CONVERTED_PRICE_CLASS)
       );
-      
+
       expect(span).toBeTruthy();
       expect(span.tagName).toBe('SPAN');
       expect(span.className).toBe(CONVERTED_PRICE_CLASS);

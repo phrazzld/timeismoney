@@ -2,9 +2,17 @@
  * Tests for storage error handling in the form handler UI
  * These tests focus on UI feedback during storage errors
  */
-/* global setupTestDom, resetTestMocks */
-import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../vitest.setup.js';
+import {
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  vi,
+  resetTestMocks,
+  setupTestDom,
+} from '../setup/vitest-imports.js';
 import { loadForm, saveOptions } from '../../options/formHandler.js';
 import * as storage from '../../utils/storage.js';
 import * as validator from '../../options/validator.js';
