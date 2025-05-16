@@ -5,8 +5,8 @@
 // eslint-disable-next-line no-restricted-imports
 import { vi } from 'vitest';
 vi.mock('../../utils/storage.js', () => ({
-  saveSettings: vi.fn(),
-  getSettings: vi.fn(),
+  saveSettings: vi.fn().mockResolvedValue(true),
+  getSettings: vi.fn().mockResolvedValue({}),
 }));
 import {
   describe,
@@ -27,14 +27,17 @@ import {
   sanitizeCurrencySymbol,
   sanitizeCurrencyCode,
   sanitizeNumericInput,
-} from '../../options/formHandler';
+} from '../../options/formHandler.js';
 
 import {
   validateCurrencySymbol,
   validateCurrencyCode,
   validateAmount,
   validateDebounceInterval,
-} from '../../options/validator';
+} from '../../options/validator.js';
+
+// Import mocked modules for testing
+import { saveSettings } from '../../utils/storage.js';
 
 // Mock storage module at the module level
 
@@ -162,7 +165,6 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings was NOT called due to validation failure
-      const { saveSettings } = require('../../utils/storage.js');
       expect(saveSettings).not.toHaveBeenCalled();
     });
 
@@ -184,7 +186,6 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings was NOT called due to validation failure
-      const { saveSettings } = require('../../utils/storage.js');
       expect(saveSettings).not.toHaveBeenCalled();
     });
 
@@ -206,7 +207,6 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings was NOT called due to validation failure
-      const { saveSettings } = require('../../utils/storage.js');
       expect(saveSettings).not.toHaveBeenCalled();
     });
 
@@ -228,7 +228,6 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings was NOT called due to validation failure
-      const { saveSettings } = require('../../utils/storage.js');
       expect(saveSettings).not.toHaveBeenCalled();
     });
 
@@ -278,7 +277,6 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings WAS called with valid settings
-      const { saveSettings } = require('../../utils/storage.js');
       expect(saveSettings).toHaveBeenCalledWith(
         expect.objectContaining({
           currencySymbol: '$',
@@ -311,7 +309,7 @@ describe('Options Form Validation', () => {
       window.close = vi.fn();
 
       // Mock saveSettings to resolve successfully
-      vi.spyOn(require('../../utils/storage.js'), 'saveSettings').mockImplementation(() => {
+      saveSettings.mockImplementation(() => {
         return Promise.resolve();
       });
 
