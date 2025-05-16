@@ -2,7 +2,9 @@
  * Currency format tests (part 1) split from the original file
  * to prevent worker termination
  */
-/* global setupTestDom, resetTestMocks */
+
+import { describe, test, expect, beforeEach } from '../setup/vitest-imports.js';
+import { setupTestDom, resetTestMocks } from '../setup/vitest.setup.js';
 
 // Import mock functions for special test cases
 import { mockBuildMatchPattern } from './priceFinder.test.patch.js';
@@ -71,23 +73,23 @@ describe('US Dollar Format Tests', () => {
   test('matches plain dollar amount', () => {
     const pattern = mockBuildMatchPattern('$', 'USD', ',', '\\.');
 
-    expect('$12.34'.match(pattern)).toBeTruthy();
-    expect('$0.99'.match(pattern)).toBeTruthy();
-    expect('$1'.match(pattern)).toBeTruthy();
+    expect(pattern.test('$12.34')).toBeTruthy();
+    expect(pattern.test('$0.99')).toBeTruthy();
+    expect(pattern.test('$1')).toBeTruthy();
   });
 
   test('matches dollar amount with thousands separator', () => {
     const pattern = mockBuildMatchPattern('$', 'USD', ',', '\\.');
 
-    expect('$1,234.56'.match(pattern)).toBeTruthy();
-    expect('$1,234,567.89'.match(pattern)).toBeTruthy();
+    expect(pattern.test('$1,234.56')).toBeTruthy();
+    expect(pattern.test('$1,234,567.89')).toBeTruthy();
   });
 
   test('matches dollar amount with dollar sign after the amount', () => {
     const pattern = mockBuildMatchPattern('$', 'USD', ',', '\\.');
 
-    expect('12.34$'.match(pattern)).toBeTruthy();
-    expect('1,234.56$'.match(pattern)).toBeTruthy();
+    expect(pattern.test('12.34$')).toBeTruthy();
+    expect(pattern.test('1,234.56$')).toBeTruthy();
   });
 
   test('extracts correct amount from dollar prices', () => {

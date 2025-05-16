@@ -3,25 +3,22 @@
  * Focuses on testing the MutationObserver dependency injection functionality
  */
 
-import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
+import {
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  vi,
+  resetTestMocks,
+} from '../setup/vitest-imports.js';
 
 import {
   observeDomChanges,
   startObserver,
   createDomScannerState,
 } from '../../content/domScanner.js';
-import { resetTestMocks } from '../../../vitest.setup.js';
-
-beforeEach(() => {
-  resetTestMocks();
-});
-afterEach(() => {
-  vi.useRealTimers();
-  resetTestMocks();
-});
-
-
-
 
 // Create a mock MutationObserver class
 class MockMutationObserver {
@@ -50,6 +47,14 @@ class MockMutationObserver {
 }
 
 describe('domScanner module', () => {
+  beforeEach(() => {
+    resetTestMocks();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    resetTestMocks();
+  });
   describe('observeDomChanges', () => {
     it('should accept a custom MutationObserver constructor', () => {
       // Create a simple callback function

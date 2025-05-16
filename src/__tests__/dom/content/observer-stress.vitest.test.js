@@ -6,8 +6,19 @@
  * 3. Edge cases with maximum queue sizes
  * 4. Resource cleanup to prevent memory leaks
  */
+import { vi, describe, it, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
 
-import { describe, it, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
+// Mock the getSettings function
+vi.mock('../../../utils/storage.js', () => ({
+  getSettings: vi.fn().mockResolvedValue({
+    currencySymbol: '$',
+    currencyCode: 'USD',
+    thousands: 'commas',
+    decimal: 'dot',
+    frequency: 'hourly',
+    amount: '30',
+  }),
+}));
 import {
   // Removing unused imports to fix linting issues
   startObserver,
@@ -21,19 +32,6 @@ import { resetTestMocks } from '../../../../vitest.setup.js';
 beforeEach(() => {
   resetTestMocks();
 });
-
-
-// Mock the getSettings function
-vi.mock('../../../utils/storage.js', () => ({
-  getSettings: vi.fn().mockResolvedValue({
-    currencySymbol: '$',
-    currencyCode: 'USD',
-    thousands: 'commas',
-    decimal: 'dot',
-    frequency: 'hourly',
-    amount: '30',
-  }),
-}));
 
 // Create a mock MutationObserver class
 class MockMutationObserver {
@@ -139,10 +137,8 @@ describe('Observer Stress and Cleanup Tests', () => {
     vi.useRealTimers();
 
     // Clear mocks
-    vi.clearAllMocks();
-  
-  resetTestMocks();
-});
+    resetTestMocks();
+  });
 
   describe('stopObserver cleanup functionality', () => {
     it('should properly clean up all resources when stopping the observer', () => {
@@ -335,7 +331,7 @@ describe('Observer Stress and Cleanup Tests', () => {
   });
 
   describe('Edge cases and resource management', () => {
-    it('should handle stopping the observer during active processing', async () => {
+    it('should handle stopping the observer during active processing', () => {
       // Create a state with an active observer
       const state = createDomScannerState();
       const callback = vi.fn();

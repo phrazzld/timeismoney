@@ -2,35 +2,9 @@
  * Performance tests for DOM scanning optimizations
  */
 
-import { describe, it, expect, beforeEach, vi } from '../../setup/vitest-imports.js';
+import { describe, it, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
 import { walk, startObserver, stopObserver } from '../../../content/domScanner';
 import { resetTestMocks } from '../../../../vitest.setup.js';
-
-beforeEach(() => {
-  resetTestMocks();
-});
-afterEach(() => {
-  vi.useRealTimers();
-  resetTestMocks();
-});
-
-
-
-
-// Mocks for Chrome API
-beforeEach(() => {
-  chrome.storage.sync.get.mockImplementation((key, callback) => {
-    callback({
-      currencySymbol: '$',
-      currencyCode: 'USD',
-      thousands: 'commas',
-      decimal: 'dot',
-      disabled: false,
-      frequency: 'hourly',
-      amount: '20',
-    });
-  });
-});
 
 /**
  * Creates a test DOM structure with the specified number of price elements
@@ -82,11 +56,34 @@ function createTestDOM(priceCount, depth) {
 
 describe('DOM Scanning Performance', () => {
   beforeEach(() => {
+    resetTestMocks();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    resetTestMocks();
+  });
+
+  // Mocks for Chrome API
+  beforeEach(() => {
+    chrome.storage.sync.get.mockImplementation((key, callback) => {
+      callback({
+        currencySymbol: '$',
+        currencyCode: 'USD',
+        thousands: 'commas',
+        decimal: 'dot',
+        disabled: false,
+        frequency: 'hourly',
+        amount: '20',
+      });
+    });
+  });
+  beforeEach(() => {
     // Reset the DOM
     document.body.innerHTML = '';
 
     // Reset all mocks
-    vi.clearAllMocks();
+    resetTestMocks();
 
     // Mock performance API for certain tests
     global.performance = {
@@ -176,7 +173,7 @@ describe('DOM Scanning Performance', () => {
     expect(totalPriceNodes).toBe(initialPriceNodeCount + newPriceNodes.length);
   });
 
-  it('should verify performance benefits of optimized scanning', async () => {
+  it('should verify performance benefits of optimized scanning', () => {
     // For this test, we'll focus on a theoretical analysis instead of timing tests
     // since the timeouts used in the observer make it difficult to get accurate timing
 

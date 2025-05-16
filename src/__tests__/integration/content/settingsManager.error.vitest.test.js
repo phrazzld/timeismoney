@@ -9,9 +9,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from '../../setup/vit
 import { resetTestMocks } from '../../../../vitest.setup.js';
 
 describe('SettingsManager Error Handling', () => {
-  beforeEach(() => {
-    resetTestMocks();
-  });
   let originalDocumentAddEventListener;
   let visibilityChangeCallback;
 
@@ -43,8 +40,7 @@ describe('SettingsManager Error Handling', () => {
       }
     });
 
-    // Reset all mocks
-    resetTestMocks();
+    // Don't reset all mocks here as it will clear our console.error spy
   });
 
   afterEach(() => {

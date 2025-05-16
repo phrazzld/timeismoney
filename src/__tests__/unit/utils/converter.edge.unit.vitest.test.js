@@ -3,15 +3,8 @@
  * Specifically focused on extreme values, unusual inputs, and boundary conditions
  */
 
-import {
-  describe,
-  test,
-  expect,
-  vi,
-  beforeEach,
-  afterEach,
-} from '../../../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../setup/vitest.setup.js';
+import { describe, test, expect, vi, beforeEach, afterEach } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../setup/vitest.setup.js';
 
 import {
   normalizePrice,

@@ -199,7 +199,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     - [x] Imported setupTestDom from vitest-imports.js
     - [x] Fixed missing function imports in formHandler.vitest.test.js
     - [x] Updated vitest-imports.js to export setupTestDom
-  - [ ] Move global-level hooks inside describe blocks to fix partially migrated status
+  - [x] Move global-level hooks inside describe blocks to fix partially migrated status
 - [~] Run ESLint to ensure all files follow project standards
   ```
   npm run lint
@@ -220,16 +220,19 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
   - [x] src/**tests**/unit/utils/converter.edge.refactored.unit.vitest.test.js
 - [x] Remove duplicate test files where both Jest and Vitest versions exist
 - [x] Standardize file naming to follow `.vitest.test.js` pattern (verified all files already follow this pattern)
-- [~] Create script to consolidate similar test files
-- [ ] Verify test coverage is maintained or improved
-- [ ] Remove Jest dependencies and configuration files
-- [ ] Update package.json to remove Jest dependencies
-- [ ] Update `MIGRATION-STATUS.md` with final status
-- [ ] Update documentation to reflect Vitest usage
+- [x] Create script to consolidate similar test files
+- [x] Verify test coverage is maintained or improved
+  - [x] Utils module: 89.13% statements, 75.75% branches, 72.22% functions, 89.13% lines
+  - [x] Some utility files have 100% coverage (constants.js, parser.js)
+  - [x] Converter.js has excellent coverage (95.42% statements/lines, 93.75% branches, 100% functions)
+- [x] Remove Jest dependencies and configuration files
+- [x] Update package.json to remove Jest dependencies (already completed)
+- [x] Update `MIGRATION-STATUS.md` with final status
+- [~] Update documentation to reflect Vitest usage
 
 ### Final Validation
 
-- [ ] Run full test suite to verify all tests pass with Vitest
+- [x] Run full test suite to verify all tests pass with Vitest
   ```
   npm test
   ```

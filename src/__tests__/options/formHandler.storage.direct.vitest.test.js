@@ -16,10 +16,6 @@ import {
 import * as storage from '../../utils/storage.js';
 import * as validator from '../../options/validator.js';
 
-beforeEach(() => {
-  resetTestMocks();
-});
-
 describe('FormHandler Storage Error Direct Tests', () => {
   beforeEach(() => {
     // Reset all mocks

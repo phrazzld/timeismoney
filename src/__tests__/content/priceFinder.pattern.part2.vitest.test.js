@@ -16,11 +16,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   resetTestMocks();
-
 });
-
-
-
 
 describe('Match Pattern Tests Part 2', () => {
   beforeEach(() => {

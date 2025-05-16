@@ -2,8 +2,8 @@
  * Advanced price extraction tests extracted from the main currency test file
  * to reduce worker load and prevent timeouts
  */
-/* global setupTestDom, resetTestMocks */
-
+import { describe, test, expect, beforeEach } from '../setup/vitest-imports.js';
+import { setupTestDom, resetTestMocks } from '../../../vitest.setup.js';
 import { getPriceInfo } from '../../content/priceFinder.js';
 
 describe('Advanced Price Extraction Tests', () => {

@@ -6,14 +6,14 @@ import { resetTestMocks } from '../../../vitest.setup.js';
 import * as storage from '../../utils/storage';
 import { restoreOptions, handleEnableToggle } from '../../popup/popup';
 
-beforeEach(() => {
-  resetTestMocks();
-});
-afterEach(() => {
-  resetTestMocks();
-});
-
 describe('Popup Error Handling', () => {
+  beforeEach(() => {
+    resetTestMocks();
+  });
+
+  afterEach(() => {
+    resetTestMocks();
+  });
   beforeEach(() => {
     // Set up DOM elements needed by the code
     document.body.innerHTML = `
@@ -40,6 +40,8 @@ describe('Popup Error Handling', () => {
   afterEach(() => {
     // Restore console.error
     vi.restoreAllMocks();
+
+    resetTestMocks();
   });
 
   describe('restoreOptions', () => {

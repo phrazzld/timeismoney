@@ -20,13 +20,6 @@ import {
   processIfAmazon,
 } from '../../../content/amazonHandler';
 
-beforeEach(() => {
-  resetTestMocks();
-});
-afterEach(() => {
-  resetTestMocks();
-});
-
 // Mock DOM elements for testing
 const createNodeWithClass = (className) => {
   const node = document.createElement('span');
@@ -40,6 +33,13 @@ const createNodeWithClass = (className) => {
 };
 
 describe('Amazon Price Handler', () => {
+  beforeEach(() => {
+    resetTestMocks();
+  });
+
+  afterEach(() => {
+    resetTestMocks();
+  });
   describe('createPriceState', () => {
     test('creates a new price state object with expected properties', () => {
       const state = createPriceState();

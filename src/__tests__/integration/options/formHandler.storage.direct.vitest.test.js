@@ -5,7 +5,7 @@
 
 import * as storage from '../../../utils/storage.js';
 import * as validator from '../../../options/validator.js';
-import { describe, beforeEach, afterEach, test, expect, vi } from 'vitest';
+import { describe, beforeEach, afterEach, test, expect, vi } from '../../setup/vitest-imports.js';
 // Import the test setup file with explicit imports
 import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
 
@@ -38,6 +38,8 @@ describe('FormHandler Storage Error Direct Tests', () => {
 
   afterEach(() => {
     vi.useRealTimers();
+
+    resetTestMocks();
   });
 
   describe('saveOptions error handling', () => {
@@ -75,6 +77,10 @@ describe('FormHandler Storage Error Direct Tests', () => {
 
       // Manually log error as the logger would in the catch block
       console.error('TimeIsMoney:', 'Error saving options:', errorObj);
+
+      beforeEach(() => {
+        resetTestMocks();
+      });
 
       // Update UI as would happen in the catch block
       const status = document.getElementById('status');

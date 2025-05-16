@@ -15,11 +15,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   resetTestMocks();
-
 });
-
-
-
 
 // Basic pattern tests moved to separate test file to reduce worker load
 // See priceFinder.basic-patterns.test.js

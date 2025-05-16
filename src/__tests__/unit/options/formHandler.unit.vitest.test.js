@@ -1,6 +1,7 @@
 /**
  * Unit tests for options form validation
  */
+// @vitest-environment jsdom
 
 // Import testing utilities from vitest-imports
 import {
@@ -11,8 +12,8 @@ import {
   beforeEach,
   afterEach,
   vi,
-} from '../../../setup/vitest-imports.js';
-import { setupTestDom, resetTestMocks } from '../../../setup/vitest.setup.js';
+} from '../../setup/vitest-imports.js';
+import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
 
 // Import the modules we want to test
 import {
@@ -30,6 +31,8 @@ import {
   validateDebounceInterval,
 } from '../../../options/validator';
 
+import * as storage from '../../../utils/storage';
+
 beforeEach(() => {
   resetTestMocks();
 });
@@ -43,9 +46,6 @@ describe('Options Form Validation', () => {
   beforeEach(() => {
     // Reset mocks
     resetTestMocks();
-
-    // Set up DOM elements
-    setupTestDom();
   });
 
   describe('Comprehensive validation tests', () => {
@@ -128,8 +128,11 @@ describe('Options Form Validation', () => {
 
   describe('Validation and saving behavior tests', () => {
     beforeEach(() => {
+      // Set up DOM for these tests
+      setupTestDom();
+
       // Mock saveSettings so we can verify it's called or not called
-      vi.spyOn(require('../../../utils/storage.js'), 'saveSettings').mockImplementation(() => {
+      vi.spyOn(storage, 'saveSettings').mockImplementation(() => {
         return Promise.resolve();
       });
     });
@@ -159,8 +162,7 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings was NOT called due to validation failure
-      const { saveSettings } = require('../../../utils/storage.js');
-      expect(saveSettings).not.toHaveBeenCalled();
+      expect(storage.saveSettings).not.toHaveBeenCalled();
     });
 
     test('saveSettings is not called when currency code validation fails', () => {
@@ -181,8 +183,7 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings was NOT called due to validation failure
-      const { saveSettings } = require('../../../utils/storage.js');
-      expect(saveSettings).not.toHaveBeenCalled();
+      expect(storage.saveSettings).not.toHaveBeenCalled();
     });
 
     test('saveSettings is not called when amount validation fails', () => {
@@ -203,8 +204,7 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings was NOT called due to validation failure
-      const { saveSettings } = require('../../../utils/storage.js');
-      expect(saveSettings).not.toHaveBeenCalled();
+      expect(storage.saveSettings).not.toHaveBeenCalled();
     });
 
     test('saveSettings is not called when debounce interval validation fails', () => {
@@ -225,8 +225,7 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings was NOT called due to validation failure
-      const { saveSettings } = require('../../../utils/storage.js');
-      expect(saveSettings).not.toHaveBeenCalled();
+      expect(storage.saveSettings).not.toHaveBeenCalled();
     });
 
     test('window.close() is not called when validation fails', () => {
@@ -275,8 +274,7 @@ describe('Options Form Validation', () => {
       saveOptions();
 
       // Expect saveSettings WAS called with valid settings
-      const { saveSettings } = require('../../../utils/storage.js');
-      expect(saveSettings).toHaveBeenCalledWith(
+      expect(storage.saveSettings).toHaveBeenCalledWith(
         expect.objectContaining({
           currencySymbol: '$',
           currencyCode: 'USD',
@@ -308,7 +306,7 @@ describe('Options Form Validation', () => {
       window.close = vi.fn();
 
       // Mock saveSettings to resolve successfully
-      vi.spyOn(require('../../../utils/storage.js'), 'saveSettings').mockImplementation(() => {
+      vi.spyOn(storage, 'saveSettings').mockImplementation(() => {
         return Promise.resolve();
       });
 

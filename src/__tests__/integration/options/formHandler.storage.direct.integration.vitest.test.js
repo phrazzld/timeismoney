@@ -16,11 +16,10 @@ import { resetTestMocks } from '../../../../vitest.setup.js';
 import * as storage from '../../../utils/storage.js';
 import * as validator from '../../../options/validator.js';
 
-beforeEach(() => {
-  resetTestMocks();
-});
-
 describe('FormHandler Storage Error Direct Tests', () => {
+  beforeEach(() => {
+    resetTestMocks();
+  });
   beforeEach(() => {
     // Reset all mocks
     resetTestMocks();

@@ -1,17 +1,23 @@
 /**
  * Tests for error handling in the settings manager
  */
-import { describe, it, test, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
+import {
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  vi,
+} from '../../setup/vitest-imports.js';
 import { resetTestMocks } from '../../../../vitest.setup.js';
 import * as storage from '../../../utils/storage.js';
 import { initSettings, handleVisibilityChange } from '../../../content/settingsManager.js';
 
-beforeEach(() => {
-  resetTestMocks();
-});
-
-
 describe('SettingsManager Error Handling', () => {
+  beforeEach(() => {
+    resetTestMocks();
+  });
   let originalDocumentAddEventListener;
   let visibilityChangeCallback;
 
@@ -50,14 +56,13 @@ describe('SettingsManager Error Handling', () => {
   afterEach(() => {
     // Restore document.addEventListener
     document.addEventListener = originalDocumentAddEventListener;
-    
+
     // Restore console.error (properly this time to avoid self-assignment)
     const originalConsoleError = console.error;
     console.error = originalConsoleError;
-    
+
     resetTestMocks();
-  
-});
+  });
 
   describe('initSettings', () => {
     it('should handle getSettings error and return disabled state', async () => {
@@ -94,11 +99,11 @@ describe('SettingsManager Error Handling', () => {
     it('should handle getSettings error during visibility change', async () => {
       // Reset mocks first to clear any console.error calls from previous tests
       resetTestMocks();
-      
+
       // Mock chrome.runtime to prevent "Extension context invalidated" error
       // We need to ensure isValidChromeRuntime() returns true
       vi.spyOn(chrome.runtime, 'getManifest').mockImplementation(() => ({ version: '1.0.0' }));
-      
+
       // Set up handleVisibilityChange with a callback
       const mockCallback = vi.fn();
       handleVisibilityChange(mockCallback);
@@ -116,18 +121,18 @@ describe('SettingsManager Error Handling', () => {
           return false; // This makes the document appear visible
         },
       });
-      
+
       // Trigger the visibility change callback
       if (visibilityChangeCallback) {
         visibilityChangeCallback();
       }
 
       // Wait for all promises to resolve
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       // Verify callback was not called due to error
       expect(mockCallback).not.toHaveBeenCalled();
-      
+
       // Note: The actual error log verification is problematic because of the asynchronous nature
       // of the function and the error handling inside settingsManager, so we'll focus on the
       // callback not being called which is the primary behavior we want to test

@@ -16,13 +16,6 @@ import { loadForm, saveOptions } from '../../options/formHandler';
 import * as storage from '../../utils/storage';
 import * as validator from '../../options/validator.js';
 
-beforeEach(() => {
-  resetTestMocks();
-});
-afterEach(() => {
-  resetTestMocks();
-});
-
 describe('FormHandler Error Handling', () => {
   beforeEach(() => {
     // Reset all mocks

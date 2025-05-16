@@ -6,6 +6,11 @@ import { getSettings, saveSettings, onSettingsChanged } from '../../../utils/sto
 import { DEFAULT_SETTINGS } from '../../../utils/constants.js';
 import { describe, it, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
 import chromeMock, { resetChromeMocks } from '../../mocks/chrome-api.mock.js';
+import { resetTestMocks } from '../../../../vitest.setup.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
 
 // Make the mock available as a global
 globalThis.chrome = chromeMock;
@@ -14,6 +19,13 @@ describe('Storage Error Handling', () => {
   beforeEach(() => {
     // Clear all mocks before each test
     resetChromeMocks();
+
+    // Mock isValidChromeRuntime to return true
+    // This ensures the function gets past the validation check
+    chromeMock.runtime.getManifest = vi.fn().mockReturnValue({
+      version: '1.0.0',
+      name: 'Mock Extension',
+    });
   });
 
   afterEach(() => {
@@ -31,6 +43,7 @@ describe('Storage Error Handling', () => {
         callback({});
       });
 
+      // The actual error should be the runtime.lastError
       await expect(getSettings()).rejects.toEqual(mockError);
       expect(chromeMock.storage.sync.get).toHaveBeenCalledWith(
         DEFAULT_SETTINGS,

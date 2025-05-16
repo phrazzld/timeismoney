@@ -6,11 +6,10 @@ import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
 import * as storage from '../../../utils/storage.js';
 import { restoreOptions, handleEnableToggle } from '../../../popup/popup.js';
 
-beforeEach(() => {
-  resetTestMocks();
-});
-
 describe('Popup Error Handling', () => {
+  beforeEach(() => {
+    resetTestMocks();
+  });
   beforeEach(() => {
     // Reset mocks and setup DOM
     resetTestMocks();

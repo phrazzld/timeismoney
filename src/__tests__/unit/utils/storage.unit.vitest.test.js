@@ -1,8 +1,8 @@
 /**
  * Tests for the storage utility functions
  */
-import { describe, it, expect, beforeEach } from '../../../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../../vitest.setup.js';
+import { describe, it, expect, beforeEach } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../vitest.setup.js';
 import { getSettings, saveSettings } from '../../../utils/storage.js';
 
 describe('Storage Utilities', () => {

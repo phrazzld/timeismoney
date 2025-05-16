@@ -2,8 +2,15 @@
  * Tests for the MutationObserver callback logic in domScanner
  * Shows how to test the observer callback logic independently
  */
-
-import { describe, it, expect, beforeEach, afterEach, vi } from '../../setup/vitest-imports.js';
+import {
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  vi,
+} from '../../setup/vitest-imports.js';
 import {
   processMutations,
   processPendingNodes,
@@ -11,56 +18,49 @@ import {
 } from '../../../content/domScanner.js';
 import { CONVERTED_PRICE_CLASS } from '../../../utils/constants.js';
 import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
-
-beforeEach(() => {
-  resetTestMocks();
-});
-
-
-// Mock the getSettings function
-vi.mock('../../../utils/storage.js', () => ({
-  getSettings: vi.fn().mockResolvedValue({
-    currencySymbol: '$',
-    currencyCode: 'USD',
-    thousands: 'commas',
-    decimal: 'dot',
-    frequency: 'hourly',
-    amount: '30',
-  }),
-}));
-
-// Mock performance API
-beforeEach(() => {
-  // Create a mock implementation that always returns a valid duration object
-  const mockPerformanceEntry = { duration: 100 };
-
-  if (global.performance) {
-    // Ensure all performance methods are properly mocked
-    global.performance.mark = vi.fn();
-    global.performance.measure = vi.fn();
-    global.performance.getEntriesByName = vi.fn().mockImplementation(() => [mockPerformanceEntry]);
-    global.performance.clearMarks = vi.fn();
-    global.performance.clearMeasures = vi.fn();
-  } else {
-    global.performance = {
-      mark: vi.fn(),
-      measure: vi.fn(),
-      getEntriesByName: vi.fn().mockImplementation(() => [mockPerformanceEntry]),
-      clearMarks: vi.fn(),
-      clearMeasures: vi.fn(),
-    };
-  }
-
-  // Make sure pop() always works even in error conditions
-  vi.spyOn(Array.prototype, 'pop').mockImplementation(function () {
-    return this.length > 0 ? this[this.length - 1] : mockPerformanceEntry;
-  });
-});
+import * as storage from '../../../utils/storage.js';
 
 describe('Observer callback logic', () => {
   beforeEach(() => {
-    // Reset mocks
+    // Reset all mocks
     resetTestMocks();
+
+    // Mock storage.getSettings instead of using vi.mock
+    vi.spyOn(storage, 'getSettings').mockResolvedValue({
+      currencySymbol: '$',
+      currencyCode: 'USD',
+      thousands: 'commas',
+      decimal: 'dot',
+      frequency: 'hourly',
+      amount: '30',
+    });
+
+    // Mock performance API
+    const mockPerformanceEntry = { duration: 100 };
+
+    if (global.performance) {
+      // Ensure all performance methods are properly mocked
+      global.performance.mark = vi.fn();
+      global.performance.measure = vi.fn();
+      global.performance.getEntriesByName = vi
+        .fn()
+        .mockImplementation(() => [mockPerformanceEntry]);
+      global.performance.clearMarks = vi.fn();
+      global.performance.clearMeasures = vi.fn();
+    } else {
+      global.performance = {
+        mark: vi.fn(),
+        measure: vi.fn(),
+        getEntriesByName: vi.fn().mockImplementation(() => [mockPerformanceEntry]),
+        clearMarks: vi.fn(),
+        clearMeasures: vi.fn(),
+      };
+    }
+
+    // Make sure pop() always works even in error conditions
+    vi.spyOn(Array.prototype, 'pop').mockImplementation(function () {
+      return this.length > 0 ? this[this.length - 1] : mockPerformanceEntry;
+    });
 
     // Set up DOM elements
     setupTestDom();
@@ -162,9 +162,9 @@ describe('Observer callback logic', () => {
 
     afterEach(() => {
       vi.useRealTimers();
-    
-  resetTestMocks();
-});
+
+      resetTestMocks();
+    });
 
     it('should process pending nodes and text nodes', async () => {
       // Create a state object with some pending nodes

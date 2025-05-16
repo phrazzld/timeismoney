@@ -8,11 +8,10 @@ import { loadForm, saveOptions } from '../../../options/formHandler.js';
 import * as storage from '../../../utils/storage.js';
 import * as validator from '../../../options/validator.js';
 
-beforeEach(() => {
-  resetTestMocks();
-});
-
 describe('FormHandler Storage Error UI Tests', () => {
+  beforeEach(() => {
+    resetTestMocks();
+  });
   let originalSetTimeout;
 
   beforeEach(() => {

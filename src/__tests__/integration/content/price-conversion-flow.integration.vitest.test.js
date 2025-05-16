@@ -63,13 +63,13 @@ describe('Price Conversion Integration Flow', () => {
 
     // The converted node should be replaced with a span
     expect(parentNode.childNodes.length).toBeGreaterThan(0);
-    
+
     // Find the span among potentially multiple child nodes
     const span = Array.from(parentNode.childNodes).find(
-      node => node.nodeType === Node.ELEMENT_NODE && 
-      node.classList.contains(CONVERTED_PRICE_CLASS)
+      (node) =>
+        node.nodeType === Node.ELEMENT_NODE && node.classList.contains(CONVERTED_PRICE_CLASS)
     );
-    
+
     expect(span).toBeTruthy();
     expect(span.tagName).toBe('SPAN');
     expect(span.className).toBe(CONVERTED_PRICE_CLASS);

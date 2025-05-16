@@ -31,9 +31,11 @@ import {
   validateDebounceInterval,
 } from '../../options/validator';
 
-beforeEach(() => {
-  resetTestMocks();
-});
+// Mock storage module at the module level
+vi.mock('../../utils/storage.js', () => ({
+  saveSettings: vi.fn(),
+  getSettings: vi.fn(),
+}));
 
 describe('Options Form Validation', () => {
   beforeAll(() => {
@@ -130,10 +132,10 @@ describe('Options Form Validation', () => {
   });
 
   describe('Validation and saving behavior tests', () => {
-    vi.mock('../../utils/storage.js', () => ({
-      saveSettings: vi.fn().mockResolvedValue(undefined),
-      getSettings: vi.fn().mockResolvedValue({}),
-    }));
+    beforeEach(() => {
+      // Reset mocks before each test
+      resetTestMocks();
+    });
 
     afterEach(() => {
       // Clean up mock

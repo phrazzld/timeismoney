@@ -2,10 +2,20 @@
  * Tests for the MutationObserver callback logic in domScanner
  * Shows how to test the observer callback logic independently
  */
-// Import all Vitest functions from the helper file
-// Hoisting of vi.mock will still work with this approach
-import { vi, describe, it, test, expect, beforeEach, afterEach } from '../setup/vitest-imports.js';
 
+// Import all Vitest functions from the helper file
+import {
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  resetTestMocks,
+  vi,
+} from '../setup/vitest-imports.js';
+
+// Mock modules before importing anything that depends on them
 vi.mock('../../utils/storage.js', () => ({
   getSettings: vi.fn().mockResolvedValue({
     currencySymbol: '$',
@@ -19,36 +29,11 @@ vi.mock('../../utils/storage.js', () => ({
 
 // Import dependencies and constants after mocks
 import { CONVERTED_PRICE_CLASS } from '../../utils/constants.js';
-import { resetTestMocks } from '../../../vitest.setup.js';
 import {
   processMutations,
   processPendingNodes,
   createDomScannerState,
 } from '../../content/domScanner.js';
-
-beforeEach(() => {
-  resetTestMocks();
-});
-
-// Mock performance API
-beforeEach(() => {
-  if (global.performance) {
-    // Ensure all performance methods are properly mocked
-    global.performance.mark = vi.fn();
-    global.performance.measure = vi.fn();
-    global.performance.getEntriesByName = vi.fn().mockReturnValue([{ duration: 100 }]);
-    global.performance.clearMarks = vi.fn();
-    global.performance.clearMeasures = vi.fn();
-  } else {
-    global.performance = {
-      mark: vi.fn(),
-      measure: vi.fn(),
-      getEntriesByName: vi.fn().mockReturnValue([{ duration: 100 }]),
-      clearMarks: vi.fn(),
-      clearMeasures: vi.fn(),
-    };
-  }
-});
 
 describe('Observer callback logic', () => {
   beforeEach(() => {
@@ -57,6 +42,24 @@ describe('Observer callback logic', () => {
 
     // Set up DOM elements for tests
     document.body.innerHTML = '<div id="test-container"></div>';
+
+    // Mock performance API
+    if (global.performance) {
+      // Ensure all performance methods are properly mocked
+      global.performance.mark = vi.fn();
+      global.performance.measure = vi.fn();
+      global.performance.getEntriesByName = vi.fn().mockReturnValue([{ duration: 100 }]);
+      global.performance.clearMarks = vi.fn();
+      global.performance.clearMeasures = vi.fn();
+    } else {
+      global.performance = {
+        mark: vi.fn(),
+        measure: vi.fn(),
+        getEntriesByName: vi.fn().mockReturnValue([{ duration: 100 }]),
+        clearMarks: vi.fn(),
+        clearMeasures: vi.fn(),
+      };
+    }
   });
 
   describe('processMutations', () => {

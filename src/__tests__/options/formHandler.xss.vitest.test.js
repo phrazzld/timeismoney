@@ -25,13 +25,6 @@ import {
 } from '../setup/vitest-imports.js';
 import * as storage from '../../utils/storage';
 
-beforeEach(() => {
-  resetTestMocks();
-});
-afterEach(() => {
-  resetTestMocks();
-});
-
 // Create a document with a body if it doesn't exist
 if (!document.body) {
   document.body = document.createElement('body');
@@ -39,6 +32,9 @@ if (!document.body) {
 
 describe('FormHandler XSS Protection', () => {
   beforeEach(() => {
+    // Reset all mocks from global hook
+    resetTestMocks();
+
     // Set up DOM elements needed by the code
     document.body.innerHTML = `
       <div id="status"></div>
@@ -326,7 +322,10 @@ describe('FormHandler XSS Protection', () => {
       });
     });
 
-    test('Sanitization is applied before saving options', () => {
+    test('Sanitization is applied before saving options', async () => {
+      // Import the validator module directly using dynamic import to avoid hoisting issues
+      const validatorModule = await import('../../options/validator.js');
+
       // Create mock getElementById to return elements with known XSS payloads
       const realGetElementById = document.getElementById;
       const mockElements = {
@@ -344,14 +343,10 @@ describe('FormHandler XSS Protection', () => {
       document.getElementById = vi.fn((id) => mockElements[id] || { value: '' });
 
       // Mock validation to always return true for this test
-      vi.spyOn(require('../../options/validator.js'), 'validateCurrencySymbol').mockReturnValue(
-        true
-      );
-      vi.spyOn(require('../../options/validator.js'), 'validateCurrencyCode').mockReturnValue(true);
-      vi.spyOn(require('../../options/validator.js'), 'validateAmount').mockReturnValue(true);
-      vi.spyOn(require('../../options/validator.js'), 'validateDebounceInterval').mockReturnValue(
-        true
-      );
+      vi.spyOn(validatorModule, 'validateCurrencySymbol').mockReturnValue(true);
+      vi.spyOn(validatorModule, 'validateCurrencyCode').mockReturnValue(true);
+      vi.spyOn(validatorModule, 'validateAmount').mockReturnValue(true);
+      vi.spyOn(validatorModule, 'validateDebounceInterval').mockReturnValue(true);
 
       // Mock saveSettings to capture what gets saved
       vi.spyOn(storage, 'saveSettings').mockImplementation((settings) => Promise.resolve(settings));

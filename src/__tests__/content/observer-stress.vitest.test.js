@@ -8,8 +8,16 @@
  */
 
 // Import Vitest functions
-import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../vitest.setup.js';
+import {
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  vi,
+  resetTestMocks,
+} from '../setup/vitest-imports.js';
 
 // Import modules to test
 import {
@@ -19,11 +27,6 @@ import {
   createDomScannerState,
 } from '../../content/domScanner.js';
 import { MAX_PENDING_NODES } from '../../utils/constants.js';
-
-beforeEach(() => {
-  resetTestMocks();
-});
-
 
 // Create a mock MutationObserver class
 class MockMutationObserver {
@@ -82,6 +85,9 @@ describe('Observer Stress and Cleanup Tests', () => {
   const originalPerformance = global.performance;
 
   beforeEach(() => {
+    // Reset mocks
+    resetTestMocks();
+
     // Reset the DOM
     document.body.innerHTML = '<div id="root"></div>';
 
@@ -107,8 +113,7 @@ describe('Observer Stress and Cleanup Tests', () => {
 
     // Clear mocks
     resetTestMocks();
-  
-});
+  });
 
   describe('stopObserver cleanup functionality', () => {
     it('should properly clean up all resources when stopping the observer', () => {

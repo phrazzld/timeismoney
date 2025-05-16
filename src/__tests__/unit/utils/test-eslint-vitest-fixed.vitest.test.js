@@ -5,8 +5,15 @@
  */
 
 // Correct imports from our helper file
-import { describe, test, expect, vi, beforeEach } from '../../../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../../vitest.setup.js';
+import { describe, test, expect, vi, beforeEach, afterEach } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../vitest.setup.js';
+
+beforeEach(() => {
+  resetTestMocks();
+});
+afterEach(() => {
+  resetTestMocks();
+});
 
 describe('Test ESLint Vitest Rules', () => {
   // Correct mock function creation

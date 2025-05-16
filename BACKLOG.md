@@ -2,6 +2,7 @@
 
 This backlog outlines planned work for the extension, balancing feature development, technical improvements, operational excellence, and innovation, aligned with our development philosophy and informed by codebase analysis.
 
+- try out ms recognizers.text and money.js packages
 - redesign work hours conversion ui to be a clean badge with a clock icon
 
 ## High Priority

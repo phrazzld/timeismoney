@@ -2,8 +2,8 @@
  * Comprehensive error simulation tests for storage.js
  * Tests error handling for Chrome storage operations
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from '../../../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../setup/vitest.setup.js';
+import { describe, it, expect, vi, beforeEach, afterEach } from '../../setup/vitest-imports.js';
+import { resetTestMocks } from '../../setup/vitest.setup.js';
 import { getSettings, saveSettings, onSettingsChanged } from '../../../utils/storage.js';
 import { DEFAULT_SETTINGS } from '../../../utils/constants.js';
 
@@ -143,9 +143,9 @@ describe('Storage Error Handling', () => {
 
       onSettingsChanged(mockCallback);
 
-      // Trigger the storage onChanged event
+      // Trigger the storage onChanged event with 'sync' areaName
       const storageListener = chrome.storage.onChanged.addListener.mock.calls[0][0];
-      storageListener(mockChanges);
+      storageListener(mockChanges, 'sync');
 
       // Verify callback was called with the correct transformed changes
       expect(mockCallback).toHaveBeenCalledWith({
@@ -159,9 +159,9 @@ describe('Storage Error Handling', () => {
 
       onSettingsChanged(mockCallback);
 
-      // Trigger the storage onChanged event with empty changes
+      // Trigger the storage onChanged event with empty changes and 'sync' areaName
       const storageListener = chrome.storage.onChanged.addListener.mock.calls[0][0];
-      storageListener({});
+      storageListener({}, 'sync');
 
       // Verify callback was called with empty object
       expect(mockCallback).toHaveBeenCalledWith({});
@@ -176,9 +176,9 @@ describe('Storage Error Handling', () => {
 
       onSettingsChanged(mockCallback);
 
-      // Trigger the storage onChanged event
+      // Trigger the storage onChanged event with 'sync' areaName
       const storageListener = chrome.storage.onChanged.addListener.mock.calls[0][0];
-      storageListener(mockChanges);
+      storageListener(mockChanges, 'sync');
 
       // Verify callback was called with the null/undefined values preserved
       expect(mockCallback).toHaveBeenCalledWith({

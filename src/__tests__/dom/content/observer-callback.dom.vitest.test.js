@@ -13,17 +13,6 @@ import {
   afterEach,
 } from '../../setup/vitest-imports.js';
 
-// Mock storage.js module
-vi.mock('../../../utils/storage.js', () => ({
-  getSettings: vi.fn().mockResolvedValue({
-    currencySymbol: '$',
-    currencyCode: 'USD',
-    thousands: 'commas',
-    decimal: 'dot',
-    frequency: 'hourly',
-    amount: '30',
-  }),
-}));
 import {
   processMutations,
   processPendingNodes,
@@ -31,15 +20,22 @@ import {
 } from '../../../content/domScanner.js';
 import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
 import { CONVERTED_PRICE_CLASS } from '../../../utils/constants.js';
-
-beforeEach(() => {
-  resetTestMocks();
-});
+import * as storage from '../../../utils/storage.js';
 
 describe('Observer callback logic', () => {
   beforeEach(() => {
     // Reset mocks
     resetTestMocks();
+
+    // Mock storage.getSettings
+    vi.spyOn(storage, 'getSettings').mockResolvedValue({
+      currencySymbol: '$',
+      currencyCode: 'USD',
+      thousands: 'commas',
+      decimal: 'dot',
+      frequency: 'hourly',
+      amount: '30',
+    });
 
     // Set up DOM elements
     setupTestDom();

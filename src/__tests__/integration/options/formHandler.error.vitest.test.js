@@ -3,10 +3,21 @@
  */
 import { loadForm, saveOptions } from '../../../options/formHandler.js';
 import * as storage from '../../../utils/storage.js';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { setupTestDom, resetTestMocks } from '../../../../vitest.setup.js';
+import { describe, it, expect, vi, beforeEach, afterEach } from '../../setup/vitest-imports.js';
+import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
+
+// Mock the validator module at the top level
+vi.mock('../../../options/validator.js', () => ({
+  validateCurrencySymbol: () => true,
+  validateCurrencyCode: () => true,
+  validateAmount: () => true,
+  validateDebounceInterval: () => true,
+}));
 
 describe('FormHandler Error Handling', () => {
+  beforeEach(() => {
+    resetTestMocks();
+  });
   beforeEach(() => {
     // Reset all mocks
     resetTestMocks();
@@ -30,6 +41,8 @@ describe('FormHandler Error Handling', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+
+    resetTestMocks();
   });
 
   describe('loadForm', () => {
@@ -68,13 +81,7 @@ describe('FormHandler Error Handling', () => {
       document.getElementById('decimal').value = 'dot';
       document.getElementById('debounce-interval').value = '200';
 
-      // Mock the validator functions to ensure validation passes
-      vi.mock('../../../options/validator.js', () => ({
-        validateCurrencySymbol: () => true,
-        validateCurrencyCode: () => true,
-        validateAmount: () => true,
-        validateDebounceInterval: () => true,
-      }));
+      // Validator functions have already been mocked at the module level
 
       // Mock saveSettings to reject with an error
       vi.spyOn(storage, 'saveSettings').mockImplementation(() => {

@@ -2,15 +2,18 @@
  * Performance tests for DOM scanning optimizations
  */
 
-import { vi, describe, it, test, expect, beforeEach, afterEach } from '../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../vitest.setup.js';
+import {
+  vi,
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  resetTestMocks,
+} from '../setup/vitest-imports.js';
 import { walk, startObserver, stopObserver } from '../../content/domScanner';
 import { MAX_PENDING_NODES } from '../../utils/constants.js';
-
-beforeEach(() => {
-  resetTestMocks();
-});
-
 
 // Mocks for Chrome API
 chrome.storage.sync.get.mockImplementation((key, callback) => {
@@ -80,6 +83,9 @@ describe('DOM Scanning Performance', () => {
   const originalPerformance = global.performance;
 
   beforeEach(() => {
+    // Reset mocks
+    resetTestMocks();
+
     // Reset the DOM
     document.body.innerHTML = '';
 
@@ -112,17 +118,14 @@ describe('DOM Scanning Performance', () => {
       clearMarks: vi.fn(),
       clearMeasures: vi.fn(),
     };
-
-    // Reset all mocks
-    resetTestMocks();
   });
 
   afterEach(() => {
     // Restore original performance API
     global.performance = originalPerformance;
-  
-  resetTestMocks();
-});
+
+    resetTestMocks();
+  });
 
   it('should process target nodes correctly with optimized scanning', async () => {
     // Create a simple test DOM with a fixed structure

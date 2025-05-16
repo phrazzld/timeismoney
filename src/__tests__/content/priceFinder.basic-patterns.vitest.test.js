@@ -13,11 +13,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   resetTestMocks();
-
 });
-
-
-
 
 describe('Basic Pattern Tests', () => {
   beforeEach(() => {

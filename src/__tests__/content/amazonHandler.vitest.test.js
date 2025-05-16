@@ -2,7 +2,16 @@
  * Tests for the Amazon Price Handler module
  */
 
-import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
+import {
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  vi,
+  resetTestMocks,
+} from '../setup/vitest-imports.js';
 
 import {
   createPriceState,
@@ -10,17 +19,6 @@ import {
   handleAmazonPrice,
   processIfAmazon,
 } from '../../content/amazonHandler';
-import { resetTestMocks } from '../../../vitest.setup.js';
-
-beforeEach(() => {
-  resetTestMocks();
-});
-afterEach(() => {
-  resetTestMocks();
-});
-
-
-
 
 // Mock DOM elements for testing
 const createNodeWithClass = (className) => {
@@ -35,6 +33,13 @@ const createNodeWithClass = (className) => {
 };
 
 describe('Amazon Price Handler', () => {
+  beforeEach(() => {
+    resetTestMocks();
+  });
+
+  afterEach(() => {
+    resetTestMocks();
+  });
   describe('createPriceState', () => {
     test('creates a new price state object with expected properties', () => {
       const state = createPriceState();
