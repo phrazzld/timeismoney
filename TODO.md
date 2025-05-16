@@ -160,7 +160,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
   - [x] DOM Module Cleanup (fixed observer-callback.dom and observer-callback.refactored.dom tests)
   - [x] PriceFinder Unit Tests Cleanup
   - [x] Utils Module Cleanup (fixed converter.edge, storage, and storage.error tests)
-- [~] Fix ESLint issues in migrated test files:
+- [x] Fix ESLint issues in migrated test files:
   - [x] Fix import duplication issues
   - [x] Fix setupTestDom undefined errors
   - [x] Fix vi.runOnlyPendingTimers (replaced with vi.runAllTimersAsync)
@@ -200,7 +200,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     - [x] Fixed missing function imports in formHandler.vitest.test.js
     - [x] Updated vitest-imports.js to export setupTestDom
   - [x] Move global-level hooks inside describe blocks to fix partially migrated status
-- [~] Run ESLint to ensure all files follow project standards
+- [x] Run ESLint to ensure all files follow project standards
   ```
   npm run lint
   ```
@@ -237,7 +237,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
   npm test
   ```
 - [x] Measure and document performance improvements compared to Jest
-- [ ] Verify CI pipeline successfully runs all tests without errors
+- [~] Verify CI pipeline successfully runs all tests without errors
 - [ ] Create migration completion report with metrics and lessons learned
 - [ ] Create release plan for merging all changes to master branch
 

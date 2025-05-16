@@ -19,13 +19,20 @@
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [".js"]
+        "extensions": [".js", ".mjs", ".cjs", ".ts"],
+        "moduleDirectory": ["node_modules", "src"]
       }
-    }
+    },
+    "import/core-modules": ["vitest", "vite"]
   },
   "rules": {
     "prettier/prettier": "error",
-    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
     "no-unused-vars": "error",
     "prefer-const": "warn",
     "no-var": "warn",
@@ -51,7 +58,13 @@
     "jsdoc/valid-types": "error",
     "jsdoc/check-types": "error",
     "jsdoc/check-param-names": "error",
-    "jsdoc/tag-lines": ["warn", "any", { "startLines": 1 }]
+    "jsdoc/tag-lines": [
+      "warn",
+      "any",
+      {
+        "startLines": 1
+      }
+    ]
   },
   "ignorePatterns": ["node_modules/", "dist/", "babel.config.js", "test-files/", "temp/"],
   "overrides": [

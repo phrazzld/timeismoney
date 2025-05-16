@@ -3,7 +3,16 @@
  * Specifically focused on extreme values, unusual inputs, and boundary conditions
  */
 
-import { describe, test, expect, vi, beforeEach, afterEach } from '../../setup/vitest-imports.js';
+// eslint-disable-next-line no-restricted-imports
+import { vi } from 'vitest';
+vi.mock('../../../utils/logger', () => ({
+  error: vi.fn(),
+  warn: vi.fn(),
+  info: vi.fn(),
+  debug: vi.fn(),
+}));
+import { describe, test, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
+
 import { resetTestMocks } from '../../setup/vitest.setup.js';
 
 import {
@@ -25,12 +34,6 @@ afterEach(() => {
 });
 
 // Mock logger to prevent console output during tests
-vi.mock('../../../utils/logger', () => ({
-  error: vi.fn(),
-  warn: vi.fn(),
-  info: vi.fn(),
-  debug: vi.fn(),
-}));
 
 beforeEach(() => {
   // Reset mocks before each test

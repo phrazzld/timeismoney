@@ -6,7 +6,7 @@
  * - src/__tests__/integration/: JSDOM environment for integration tests
  * - src/__tests__/dom/: JSDOM environment for DOM-heavy tests
  */
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vite';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 

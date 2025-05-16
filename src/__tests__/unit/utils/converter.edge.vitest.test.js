@@ -3,15 +3,23 @@
  * Specifically focused on extreme values, unusual inputs, and boundary conditions
  */
 
+// eslint-disable-next-line no-restricted-imports
+import { vi } from 'vitest';
+vi.mock('../../../utils/logger', () => ({
+  error: vi.fn(),
+  warn: vi.fn(),
+  info: vi.fn(),
+  debug: vi.fn(),
+}));
 import {
   describe,
   test,
   expect,
-  vi,
   beforeEach,
   afterEach,
   resetTestMocks,
 } from '../../setup/vitest-imports.js';
+
 import {
   normalizePrice,
   calculateHourlyWage,
@@ -30,12 +38,6 @@ afterEach(() => {
 });
 
 // Mock logger to prevent console output during tests
-vi.mock('../../../utils/logger', () => ({
-  error: vi.fn(),
-  warn: vi.fn(),
-  info: vi.fn(),
-  debug: vi.fn(),
-}));
 
 describe('Edge cases: normalizePrice', () => {
   const thousands = /,/g;

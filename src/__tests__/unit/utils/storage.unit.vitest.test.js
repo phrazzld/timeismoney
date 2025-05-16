@@ -2,9 +2,12 @@
  * Tests for the storage utility functions
  */
 import { describe, it, expect, beforeEach } from '../../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../vitest.setup.js';
+import chromeMock from '../../mocks/chrome-api.mock.js';
+import { resetTestMocks } from '../../../../vitest.setup.js';
 import { getSettings, saveSettings } from '../../../utils/storage.js';
 
+// Set up Chrome API mock
+global.chrome = chromeMock;
 describe('Storage Utilities', () => {
   beforeEach(() => {
     // Reset all mocks before each test

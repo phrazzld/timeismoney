@@ -3,19 +3,8 @@
  * Shows how to test the observer callback logic independently
  */
 
-// Import all Vitest functions from the helper file
-import {
-  describe,
-  it,
-  test,
-  expect,
-  beforeEach,
-  afterEach,
-  resetTestMocks,
-  vi,
-} from '../setup/vitest-imports.js';
-
-// Mock modules before importing anything that depends on them
+// eslint-disable-next-line no-restricted-imports
+import { vi } from 'vitest';
 vi.mock('../../utils/storage.js', () => ({
   getSettings: vi.fn().mockResolvedValue({
     currencySymbol: '$',
@@ -26,6 +15,18 @@ vi.mock('../../utils/storage.js', () => ({
     amount: '30',
   }),
 }));
+import {
+  describe,
+  it,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  resetTestMocks,
+} from '../setup/vitest-imports.js';
+// Import all Vitest functions from the helper file
+
+// Mock modules before importing anything that depends on them
 
 // Import dependencies and constants after mocks
 import { CONVERTED_PRICE_CLASS } from '../../utils/constants.js';

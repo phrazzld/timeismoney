@@ -2,18 +2,8 @@
  * Performance tests for DOM scanning optimizations
  */
 
-// Import vitest functions first
-import {
-  vi,
-  describe,
-  it,
-  test,
-  expect,
-  beforeEach,
-  afterEach,
-} from '../../setup/vitest-imports.js';
-
-// Mocks must come after imports but before importing the modules they mock
+// eslint-disable-next-line no-restricted-imports
+import { vi } from 'vitest';
 vi.mock('../../../utils/storage.js', () => ({
   getSettings: vi.fn().mockResolvedValue({
     currencySymbol: '$',
@@ -24,6 +14,11 @@ vi.mock('../../../utils/storage.js', () => ({
     amount: '30',
   }),
 }));
+import { describe, it, test, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
+// Import vitest functions first
+
+// Mocks must come after imports but before importing the modules they mock
+
 import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
 import {
   walk,

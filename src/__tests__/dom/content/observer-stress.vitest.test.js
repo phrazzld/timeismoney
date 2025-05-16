@@ -6,9 +6,9 @@
  * 3. Edge cases with maximum queue sizes
  * 4. Resource cleanup to prevent memory leaks
  */
-import { vi, describe, it, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
 
-// Mock the getSettings function
+// eslint-disable-next-line no-restricted-imports
+import { vi } from 'vitest';
 vi.mock('../../../utils/storage.js', () => ({
   getSettings: vi.fn().mockResolvedValue({
     currencySymbol: '$',
@@ -19,6 +19,10 @@ vi.mock('../../../utils/storage.js', () => ({
     amount: '30',
   }),
 }));
+import { describe, it, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
+
+// Mock the getSettings function
+
 import {
   // Removing unused imports to fix linting issues
   startObserver,

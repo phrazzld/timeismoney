@@ -1,18 +1,22 @@
 /**
  * Tests for error handling in the form handler with Vitest
  */
-import { loadForm, saveOptions } from '../../../options/formHandler.js';
-import * as storage from '../../../utils/storage.js';
-import { describe, it, expect, vi, beforeEach, afterEach } from '../../setup/vitest-imports.js';
-import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
 
-// Mock the validator module at the top level
+// eslint-disable-next-line no-restricted-imports
+import { vi } from 'vitest';
 vi.mock('../../../options/validator.js', () => ({
   validateCurrencySymbol: () => true,
   validateCurrencyCode: () => true,
   validateAmount: () => true,
   validateDebounceInterval: () => true,
 }));
+import { describe, it, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
+import { loadForm, saveOptions } from '../../../options/formHandler.js';
+import * as storage from '../../../utils/storage.js';
+
+import { setupTestDom, resetTestMocks } from '../../setup/vitest.setup.js';
+
+// Mock the validator module at the top level
 
 describe('FormHandler Error Handling', () => {
   beforeEach(() => {

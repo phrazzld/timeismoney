@@ -2,11 +2,12 @@
  * Integration tests for options form validation
  * Refactored to use centralized mocks and actual validator implementation
  */
-/* global setupTestDom */
 
-// Use vitest auto-hoisting feature to mock storage
+// eslint-disable-next-line no-restricted-imports
+import { vi } from 'vitest';
+vi.mock('../../../utils/storage.js');
+
 import {
-  vi,
   describe,
   it,
   expect,
@@ -14,9 +15,12 @@ import {
   afterEach,
   beforeAll,
   afterAll,
+  resetTestMocks,
 } from '../../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../../vitest.setup.js';
-vi.mock('../../../utils/storage.js');
+/* global setupTestDom */
+
+// Use vitest auto-hoisting feature to mock storage
+
 // Import the modules we want to test
 import {
   saveOptions,

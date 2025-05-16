@@ -2,7 +2,7 @@
  * Tests for the DOM Modifier Module
  */
 
-import { describe, test, expect, beforeEach } from '../../setup/vitest-imports.js';
+import { describe, test, expect, beforeEach, setupTestDom } from '../../setup/vitest-imports.js';
 import {
   isValidForProcessing,
   applyConversion,
@@ -10,8 +10,6 @@ import {
   processTextNode,
 } from '../../../content/domModifier.js';
 import { CONVERTED_PRICE_CLASS } from '../../../utils/constants.js';
-// eslint-disable-next-line no-unused-vars
-import setupTestDom from '../../setup/test-helpers';
 
 describe('DOM Modifier Module', () => {
   beforeEach(() => {

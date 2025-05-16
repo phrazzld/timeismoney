@@ -6,7 +6,7 @@
 
 // Correct imports from our helper file
 import { describe, test, expect, vi, beforeEach, afterEach } from '../../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../vitest.setup.js';
+import { resetTestMocks } from '../../../../vitest.setup.js';
 
 beforeEach(() => {
   resetTestMocks();

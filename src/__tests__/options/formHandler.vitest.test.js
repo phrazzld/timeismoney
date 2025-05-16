@@ -2,6 +2,12 @@
  * Unit tests for options form validation
  */
 
+// eslint-disable-next-line no-restricted-imports
+import { vi } from 'vitest';
+vi.mock('../../utils/storage.js', () => ({
+  saveSettings: vi.fn(),
+  getSettings: vi.fn(),
+}));
 import {
   describe,
   it,
@@ -9,7 +15,6 @@ import {
   expect,
   beforeEach,
   afterEach,
-  vi,
   resetTestMocks,
   setupTestDom,
   beforeAll,
@@ -32,10 +37,6 @@ import {
 } from '../../options/validator';
 
 // Mock storage module at the module level
-vi.mock('../../utils/storage.js', () => ({
-  saveSettings: vi.fn(),
-  getSettings: vi.fn(),
-}));
 
 describe('Options Form Validation', () => {
   beforeAll(() => {
