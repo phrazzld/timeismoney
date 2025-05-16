@@ -33,11 +33,18 @@ We maintain code quality through linting and testing:
   npm run lint:fix  # Fix linting issues automatically
   ```
 
-- **Testing**: We use Jest for unit testing.
+- **Testing**: We use Vitest for testing.
+
   ```
-  npm test          # Run all tests
-  npm test -- --watch  # Run tests in watch mode
+  npm test              # Run all tests
+  npm run test:watch    # Run tests in watch mode
+  npm run test:coverage # Run tests with coverage
+  npm run test:unit     # Run only unit tests
+  npm run test:integration # Run only integration tests
+  npm run test:dom      # Run only DOM tests
   ```
+
+  See our [Testing Guide](TESTING_GUIDE.md) for more details on our testing approach and organization.
 
 ## Continuous Integration
 
@@ -45,9 +52,11 @@ We use GitHub Actions for continuous integration. Every pull request and push to
 
 1. Installs dependencies
 2. Runs linting checks
-3. Runs all tests
+3. Runs all tests with Vitest
 
 Pull requests cannot be merged if they fail any of these checks.
+
+Our test suite is organized into three categories (unit, integration, and DOM tests), which are all run during CI. For local development, you may want to run specific test categories to speed up feedback.
 
 ## Pull Request Process
 
