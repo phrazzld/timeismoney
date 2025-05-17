@@ -206,7 +206,7 @@ describe('Observer callback logic', () => {
       processPendingNodes(callback, {}, state);
 
       // Advance timers to handle the Promise
-      vi.runAllTimers();
+      await vi.runAllTimersAsync();
 
       // Need to let the promise resolve
       await Promise.resolve();
@@ -214,7 +214,7 @@ describe('Observer callback logic', () => {
 
       // Force callback execution by flushing microtasks
       // This addresses the limitation with mocked timers and Promises
-      vi.runOnlyPendingTimers();
+      await vi.runOnlyPendingTimersAsync();
 
       // Mock the callback to force it to have been called
       callback.mockImplementation(() => true);

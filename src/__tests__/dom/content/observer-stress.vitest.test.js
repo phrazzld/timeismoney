@@ -267,7 +267,7 @@ describe('Observer Stress and Cleanup Tests', () => {
       expect(state.pendingTextNodes.size).toBeGreaterThan(0);
 
       // Advance timers to trigger the debounced processing
-      vi.advanceTimersByTime(200);
+      await vi.advanceTimersByTimeAsync(200);
 
       // Wait for the Promise in processPendingNodes to resolve
       await Promise.resolve();
