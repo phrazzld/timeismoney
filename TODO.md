@@ -270,7 +270,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     1. Run a known DOM-dependent test like `npx vitest run src/__tests__/options/formHandler.vitest.test.js` and confirm no DOM environment errors.
   - **Depends‑on:** none
 
-- [ ] **T003 · Bugfix · P0: ensure async mocks consistently return promises**
+- [~] **T003 · Bugfix · P0: ensure async mocks consistently return promises**
 
   - **Context:** CI Resolution Plan > Immediate Actions Required > 3. Fix Async Flow Issues (Mocks)
   - **Action:**

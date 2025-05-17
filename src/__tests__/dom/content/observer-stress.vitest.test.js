@@ -10,14 +10,16 @@
 // eslint-disable-next-line no-restricted-imports
 import { vi } from 'vitest';
 vi.mock('../../../utils/storage.js', () => ({
-  getSettings: vi.fn().mockResolvedValue({
-    currencySymbol: '$',
-    currencyCode: 'USD',
-    thousands: 'commas',
-    decimal: 'dot',
-    frequency: 'hourly',
-    amount: '30',
-  }),
+  getSettings: vi.fn(() =>
+    Promise.resolve({
+      currencySymbol: '$',
+      currencyCode: 'USD',
+      thousands: 'commas',
+      decimal: 'dot',
+      frequency: 'hourly',
+      amount: '30',
+    })
+  ),
 }));
 import { describe, it, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
 

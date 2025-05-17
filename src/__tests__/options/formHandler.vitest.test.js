@@ -5,8 +5,8 @@
 // eslint-disable-next-line no-restricted-imports
 import { vi } from 'vitest';
 vi.mock('../../utils/storage.js', () => ({
-  saveSettings: vi.fn().mockResolvedValue(true),
-  getSettings: vi.fn().mockResolvedValue({}),
+  saveSettings: vi.fn(() => Promise.resolve(true)),
+  getSettings: vi.fn(() => Promise.resolve({})),
 }));
 import {
   describe,

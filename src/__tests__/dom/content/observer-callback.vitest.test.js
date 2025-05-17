@@ -180,14 +180,16 @@ describe('Observer callback logic', () => {
       state.pendingTextNodes.add(textNode);
 
       // Mock getSettings to resolve for the test
-      vi.spyOn(await import('../../../utils/storage.js'), 'getSettings').mockResolvedValue({
-        currencySymbol: '$',
-        currencyCode: 'USD',
-        frequency: 'hourly',
-        amount: '15.00',
-        thousands: 'commas',
-        decimal: 'dot',
-      });
+      vi.spyOn(await import('../../../utils/storage.js'), 'getSettings').mockImplementation(() =>
+        Promise.resolve({
+          currencySymbol: '$',
+          currencyCode: 'USD',
+          frequency: 'hourly',
+          amount: '15.00',
+          thousands: 'commas',
+          decimal: 'dot',
+        })
+      );
 
       // Make the callback do something meaningful to verify it gets called
       const callback = vi.fn((node) => {

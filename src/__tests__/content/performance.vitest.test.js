@@ -2,8 +2,25 @@
  * Performance tests for DOM scanning optimizations
  */
 
+// eslint-disable-next-line no-restricted-imports
+import { vi } from 'vitest';
+vi.mock('../../utils/storage.js', () => ({
+  getSettings: vi.fn(() =>
+    Promise.resolve({
+      currencySymbol: '$',
+      currencyCode: 'USD',
+      thousands: 'commas',
+      decimal: 'dot',
+      disabled: false,
+      frequency: 'hourly',
+      amount: '20',
+      debounceInterval: 200,
+      enableDynamicScanning: true,
+    })
+  ),
+}));
+
 import {
-  vi,
   describe,
   it,
   test,
@@ -14,19 +31,32 @@ import {
 } from '../setup/vitest-imports.js';
 import { walk, startObserver, stopObserver } from '../../content/domScanner';
 import { MAX_PENDING_NODES } from '../../utils/constants.js';
+import chromeMock from '../mocks/chrome-api.mock.js';
 
-// Mocks for Chrome API
-chrome.storage.sync.get.mockImplementation((key, callback) => {
-  callback({
-    currencySymbol: '$',
-    currencyCode: 'USD',
-    thousands: 'commas',
-    decimal: 'dot',
-    disabled: false,
-    frequency: 'hourly',
-    amount: '20',
-    debounceInterval: 200,
-    enableDynamicScanning: true,
+// Set up Chrome API mock
+beforeEach(() => {
+  // Ensure chrome mock is in global scope
+  global.chrome = chromeMock;
+
+  // Mock chrome.runtime.getManifest to return a valid manifest
+  chrome.runtime.getManifest = vi.fn().mockReturnValue({
+    version: '1.0.0',
+    name: 'Mock Extension',
+  });
+
+  // Mock chrome storage
+  chrome.storage.sync.get.mockImplementation((key, callback) => {
+    callback({
+      currencySymbol: '$',
+      currencyCode: 'USD',
+      thousands: 'commas',
+      decimal: 'dot',
+      disabled: false,
+      frequency: 'hourly',
+      amount: '20',
+      debounceInterval: 200,
+      enableDynamicScanning: true,
+    });
   });
 });
 
