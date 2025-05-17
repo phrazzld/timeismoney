@@ -5,6 +5,8 @@
  * - src/__tests__/unit/: Node environment for pure logic tests
  * - src/__tests__/integration/: JSDOM environment for integration tests
  * - src/__tests__/dom/: JSDOM environment for DOM-heavy tests
+ * - src/__tests__/options/: JSDOM environment for options page tests
+ * - src/__tests__/popup/: JSDOM environment for popup tests
  */
 import { defineConfig } from 'vite';
 import { fileURLToPath } from 'node:url';
@@ -21,28 +23,6 @@ export default defineConfig({
   test: {
     // Default environment (JSDOM for most tests)
     environment: 'jsdom',
-
-    // Configure workspaces for different test environments
-    workspace: {
-      // Unit tests run in Node environment (faster, no DOM needed)
-      unit: {
-        environment: 'node',
-        include: [
-          'src/__tests__/unit/**/*.vitest.test.js',
-          'src/__tests__/unit/**/*vitest*test.js',
-        ],
-      },
-      // Integration and DOM tests run in JSDOM environment
-      integration: {
-        environment: 'jsdom',
-        include: [
-          'src/__tests__/integration/**/*.vitest.test.js',
-          'src/__tests__/integration/**/*vitest*test.js',
-          'src/__tests__/dom/**/*.vitest.test.js',
-          'src/__tests__/dom/**/*vitest*test.js',
-        ],
-      },
-    },
 
     // Where to look for test files for Vitest
     include: ['src/**/*.vitest.test.js', 'src/**/*vitest*test.js'],

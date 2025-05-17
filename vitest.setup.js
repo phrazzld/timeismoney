@@ -116,7 +116,11 @@ globalThis.resetTestMocks = resetTestMocks;
  */
 export const setupTestDom = () => {
   // Ensure document and body exist
-  if (typeof document === 'undefined' || !document.body) {
+  if (
+    typeof document === 'undefined' ||
+    !document.body ||
+    typeof document.body.appendChild !== 'function'
+  ) {
     // If we're in a test environment where document isn't properly set up
     // Return without trying to manipulate the DOM
     return;
