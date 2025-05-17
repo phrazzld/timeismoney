@@ -24,16 +24,13 @@ export default defineConfig({
     // Default environment (JSDOM for most tests)
     environment: 'jsdom',
 
-    // Where to look for test files for Vitest
-    include: ['src/**/*.vitest.test.js', 'src/**/*vitest*test.js'],
+    // Where to look for test files for Vitest - only include files explicitly named with .vitest.test.js
+    include: ['src/**/*.vitest.test.js'],
 
-    // Files to exclude - but allow all Vitest tests
+    // Files to exclude - avoid interfering with our include pattern
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
-      // Allow Vitest tests
-      '!src/**/*.vitest.test.js',
-      '!src/**/*vitest*test.js',
       // Exclude test helpers and patches
       'src/**/*.test.patch.js',
       'src/**/*test-helpers.js',

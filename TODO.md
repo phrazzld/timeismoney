@@ -283,7 +283,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     1. Run tests using the `getSettings` mock (e.g., `formHandler.vitest.test.js`) and confirm no promise-related errors from the mock.
   - **Depends‑on:** [T001]
 
-- [~] **T004 · Bugfix · P0: resolve async operations in `domscanner.js` tests**
+- [x] **T004 · Bugfix · P0: resolve async operations in `domscanner.js` tests**
 
   - **Context:** CI Resolution Plan > Immediate Actions Required > 3. Fix Async Flow Issues (domScanner.js tests)
   - **Action:**
@@ -295,7 +295,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     1. Run relevant `domScanner.js` tests individually to confirm async issues are resolved.
   - **Depends‑on:** [T001]
 
-- [ ] **T005 · Chore · P1: configure vitest test scope to include only `.vitest.test.js` files**
+- [x] **T005 · Chore · P1: configure vitest test scope to include only `.vitest.test.js` files**
 
   - **Context:** CI Resolution Plan > Immediate Actions Required > 4. Configure Test Scope for PR #55 (Actions 1, 2)
   - **Action:**
