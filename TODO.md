@@ -257,7 +257,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     1. Run `npx vitest run src/__tests__/options/formHandler.vitest.test.js` and confirm no ES module import errors.
   - **Depends‑on:** none
 
-- [ ] **T002 · Bugfix · P0: configure jsdom environment for dom-dependent tests**
+- [x] **T002 · Bugfix · P0: configure jsdom environment for dom-dependent tests**
 
   - **Context:** CI Resolution Plan > Immediate Actions Required > 2. Fix DOM Environment Configuration
   - **Action:**
