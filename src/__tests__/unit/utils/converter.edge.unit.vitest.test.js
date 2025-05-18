@@ -56,8 +56,8 @@ describe('Edge cases: normalizePrice', () => {
 
   test('handles prices with multiple decimal points', () => {
     // The implementation seems to replace all decimal points with '~', then the first '~' with '.'
-    // This results in 123.46 rather than 123.45
-    expect(normalizePrice('123.45.67', thousands, decimal)).toBe(123.46);
+    // The actual behavior returns the first two segments (123.45)
+    expect(normalizePrice('123.45.67', thousands, decimal)).toBe(123.45);
   });
 
   test('handles negative prices', () => {

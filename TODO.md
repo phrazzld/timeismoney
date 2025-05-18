@@ -318,7 +318,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     1. Review file changes, if any, made by the script.
   - **Depends‑on:** [T001, T005]
 
-- [ ] **T007 · Test · P0: conduct full local and ci test suite verification**
+- [~] **T007 · Test · P0: conduct full local and ci test suite verification**
   - **Context:** CI Resolution Plan > Verification Steps
   - **Action:**
     1. After all preceding fixes (T001-T006) are merged/applied locally, run the full test suite using `npm test`.

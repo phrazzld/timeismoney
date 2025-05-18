@@ -32,8 +32,18 @@ export const setupChromeMocks = () => {
  * @returns {Function} Function to reset Browser mocks
  */
 export const setupBrowserMocks = () => {
-  // Set up document methods
-  Object.assign(global.document, browserMock.document);
+  // Set up document methods - exclude read-only properties like body
+  const { body, ...documentMethods } = browserMock.document;
+  Object.assign(global.document, documentMethods);
+
+  // For body, we need to mock its methods individually if they don't exist
+  if (global.document.body) {
+    Object.keys(body).forEach((key) => {
+      if (typeof body[key] === 'function') {
+        global.document.body[key] = body[key];
+      }
+    });
+  }
 
   // Set up window methods
   Object.assign(global.window, browserMock.window);

@@ -489,9 +489,11 @@ export const processPendingNodes = (callback, options = {}, state = defaultState
               'element-nodes-end'
             );
             const elementMeasure = performance.getEntriesByName('Element Nodes Processing').pop();
-            logger.debug(
-              `Processed ${nodeCount} element nodes in ${Math.round(elementMeasure.duration)}ms`
-            );
+            if (elementMeasure) {
+              logger.debug(
+                `Processed ${nodeCount} element nodes in ${Math.round(elementMeasure.duration)}ms`
+              );
+            }
           }
 
           // Process text nodes directly
@@ -521,9 +523,11 @@ export const processPendingNodes = (callback, options = {}, state = defaultState
             performance.mark('text-nodes-end');
             performance.measure('Text Nodes Processing', 'text-nodes-start', 'text-nodes-end');
             const textMeasure = performance.getEntriesByName('Text Nodes Processing').pop();
-            logger.debug(
-              `Processed ${textNodeCount} text nodes in ${Math.round(textMeasure.duration)}ms`
-            );
+            if (textMeasure) {
+              logger.debug(
+                `Processed ${textNodeCount} text nodes in ${Math.round(textMeasure.duration)}ms`
+              );
+            }
           }
         } finally {
           // Always clear the processing flag, even if errors occur during processing
@@ -538,8 +542,12 @@ export const processPendingNodes = (callback, options = {}, state = defaultState
           );
 
           // Log the overall timing results
-          const totalMeasure = performance.getEntriesByName('Total Processing Time').pop();
-          logger.debug(`Total processing time: ${Math.round(totalMeasure.duration)}ms`);
+          const totalMeasures = performance.getEntriesByName('Total Processing Time');
+          const totalMeasure =
+            totalMeasures && totalMeasures.length > 0 ? totalMeasures.pop() : null;
+          if (totalMeasure && totalMeasure.duration !== undefined) {
+            logger.debug(`Total processing time: ${Math.round(totalMeasure.duration)}ms`);
+          }
 
           // Clean up performance entries to avoid memory leaks
           performance.clearMarks('processPendingNodes-start');
@@ -571,10 +579,13 @@ export const processPendingNodes = (callback, options = {}, state = defaultState
           'processPendingNodes-start',
           'processPendingNodes-end'
         );
-        const errorMeasure = performance.getEntriesByName('Total Processing Time (Error)').pop();
-        logger.error(
-          `Processing failed after ${Math.round(errorMeasure.duration)}ms due to settings error`
-        );
+        const errorMeasures = performance.getEntriesByName('Total Processing Time (Error)');
+        const errorMeasure = errorMeasures && errorMeasures.length > 0 ? errorMeasures.pop() : null;
+        if (errorMeasure && errorMeasure.duration !== undefined) {
+          logger.error(
+            `Processing failed after ${Math.round(errorMeasure.duration)}ms due to settings error`
+          );
+        }
 
         // Clean up performance entries
         performance.clearMarks('processPendingNodes-start');
