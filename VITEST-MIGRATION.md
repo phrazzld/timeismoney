@@ -1,5 +1,7 @@
 # Jest to Vitest Migration Guide
 
+> **⚠️ DEPRECATED**: This migration documentation has been completed and the relevant information has been integrated into the comprehensive [TESTING_GUIDE.md](./TESTING_GUIDE.md). Please refer to that guide for all current testing documentation.
+
 This document provides guidance for migrating tests from Jest to Vitest in the TimeIsMoney project.
 
 ## Setup and Configuration

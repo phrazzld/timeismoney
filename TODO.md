@@ -356,7 +356,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     1. Observe CI run logs to confirm separate jobs and their respective environments.
   - **Depends‑on:** [T002, T005]
 
-- [ ] **T010 · Chore · P2: update testing documentation with vitest best practices**
+- [x] **T010 · Chore · P2: update testing documentation with vitest best practices**
 
   - **Context:** CI Resolution Plan > Long-term Prevention > 3. Documentation
   - **Action:**

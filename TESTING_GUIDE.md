@@ -1,67 +1,72 @@
 # Testing Guide for Time Is Money
 
-This guide outlines our testing approach, structure, and best practices for the Time Is Money Chrome extension.
+This comprehensive guide consolidates all testing documentation for the Time Is Money Chrome extension, providing a single source of truth for Vitest testing best practices, patterns, and configuration.
 
 ## Table of Contents
 
-- [Testing Framework](#testing-framework)
-- [Test Organization](#test-organization)
-- [Running Tests](#running-tests)
-- [Writing Tests](#writing-tests)
-- [Mocking Philosophy](#mocking-philosophy)
-- [Coverage Requirements](#coverage-requirements)
-- [Performance Considerations](#performance-considerations)
+1. [Introduction](#introduction)
+2. [Setup & Configuration](#setup--configuration)
+3. [Test File Organization](#test-file-organization)
+4. [Writing Tests with Vitest](#writing-tests-with-vitest)
+   - [Core API](#core-api)
+   - [ES Module Usage](#es-module-usage)
+   - [Environment Configuration](#environment-configuration)
+   - [Async Testing Patterns](#async-testing-patterns)
+   - [Mocking & Spies](#mocking--spies)
+5. [Code Coverage](#code-coverage)
+6. [Debugging Tests](#debugging-tests)
+7. [Common Patterns](#common-patterns)
+8. [Migration from Jest](#migration-from-jest)
+9. [Troubleshooting](#troubleshooting)
 
-## Testing Framework
+## Introduction
 
-We use [Vitest](https://vitest.dev/) as our testing framework. Vitest is ESM-first, built on top of Vite, and provides fast test execution with minimal configuration.
+Time Is Money uses [Vitest](https://vitest.dev/) as its testing framework. Vitest is an ESM-first, Vite-powered testing framework that provides fast test execution, native TypeScript support, and seamless integration with modern JavaScript tooling.
 
-Benefits over our previous Jest setup include:
+### Testing Philosophy
 
-- Native ESM support
-- Faster test execution
-- Better TypeScript integration
-- Less configuration overhead
-- Improved performance for large test suites
+Our testing approach emphasizes:
 
-## Test Organization
+- **Minimal mocking**: Mock only true external dependencies (Chrome API, network calls)
+- **Real implementations**: Test against actual module implementations
+- **Clear categorization**: Separate unit, integration, and DOM tests
+- **Comprehensive coverage**: Target >85% overall coverage
+- **Fast feedback**: Leverage Vitest's speed for rapid development
 
-Our tests are organized into three main categories based on their nature and the environment they require:
+## Setup & Configuration
 
-### 1. Unit Tests (`src/__tests__/unit/`)
+### Vitest Configuration
 
-- Focus on individual functions/modules
-- Run in Node environment (no DOM)
-- Very minimal mocking (only Chrome API)
-- High coverage expected (>95%)
-- Located in `src/__tests__/unit/`
-- File naming pattern: `*.vitest.test.js`
+The project's Vitest configuration is defined in `vitest.config.js`:
 
-### 2. Integration Tests (`src/__tests__/integration/`)
+```javascript
+export default defineConfig({
+  test: {
+    // Default environment (JSDOM for most tests)
+    environment: 'jsdom',
 
-- Test interactions between modules
-- Run in JSDOM environment
-- Light DOM usage
-- External dependencies mocked (Chrome API)
-- Focus on data flow and contracts between modules
-- Medium-to-high coverage expected (>80%)
-- Located in `src/__tests__/integration/`
-- File naming pattern: `*.vitest.test.js`
+    // Test file patterns
+    include: ['src/**/*.vitest.test.js'],
 
-### 3. DOM Tests (`src/__tests__/dom/`)
+    // Setup files that run before each test file
+    setupFiles: ['./vitest.setup.js'],
 
-- Test components heavily interacting with DOM
-- Test MutationObservers, UI components, DOM manipulation
-- Run in JSDOM environment
-- External dependencies mocked (Chrome API)
-- Focus on DOM manipulation logic, event handling, observer behavior
-- Medium coverage expected (>70%)
-- Located in `src/__tests__/dom/`
-- File naming pattern: `*.vitest.test.js`
+    // Enable globals for easier migration from Jest
+    globals: true,
 
-## Running Tests
+    // Coverage configuration
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'json', 'lcov'],
+      reportsDirectory: './coverage',
+    },
+  },
+});
+```
 
-We provide several npm scripts to run tests:
+### NPM Scripts
+
+Run tests using these commands:
 
 ```bash
 # Run all tests
@@ -73,150 +78,637 @@ npm run test:watch
 # Generate test coverage report
 npm run test:coverage
 
-# Run only unit tests
-npm run test:unit
-
-# Run only integration tests
-npm run test:integration
-
-# Run only DOM tests
-npm run test:dom
+# Run specific test categories
+npm run test:unit        # Unit tests only
+npm run test:integration # Integration tests only
+npm run test:dom        # DOM tests only
 ```
 
-## Writing Tests
+## Test File Organization
 
-### Basic Test Structure
+### Directory Structure
+
+Tests are organized in `src/__tests__/` with subdirectories matching the source code structure:
+
+```
+src/__tests__/
+├── unit/             # Isolated component tests
+│   ├── utils/        # Utility function tests
+│   ├── content/      # Content script unit tests
+│   ├── options/      # Options page unit tests
+│   └── popup/        # Popup unit tests
+├── integration/      # Component interaction tests
+│   ├── content/      # Content script integrations
+│   ├── options/      # Options page integrations
+│   └── popup/        # Popup integrations
+├── dom/              # DOM-specific tests
+│   └── content/      # DOM manipulation tests
+├── mocks/            # Centralized mock definitions
+│   ├── chrome-api.mock.js
+│   └── browser-api.mock.js
+└── setup/            # Test utilities and setup
+    ├── vitest-imports.js  # Centralized imports
+    └── test-helpers.js    # Common test utilities
+```
+
+### File Naming Conventions
+
+- Standard tests: `[filename].vitest.test.js`
+- Specialized tests: `[filename].[type].vitest.test.js`
+  - Example: `converter.unit.vitest.test.js`
+  - Example: `domModifier.dom.vitest.test.js`
+
+### Test Categories
+
+1. **Unit Tests** (`src/__tests__/unit/`)
+
+   - Focus on individual functions/modules
+   - Run in Node environment (no DOM)
+   - Minimal mocking (Chrome API only)
+   - Coverage target: >95%
+
+2. **Integration Tests** (`src/__tests__/integration/`)
+
+   - Test module interactions
+   - Run in JSDOM environment
+   - Mock external dependencies
+   - Coverage target: >80%
+
+3. **DOM Tests** (`src/__tests__/dom/`)
+   - Test DOM manipulation and observers
+   - Run in JSDOM environment
+   - Focus on UI interactions
+   - Coverage target: >70%
+
+## Writing Tests with Vitest
+
+### Core API
+
+#### Basic Test Structure
 
 ```javascript
-// Import the functions to test
-import { myFunction } from '../../../path/to/module.js';
+// Import Vitest functions from centralized imports
+import { describe, test, expect, vi, beforeEach, afterEach } from '../setup/vitest-imports.js';
+import { resetTestMocks } from '../../vitest.setup.js';
 
-// Import Vitest functions explicitly (preferred)
-import { describe, test, expect, vi } from 'vitest';
+// Import the module to test
+import { myFunction } from '../../../src/utils/myModule.js';
 
-// Simple test group
-describe('myFunction', () => {
-  // Individual test case
-  test('handles normal input correctly', () => {
-    const result = myFunction('normal input');
-    expect(result).toBe('expected output');
+describe('myModule', () => {
+  beforeEach(() => {
+    // Reset all mocks before each test
+    resetTestMocks();
   });
 
-  // Edge case test
-  test('handles edge cases', () => {
-    expect(myFunction('')).toBe('empty input handling');
-    expect(myFunction(null)).toBe('null handling');
+  describe('myFunction', () => {
+    test('handles normal input correctly', () => {
+      // Arrange
+      const input = 'test input';
+      const expected = 'expected output';
+
+      // Act
+      const result = myFunction(input);
+
+      // Assert
+      expect(result).toBe(expected);
+    });
+
+    test('handles edge cases', () => {
+      expect(myFunction('')).toBe('empty handling');
+      expect(myFunction(null)).toBe('null handling');
+    });
   });
 });
 ```
 
-### Testing Asynchronous Code
+#### Common Matchers
 
 ```javascript
-// With async/await
-test('async function works correctly', async () => {
-  const result = await asyncFunction();
-  expect(result).toBe('expected');
+// Equality
+expect(value).toBe(42); // Strict equality (===)
+expect(object).toEqual({ key: 'val' }); // Deep equality
+
+// Truthiness
+expect(value).toBeTruthy();
+expect(value).toBeFalsy();
+expect(value).toBeNull();
+expect(value).toBeDefined();
+expect(value).toBeUndefined();
+
+// Numbers
+expect(number).toBeGreaterThan(3);
+expect(number).toBeGreaterThanOrEqual(3.5);
+expect(number).toBeLessThan(5);
+expect(number).toBeCloseTo(0.3); // For floating point
+
+// Strings
+expect(string).toMatch(/pattern/);
+expect(string).toContain('substring');
+
+// Arrays
+expect(array).toContain(item);
+expect(array).toHaveLength(3);
+
+// Exceptions
+expect(() => throwError()).toThrow();
+expect(() => throwError()).toThrow('specific message');
+```
+
+### ES Module Usage
+
+#### Best Practices
+
+1. Use ES module imports/exports consistently:
+
+```javascript
+// Good: ES module syntax
+import { someFunction } from './module.js';
+export { myFunction };
+
+// Bad: CommonJS syntax
+const { someFunction } = require('./module');
+module.exports = { myFunction };
+```
+
+2. Use explicit file extensions:
+
+```javascript
+// Good: Explicit extension
+import { helper } from './utils/helper.js';
+
+// Less ideal: Extension omitted
+import { helper } from './utils/helper';
+```
+
+3. Prefer named exports for testability:
+
+```javascript
+// Good: Named exports are easier to mock
+export function calculatePrice(amount) {
+  /* ... */
+}
+export function formatPrice(price) {
+  /* ... */
+}
+
+// Less ideal: Default export of object
+export default {
+  calculatePrice,
+  formatPrice,
+};
+```
+
+### Environment Configuration
+
+#### Test Environment Matrix
+
+| Test Type   | Directory                | Environment | Use Cases                             |
+| ----------- | ------------------------ | ----------- | ------------------------------------- |
+| Unit        | `__tests__/unit/`        | Node        | Pure functions, utilities, algorithms |
+| Integration | `__tests__/integration/` | JSDOM       | Module interactions, API calls        |
+| DOM         | `__tests__/dom/`         | JSDOM       | DOM manipulation, MutationObservers   |
+
+#### JSDOM Configuration
+
+For tests requiring DOM access:
+
+```javascript
+// JSDOM is configured automatically for integration/DOM tests
+// You can interact with the document directly
+
+test('updates DOM element', () => {
+  // Setup DOM
+  document.body.innerHTML = `
+    <div id="price">$10.00</div>
+  `;
+
+  // Run function that modifies DOM
+  updatePrice('price', '$20.00');
+
+  // Assert DOM changes
+  const element = document.getElementById('price');
+  expect(element.textContent).toBe('$20.00');
+});
+```
+
+#### Node Environment
+
+For pure unit tests:
+
+```javascript
+// Unit tests run in Node environment by default
+// No DOM access, faster execution
+
+test('calculates hourly wage', () => {
+  const wage = calculateHourlyWage('yearly', '52000');
+  expect(wage).toBe(25); // $52,000/year = $25/hour
+});
+```
+
+### Async Testing Patterns
+
+#### Async/Await
+
+```javascript
+test('fetches data asynchronously', async () => {
+  const data = await fetchData();
+  expect(data).toEqual({ status: 'success' });
 });
 
-// With Promises
-test('promise function works correctly', () => {
-  return promiseFunction().then((result) => {
-    expect(result).toBe('expected');
+test('handles async errors', async () => {
+  await expect(failingAsyncFunction()).rejects.toThrow('Network error');
+});
+```
+
+#### Promises
+
+```javascript
+test('returns a promise', () => {
+  // Return the promise for Vitest to wait
+  return expectPromise().then((result) => {
+    expect(result).toBe('resolved value');
+  });
+});
+
+test('handles promise rejection', () => {
+  return expect(rejectingPromise()).rejects.toMatch('error');
+});
+```
+
+#### Timers and Time-based Testing
+
+```javascript
+import { vi } from 'vitest';
+
+test('debounces function calls', async () => {
+  vi.useFakeTimers();
+
+  const debounced = debounce(mockFn, 200);
+
+  // Call multiple times quickly
+  debounced();
+  debounced();
+  debounced();
+
+  // Fast-forward time
+  await vi.runAllTimersAsync();
+
+  // Function called only once after debounce
+  expect(mockFn).toHaveBeenCalledTimes(1);
+
+  vi.useRealTimers();
+});
+```
+
+### Mocking & Spies
+
+#### Chrome API Mocking
+
+Chrome APIs are pre-mocked in the setup:
+
+```javascript
+test('saves to Chrome storage', async () => {
+  // Mock implementation
+  chrome.storage.sync.set.mockImplementation((data, callback) => {
+    callback();
+  });
+
+  // Call function using Chrome API
+  await saveSettings({ theme: 'dark' });
+
+  // Verify API usage
+  expect(chrome.storage.sync.set).toHaveBeenCalledWith({ theme: 'dark' }, expect.any(Function));
+});
+```
+
+#### Module Mocking
+
+```javascript
+// Mock an entire module
+vi.mock('../../../utils/logger.js', () => ({
+  error: vi.fn(),
+  warn: vi.fn(),
+  info: vi.fn(),
+  debug: vi.fn(),
+}));
+
+// Import after mocking
+import logger from '../../../utils/logger.js';
+
+test('logs errors appropriately', () => {
+  performRiskyOperation();
+  expect(logger.error).toHaveBeenCalledWith('Operation failed');
+});
+```
+
+#### Spies
+
+```javascript
+test('calls original method', () => {
+  const spy = vi.spyOn(console, 'log');
+
+  // Original implementation still runs
+  logMessage('test');
+
+  expect(spy).toHaveBeenCalledWith('test');
+
+  // Restore original
+  spy.mockRestore();
+});
+```
+
+#### Mock Functions
+
+```javascript
+test('uses callback correctly', () => {
+  const mockCallback = vi.fn();
+
+  processArray([1, 2, 3], mockCallback);
+
+  expect(mockCallback).toHaveBeenCalledTimes(3);
+  expect(mockCallback).toHaveBeenNthCalledWith(1, 1, 0);
+  expect(mockCallback).toHaveBeenNthCalledWith(2, 2, 1);
+  expect(mockCallback).toHaveBeenNthCalledWith(3, 3, 2);
+});
+```
+
+## Code Coverage
+
+### Coverage Targets
+
+- Overall: >85%
+- Unit tests: >95%
+- Critical utilities: 100%
+- Integration tests: >80%
+- DOM tests: >70%
+
+### Generating Coverage Reports
+
+```bash
+# Generate coverage report
+npm run test:coverage
+
+# View HTML report
+open coverage/index.html
+```
+
+### Coverage Configuration
+
+```javascript
+// vitest.config.js
+coverage: {
+  provider: 'v8',
+  enabled: false, // Enable via CLI flag
+  reporter: ['text', 'html', 'json', 'lcov'],
+  reportsDirectory: './coverage',
+  exclude: [
+    '**/node_modules/**',
+    '**/dist/**',
+    '**/__tests__/**',
+    '**/test-helpers.js'
+  ],
+}
+```
+
+## Debugging Tests
+
+### Debugging with VS Code
+
+1. Add breakpoints in your test files
+2. Use VS Code's JavaScript debugger
+3. Run tests with `--inspect` flag:
+
+```bash
+node --inspect-brk ./node_modules/.bin/vitest run
+```
+
+### Console Logging
+
+```javascript
+test('debug complex logic', () => {
+  const input = { complex: 'data' };
+
+  console.log('Input:', input);
+
+  const result = complexFunction(input);
+
+  console.log('Output:', result);
+
+  expect(result).toBeDefined();
+});
+```
+
+### Vitest UI
+
+```bash
+# Run tests with UI
+npx vitest --ui
+
+# Opens browser interface for debugging tests
+```
+
+## Common Patterns
+
+### Testing Chrome Extension Components
+
+#### Content Scripts
+
+```javascript
+// Test content script initialization
+test('initializes content script', () => {
+  // Mock DOM
+  document.body.innerHTML = '<div class="price">$10</div>';
+
+  // Mock Chrome runtime
+  chrome.runtime.sendMessage.mockImplementation((msg, callback) => {
+    callback({ settings: { enabled: true } });
+  });
+
+  // Initialize content script
+  initContentScript();
+
+  // Verify initialization
+  expect(chrome.runtime.sendMessage).toHaveBeenCalled();
+  expect(document.querySelector('.converted')).toBeTruthy();
+});
+```
+
+#### Background Scripts
+
+```javascript
+test('handles extension messages', () => {
+  const sendResponse = vi.fn();
+
+  // Simulate message
+  chrome.runtime.onMessage.addListener.mock.calls[0][0](
+    { action: 'getSettings' },
+    { tab: { id: 1 } },
+    sendResponse
+  );
+
+  expect(sendResponse).toHaveBeenCalledWith({ settings: expect.any(Object) });
+});
+```
+
+#### Options Page
+
+```javascript
+test('saves options correctly', async () => {
+  // Setup DOM
+  document.body.innerHTML = `
+    <input id="amount" value="25">
+    <button id="save">Save</button>
+  `;
+
+  // Mock storage
+  chrome.storage.sync.set.mockImplementation((data, callback) => {
+    callback();
+  });
+
+  // Trigger save
+  document.getElementById('save').click();
+
+  // Verify save
+  expect(chrome.storage.sync.set).toHaveBeenCalledWith({ amount: '25' }, expect.any(Function));
+});
+```
+
+### Testing MutationObservers
+
+```javascript
+test('observes DOM mutations', async () => {
+  const callback = vi.fn();
+
+  // Create observer
+  observeDomChanges(callback);
+
+  // Trigger mutation
+  const newElement = document.createElement('div');
+  newElement.className = 'price';
+  newElement.textContent = '$30';
+  document.body.appendChild(newElement);
+
+  // Wait for observer
+  await vi.waitFor(() => {
+    expect(callback).toHaveBeenCalled();
   });
 });
 ```
 
-### Testing with JSDOM
-
-For integration and DOM tests, JSDOM is automatically configured. You can interact with the document directly:
+### Testing Error Scenarios
 
 ```javascript
-test('DOM manipulation works correctly', () => {
-  // Setup DOM elements
-  document.body.innerHTML = '<div id="test">Initial text</div>';
-
-  // Call function that manipulates the DOM
-  updateDomElement('test', 'Updated text');
-
-  // Assert the changes
-  expect(document.getElementById('test').textContent).toBe('Updated text');
-});
-```
-
-## Mocking Philosophy
-
-Our testing approach emphasizes minimal mocking. The key principles are:
-
-1. **Mock only true external dependencies** - Primarily the Chrome API
-2. **Do not mock internal modules** - Test against real implementations
-3. **Use centralized mocks** - Reuse consistent mocks from `src/__tests__/mocks/`
-
-### Mocking the Chrome API
-
-We have a centralized Chrome API mock in `src/__tests__/mocks/chrome-api.mock.js`:
-
-```javascript
-// Example of using the Chrome API mock
-import { describe, test, expect, vi } from 'vitest';
-import chromeMock from '../../../__tests__/mocks/chrome-api.mock.js';
-
-// The chrome mock is automatically available in global scope
-test('function correctly interacts with Chrome storage', async () => {
-  // Chrome storage is already mocked for you
-  chrome.storage.sync.get.mockImplementationOnce((_, callback) => {
-    callback({ option: 'value' });
+test('handles errors gracefully', () => {
+  // Mock error scenario
+  chrome.storage.sync.get.mockImplementation(() => {
+    throw new Error('Storage error');
   });
 
-  const result = await yourFunction();
-  expect(chrome.storage.sync.get).toHaveBeenCalled();
-  expect(result).toBe('expected value');
+  // Should not throw
+  expect(() => loadSettings()).not.toThrow();
+
+  // Should handle error
+  expect(logger.error).toHaveBeenCalledWith('Failed to load settings');
 });
 ```
 
-### Mock Helpers
+## Migration from Jest
 
-Our test setup includes helpers for common mocking tasks:
+### Common Migration Patterns
 
 ```javascript
-// Import mock helpers
-import { resetTestMocks } from '../../../__tests__/setup/vitest.setup.js';
+// Jest to Vitest replacements
+jest.fn()          → vi.fn()
+jest.spyOn()       → vi.spyOn()
+jest.mock()        → vi.mock()
+jest.useFakeTimers() → vi.useFakeTimers()
+jest.runAllTimers()  → vi.runAllTimers()
+```
 
-// Reset all mocks before/after tests
+### Import Changes
+
+```javascript
+// Before: Jest globals
+describe('test', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+});
+
+// After: Vitest imports
+import { describe, beforeEach, vi } from 'vitest';
+
+describe('test', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+});
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### Issue: Tests fail with "Cannot find module"
+
+**Solution**: Ensure all imports use explicit file extensions:
+
+```javascript
+// Good
+import { helper } from './helper.js';
+
+// Bad
+import { helper } from './helper';
+```
+
+#### Issue: Chrome API not mocked
+
+**Solution**: Check that test setup imports are correct:
+
+```javascript
+import { resetTestMocks } from '../../vitest.setup.js';
+
 beforeEach(() => {
   resetTestMocks();
 });
-
-// Or manually
-afterEach(() => {
-  vi.clearAllMocks();
-});
 ```
 
-## Coverage Requirements
+#### Issue: Async tests timeout
 
-We have established the following coverage targets:
+**Solution**: Increase timeout or ensure promises resolve:
 
-- Overall target: >85% combined line coverage
-- Unit tests: >95% coverage
-- Critical utility modules (`converter.js`, `parser.js`): 100% coverage
-- Integration tests: >80% coverage
-- DOM tests: >70% coverage
-
-To check current coverage:
-
-```bash
-npm run test:coverage
+```javascript
+test('long running test', async () => {
+  // Increase timeout to 10 seconds
+  await longRunningOperation();
+}, 10000);
 ```
 
-This will generate a coverage report in the `coverage/` directory which you can view in your browser (`coverage/index.html`).
+#### Issue: DOM not available in tests
 
-## Performance Considerations
+**Solution**: Ensure test file is in correct directory (integration or dom folder) or explicitly set environment:
 
-Our test suite is designed to run efficiently. Some best practices:
+```javascript
+// For specific test files needing DOM
+// @vitest-environment jsdom
+```
 
-1. **Proper categorization** - Unit tests run in Node environment (faster than JSDOM)
-2. **Minimal setup/teardown** - Reset state efficiently between tests
-3. **Focused test runs** - Use specific test commands during development
-4. **Parallel execution** - Vitest runs tests in parallel by default
-5. **Manage test resources** - Properly clean up resources in DOM tests
+### Debug Configuration
+
+Add to your VS Code launch.json:
+
+```json
+{
+  "type": "node",
+  "request": "launch",
+  "name": "Debug Vitest Tests",
+  "program": "${workspaceFolder}/node_modules/.bin/vitest",
+  "args": ["run", "${file}"],
+  "console": "integratedTerminal",
+  "internalConsoleOptions": "neverOpen"
+}
+```
+
+---
+
+_This guide consolidates all testing documentation. Previous documentation files (VITEST-PATTERNS.md, VITEST-MIGRATION.md) have been integrated here and should be considered deprecated._

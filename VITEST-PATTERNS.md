@@ -1,5 +1,7 @@
 # Vitest Testing Patterns
 
+> **⚠️ DEPRECATED**: This documentation has been integrated into the comprehensive [TESTING_GUIDE.md](./TESTING_GUIDE.md). Please refer to that guide for all testing documentation.
+
 This guide establishes the preferred patterns for writing new tests using Vitest in the Time Is Money extension. All new tests should follow these guidelines to ensure consistent test structure, organization, and best practices across the codebase.
 
 ## Table of Contents
