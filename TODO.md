@@ -342,7 +342,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     2. Introducing a `require()` call for an ES module in a test file triggers an ESLint error during linting.
   - **Depends‑on:** [T001]
 
-- [ ] **T009 · Chore · P2: refactor ci pipeline to split unit and integration test jobs**
+- [x] **T009 · Chore · P2: refactor ci pipeline to split unit and integration test jobs**
 
   - **Context:** CI Resolution Plan > Long-term Prevention > 2. CI Improvements
   - **Action:**
