@@ -306,7 +306,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     2. CI logs confirm that only the intended set of test files are being run.
   - **Depends‑on:** none
 
-- [ ] **T006 · Chore · P1: execute test pattern standardization script**
+- [x] **T006 · Chore · P1: execute test pattern standardization script**
 
   - **Context:** CI Resolution Plan > Immediate Actions Required > 4. Configure Test Scope for PR #55 (Action 3)
   - **Action:**
