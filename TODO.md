@@ -366,7 +366,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
     1. Project testing documentation accurately reflects the current Vitest setup and best practices.
   - **Depends‑on:** [T001, T002, T003, T004, T005, T006]
 
-- [ ] **T011 · Chore · P2: implement pre-commit hook for test pattern validation**
+- [x] **T011 · Chore · P2: implement pre-commit hook for test pattern validation**
   - **Context:** CI Resolution Plan > Long-term Prevention > 4. Automation
   - **Action:**
     1. Integrate a pre-commit hook (e.g., via Husky and lint-staged).
