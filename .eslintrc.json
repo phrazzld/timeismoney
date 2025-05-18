@@ -64,7 +64,8 @@
       {
         "startLines": 1
       }
-    ]
+    ],
+    "import/no-commonjs": "error"
   },
   "ignorePatterns": ["node_modules/", "dist/", "babel.config.js", "test-files/", "temp/"],
   "overrides": [
@@ -190,7 +191,8 @@
     {
       "files": ["scripts/**/*.js"],
       "rules": {
-        "no-console": "off"
+        "no-console": "off",
+        "import/no-commonjs": "off"
       }
     },
     {

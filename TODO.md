@@ -331,7 +331,7 @@ This document consolidates all Jest to Vitest migration tasks from multiple TODO
 
 ### Long-term CI & Test Health
 
-- [ ] **T008 · Chore · P2: implement eslint rule to prevent commonjs `require()` usage**
+- [x] **T008 · Chore · P2: implement eslint rule to prevent commonjs `require()` usage**
 
   - **Context:** CI Resolution Plan > Long-term Prevention > 1. ESLint Rules
   - **Action:**
