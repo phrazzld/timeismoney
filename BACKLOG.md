@@ -16,6 +16,56 @@ This backlog outlines planned work for the extension, balancing feature developm
   - **Dependencies**: None - completed
   - **Status**: Completed - All tests have been migrated to Vitest with proper structure and patterns
 
+### Testing Infrastructure Issues (FROM CODE REVIEW)
+
+- **[Test] Remove Global Jest Compatibility Layer & Global Test Functions**:
+
+  - **Type**: Refactor/Bug Fix
+  - **Complexity**: High
+  - **Violation**: _Explicit is Better than Implicit_, _Design for Testability_
+  - **Location**: `vitest.setup.js:10-63` (global assignments and `globalThis.jest` object)
+  - **Rationale**: The current setup reintroduces fragility and implicit dependencies of a global test environment, contradicting modern ESM best practices
+  - **Expected Outcome**: All Vitest functions explicitly imported in every test file, no global assignments
+  - **Dependencies**: None
+
+- **[Test] Simplify Overly Complex ESLint Rules for Test Files**:
+
+  - **Type**: Refactor
+  - **Complexity**: Medium
+  - **Violation**: _Simplicity First_, _Maintainability Over Premature Optimization_
+  - **Location**: `.eslintrc.json:44-131` (overrides section for `**/*.vitest.test.js`)
+  - **Rationale**: Complex ESLint rules are difficult to maintain and cause developer friction
+  - **Expected Outcome**: Simplified ESLint config after removing global setup
+  - **Dependencies**: Remove global Jest compatibility layer first
+
+- **[Test] Remove All Internal Module Mocking**:
+
+  - **Type**: Refactor/Bug Fix
+  - **Complexity**: High
+  - **Violation**: _Mocking Policy: Sparingly, At External Boundaries Only_
+  - **Location**: Multiple test files mocking internal modules like `utils/logger`, `utils/storage`
+  - **Rationale**: Mocking internal modules leads to brittle tests and hides real integration bugs
+  - **Expected Outcome**: Tests only mock true external dependencies (Chrome API), internal modules tested via public API
+  - **Dependencies**: May require refactoring some modules for better testability
+
+- **[Test] Clean Up Test File Duplication and Fragmentation**:
+
+  - **Type**: Cleanup
+  - **Complexity**: Medium
+  - **Violation**: _Modularity is Mandatory_, _DRY_
+  - **Location**: Throughout `src/__tests__/` and `temp/consolidated/`
+  - **Rationale**: Duplicate test files create confusion and maintenance burden
+  - **Expected Outcome**: Single authoritative test file per module, consolidated tests, removed temp directory
+  - **Dependencies**: None
+
+- **[Test] Fix validate-test-names.js to Skip Deleted Files**:
+  - **Type**: Bug Fix
+  - **Complexity**: Simple
+  - **Location**: `scripts/validate-test-names.js`
+  - **Rationale**: Script currently checks deleted files, causing false failures during cleanup
+  - **Expected Outcome**: Validation script filters out deleted files
+  - **Dependencies**: None
+
 ### Security & Stability
 
 - migrate from npm to pnpm
@@ -43,6 +93,17 @@ This backlog outlines planned work for the extension, balancing feature developm
   - **Complexity**: Simple
   - **Rationale**: Reduces confusion, removes dead code (Technical Debt Reduction), simplifies build process, aligns with modular structure (Technical Excellence).
   - **Expected Outcome**: The deprecated file is removed without affecting functionality. Build process is cleaner.
+  - **Dependencies**: None
+  - **Status**: Completed - Removed in cleanup
+
+- **[Refactor] Fix Fragile Performance Logging in domScanner.js**:
+
+  - **Type**: Bug Fix
+  - **Complexity**: Simple
+  - **Location**: `src/content/domScanner.js:516, 546, 579`
+  - **Violation**: _Consistent Error Handling_, _Robustness_
+  - **Rationale**: Code uses `performance.getEntriesByName(...).pop()` without defensive checks, can throw TypeError
+  - **Expected Outcome**: Defensive checks prevent crashes when performance entries are missing
   - **Dependencies**: None
 
 - **[Refactor] Unify and Externalize Configuration Defaults**: Centralize all default values and configuration settings (currency, wage, debounce times, CSS selectors, regex patterns, feature flags) into a single, well-defined configuration module/source of truth, removing hardcoded values from other modules.
@@ -131,6 +192,26 @@ This backlog outlines planned work for the extension, balancing feature developm
 
 ### Testing & Quality Assurance
 
+- **[Test] Simplify setupTestDom Helper**:
+
+  - **Type**: Refactor
+  - **Complexity**: Simple
+  - **Location**: `vitest.setup.js:129-161`
+  - **Violation**: _Simplicity First_, _Design for Testability_
+  - **Rationale**: Current helper creates overly specific DOM structure, coupling tests to arbitrary elements
+  - **Expected Outcome**: Minimal DOM setup, tests create specific DOM they need
+  - **Dependencies**: None
+
+- **[Test] Ensure Consistent Import Usage in Tests**:
+
+  - **Type**: Refactor
+  - **Complexity**: Medium
+  - **Location**: Multiple `.vitest.test.js` files
+  - **Violation**: _Coding Standards_, _Explicit is Better than Implicit_
+  - **Rationale**: Mixed usage of globals and imports creates confusion
+  - **Expected Outcome**: All tests use explicit imports from `vitest-imports.js`
+  - **Dependencies**: Remove global assignments first
+
 - **[Test] Expand Test Coverage for Edge Cases and Errors**: Add specific unit and integration tests covering known edge cases and error conditions, such as storage errors (quota exceeded, invalid data), permission issues, context invalidation, complex/unusual DOM structures, empty/missing configuration, locale-specific number formats, and specific error paths identified during error handling standardization.
 
   - **Type**: Enhancement
@@ -214,6 +295,34 @@ This backlog outlines planned work for the extension, balancing feature developm
   - **Complexity**: Simple
   - **Rationale**: Minor performance optimization that follows best practices for event listeners, potentially improving perceived responsiveness (Technical Excellence).
   - **Expected Outcome**: Relevant event listeners are marked as passive where applicable, potentially improving scrolling performance.
+  - **Dependencies**: None
+
+### Build & Configuration
+
+- **[Build] Fix .gitignore for Config Files**:
+
+  - **Type**: Bug Fix
+  - **Complexity**: Simple
+  - **Location**: `.gitignore`
+  - **Rationale**: Global `import/no-commonjs` rule may incorrectly flag legitimate config files
+  - **Expected Outcome**: ESLint properly ignores CommonJS config files
+  - **Dependencies**: None
+
+- **[Build] Remove Redundant test:all Script**:
+
+  - **Type**: Cleanup
+  - **Complexity**: Simple
+  - **Location**: `package.json:9`
+  - **Rationale**: `test:all` is identical to `test`, causing confusion
+  - **Expected Outcome**: Single test command
+  - **Dependencies**: None
+
+- **[CI] Make Coverage Report Upload Mandatory**:
+  - **Type**: Enhancement
+  - **Complexity**: Simple
+  - **Location**: `.github/workflows/ci.yml:72`
+  - **Rationale**: Coverage reports should fail CI if missing
+  - **Expected Outcome**: CI fails on missing coverage reports
   - **Dependencies**: None
 
 ### Documentation
