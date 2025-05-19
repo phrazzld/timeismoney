@@ -35,10 +35,62 @@ jobs:
       
       - name: Lint code
         run: npm run lint
+  
+  test:
+    name: Test (${{ matrix.test_type }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test_type: [unit, integration_dom]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'npm'
+      
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run Unit Tests
+        if: matrix.test_type == 'unit'
+        run: npm run test:unit
+        env:
+          VITEST_ENV_TYPE: node
+      
+      - name: Run Integration/DOM Tests
+        if: matrix.test_type == 'integration_dom'
+        run: |
+          echo "Running integration tests with JSDOM environment"
+          npm run test:integration
+          npm run test:dom
+        env:
+          VITEST_ENV_TYPE: jsdom
+      
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ matrix.test_type }}
+          path: coverage/
+          if-no-files-found: warn
 
   build:
     name: Build
     runs-on: ubuntu-latest
+    needs: [test]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

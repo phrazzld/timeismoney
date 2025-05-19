@@ -43,8 +43,7 @@ coverage/
 .nyc_output/
 
 # Project specific
-docs/
-thinktank_output/
+# Allow docs/development but ignore other docs
 thinktank_*/
 diff.md
 CODE_REVIEW.md
@@ -71,3 +70,11 @@ scripts/rename-test-files.sh
 **/*.refactored.*.test.js
 T*-task.md
 T*-completed.md
+
+# Migration temporary files
+**/*.bak
+**/*.bak.bak
+codemod-report-*.md
+migration-report-*.md
+*-plan.md
+*-task.md

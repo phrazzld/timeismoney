@@ -8,17 +8,31 @@
   "extends": [
     "eslint:recommended",
     "plugin:prettier/recommended",
-    "plugin:jest/recommended",
-    "plugin:jsdoc/recommended"
+    "plugin:jsdoc/recommended",
+    "plugin:import/recommended"
   ],
-  "plugins": ["prettier", "jest", "jsdoc"],
+  "plugins": ["prettier", "jsdoc", "import"],
   "parserOptions": {
     "ecmaVersion": 2020,
     "sourceType": "module"
   },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".mjs", ".cjs", ".ts"],
+        "moduleDirectory": ["node_modules", "src"]
+      }
+    },
+    "import/core-modules": ["vitest", "vite"]
+  },
   "rules": {
     "prettier/prettier": "error",
-    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
     "no-unused-vars": "error",
     "prefer-const": "warn",
     "no-var": "warn",
@@ -44,20 +58,128 @@
     "jsdoc/valid-types": "error",
     "jsdoc/check-types": "error",
     "jsdoc/check-param-names": "error",
-    "jsdoc/tag-lines": ["warn", "any", { "startLines": 1 }]
+    "jsdoc/tag-lines": [
+      "warn",
+      "any",
+      {
+        "startLines": 1
+      }
+    ],
+    "import/no-commonjs": "error"
   },
-  "ignorePatterns": [
-    "node_modules/",
-    "dist/",
-    "jest.config.js",
-    "jest.setup.js",
-    "babel.config.js"
-  ],
+  "ignorePatterns": ["node_modules/", "dist/", "babel.config.js", "test-files/", "temp/"],
   "overrides": [
     {
-      "files": ["**/*.test.js", "**/*.spec.js"],
-      "env": {
-        "jest": true
+      "files": ["**/*.vitest.test.js"],
+      "rules": {
+        "jsdoc/require-jsdoc": "off",
+        "jsdoc/require-description": "off",
+        "jsdoc/require-param-description": "off",
+        "jsdoc/require-returns-description": "off",
+        "no-restricted-globals": [
+          "error",
+          {
+            "name": "describe",
+            "message": "Import 'describe' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "it",
+            "message": "Import 'it' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "test",
+            "message": "Import 'test' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "expect",
+            "message": "Import 'expect' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "beforeEach",
+            "message": "Import 'beforeEach' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "afterEach",
+            "message": "Import 'afterEach' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "beforeAll",
+            "message": "Import 'beforeAll' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "afterAll",
+            "message": "Import 'afterAll' from vitest-imports.js instead of using global"
+          },
+          {
+            "name": "jest",
+            "message": "Use 'vi' from vitest-imports.js instead of 'jest'"
+          }
+        ],
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "CallExpression[callee.name='jest.fn']",
+            "message": "Use 'vi.fn()' from vitest-imports.js instead of 'jest.fn()'"
+          },
+          {
+            "selector": "CallExpression[callee.name='jest.mock']",
+            "message": "Use 'vi.mock()' from vitest-imports.js instead of 'jest.mock()'"
+          },
+          {
+            "selector": "CallExpression[callee.name='jest.spyOn']",
+            "message": "Use 'vi.spyOn()' from vitest-imports.js instead of 'jest.spyOn()'"
+          },
+          {
+            "selector": "CallExpression[callee.name='jest.clearAllMocks']",
+            "message": "Use 'resetTestMocks()' from vitest.setup.js instead of 'jest.clearAllMocks()'"
+          },
+          {
+            "selector": "CallExpression[callee.name='jest.resetAllMocks']",
+            "message": "Use 'resetTestMocks()' from vitest.setup.js instead of 'jest.resetAllMocks()'"
+          },
+          {
+            "selector": "CallExpression[callee.object.name='vi'][callee.property.name='clearAllMocks']",
+            "message": "Use 'resetTestMocks()' from vitest.setup.js instead of 'vi.clearAllMocks()'"
+          },
+          {
+            "selector": "CallExpression[callee.object.name='vi'][callee.property.name='resetAllMocks']",
+            "message": "Use 'resetTestMocks()' from vitest.setup.js instead of 'vi.resetAllMocks()'"
+          }
+        ],
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "vitest",
+                "message": "Import from vitest-imports.js helper instead of directly from vitest"
+              }
+            ]
+          }
+        ],
+        "require-await": "error",
+        "consistent-return": "error",
+        "import/no-unresolved": "off",
+        "no-unused-vars": "off"
+      }
+    },
+    {
+      "files": [
+        "**/*.test.js",
+        "**/*.spec.js",
+        "**/__tests__/setup/**/*.js",
+        "**/__tests__/test-setup-example.js"
+      ],
+      "globals": {
+        "describe": "readonly",
+        "it": "readonly",
+        "test": "readonly",
+        "expect": "readonly",
+        "beforeEach": "readonly",
+        "afterEach": "readonly",
+        "beforeAll": "readonly",
+        "afterAll": "readonly",
+        "jest": "readonly"
       },
       "rules": {
         "jsdoc/require-jsdoc": "off",
@@ -69,7 +191,14 @@
     {
       "files": ["scripts/**/*.js"],
       "rules": {
-        "no-console": "off"
+        "no-console": "off",
+        "import/no-commonjs": "off"
+      }
+    },
+    {
+      "files": ["**/__tests__/**/*.js"],
+      "rules": {
+        "import/no-unresolved": "off"
       }
     }
   ]
