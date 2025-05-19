@@ -25,7 +25,7 @@
 
 ## Recognition Service (`Microsoft.Recognizers.Text` Adapter)
 
-- [ ] **T003 · Feature · P1: implement `RecognitionService` adapter**
+- [x] **T003 · Feature · P1: implement `RecognitionService` adapter**
 
   - **Context:** Plan Details - Detailed Build Steps - 2. Implement `RecognitionService`; Architecture Blueprint - Modules / Packages (`src/services/recognitionService.ts`); Error & Edge‑Case Strategy; Logging & Observability; Security & Config
   - **Action:**
@@ -40,7 +40,7 @@
     5. Basic input validation for `text` and `culture` parameters is performed.
   - **Depends‑on:** [T002]
 
-- [ ] **T004 · Test · P1: write unit tests for `RecognitionService`**
+- [x] **T004 · Test · P1: write unit tests for `RecognitionService`**
   - **Context:** Plan Details - Detailed Build Steps - 8. Testing; Testing Strategy - Unit Tests (`RecognitionService`)
   - **Action:**
     1. Create unit tests for `RecognitionService` in a new test file (e.g., `src/services/recognitionService.test.ts`).
