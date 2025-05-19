@@ -12,7 +12,7 @@
     2. Project successfully installs dependencies with `pnpm install`.
   - **Depends‑on:** none
 
-- [ ] **T002 · Feature · P2: define core interfaces and types for currency and money handling**
+- [x] **T002 · Feature · P2: define core interfaces and types for currency and money handling**
   - **Context:** Plan Details - Detailed Build Steps - 1. Setup & Installation; Architecture Blueprint - Public Interfaces / Contracts
   - **Action:**
     1. Create `src/types/money.ts` (or `src/interfaces/` as appropriate).
