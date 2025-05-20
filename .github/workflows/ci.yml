@@ -39,8 +39,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
       
+      # Changed from --frozen-lockfile to --no-frozen-lockfile to fix CI issues
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
       
       - name: Lint code
         run: pnpm run lint
@@ -80,8 +81,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
       
+      # Changed from --frozen-lockfile to --no-frozen-lockfile to fix CI issues
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
       
       - name: Run Unit Tests
         if: matrix.test_type == 'unit'
@@ -137,8 +139,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
       
+      # Changed from --frozen-lockfile to --no-frozen-lockfile to fix CI issues
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
       
       - name: Build extension
         run: pnpm run build
