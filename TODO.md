@@ -194,7 +194,7 @@
     2. Project builds and all tests pass after removal.
   - **Depends‑on:** [T011, T012, T014]
 
-- [ ] **T016 · Chore · P3: update `README.md` and `CHANGELOG.md`**
+- [x] **T016 · Chore · P3: update `README.md` and `CHANGELOG.md`**
 
   - **Context:** Plan Details - Documentation - Any required readme or openapi updates
   - **Action:**
