@@ -70,6 +70,19 @@
   "ignorePatterns": ["node_modules/", "dist/", "babel.config.js", "test-files/", "temp/"],
   "overrides": [
     {
+      "files": ["src/utils/performance-instrumentation.js"],
+      "rules": {
+        "no-import-assign": "off",
+        "import/namespace": "off"
+      }
+    },
+    {
+      "files": ["scripts/performance-test.js"],
+      "rules": {
+        "import/no-unresolved": "off"
+      }
+    },
+    {
       "files": ["**/*.vitest.test.js"],
       "rules": {
         "jsdoc/require-jsdoc": "off",

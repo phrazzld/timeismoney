@@ -235,3 +235,16 @@
 - [ ] **Issue:** The Risk Matrix for "Performance degradation" has a mitigation strategy that is cut off: "...Optimize DOM traversal to minimize calls to `RecognitionService`. Consider debounc/thrott".
   - **Context:** PLAN.md > Risk Matrix
   - **Blocking?:** no (Task T018 covers benchmarking and profiling. Optimization tasks would be separate, based on findings from T018, and are not part of this plan's direct build steps.)
+
+### Follow-up Tasks from Performance Benchmarking
+
+- [x] **T019 · Chore · P3: Fix linting issues in performance testing code**
+  - **Context:** Performance testing code created in T018 has linting issues that need to be resolved.
+  - **Action:**
+    1. Fix ESLint errors in `src/utils/performance.js`, `src/utils/performance-instrumentation.js`, and `scripts/performance-test.js`.
+    2. Resolve JSDoc issues and import/namespace errors.
+    3. Fix performance measurement implementation to work with the namespace structure.
+  - **Done‑when:**
+    1. All linting errors are resolved and the code passes ESLint checks without errors.
+    2. Performance testing can be run without using the `--no-verify` flag.
+  - **Depends‑on:** None
