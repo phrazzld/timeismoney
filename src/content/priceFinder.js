@@ -302,7 +302,12 @@ export const determineCulture = (settings) => {
 };
 
 /********************************************************************************
- * LEGACY FUNCTIONS BELOW - Kept for backward compatibility with existing tests
+ * LEGACY FUNCTIONS BELOW - Kept only for backward compatibility with existing tests
+ * These functions are from the old regex-based price parsing implementation.
+ * 
+ * TODO: Remove all these functions when integration tests are updated to use
+ * the service-based approach with RecognitionService and CurrencyService.
+ * 
  * @eslint-disable jsdoc/require-description, jsdoc/require-param, jsdoc/require-returns
  ********************************************************************************/
 
@@ -323,7 +328,10 @@ const patternCache = {
 };
 
 /**
- * @deprecated Use the service-based approach instead. Kept for test compatibility.
+ * @deprecated This is part of the old regex-based price parsing implementation.
+ * Kept only for backward compatibility with existing tests.
+ * New code should use the service-based approach with RecognitionService instead.
+ * TODO: Remove when integration tests are updated to use service-based approach.
  */
 export const buildThousandsString = (delimiter) => {
   // Simulate the cache mechanism for tests
@@ -340,7 +348,10 @@ export const buildThousandsString = (delimiter) => {
 };
 
 /**
- * @deprecated Use the service-based approach instead. Kept for test compatibility.
+ * @deprecated This is part of the old regex-based price parsing implementation.
+ * Kept only for backward compatibility with existing tests.
+ * New code should use the service-based approach with RecognitionService instead.
+ * TODO: Remove when integration tests are updated to use service-based approach.
  */
 export const buildDecimalString = (delimiter) => {
   // Simulate the cache mechanism for tests
@@ -357,7 +368,10 @@ export const buildDecimalString = (delimiter) => {
 };
 
 /**
- * @deprecated Use the service-based approach instead. Kept for test compatibility.
+ * @deprecated This is part of the old regex-based price parsing implementation.
+ * Kept only for backward compatibility with existing tests.
+ * New code should use the service-based approach with RecognitionService instead.
+ * TODO: Remove when integration tests are updated to use service-based approach.
  */
 export const getLocaleFormat = (currencySymbol, currencyCode) => {
   const formatGroup = currencySymbol
@@ -370,14 +384,20 @@ export const getLocaleFormat = (currencySymbol, currencyCode) => {
 };
 
 /**
- * @deprecated Use the service-based approach instead. Kept for test compatibility.
+ * @deprecated This is part of the old regex-based price parsing implementation.
+ * Kept only for backward compatibility with existing tests.
+ * New code should use the service-based approach with RecognitionService instead.
+ * TODO: Remove when integration tests are updated to use service-based approach.
  */
 export const buildNumberPattern = (thousandsString, decimalString) => {
   return `\\d+(?:${thousandsString}\\d{3})*(?:${decimalString}\\d{1,2})?`;
 };
 
 /**
- * @deprecated Use the service-based approach instead. Kept for test compatibility.
+ * @deprecated This is part of the old regex-based price parsing implementation.
+ * Kept only for backward compatibility with existing tests.
+ * New code should use the service-based approach with RecognitionService instead.
+ * TODO: Remove when integration tests are updated to use service-based approach.
  */
 export const buildSymbolBeforePattern = (escapedSymbol, currencyCode, numberPattern) => {
   const symbolPart = escapedSymbol ? `(${escapedSymbol})` : currencyCode ? `(${currencyCode})` : '';
@@ -385,7 +405,10 @@ export const buildSymbolBeforePattern = (escapedSymbol, currencyCode, numberPatt
 };
 
 /**
- * @deprecated Use the service-based approach instead. Kept for test compatibility.
+ * @deprecated This is part of the old regex-based price parsing implementation.
+ * Kept only for backward compatibility with existing tests.
+ * New code should use the service-based approach with RecognitionService instead.
+ * TODO: Remove when integration tests are updated to use service-based approach.
  */
 export const buildSymbolAfterPattern = (escapedSymbol, currencyCode, numberPattern) => {
   const symbolPart = escapedSymbol ? `(${escapedSymbol})` : currencyCode ? `(${currencyCode})` : '';
@@ -393,7 +416,10 @@ export const buildSymbolAfterPattern = (escapedSymbol, currencyCode, numberPatte
 };
 
 /**
- * @deprecated Use the service-based approach instead. Kept for test compatibility.
+ * @deprecated This is part of the old regex-based price parsing implementation.
+ * Kept only for backward compatibility with existing tests.
+ * New code should use the service-based approach with RecognitionService instead.
+ * TODO: Remove when integration tests are updated to use service-based approach.
  */
 export const buildCurrencyCodePatterns = (currencyCode, numberPattern) => {
   if (!currencyCode) return [];
@@ -401,7 +427,10 @@ export const buildCurrencyCodePatterns = (currencyCode, numberPattern) => {
 };
 
 /**
- * @deprecated Use the service-based approach instead. Kept for test compatibility.
+ * @deprecated This is part of the old regex-based price parsing implementation.
+ * Kept only for backward compatibility with existing tests.
+ * New code should use the service-based approach with RecognitionService instead.
+ * TODO: Remove when integration tests are updated to use service-based approach.
  */
 export const buildMatchPattern = (currencySymbol, currencyCode, thousandsString, decimalString) => {
   // Check cache first for test compatibility
@@ -449,7 +478,10 @@ export const buildMatchPattern = (currencySymbol, currencyCode, thousandsString,
 };
 
 /**
- * @deprecated Use detectCultureFromText instead. Kept for test compatibility.
+ * @deprecated This is part of the old regex-based price parsing implementation.
+ * Kept only for backward compatibility with existing tests.
+ * Use detectCultureFromText instead for new code.
+ * TODO: Remove when integration tests are updated to use service-based approach.
  */
 export const detectFormatFromText = (text) => {
   if (!text || typeof text !== 'string') return null;
@@ -470,7 +502,10 @@ export const detectFormatFromText = (text) => {
 };
 
 /**
- * @deprecated Use the service-based approach instead. Kept for test compatibility.
+ * @deprecated This is part of the old regex-based price parsing implementation.
+ * Kept only for backward compatibility with existing tests.
+ * New code should use the service-based approach with RecognitionService instead.
+ * TODO: Remove when integration tests are updated to use service-based approach.
  */
 export const getPriceInfo = (text, formatSettings = null) => {
   if (!text) return null;

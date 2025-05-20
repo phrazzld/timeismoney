@@ -183,7 +183,7 @@
     1. Linters and formatters pass without errors for all new/modified files.
   - **Depends‑on:** [T013]
 
-- [ ] **T015 · Chore · P3: review and remove dead code from old implementation**
+- [x] **T015 · Chore · P3: review and remove dead code from old implementation**
 
   - **Context:** Plan Details - Detailed Build Steps - 9. Documentation & Cleanup
   - **Action:**

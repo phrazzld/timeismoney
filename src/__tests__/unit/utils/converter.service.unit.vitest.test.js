@@ -498,9 +498,9 @@ describe('Converter (Service-based)', () => {
       expect(result).toBe('$100.00 (5h 0m)');
     });
 
-    it('should handle original function name export compatibility', () => {
-      // Verify that the original function name is exported and works
-      expect(converter.convertPriceToTimeStringOriginal).toBeDefined();
+    it('should use main function directly instead of alias', () => {
+      // NOTE: We removed the alias convertPriceToTimeStringOriginal as it was redundant
+      // Now we use convertPriceToTimeString directly as the main function
 
       // Create test data
       const formatters = {
@@ -514,8 +514,8 @@ describe('Converter (Service-based)', () => {
         currencyCode: 'USD',
       };
 
-      // Call with original function name
-      const result = converter.convertPriceToTimeStringOriginal('$10.99', formatters, wageInfo);
+      // Call the main function directly
+      const result = converter.convertPriceToTimeString('$10.99', formatters, wageInfo);
 
       // Should format the price with time
       expect(result).toContain('$10.99');

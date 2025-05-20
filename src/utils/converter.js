@@ -14,8 +14,12 @@ import recognitionService from '../services/recognitionService.js';
 import currencyService from '../services/currencyService.js';
 
 /**
- * Normalizes a price string by removing formatting characters (LEGACY FUNCTION).
- * Kept for backward compatibility with existing tests and legacy code.
+ * Normalizes a price string by removing formatting characters.
+ * 
+ * @deprecated This is a LEGACY FUNCTION from the regex-based price parsing implementation.
+ * Kept only for backward compatibility with existing tests and legacy code.
+ * New code should use the service-based approach with RecognitionService instead.
+ * TODO: Remove when integration tests are updated to use service-based approach.
  *
  * This function handles the old regex-based approach for extracting numeric values
  * from formatted price strings with various thousands/decimal separators.
@@ -67,8 +71,12 @@ export function normalizePrice(priceString, thousands, decimal) {
 }
 
 /**
- * Calculates the hourly wage based on frequency and amount (LEGACY FUNCTION).
- * Kept for backward compatibility with existing tests and legacy code.
+ * Calculates the hourly wage based on frequency and amount.
+ * 
+ * @deprecated This is a LEGACY FUNCTION from the old price conversion implementation.
+ * Kept only for backward compatibility with existing tests and legacy code.
+ * New code should use createWageObject() and CurrencyService instead.
+ * TODO: Remove when integration tests are updated to use service-based approach.
  *
  * Converts yearly wages to hourly wages by dividing by the standard
  * 2080 work hours per year (40 hours/week * 52 weeks).
@@ -93,8 +101,12 @@ export function calculateHourlyWage(frequency, amount) {
 }
 
 /**
- * Converts a monetary amount to equivalent time based on hourly rate (LEGACY FUNCTION).
- * Kept for backward compatibility with existing tests and legacy code.
+ * Converts a monetary amount to equivalent time based on hourly rate.
+ * 
+ * @deprecated This is a LEGACY FUNCTION from the old price conversion implementation.
+ * Kept only for backward compatibility with existing tests and legacy code.
+ * New code should use CurrencyService.convertToTime() instead.
+ * TODO: Remove when integration tests are updated to use service-based approach.
  *
  * This function is the core of the legacy conversion logic, calculating
  * how many hours and minutes of work are required to earn a given price.
@@ -388,7 +400,11 @@ export function convertPriceToTimeString(
 
 /**
  * Legacy interface for backward compatibility.
- * Full legacy implementation that doesn't use the service-based approach.
+ * 
+ * @deprecated This is a LEGACY FUNCTION that implements the full regex-based price conversion flow.
+ * Kept only for backward compatibility with existing tests and integrations.
+ * New code should use the service-based approach with RecognitionService and CurrencyService.
+ * TODO: Remove when integration tests are updated to use service-based approach.
  *
  * This function is maintained for backward compatibility with existing
  * code that still uses the old regex-based approach. It implements the
@@ -467,10 +483,5 @@ export function convertPriceToTimeStringLegacy(
   }
 }
 
-/**
- * Alias for convertPriceToTimeString, provided for backward compatibility.
- * This is the preferred way to use the function going forward.
- *
- * @type {Function}
- */
-export const convertPriceToTimeStringOriginal = convertPriceToTimeString;
+// Removed redundant alias convertPriceToTimeStringOriginal
+// The main convertPriceToTimeString function is now the preferred API

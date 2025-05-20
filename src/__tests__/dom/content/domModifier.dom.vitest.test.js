@@ -93,6 +93,7 @@ describe('DOM Modifier Module', () => {
         pattern: /\$\d+\.\d{2}/g,
         thousands: /,/g,
         decimal: /\./g,
+        culture: 'en-US', // Added for service-based implementation
         formatInfo: {
           localeId: 'en-US',
           thousands: 'commas',
@@ -103,6 +104,8 @@ describe('DOM Modifier Module', () => {
       // Create conversion info similar to what index.js would create
       const conversionInfo = {
         convertFn: (price) => `${price} (3h 0m)`,
+        // Add culture for the new service-based approach
+        culture: 'en-US',
         formatters: {
           thousands: /,/g,
           decimal: /\./g,
@@ -110,6 +113,8 @@ describe('DOM Modifier Module', () => {
         wageInfo: {
           frequency: 'hourly',
           amount: '10',
+          // Add currencyCode for the new service-based implementation
+          currencyCode: 'USD',
         },
       };
 
