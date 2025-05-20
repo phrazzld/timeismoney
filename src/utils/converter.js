@@ -2,7 +2,9 @@
  * Unified Converter module for converting prices to equivalent working time.
  * Uses RecognitionService and CurrencyService to handle detection and conversion.
  *
- * Contains some legacy functions for backward compatibility.
+ * This module serves as the orchestration layer between the DOM-based price detection
+ * and the service-based price processing. It contains both the modern implementation
+ * using the new service architecture and legacy functions for backward compatibility.
  *
  * @module utils/converter
  */
@@ -12,13 +14,23 @@ import recognitionService from '../services/recognitionService.js';
 import currencyService from '../services/currencyService.js';
 
 /**
- * Normalizes a price string by removing formatting characters (LEGACY FUNCTION)
- * Kept for backward compatibility with existing tests
+ * Normalizes a price string by removing formatting characters (LEGACY FUNCTION).
+ * Kept for backward compatibility with existing tests and legacy code.
  *
- * @param {string} priceString - The price string to normalize
- * @param {RegExp} thousands - Regex for thousands delimiter
- * @param {RegExp} decimal - Regex for decimal delimiter
- * @returns {number} Normalized price as a number
+ * This function handles the old regex-based approach for extracting numeric values
+ * from formatted price strings with various thousands/decimal separators.
+ *
+ * @param {string} priceString - The price string to normalize (e.g., "$19.99", "€15,50")
+ * @param {RegExp} thousands - Regex for thousands delimiter (e.g., /,/g for US format)
+ * @param {RegExp} decimal - Regex for decimal delimiter (e.g., /\./g for US format)
+ * @returns {number} Normalized price as a number (e.g., 19.99, 15.5)
+ *
+ * @example
+ * // US format
+ * normalizePrice("$1,234.56", /,/g, /\./g); // Returns 1234.56
+ *
+ * // European format
+ * normalizePrice("1.234,56 €", /\./g, /,/g); // Returns 1234.56
  */
 export function normalizePrice(priceString, thousands, decimal) {
   // First strip any non-essential characters like currency symbols and codes
@@ -55,12 +67,22 @@ export function normalizePrice(priceString, thousands, decimal) {
 }
 
 /**
- * Calculates the hourly wage based on frequency and amount (LEGACY FUNCTION)
- * Kept for backward compatibility with existing tests
+ * Calculates the hourly wage based on frequency and amount (LEGACY FUNCTION).
+ * Kept for backward compatibility with existing tests and legacy code.
+ *
+ * Converts yearly wages to hourly wages by dividing by the standard
+ * 2080 work hours per year (40 hours/week * 52 weeks).
  *
  * @param {string} frequency - Wage frequency ('hourly' or 'yearly')
  * @param {string|number} amount - Wage amount as string or number
  * @returns {number} Hourly wage as a number
+ *
+ * @example
+ * // Hourly wage unchanged
+ * calculateHourlyWage('hourly', '20'); // Returns 20
+ *
+ * // Yearly wage converted to hourly (52000 / 2080 = 25)
+ * calculateHourlyWage('yearly', '52000'); // Returns 25
  */
 export function calculateHourlyWage(frequency, amount) {
   let hourlyWage = parseFloat(amount);
@@ -71,12 +93,22 @@ export function calculateHourlyWage(frequency, amount) {
 }
 
 /**
- * Converts a monetary amount to equivalent time based on hourly rate (LEGACY FUNCTION)
- * Kept for backward compatibility with existing tests
+ * Converts a monetary amount to equivalent time based on hourly rate (LEGACY FUNCTION).
+ * Kept for backward compatibility with existing tests and legacy code.
+ *
+ * This function is the core of the legacy conversion logic, calculating
+ * how many hours and minutes of work are required to earn a given price.
  *
  * @param {number} priceValue - The price to convert
  * @param {number} hourlyRate - The hourly wage rate
- * @returns {object} Object containing hours and minutes
+ * @returns {object} Object containing hours and minutes representing work time
+ *
+ * @example
+ * // 1 hour and 30 minutes of work at $20/hour to earn $30
+ * convertToTime(30, 20); // Returns { hours: 1, minutes: 30 }
+ *
+ * // Handles rounding edge cases (59.8 minutes rounds to 60, becomes an hour)
+ * convertToTime(19.99, 12); // Returns { hours: 1, minutes: 40 } (1.666~ hours)
  */
 export function convertToTime(priceValue, hourlyRate) {
   const totalHours = priceValue / hourlyRate;
@@ -92,14 +124,27 @@ export function convertToTime(priceValue, hourlyRate) {
 }
 
 /**
- * Converts wage information from settings to a money object
- * Handles frequency conversion (yearly to hourly)
+ * Converts wage information from settings to a money object.
+ * Handles frequency conversion (yearly to hourly) and creates a standardized
+ * money object using the CurrencyService.
  *
- * @param {object} wageInfo - Information about wage
+ * This function bridges the user settings with the CurrencyService by
+ * normalizing the wage information and converting yearly wages to hourly.
+ *
+ * @param {object} wageInfo - Information about wage from user settings
  * @param {string} wageInfo.frequency - Wage frequency ('hourly' or 'yearly')
  * @param {string|number} wageInfo.amount - Wage amount as string or number
  * @param {string} wageInfo.currencyCode - Currency code for the wage (e.g., 'USD')
- * @returns {import('../types/money').IMoneyObject|null} Money object representing hourly wage
+ * @returns {import('../types/money').IMoneyObject|null} Money object representing hourly wage, or null on error
+ *
+ * @example
+ * // Hourly wage
+ * createWageObject({ frequency: 'hourly', amount: '20', currencyCode: 'USD' });
+ * // Returns a money object with value 20 and currency USD
+ *
+ * // Yearly wage (converted to hourly)
+ * createWageObject({ frequency: 'yearly', amount: '52000', currencyCode: 'USD' });
+ * // Returns a money object with value 25 and currency USD (52000 / 2080)
  */
 export function createWageObject(wageInfo) {
   if (!wageInfo || typeof wageInfo !== 'object' || !wageInfo.amount || !wageInfo.currencyCode) {
@@ -128,11 +173,18 @@ export function createWageObject(wageInfo) {
 }
 
 /**
- * Formats time data into a readable verbose snippet
+ * Formats time data into a readable verbose snippet.
+ * Creates a human-friendly, grammatically correct time string.
  *
  * @param {number} hours - Number of hours
  * @param {number} minutes - Number of minutes
- * @returns {string} Formatted time string (e.g., "5 hours, 30 minutes")
+ * @returns {string} Formatted time string (e.g., "5 hours, 30 minutes", "1 hour", "45 minutes")
+ *
+ * @example
+ * formatTimeSnippet(5, 30); // Returns "5 hours, 30 minutes"
+ * formatTimeSnippet(1, 1); // Returns "1 hour, 1 minute"
+ * formatTimeSnippet(0, 45); // Returns "45 minutes"
+ * formatTimeSnippet(2, 0); // Returns "2 hours"
  */
 export function formatTimeSnippet(hours, minutes) {
   const hourText = hours === 1 ? 'hour' : 'hours';
@@ -148,24 +200,38 @@ export function formatTimeSnippet(hours, minutes) {
 }
 
 /**
- * Formats time data into a compact snippet
+ * Formats time data into a compact snippet.
+ * Creates a short, space-efficient time string.
  *
  * @param {number} hours - Number of hours
  * @param {number} minutes - Number of minutes
- * @returns {string} Formatted time string (e.g., "5h 30m")
+ * @returns {string} Formatted time string (e.g., "5h 30m", "0h 45m")
+ *
+ * @example
+ * formatTimeCompact(5, 30); // Returns "5h 30m"
+ * formatTimeCompact(0, 45); // Returns "0h 45m"
  */
 export function formatTimeCompact(hours, minutes) {
   return `${hours}h ${minutes}m`;
 }
 
 /**
- * Combines original price with equivalent time format
+ * Combines original price with equivalent time format.
+ * Creates a combined string showing both the price and the time equivalent,
+ * typically for display in augmented DOM elements.
  *
- * @param {string} originalPrice - The original price string
+ * @param {string} originalPrice - The original price string as found in the DOM
  * @param {number} hours - Number of hours
  * @param {number} minutes - Number of minutes
  * @param {boolean} [useCompactFormat] - Whether to use compact formatting (5h 30m) or verbose (5 hours, 30 minutes)
  * @returns {string} Combined string with original price and time (e.g., "$10 (2h 30m)")
+ *
+ * @example
+ * // Compact format (default)
+ * formatPriceWithTime("$19.99", 2, 0); // Returns "$19.99 (2h 0m)"
+ *
+ * // Verbose format
+ * formatPriceWithTime("€15.50", 1, 33, false); // Returns "€15.50 (1 hour, 33 minutes)"
  */
 export function formatPriceWithTime(originalPrice, hours, minutes, useCompactFormat = true) {
   const timeFormat = useCompactFormat
@@ -176,21 +242,45 @@ export function formatPriceWithTime(originalPrice, hours, minutes, useCompactFor
 }
 
 /**
- * Main function to convert a price string to time representation
- * Uses RecognitionService to extract currency information and CurrencyService for conversion
+ * Main function to convert a price string to time representation.
+ * Uses RecognitionService to extract currency information and CurrencyService for conversion.
  *
- * This function handles both new and legacy call patterns:
- * - New: (priceString, culture, wageInfo, useCompactFormat)
- * - Legacy: (priceString, formatters, wageInfo, useCompactFormat)
+ * This function is the core orchestration point for the price-to-time conversion flow,
+ * connecting the various services and handling both modern and legacy call patterns.
  *
- * @param {string} priceString - The original price string
+ * Two call patterns are supported:
+ * 1. Modern: (priceString, culture, wageInfo, useCompactFormat)
+ * 2. Legacy: (priceString, formatters, wageInfo, useCompactFormat)
+ *
+ * The function detects which pattern is being used based on the type of the second parameter.
+ *
+ * @param {string} priceString - The original price string from the DOM
  * @param {string|object} cultureOrFormatters - Either a culture string (e.g., 'en-US') or a legacy formatters object
- * @param {object} wageInfo - Information about wage
+ * @param {object} wageInfo - Information about wage from user settings
  * @param {string} wageInfo.frequency - Wage frequency ('hourly' or 'yearly')
  * @param {string|number} wageInfo.amount - Wage amount as string or number
  * @param {string} [wageInfo.currencyCode] - Currency code for the wage (e.g., 'USD')
  * @param {boolean} [useCompactFormat] - Whether to use compact formatting
- * @returns {string} Formatted string with price and equivalent working time
+ * @returns {string} Formatted string with price and equivalent working time, or original string on error
+ *
+ * @example
+ * // Modern usage with culture string
+ * convertPriceToTimeString(
+ *   "$19.99",
+ *   "en-US",
+ *   { frequency: 'hourly', amount: '20', currencyCode: 'USD' },
+ *   true
+ * );
+ * // Returns "$19.99 (1h 0m)"
+ *
+ * // Legacy usage with formatter object
+ * convertPriceToTimeString(
+ *   "$19.99",
+ *   { thousands: /,/g, decimal: /\./g },
+ *   { frequency: 'hourly', amount: '20' },
+ *   true
+ * );
+ * // Returns "$19.99 (1h 0m)"
  */
 export function convertPriceToTimeString(
   priceString,
@@ -297,19 +387,32 @@ export function convertPriceToTimeString(
 }
 
 /**
- * Legacy interface for backward compatibility
- * This will be used by existing code that still passes formatters
- * Full legacy implementation that doesn't use the service-based approach
+ * Legacy interface for backward compatibility.
+ * Full legacy implementation that doesn't use the service-based approach.
  *
- * @param {string} priceString - The original price string
- * @param {object} formatters - Formatting regex patterns
- * @param {RegExp} formatters.thousands - Regex for thousands delimiter
- * @param {RegExp} formatters.decimal - Regex for decimal delimiter
- * @param {object} wageInfo - Information about wage
+ * This function is maintained for backward compatibility with existing
+ * code that still uses the old regex-based approach. It implements the
+ * complete legacy conversion flow using the old helper functions.
+ *
+ * @param {string} priceString - The original price string from the DOM
+ * @param {object} formatters - Formatting regex patterns for legacy price parsing
+ * @param {RegExp} formatters.thousands - Regex for thousands delimiter (e.g., /,/g for US format)
+ * @param {RegExp} formatters.decimal - Regex for decimal delimiter (e.g., /\./g for US format)
+ * @param {object} wageInfo - Information about wage from user settings
  * @param {string} wageInfo.frequency - Wage frequency ('hourly' or 'yearly')
  * @param {string|number} wageInfo.amount - Wage amount as string or number
  * @param {boolean} [useCompactFormat] - Whether to use compact formatting
- * @returns {string} Formatted string with price and equivalent working time
+ * @returns {string} Formatted string with price and equivalent working time, or original string on error
+ *
+ * @example
+ * // US format
+ * convertPriceToTimeStringLegacy(
+ *   "$19.99",
+ *   { thousands: /,/g, decimal: /\./g },
+ *   { frequency: 'hourly', amount: '20' },
+ *   true
+ * );
+ * // Returns "$19.99 (1h 0m)"
  */
 export function convertPriceToTimeStringLegacy(
   priceString,
@@ -364,6 +467,10 @@ export function convertPriceToTimeStringLegacy(
   }
 }
 
-// Export the main function under the original name for compatibility
-// This is the preferred way to use the function going forward
+/**
+ * Alias for convertPriceToTimeString, provided for backward compatibility.
+ * This is the preferred way to use the function going forward.
+ *
+ * @type {Function}
+ */
 export const convertPriceToTimeStringOriginal = convertPriceToTimeString;

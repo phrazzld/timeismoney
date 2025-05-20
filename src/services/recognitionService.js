@@ -1,6 +1,10 @@
 /**
- * Recognition service for extracting currency mentions from text
+ * Recognition service for extracting currency mentions from text.
  * Adapts Microsoft Recognizers Text Suite for consistent currency extraction
+ * across different text formats and locales.
+ *
+ * This service implements the IRecognitionService interface and provides
+ * reliable currency extraction with culture-aware processing.
  *
  * @module services/recognitionService
  */
@@ -10,15 +14,35 @@ import { debug, warn, error } from '../utils/logger.js';
 
 /**
  * Implementation of IRecognitionService that adapts Microsoft Recognizers Text Suite
- * for extracting currency information from text
+ * for extracting currency information from text.
+ *
+ * This class identifies and normalizes currency mentions in text, handling
+ * various formats, symbols, and cultural variations. It processes raw text
+ * and returns structured data about any currency values found.
+ *
+ * @implements {import('../types/money').IRecognitionService}
  */
 export class RecognitionService {
   /**
-   * Extracts all currency mentions from a given text string
+   * Extracts all currency mentions from a given text string.
+   * Processes the input text to identify and normalize any currency values,
+   * using the specified culture to guide recognition patterns.
+   *
+   * This method validates inputs, handles errors gracefully, and returns
+   * an empty array rather than throwing exceptions when processing fails.
+   * It also performs extensive logging for debugging and monitoring.
    *
    * @param {string} text - The text to analyze for currency mentions
    * @param {string} culture - The culture code (e.g., "en-US", "de-DE") to guide recognition
-   * @returns {Array<import('../types/money').IExtractedCurrency>} An array of extracted currency information
+   * @returns {Array<import('../types/money').IExtractedCurrency>} An array of extracted currency information, empty if none found or on error
+   *
+   * @example
+   * // Extract currencies from text with en-US culture
+   * const currencies = recognitionService.extractCurrencies(
+   *   "The item costs $19.99 or €15.00",
+   *   "en-US"
+   * );
+   * // Returns array with information about the $19.99 and €15.00 mentions
    */
   extractCurrencies(text, culture) {
     // Input validation
@@ -114,13 +138,22 @@ export class RecognitionService {
   }
 
   /**
-   * Normalizes a currency unit to an ISO 4217 currency code
-   * This is a helper method to handle various forms of currency units
+   * Normalizes a currency unit to an ISO 4217 currency code.
+   * This helper method handles various forms of currency units (symbols, names)
+   * and uses culture context to disambiguate when needed (e.g., '$' could be
+   * USD, CAD, AUD depending on the culture).
    *
    * @private
-   * @param {string} unit - The currency unit to normalize
-   * @param {string} culture - The culture to use for context
-   * @returns {string} The normalized ISO currency code
+   * @param {string} unit - The currency unit to normalize (e.g., "$", "Dollar", "EUR")
+   * @param {string} culture - The culture to use for context (e.g., "en-US", "en-CA")
+   * @returns {string} The normalized ISO currency code (e.g., "USD", "CAD"), or the uppercase input if unable to normalize
+   *
+   * @example
+   * // With US culture
+   * _normalizeIsoCurrency("$", "en-US"); // Returns "USD"
+   *
+   * // With Canadian culture
+   * _normalizeIsoCurrency("$", "en-CA"); // Returns "CAD"
    */
   _normalizeIsoCurrency(unit, culture) {
     if (!unit) return '';
@@ -189,4 +222,10 @@ export class RecognitionService {
   }
 }
 
+/**
+ * Singleton instance of RecognitionService.
+ * Use this exported instance throughout the application for consistency.
+ *
+ * @type {RecognitionService}
+ */
 export default new RecognitionService();

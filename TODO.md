@@ -162,7 +162,7 @@
 
 ## Documentation and Finalization
 
-- [ ] **T013 · Chore · P2: add JSDoc comments to new/refactored modules and interfaces**
+- [x] **T013 · Chore · P2: add JSDoc comments to new/refactored modules and interfaces**
 
   - **Context:** Plan Details - Detailed Build Steps - 9. Documentation & Cleanup; Documentation - Code Self‑Doc Patterns
   - **Action:**
