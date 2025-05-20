@@ -138,7 +138,7 @@
     2. The application initializes without errors related to service provisioning or DI.
   - **Depends‑on:** [T003, T005, T007, T009]
 
-- [ ] **T011 · Chore · P3: remove old regex constants from `src/utils/constants.js`**
+- [x] **T011 · Chore · P3: remove old regex constants from `src/utils/constants.js`**
 
   - **Context:** Plan Details - Detailed Build Steps - 7. Update `src/utils/constants.js`
   - **Action:**
