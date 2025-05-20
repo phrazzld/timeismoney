@@ -15,10 +15,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       
+      # Updated Node.js version to 20.x to meet glob package requirements
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          node-version: 20.x
       
       - name: Install pnpm
         uses: pnpm/action-setup@v2
@@ -57,10 +58,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       
+      # Updated Node.js version to 20.x to meet glob package requirements
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          node-version: 20.x
       
       - name: Install pnpm
         uses: pnpm/action-setup@v2
@@ -115,10 +117,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       
+      # Updated Node.js version to 20.x to meet glob package requirements
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          node-version: 20.x
       
       - name: Install pnpm
         uses: pnpm/action-setup@v2
