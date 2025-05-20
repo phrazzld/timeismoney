@@ -217,7 +217,7 @@
     1. If E2E tests are limited, manually verify the extension's core functionality on a few diverse sample web pages.
   - **Depends‑on:** [T012, T010]
 
-- [ ] **T018 · Chore · P2: benchmark key flows and profile extension performance**
+- [x] **T018 · Chore · P2: benchmark key flows and profile extension performance**
   - **Context:** Plan Details - Risk Matrix (Performance degradation)
   - **Action:**
     1. Benchmark key flows (e.g., time from page load to prices converted) before (if a baseline exists) and after the refactor.
