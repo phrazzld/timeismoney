@@ -100,7 +100,7 @@
     6. Existing time formatting logic (e.g., `formatTimeSnippet`) is retained and used for `ITimeBreakdown` objects.
   - **Depends‑on:** [T003, T005]
 
-- [ ] **T008 · Test · P1: update unit tests for refactored `src/utils/converter.ts`**
+- [x] **T008 · Test · P1: update unit tests for refactored `src/utils/converter.ts`**
 
   - **Context:** Plan Details - Detailed Build Steps - 8. Testing; Testing Strategy - Unit Tests (`converter.ts`)
   - **Action:**
