@@ -173,7 +173,7 @@
     1. All specified interfaces, service methods, and major refactored functions have comprehensive JSDoc comments.
   - **Depends‑on:** [T002, T003, T005, T007]
 
-- [ ] **T014 · Chore · P3: run linters and formatters on all changed code**
+- [x] **T014 · Chore · P3: run linters and formatters on all changed code**
 
   - **Context:** Plan Details - Detailed Build Steps - 9. Documentation & Cleanup
   - **Action:**
