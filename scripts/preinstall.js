@@ -1,7 +1,15 @@
 /**
  * This script prevents the use of npm and yarn package managers.
  * It enforces the use of pnpm for consistent dependency management.
+ * In CI environments, the check is bypassed to allow the workflow to continue.
  */
+
+// Skip this check if running in a CI environment
+const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+if (isCI) {
+  console.log('Running in CI environment, bypassing package manager check');
+  process.exit(0); // Exit successfully
+}
 
 const usedManager = process.env.npm_execpath || '';
 const isNpm = usedManager.includes('npm');
