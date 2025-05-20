@@ -4,7 +4,15 @@
   "description": "Chrome extension that converts prices to equivalent working hours",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=16.0.0",
+    "pnpm": ">=8.0.0",
+    "npm": "please-use-pnpm",
+    "yarn": "please-use-pnpm"
+  },
+  "packageManager": "pnpm@8.12.0",
   "scripts": {
+    "preinstall": "node ./scripts/preinstall.js",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"**/*.{js,json,css,html}\"",
@@ -15,7 +23,7 @@
     "test:unit": "vitest run src/__tests__/unit",
     "test:integration": "vitest run src/__tests__/integration",
     "test:dom": "vitest run src/__tests__/dom",
-    "ci": "npm run lint && npm run test",
+    "ci": "pnpm run lint && pnpm run test",
     "build": "./scripts/build-extension.sh",
     "build:content": "esbuild src/content/index.js --bundle --outfile=dist/content/content.bundle.js --format=iife --sourcemap --target=chrome90",
     "build:background": "esbuild src/background/background.js --bundle --outfile=dist/background/background.bundle.js --format=esm --sourcemap --target=chrome90",

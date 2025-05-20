@@ -7,7 +7,7 @@ echo ""
 
 # Run the build script first
 echo "Building the extension..."
-cd "$(dirname "$0")/.." && npm run build
+cd "$(dirname "$0")/.." && pnpm run build
 
 # Get the path to the dist directory
 EXTENSION_DIR=$(cd "$(dirname "$0")/.." && pwd)/dist

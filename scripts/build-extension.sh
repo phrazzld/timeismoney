@@ -39,10 +39,10 @@ mkdir -p "${DIST_DIR}/utils" "${DIST_DIR}/content" "${DIST_DIR}/background" "${D
 
 # Bundle scripts
 echo "Bundling content script with esbuild..."
-npm run build:content
+pnpm run build:content
 
 echo "Bundling background script with esbuild..."
-npm run build:background
+pnpm run build:background
 
 # Copy manifest and other root files
 echo "Copying manifest.json..."
