@@ -148,7 +148,7 @@
     2. Project builds and runs correctly without these constants.
   - **Depends‑on:** [T007, T009]
 
-- [ ] **T012 · Test · P2: update integration/DOM tests for `priceFinder.ts` and `domModifier.ts`**
+- [x] **T012 · Test · P2: update integration/DOM tests for `priceFinder.ts` and `domModifier.ts`**
   - **Context:** Plan Details - Detailed Build Steps - 8. Testing; Testing Strategy - Integration Tests
   - **Action:**
     1. Update existing integration/DOM tests that cover the flow from `priceFinder.ts` identifying elements, through `converter.ts` processing, to `domModifier.ts` updating the DOM.
