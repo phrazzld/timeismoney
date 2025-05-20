@@ -205,7 +205,7 @@
     2. `CHANGELOG.md` includes an entry for this refactor.
   - **Depends‑on:** [T015]
 
-- [ ] **T017 · Test · P2: run existing End-to-End (E2E) tests**
+- [x] **T017 · Test · P2: run existing End-to-End (E2E) tests**
 
   - **Context:** Plan Details - Testing Strategy - End-to-End (E2E) Tests
   - **Action:**
