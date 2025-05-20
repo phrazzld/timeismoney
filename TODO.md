@@ -54,7 +54,7 @@
 
 ## Currency Service (`Money.js` Adapter)
 
-- [ ] **T005 · Feature · P1: implement `CurrencyService` adapter**
+- [x] **T005 · Feature · P1: implement `CurrencyService` adapter**
 
   - **Context:** Plan Details - Detailed Build Steps - 3. Implement `CurrencyService`; Architecture Blueprint - Modules / Packages (`src/services/currencyService.ts`); Error & Edge‑Case Strategy; Logging & Observability; Security & Config
   - **Action:**
@@ -70,7 +70,7 @@
     6. Input validation for `numericStringValue` and `currencyCode` in `createMoney` is performed.
   - **Depends‑on:** [T002]
 
-- [ ] **T006 · Test · P1: write unit tests for `CurrencyService`**
+- [x] **T006 · Test · P1: write unit tests for `CurrencyService`**
   - **Context:** Plan Details - Detailed Build Steps - 8. Testing; Testing Strategy - Unit Tests (`CurrencyService`)
   - **Action:**
     1. Create unit tests for `CurrencyService` in a new test file (e.g., `src/services/currencyService.test.ts`).
@@ -84,7 +84,7 @@
 
 ## Core Logic Refactoring
 
-- [ ] **T007 · Refactor · P1: refactor `src/utils/converter.ts` to use new services**
+- [x] **T007 · Refactor · P1: refactor `src/utils/converter.ts` to use new services**
 
   - **Context:** Plan Details - Detailed Build Steps - 4. Refactor `src/utils/converter.ts`; Error & Edge‑Case Strategy; Logging & Observability; Security & Config
   - **Action:**
