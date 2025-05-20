@@ -113,7 +113,7 @@
     3. Time formatting functions are tested directly if their logic is significant.
   - **Depends‑on:** [T007]
 
-- [ ] **T009 · Refactor · P1: refactor `src/content/priceFinder.ts`**
+- [x] **T009 · Refactor · P1: refactor `src/content/priceFinder.ts`**
   - **Context:** Plan Details - Detailed Build Steps - 5. Refactor `src/content/priceFinder.ts`; Error & Edge‑Case Strategy (Culture/Locale)
   - **Action:**
     1. Simplify `priceFinder.ts` to focus on identifying relevant DOM text nodes that might contain prices.
