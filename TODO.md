@@ -127,7 +127,7 @@
 
 ## Integration and Cleanup
 
-- [ ] **T010 · Chore · P2: update `src/content/index.ts` (or equivalent entry point)**
+- [x] **T010 · Chore · P2: update `src/content/index.ts` (or equivalent entry point)**
 
   - **Context:** Plan Details - Detailed Build Steps - 6. Update `src/content/index.ts`
   - **Action:**

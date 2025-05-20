@@ -24,6 +24,14 @@ import { processTextNode, isValidForProcessing } from './domModifier.js';
 import { DEFAULT_DEBOUNCE_INTERVAL_MS } from '../utils/constants.js';
 import * as logger from '../utils/logger.js';
 
+// Import service instances
+// These services are instantiated here to ensure they're available
+// They are used by converter.js so we need to import them even if not directly used here
+// eslint-disable-next-line no-unused-vars
+import recognitionService from '../services/recognitionService.js';
+// eslint-disable-next-line no-unused-vars
+import currencyService from '../services/currencyService.js';
+
 // Create a single shared state object for the DOM scanner
 const domScannerState = createDomScannerState();
 
@@ -381,7 +389,9 @@ const convert = (textNode, preloadedSettings) => {
           }
 
           // STEP 2b: Extract actual price information using the patterns
-          // Import getPriceInfo from priceFinder to extract the actual price value
+          // Note: In the refactored approach, we don't need to extract matches manually as
+          // the recognitionService will handle this. However, we keep this for backward compatibility
+          // with the legacy implementation that expects pattern matching.
           try {
             // Use the pattern to check if there are matches in the text
             const matches = textNode.nodeValue.match(priceMatch.pattern);
@@ -393,8 +403,9 @@ const convert = (textNode, preloadedSettings) => {
             // We know there are matches, so we're good to proceed
             logger.debug('Found price match in text:', matches[0], {
               pattern: priceMatch.pattern.toString(),
-              thousands: priceMatch.thousands.toString(),
-              decimal: priceMatch.decimal.toString(),
+              thousands: priceMatch.thousands?.toString() || 'N/A',
+              decimal: priceMatch.decimal?.toString() || 'N/A',
+              culture: priceMatch.culture || 'en-US',
               formatInfo: priceMatch.formatInfo,
             });
           } catch (matchError) {
@@ -407,6 +418,10 @@ const convert = (textNode, preloadedSettings) => {
           // STEP 3: Prepare conversion information for the converter
           const conversionInfo = {
             convertFn: convertPriceToTimeString,
+            // If priceMatch has a culture property, use it. Otherwise use default 'en-US'.
+            // This is the culture string used by the recognition service
+            culture: priceMatch.culture || 'en-US',
+            // Keep formatters for backward compatibility with legacy implementations
             formatters: {
               thousands: priceMatch.thousands,
               decimal: priceMatch.decimal,
@@ -414,6 +429,8 @@ const convert = (textNode, preloadedSettings) => {
             wageInfo: {
               frequency: settings.frequency || 'hourly',
               amount: settings.amount || '10', // Provide a reasonable default for amount
+              // Add currencyCode for the new service-based implementation
+              currencyCode: settings.currencyCode || 'USD',
             },
           };
 
@@ -429,6 +446,8 @@ const convert = (textNode, preloadedSettings) => {
 
           // STEP 4: Use domModifier to update the DOM with the converted prices
           try {
+            // Update the call to use culture alongside formatters for backward compatibility
+            // This allows processTextNode to work with both the legacy and new service-based approach
             const result = processTextNode(
               textNode,
               priceMatch,
@@ -447,7 +466,7 @@ const convert = (textNode, preloadedSettings) => {
               textContent: textNode?.nodeValue?.substring(0, 50) + '...',
               priceMatch:
                 typeof priceMatch === 'object'
-                  ? { pattern: priceMatch.pattern?.toString() }
+                  ? { pattern: priceMatch.pattern?.toString(), culture: priceMatch.culture }
                   : 'Invalid priceMatch',
               errorDetails: domModifierError.stack,
             });
