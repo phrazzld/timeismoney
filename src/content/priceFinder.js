@@ -304,10 +304,10 @@ export const determineCulture = (settings) => {
 /********************************************************************************
  * LEGACY FUNCTIONS BELOW - Kept only for backward compatibility with existing tests
  * These functions are from the old regex-based price parsing implementation.
- * 
+ *
  * TODO: Remove all these functions when integration tests are updated to use
  * the service-based approach with RecognitionService and CurrencyService.
- * 
+ *
  * @eslint-disable jsdoc/require-description, jsdoc/require-param, jsdoc/require-returns
  ********************************************************************************/
 

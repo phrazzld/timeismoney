@@ -10,7 +10,7 @@ import { vi } from 'vitest';
 
 /**
  * Creates a mock implementation of RecognitionService for testing
- * 
+ *
  * @returns {object} A mock RecognitionService with mocked methods
  */
 export const createMockRecognitionService = () => ({
@@ -97,7 +97,7 @@ export const createMockRecognitionService = () => ({
 
 /**
  * Creates a mock implementation of CurrencyService for testing
- * 
+ *
  * @returns {object} A mock CurrencyService with mocked methods
  */
 export const createMockCurrencyService = () => ({
@@ -195,7 +195,7 @@ export const createMockCurrencyService = () => ({
 /**
  * Resets all service mocks to their initial state
  * This should be called in afterEach to ensure clean state between tests
- * 
+ *
  * @returns {void}
  */
 export const resetServiceMocks = () => {

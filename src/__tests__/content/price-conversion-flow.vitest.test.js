@@ -69,7 +69,7 @@ describe('Price Conversion Integration Flow', () => {
 
     // The converted node should include a span (DOM structure might vary)
     expect(parentNode.childNodes.length).toBeGreaterThan(0);
-    
+
     // Find the span that was added
     const span = parentNode.querySelector(`.${CONVERTED_PRICE_CLASS}`);
     expect(span).toBeTruthy();

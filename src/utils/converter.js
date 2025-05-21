@@ -15,7 +15,7 @@ import currencyService from '../services/currencyService.js';
 
 /**
  * Normalizes a price string by removing formatting characters.
- * 
+ *
  * @deprecated This is a LEGACY FUNCTION from the regex-based price parsing implementation.
  * Kept only for backward compatibility with existing tests and legacy code.
  * New code should use the service-based approach with RecognitionService instead.
@@ -72,7 +72,7 @@ export function normalizePrice(priceString, thousands, decimal) {
 
 /**
  * Calculates the hourly wage based on frequency and amount.
- * 
+ *
  * @deprecated This is a LEGACY FUNCTION from the old price conversion implementation.
  * Kept only for backward compatibility with existing tests and legacy code.
  * New code should use createWageObject() and CurrencyService instead.
@@ -102,7 +102,7 @@ export function calculateHourlyWage(frequency, amount) {
 
 /**
  * Converts a monetary amount to equivalent time based on hourly rate.
- * 
+ *
  * @deprecated This is a LEGACY FUNCTION from the old price conversion implementation.
  * Kept only for backward compatibility with existing tests and legacy code.
  * New code should use CurrencyService.convertToTime() instead.
@@ -400,7 +400,7 @@ export function convertPriceToTimeString(
 
 /**
  * Legacy interface for backward compatibility.
- * 
+ *
  * @deprecated This is a LEGACY FUNCTION that implements the full regex-based price conversion flow.
  * Kept only for backward compatibility with existing tests and integrations.
  * New code should use the service-based approach with RecognitionService and CurrencyService.
