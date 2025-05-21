@@ -24,7 +24,7 @@
   - **Done‑when:**
     1. A clear decision on the strategy for centralizing Node.js version management is documented.
 
-- [ ] **T003 · Refactor · P1: implement selected centralized node.js version management strategy in ci**
+- [x] **T003 · Refactor · P1: implement selected centralized node.js version management strategy in ci**
 
   - **Context:** Implementation of strategy from T002
   - **Action:**
