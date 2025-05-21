@@ -46,7 +46,7 @@
     2. The CI pipeline includes this check and fails the build if discrepancies are found.
   - **Depends‑on:** [T003]
 
-- [ ] **T005 · Chore · P2: evaluate consolidation of ci-fix.yml and ci.yml workflows**
+- [x] **T005 · Chore · P2: evaluate consolidation of ci-fix.yml and ci.yml workflows**
 
   - **Context:** Workflow consolidation for improved maintenance
   - **Action:**
