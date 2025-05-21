@@ -55,7 +55,7 @@
   - **Done‑when:**
     1. A written analysis with a clear recommendation is documented and reviewed.
 
-- [ ] **T006 · Chore · P2: document procedure for updating critical environment versions**
+- [x] **T006 · Chore · P2: document procedure for updating critical environment versions**
   - **Context:** Documentation for environment updates
   - **Action:**
     1. Create or update project documentation with a procedure for updating Node.js, pnpm, etc.
