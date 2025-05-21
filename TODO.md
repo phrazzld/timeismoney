@@ -15,7 +15,7 @@
 
 ## CI/CD Pipeline Enhancements
 
-- [ ] **T002 · Chore · P1: evaluate and select strategy for centralized node.js version management in ci**
+- [x] **T002 · Chore · P1: evaluate and select strategy for centralized node.js version management in ci**
 
   - **Context:** Prevention of similar CI issues in the future
   - **Action:**
