@@ -6,6 +6,16 @@ This backlog outlines planned work for the extension, balancing feature developm
 
 ## High Priority
 
+### Core Functionality Enhancement
+
+- **[Feature/Enhancement] Enable Extension on All Sites (Remove Site Whitelist)**
+
+  - **Type**: Feature/Enhancement
+  - **Complexity**: Medium
+  - **Rationale**: Expands the extension's utility by allowing price conversion on any website, significantly improving user experience and value proposition. Currently limited by site whitelist restrictions.
+  - **Expected Outcome**: Extension operates on all websites by default, with users able to disable on specific sites if needed. Removal of hardcoded site restrictions.
+  - **Dependencies**: `[Security/Refactor] Implement Systematic Input Sanitization & Validation`, `[Security/Enhancement] Review and Minimize Host Permissions`.
+
 ### Foundational Technical Excellence & Philosophy Alignment
 
 - **[Refactor/Philosophy] Enforce Strict TypeScript Compiler Options and Eliminate `any` (Philosophy Alignment)**
@@ -37,7 +47,7 @@ This backlog outlines planned work for the extension, balancing feature developm
   - **Complexity**: Medium
   - **Rationale**: Actively enforces minimum test coverage and prevents introduction of known high-impact vulnerabilities, ensuring baseline quality and security. Aligns with _Test Coverage Enforcement, Dependency Management Security, Automation, Quality Gates, and CI/CD_.
   - **Expected Outcome**: CI pipeline fails builds if test coverage drops below a defined threshold (e.g., 85%) or if high/critical severity vulnerabilities are found in dependencies (e.g., via `pnpm audit --audit-level=high`).
-  - **Dependencies**: `[Chore] Audit and Update Dependencies & Migrate to pnpm`, `[Test] Expand Test Coverage for Edge Cases and Errors`.
+  - **Dependencies**: `[Chore] Audit and Update Dependencies`, `[Test] Expand Test Coverage for Edge Cases and Errors`.
 
 ### Testing Infrastructure & Quality Assurance
 
@@ -100,11 +110,60 @@ This backlog outlines planned work for the extension, balancing feature developm
 
 ### Build & Dependencies
 
-- **[Chore/Enhancement] Audit and Update Dependencies & Migrate to pnpm**
+- ✅ **[Chore/Enhancement] Migrate to pnpm Package Manager**
+
   - **Type**: Chore/Enhancement
   - **Complexity**: Medium
-  - **Rationale**: Ensures security, stability, and maintainability by using up-to-date dependencies. pnpm offers benefits in disk space, installation speed, and stricter dependency management. (Technical Excellence, Operational Excellence).
-  - **Expected Outcome**: Project dependencies are minimal, up-to-date, secure, and properly licensed. Project uses pnpm for all package management; `pnpm-lock.yaml` reflects audited state.
+  - **Rationale**: Improves dependency management with better performance, disk efficiency, and stricter dependency management.
+  - **Expected Outcome**: Project uses pnpm for all package management operations; properly defined pnpm-lock.yaml.
+  - **Status**: Completed - Project now uses pnpm for package management.
+
+- **[Chore/Enhancement] Audit and Update Dependencies**
+  - **Type**: Chore/Enhancement
+  - **Complexity**: Medium
+  - **Rationale**: Ensures security, stability, and maintainability by using up-to-date dependencies. (Technical Excellence, Operational Excellence).
+  - **Expected Outcome**: Project dependencies are minimal, up-to-date, secure, and properly licensed.
+  - **Dependencies**: None.
+
+### CI/CD Pipeline
+
+- ✅ **[Enhancement] Implement Centralized Node.js Version Management in CI**
+
+  - **Type**: Enhancement
+  - **Complexity**: Medium
+  - **Rationale**: Ensures consistency between local development and CI environments, prevents version mismatch issues, and simplifies version updates.
+  - **Expected Outcome**: All CI workflows use a centralized approach to Node.js version management via `.nvmrc` file.
+  - **Status**: Completed - `.nvmrc` file is now the single source of truth for Node.js version in both local development and CI environments.
+
+- ✅ **[Test] Implement Automated CI Node.js Version Validation**
+
+  - **Type**: Test
+  - **Complexity**: Medium
+  - **Rationale**: Prevents configuration drift in CI workflows that could lead to environment inconsistencies.
+  - **Expected Outcome**: Validation script checks all workflow files for compliance with the centralized Node.js version management approach, failing CI builds when non-compliant configurations are found.
+  - **Status**: Completed - Script implemented and integrated into CI pipeline.
+
+- ✅ **[Chore/Doc] Document Procedures for Updating Critical Environment Versions**
+
+  - **Type**: Documentation/Chore
+  - **Complexity**: Simple
+  - **Rationale**: Ensures consistent approach to environment updates across the team, reducing errors and inconsistencies.
+  - **Expected Outcome**: Comprehensive documentation for updating Node.js, pnpm, and other critical environment components.
+  - **Status**: Completed - Documented in `docs/development/ENVIRONMENT_VERSION_MANAGEMENT.md`.
+
+- ✅ **[Enhancement] Evaluate Workflow File Consolidation**
+
+  - **Type**: Enhancement
+  - **Complexity**: Simple
+  - **Rationale**: Reduces duplication and simplifies CI configuration maintenance.
+  - **Expected Outcome**: Analysis document with recommendation for consolidating duplicate workflow files.
+  - **Status**: Completed - Recommendation documented in `docs/development/CI_WORKFLOW_EVALUATION.md`.
+
+- **[Refactor] Consolidate CI Workflow Files**
+  - **Type**: Refactor
+  - **Complexity**: Simple
+  - **Rationale**: Based on the completed evaluation (T005), consolidating the duplicate CI workflow files will improve maintenance.
+  - **Expected Outcome**: Single workflow file (`ci.yml`) handling all CI processes with documentation of the change.
   - **Dependencies**: None.
 
 ---
@@ -380,49 +439,3 @@ This backlog outlines planned work for the extension, balancing feature developm
   - **Rationale**: Preserves institutional knowledge and aids future maintainers.
   - **Expected Outcome**: Documentation includes rationale for key decisions.
   - **Dependencies**: None.
-
----
-
-## Future Considerations
-
-### Research & Innovation
-
-- **[Research] Try out MS Recognizers.Text and Money.js packages**
-
-  - Investigate using these libraries to improve price detection accuracy and potentially simplify regex patterns.
-
-- **[Research] Explore Alternative Price Detection Methods**
-
-  - Investigate using structured data, machine learning, or site-specific selectors to improve detection accuracy.
-
-- **[Research] Automated Error Reporting**
-
-  - Consider integrating privacy-conscious error reporting (e.g., Sentry) to catch and fix issues in production.
-
-- **[Research] Support for Additional Browsers (Firefox, Edge)**
-  - Evaluate cross-browser compatibility and effort required for porting.
-
-### Feature Enhancements
-
-- **[Feature] User-Driven Customization of Highlighting Styles**
-
-  - Allow users to define or select highlight styles for converted prices.
-
-- **[Feature] Support for Additional Currencies/Locales**
-
-  - Expand recognition and conversion to more currencies and number formats.
-
-- **[Feature] User-Defined Website Rules**
-
-  - Let users create custom selectors/rules for unsupported sites.
-
-- **[Feature] Analytics Opt-In for Understanding User Engagement**
-
-  - Privacy-conscious analytics for feature usage (pending legal/privacy review).
-
-- **[Feature] Crypto / Stock Price Conversion**
-  - Enable conversion of crypto and stock tickers to time equivalents.
-
----
-
-_This backlog is a living document. Review and update regularly to ensure focus on the most valuable, impactful, and maintainable work._
