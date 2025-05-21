@@ -5,6 +5,10 @@ import { execSync } from 'child_process';
 /**
  * Validates that all staged test files follow the correct naming convention.
  * Test files must use the pattern: *.vitest.test.js
+ *
+ * Special cases:
+ * - Files in the __tests__/mocks/ directory are excluded from validation
+ *   as they are mock implementations used by tests, not test files themselves.
  */
 function validateTestFileNames() {
   try {
@@ -15,7 +19,12 @@ function validateTestFileNames() {
 
     // Filter for test files
     const testFiles = stagedFiles.filter(
-      (file) => file.includes('__tests__') || file.includes('.test.') || file.includes('.spec.')
+      (file) =>
+        // Include files that are in __tests__ directory but not in the mocks directory
+        (file.includes('__tests__') && !file.includes('__tests__/mocks/')) ||
+        // Or files that explicitly have .test. or .spec. in their name
+        file.includes('.test.') ||
+        file.includes('.spec.')
     );
 
     // Check if any test files don't match our pattern

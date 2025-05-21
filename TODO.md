@@ -256,7 +256,7 @@
     2. pnpm dependencies install correctly in the CI environment
   - **Depends‑on:** None
 
-- [ ] **T021 · Chore · P2: Update test name validation script**
+- [x] **T021 · Chore · P2: Update test name validation script**
   - **Context:** The current test name validation script incorrectly flags mock files in `__tests__/mocks/` directory as test files requiring the `.vitest.test.js` extension.
   - **Action:**
     1. Update `scripts/validate-test-names.js` to exclude files in the `__tests__/mocks/` directory from validation
