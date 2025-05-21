@@ -340,17 +340,22 @@ export class CurrencyService {
     const hours = Math.floor(totalHours);
     const minutes = Math.round((totalHours - hours) * 60);
 
+    // Record the start time for performance measurement
+    const startTime = performance.now();
+
     // Handle case where rounding minutes results in 60
     if (minutes === 60) {
       return {
         hours: hours + 1,
         minutes: 0,
+        startTime: startTime,
       };
     }
 
     return {
       hours,
       minutes,
+      startTime: startTime,
     };
   }
 

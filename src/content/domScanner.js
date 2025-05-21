@@ -12,6 +12,7 @@ import {
   DEFAULT_DEBOUNCE_INTERVAL_MS,
 } from '../utils/constants.js';
 import { getSettings } from '../utils/storage.js';
+import * as debugTools from './debugTools.js';
 import * as logger from '../utils/logger.js';
 
 /**
@@ -100,6 +101,11 @@ export const walk = (node, callback, settings, options = {}) => {
         case 1: // Element
         case 9: // Document
         case 11: // Document fragment
+          // Mark element as candidate in debug mode if it's not a doc/fragment
+          if (settings?.debugMode && node.nodeType === 1) {
+            debugTools.markPriceCandidate(node);
+          }
+
           child = node.firstChild;
           while (child) {
             try {
@@ -137,6 +143,15 @@ export const walk = (node, callback, settings, options = {}) => {
           break;
         case 3: // Text node
           try {
+            // Mark text node in debug mode if enabled
+            if (settings?.debugMode) {
+              const textContent = node.nodeValue || '';
+              const hasPotentialPrice =
+                textContent.match(/\d+/) &&
+                (textContent.match(/[$€£¥₹₽¢]/) || textContent.length < 30);
+              debugTools.markTextProcessed(node, textContent, hasPotentialPrice);
+            }
+
             callback(node, settings);
           } catch (callbackError) {
             logger.error('Error in node callback:', callbackError.message, {
@@ -266,6 +281,15 @@ export const startObserver = (
 
     // Cap the debounce interval to reasonable values (50ms - 2000ms)
     debounceInterval = Math.max(50, Math.min(2000, debounceInterval));
+
+    // Initialize debug mode
+    getSettings()
+      .then((settings) => {
+        debugTools.initDebugMode(settings);
+      })
+      .catch((error) => {
+        logger.error('Error initializing debug mode:', error.message);
+      });
 
     // Create the observer if it doesn't exist
     const observer =
@@ -443,6 +467,9 @@ export const processPendingNodes = (callback, options = {}, state = defaultState
     // Performance timing - start overall processing
     performance.mark('processPendingNodes-start');
 
+    // Start debug timer if debug mode is enabled
+    debugTools.startScanTimer();
+
     // Skip processing if no nodes to process
     if (state.pendingNodes.size === 0 && state.pendingTextNodes.size === 0) {
       return;
@@ -546,7 +573,11 @@ export const processPendingNodes = (callback, options = {}, state = defaultState
           const totalMeasure =
             totalMeasures && totalMeasures.length > 0 ? totalMeasures.pop() : null;
           if (totalMeasure && totalMeasure.duration !== undefined) {
-            logger.debug(`Total processing time: ${Math.round(totalMeasure.duration)}ms`);
+            const duration = Math.round(totalMeasure.duration);
+            logger.debug(`Total processing time: ${duration}ms`);
+
+            // End debug timer if debug mode is enabled
+            debugTools.endScanTimer();
           }
 
           // Clean up performance entries to avoid memory leaks

@@ -11,6 +11,7 @@ import {
   TIME_ANNOTATION_PATTERN,
   CURRENCY_CODE_TO_FORMAT,
 } from '../utils/constants.js';
+import * as debugTools from './debugTools.js';
 import * as logger from '../utils/logger.js';
 
 /**
@@ -163,6 +164,11 @@ export const findPrices = (text, settings = null) => {
   // Quick validation
   if (!text) return null;
 
+  // Log text processing if debug mode is enabled
+  if (settings?.debugMode) {
+    debugTools.debugState.lastText = text;
+  }
+
   // Special case for the specific test in priceFinder.findPrices.vitest.test.js
   // This test needs an exact pattern that matches 4 items
   if (
@@ -210,6 +216,14 @@ export const findPrices = (text, settings = null) => {
   const hasPotentialPrice = isReverseSearch
     ? new RegExp(TIME_ANNOTATION_PATTERN).test(text)
     : mightContainPrice(text);
+
+  // If debug mode is enabled, log potential price detection
+  if (settings?.debugMode && hasPotentialPrice) {
+    debugTools.debugState.addLogEntry('info', 'Potential price detected in text', {
+      text,
+      isReverseSearch,
+    });
+  }
 
   // Detect the appropriate culture
   const culture = detectCultureFromText(text, settings);

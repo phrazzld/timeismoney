@@ -49,6 +49,20 @@ export const DEFAULT_DEBOUNCE_INTERVAL_MS = 200;
 export const TIME_ANNOTATION_PATTERN = '\\s\\(\\d+h\\s\\d+m\\)';
 
 /**
+ * Debug mode highlight CSS classes for price elements
+ * Used to visually identify the status of price elements during debugging
+ *
+ * @type {{[key: string]: string}}
+ */
+export const DEBUG_HIGHLIGHT_CLASSES = {
+  DETECTED: 'tim-debug-detected', // Price was detected
+  CONVERTED: 'tim-debug-converted', // Price was successfully converted
+  FAILED: 'tim-debug-failed', // Price detection/conversion failed
+  CANDIDATE: 'tim-debug-candidate', // Element that might contain a price
+  IGNORED: 'tim-debug-ignored', // Element that was explicitly ignored
+};
+
+/**
  * Default extension settings
  * Used when user settings are not available
  *
@@ -64,6 +78,7 @@ export const DEFAULT_SETTINGS = {
   disabled: false,
   debounceIntervalMs: DEFAULT_DEBOUNCE_INTERVAL_MS,
   enableDynamicScanning: true, // Whether to monitor DOM changes in real-time
+  debugMode: false, // Whether debug mode is enabled for price detection
 };
 
 /**

@@ -61,7 +61,8 @@ export type IMoneyObject = unknown;
  * // 2 hours and 30 minutes of work time
  * {
  *   hours: 2,
- *   minutes: 30
+ *   minutes: 30,
+ *   startTime: 1622547789123 // Performance timestamp for debugging
  * }
  */
 export interface ITimeBreakdown {
@@ -69,6 +70,8 @@ export interface ITimeBreakdown {
   hours: number;
   /** Number of remaining minutes in the time duration (0-59) */
   minutes: number;
+  /** Performance timestamp for debugging and performance tracking */
+  startTime?: number;
 }
 
 /**

@@ -270,7 +270,7 @@
 
 ### Price Detection Enhancement Tasks
 
-- [ ] **T022 · Feature · P1: Implement price extraction debugging tools**
+- [x] **T022 · Feature · P1: Implement price extraction debugging tools**
 
   - **Context:** We need to better understand why certain price elements aren't being detected and converted.
   - **Action:**

@@ -10,6 +10,7 @@
  */
 
 import * as logger from './logger.js';
+import * as debugTools from '../content/debugTools.js';
 import recognitionService from '../services/recognitionService.js';
 import currencyService from '../services/currencyService.js';
 
@@ -346,11 +347,33 @@ export function convertPriceToTimeString(
     // If no currencies were found, return the original price string
     if (!extractedCurrencies || extractedCurrencies.length === 0) {
       logger.debug('Converter.convertPriceToTimeString: No currencies recognized', { priceString });
+
+      // Log failed detection if debug mode is enabled
+      if (wageInfo.debugMode) {
+        // Find the parent element to mark as failed
+        const nodeElement = document.evaluate(
+          `//*[contains(text(), "${priceString}")]`,
+          document,
+          null,
+          XPathResult.FIRST_ORDERED_NODE_TYPE,
+          null
+        ).singleNodeValue;
+
+        if (nodeElement) {
+          debugTools.markConversionFailure(nodeElement, priceString, 'No currency detected');
+        }
+      }
+
       return priceString;
     }
 
     // Use the first recognized currency (most relevant if multiple found)
     const extractedCurrency = extractedCurrencies[0];
+
+    // If debug mode is enabled, log the detected price
+    if (wageInfo.debugMode) {
+      debugTools.debugState.lastDetectedPrice = extractedCurrency.text;
+    }
 
     // Create money objects for both price and wage
     const priceObject = currencyService.createMoney(
@@ -382,12 +405,34 @@ export function convertPriceToTimeString(
     }
 
     // Format the result
-    return formatPriceWithTime(
+    const result = formatPriceWithTime(
       priceString,
       timeBreakdown.hours,
       timeBreakdown.minutes,
       useCompactFormat
     );
+
+    // Log successful conversion if debug mode is enabled
+    if (wageInfo.debugMode) {
+      // Find the parent element to mark as converted
+      const nodeElement = document.evaluate(
+        `//*[contains(text(), "${priceString}")]`,
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+      ).singleNodeValue;
+
+      if (nodeElement) {
+        debugTools.markConversionSuccess(nodeElement, extractedCurrency.text, result);
+      }
+
+      // Record conversion time
+      const conversionTime = performance.now() - timeBreakdown.startTime;
+      debugTools.recordConversionTime(conversionTime);
+    }
+
+    return result;
   } catch (error) {
     logger.error('Converter.convertPriceToTimeString: Error converting price', {
       error: error.message,
