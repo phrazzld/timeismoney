@@ -284,7 +284,7 @@
     3. Visual indicators show which elements are being processed
   - **Depends‑on:** None
 
-- [ ] **T023 · Refactor · P1: Extend Amazon price handler to support multiple class patterns**
+- [x] **T023 · Refactor · P1: Extend Amazon price handler to support multiple class patterns**
 
   - **Context:** The current Amazon price handler only handles `sx-price-*` class patterns, but Amazon uses at least two different patterns for prices.
   - **Action:**

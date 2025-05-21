@@ -15,13 +15,23 @@ export const CONVERTED_PRICE_CLASS = 'tim-converted-price';
 /**
  * CSS class names used to identify Amazon price components
  * Amazon splits prices into separate DOM elements with these classes
+ * Supports both 'sx-price-*' and 'a-price-*' patterns
  *
- * @type {{[key: string]: string}}
+ * @type {{[key: string]: {sx: string, a: string}}}
  */
 export const AMAZON_PRICE_CLASSES = {
-  CURRENCY: 'sx-price-currency',
-  WHOLE: 'sx-price-whole',
-  FRACTIONAL: 'sx-price-fractional',
+  CURRENCY: {
+    sx: 'sx-price-currency',
+    a: 'a-price-symbol',
+  },
+  WHOLE: {
+    sx: 'sx-price-whole',
+    a: 'a-price-whole',
+  },
+  FRACTIONAL: {
+    sx: 'sx-price-fractional',
+    a: 'a-price-fraction',
+  },
 };
 
 /**
