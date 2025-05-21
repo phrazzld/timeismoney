@@ -227,15 +227,6 @@
     2. Any significant performance regressions are identified and documented for potential follow-up optimization tasks.
   - **Depends‑on:** [T017]
 
-### Clarifications & Assumptions
-
-- [ ] **Issue:** Confirm strategy for sourcing the `culture` string for `RecognitionService`.
-  - **Context:** PLAN.md > Error & Edge‑Case Strategy (Culture/Locale) states: "This will initially be sourced from user settings or a sensible default (e.g., "en-US"), falling back to browser locale if robustly detectable."
-  - **Blocking?:** no (Task T009 assumes `priceFinder.ts` or `converter.ts` will handle this sourcing logic.)
-- [ ] **Issue:** The Risk Matrix for "Performance degradation" has a mitigation strategy that is cut off: "...Optimize DOM traversal to minimize calls to `RecognitionService`. Consider debounc/thrott".
-  - **Context:** PLAN.md > Risk Matrix
-  - **Blocking?:** no (Task T018 covers benchmarking and profiling. Optimization tasks would be separate, based on findings from T018, and are not part of this plan's direct build steps.)
-
 ### Follow-up Tasks from Performance Benchmarking
 
 - [x] **T019 · Chore · P3: Fix linting issues in performance testing code**
@@ -275,4 +266,75 @@
     1. The validation script correctly excludes files in the `__tests__/mocks/` directory
     2. Updated script is committed and passes CI
     3. No false positives occur when mock files are staged for commit
+  - **Depends‑on:** None
+
+### Price Detection Enhancement Tasks
+
+- [ ] **T022 · Feature · P1: Implement price extraction debugging tools**
+
+  - **Context:** We need to better understand why certain price elements aren't being detected and converted.
+  - **Action:**
+    1. Create a debug mode toggle in extension settings
+    2. Add detailed logging of DOM nodes examined, including their HTML structure and position
+    3. Create a visual highlighting mechanism to show identified price candidates
+    4. Add debugging information overlay to show processing steps in real-time
+  - **Done‑when:**
+    1. Extension can be toggled into debug mode via settings
+    2. Detailed logs with captured and missed price elements are generated
+    3. Visual indicators show which elements are being processed
+  - **Depends‑on:** None
+
+- [ ] **T023 · Refactor · P1: Extend Amazon price handler to support multiple class patterns**
+
+  - **Context:** The current Amazon price handler only handles `sx-price-*` class patterns, but Amazon uses at least two different patterns for prices.
+  - **Action:**
+    1. Update `AMAZON_PRICE_CLASSES` constant to support both `sx-price-*` and `a-price-*` patterns
+    2. Modify `isAmazonPriceNode()` to check for multiple class pattern families
+    3. Extend `handleAmazonPrice()` to process elements with the new `a-price-*` structure
+    4. Add logging to track which price patterns are being detected
+  - **Done‑when:**
+    1. Amazon prices using the `a-price-*` class pattern are correctly identified and converted
+    2. Maintains functionality for existing price patterns
+    3. Logs detailed information about matched patterns
+  - **Depends‑on:** None
+
+- [ ] **T024 · Feature · P1: Implement site-specific handler for eBay**
+
+  - **Context:** eBay uses specific class patterns for price elements that are not being detected by the current implementation.
+  - **Action:**
+    1. Create an `ebayHandler.js` module similar to the Amazon handler
+    2. Define eBay-specific price class patterns (e.g., `bsig__price`, `s-item__price`) in constants
+    3. Implement detection logic for eBay price elements
+    4. Integrate with `domScanner.js` similar to `processIfAmazon()`
+  - **Done‑when:**
+    1. eBay price elements with classes like `bsig__price` are correctly identified and converted
+    2. Tests confirm proper detection of eBay price patterns
+    3. Performance remains acceptable with the additional handler
+  - **Depends‑on:** None
+
+- [ ] **T025 · Refactor · P1: Enhance element attribute-based price detection**
+
+  - **Context:** The current implementation relies too heavily on text nodes and may miss prices within structured elements.
+  - **Action:**
+    1. Create a mechanism to identify price candidates based on element attributes and class patterns
+    2. Add support for evaluating elements with price-related classes directly
+    3. Extract and combine text from child nodes for composite price structures
+    4. Prioritize attribute-based detection over text-only detection
+  - **Done‑when:**
+    1. Elements with price-related classes are detected even without direct currency symbols
+    2. Composite price structures with split text nodes are properly combined
+    3. Increased detection rate for structured price elements
+  - **Depends‑on:** None
+
+- [ ] **T026 · Test · P2: Create comprehensive testing pages for price detection**
+  - **Context:** We need standardized test cases to verify detection of different price formats across websites.
+  - **Action:**
+    1. Create a comprehensive test page with examples from major e-commerce sites
+    2. Include Amazon, eBay, Walmart, and other common price formats
+    3. Add both simple and complex (split component) price examples
+    4. Include metadata about expected detection outcomes
+  - **Done‑when:**
+    1. Test page includes examples of all major price formats from various websites
+    2. Each price example has metadata about how it should be detected
+    3. Page can be used to measure detection accuracy across versions
   - **Depends‑on:** None
