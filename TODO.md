@@ -35,7 +35,7 @@
     2. CI jobs pass successfully using the centrally defined Node.js version.
   - **Depends‑on:** [T002]
 
-- [ ] **T004 · Test · P2: implement script for automated ci node.js version validation**
+- [x] **T004 · Test · P2: implement script for automated ci node.js version validation**
 
   - **Context:** Automated CI configuration validation
   - **Action:**
