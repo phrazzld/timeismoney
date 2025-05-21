@@ -248,3 +248,31 @@
     1. All linting errors are resolved and the code passes ESLint checks without errors.
     2. Performance testing can be run without using the `--no-verify` flag.
   - **Depends‑on:** None
+
+### CI Fix Tasks
+
+- [x] **T020 · Chore · P1: Fix CI pipeline for pnpm**
+
+  - **Context:** PR #56 is failing in CI due to pnpm lockfile issues.
+  - **Action:**
+    1. Update `.github/workflows/ci.yml` to use `--no-frozen-lockfile` flag for pnpm install commands
+    2. Ensure pnpm-lock.yaml is properly committed to the repository
+    3. Check pnpm version compatibility between local and CI environments
+    4. Add jsdom dependency for vitest tests
+    5. Fix formatting issues in code files
+  - **Done‑when:**
+    1. CI pipeline successfully completes all jobs (lint, tests, build)
+    2. pnpm dependencies install correctly in the CI environment
+  - **Depends‑on:** None
+
+- [ ] **T021 · Chore · P2: Update test name validation script**
+  - **Context:** The current test name validation script incorrectly flags mock files in `__tests__/mocks/` directory as test files requiring the `.vitest.test.js` extension.
+  - **Action:**
+    1. Update `scripts/validate-test-names.js` to exclude files in the `__tests__/mocks/` directory from validation
+    2. Add unit tests for the validation script to ensure it correctly identifies test files
+    3. Document the exception for mock files
+  - **Done‑when:**
+    1. The validation script correctly excludes files in the `__tests__/mocks/` directory
+    2. Updated script is committed and passes CI
+    3. No false positives occur when mock files are staged for commit
+  - **Depends‑on:** None
