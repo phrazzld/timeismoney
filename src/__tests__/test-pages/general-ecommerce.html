@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>General E-commerce Price Formats - Detection Test Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        border-bottom: 2px solid #333;
+        padding-bottom: 10px;
+      }
+      h2 {
+        margin-top: 30px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+      }
+      h3 {
+        margin-top: 20px;
+        color: #555;
+      }
+      .test-section {
+        border: 1px solid #eee;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+      }
+      .test-case {
+        padding: 15px;
+        margin: 10px 0;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+      }
+      code {
+        background-color: #f0f0f0;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-family: monospace;
+      }
+      .description {
+        font-style: italic;
+        color: #666;
+        margin-bottom: 10px;
+      }
+      .nav-bar {
+        background-color: #4caf50;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      .nav-bar a {
+        color: white;
+        text-decoration: none;
+        margin-right: 15px;
+      }
+
+      /* Shopify styling */
+      .product-price {
+        font-weight: bold;
+        font-size: 18px;
+      }
+      .product-price__sale {
+        color: #e32c2b;
+      }
+      .product-price__regular {
+        color: #333;
+      }
+      .product__price {
+        margin-bottom: 10px;
+      }
+      .money {
+        font-weight: bold;
+      }
+
+      /* WooCommerce styling */
+      .woocommerce-Price-amount {
+        font-weight: bold;
+      }
+      .price {
+        font-size: 16px;
+        margin: 10px 0;
+      }
+      .price--withTax {
+        color: #333;
+      }
+      .price--withoutTax {
+        color: #777;
+      }
+      .price del {
+        color: #777;
+        font-weight: normal;
+        text-decoration: line-through;
+      }
+      .price ins {
+        color: #77a464;
+        font-weight: bold;
+        text-decoration: none;
+      }
+
+      /* Magento styling */
+      .price-box {
+        margin-bottom: 10px;
+      }
+      .regular-price {
+        color: #333;
+        font-weight: bold;
+      }
+      .special-price {
+        color: #d9534f;
+        font-weight: bold;
+      }
+      .old-price {
+        color: #777;
+        text-decoration: line-through;
+      }
+
+      /* BigCommerce styling */
+      .price-section {
+        margin-bottom: 10px;
+      }
+      .price--withoutTax {
+        font-weight: bold;
+      }
+
+      /* Generic e-commerce styling */
+      .sale-price {
+        color: #e60000;
+        font-weight: bold;
+      }
+      .original-price {
+        color: #666;
+        text-decoration: line-through;
+      }
+      .current-price {
+        font-weight: bold;
+        font-size: 18px;
+      }
+    </style>
+    <script src="js/verify.js"></script>
+  </head>
+  <body>
+    <div class="nav-bar">
+      <a href="index.html">← Back to Index</a>
+      <a href="ebay.html">← eBay Prices</a>
+      <a href="composite-prices.html">Next: Composite Prices →</a>
+    </div>
+
+    <h1>General E-commerce Price Formats - Detection Test Page</h1>
+
+    <p>
+      This page tests common e-commerce price formats found across various platforms like Shopify,
+      WooCommerce, Magento, and BigCommerce. These represent common patterns you'll encounter on
+      most shopping websites.
+    </p>
+
+    <h2>Shopify Price Formats</h2>
+
+    <div class="test-section">
+      <h3>Standard Shopify Prices</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="49.99"
+        data-currency="USD"
+        data-description="Shopify regular price"
+      >
+        <div class="description">Standard Shopify price with product-price and money classes</div>
+        <div class="product__price">
+          <span class="product-price product-price__regular">
+            <span class="money">$49.99</span>
+          </span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="29.99"
+        data-currency="USD"
+        data-description="Shopify sale price"
+      >
+        <div class="description">Shopify sale price with product-price__sale</div>
+        <div class="product__price">
+          <span class="product-price product-price__sale">
+            <span class="money">$29.99</span>
+          </span>
+          <s class="product-price__regular">$39.99</s>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="199.00"
+        data-currency="USD"
+        data-description="Standalone Shopify money class"
+      >
+        <div class="description">Shopify price with just money class</div>
+        <span class="money">$199.00</span>
+      </div>
+    </div>
+
+    <h2>WooCommerce Price Formats</h2>
+
+    <div class="test-section">
+      <h3>WooCommerce Standard Prices</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="39.00"
+        data-currency="USD"
+        data-description="WooCommerce standard price"
+      >
+        <div class="description">Standard WooCommerce price format</div>
+        <p class="price">
+          <span class="woocommerce-Price-amount amount">
+            <span class="woocommerce-Price-currencySymbol">$</span>39.00
+          </span>
+        </p>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="25.00"
+        data-currency="USD"
+        data-description="WooCommerce sale price"
+      >
+        <div class="description">WooCommerce price with sale (del/ins pattern)</div>
+        <p class="price">
+          <del aria-hidden="true">
+            <span class="woocommerce-Price-amount amount">
+              <span class="woocommerce-Price-currencySymbol">$</span>35.00
+            </span>
+          </del>
+          <ins>
+            <span class="woocommerce-Price-amount amount">
+              <span class="woocommerce-Price-currencySymbol">$</span>25.00
+            </span>
+          </ins>
+        </p>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>WooCommerce Price Variants</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="79.95"
+        data-currency="USD"
+        data-description="Price with tax"
+      >
+        <div class="description">WooCommerce price with tax indication</div>
+        <p class="price price--withTax">
+          <span class="woocommerce-Price-amount amount">
+            <span class="woocommerce-Price-currencySymbol">$</span>79.95
+          </span>
+          <small> (incl. tax)</small>
+        </p>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="69.95"
+        data-currency="USD"
+        data-description="Price without tax"
+      >
+        <div class="description">WooCommerce price without tax</div>
+        <p class="price price--withoutTax">
+          <span class="woocommerce-Price-amount amount">
+            <span class="woocommerce-Price-currencySymbol">$</span>69.95
+          </span>
+          <small> (excl. tax)</small>
+        </p>
+      </div>
+    </div>
+
+    <h2>Magento Price Formats</h2>
+
+    <div class="test-section">
+      <h3>Magento Standard Prices</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="149.99"
+        data-currency="USD"
+        data-description="Magento regular price"
+      >
+        <div class="description">Standard Magento price format with price-box</div>
+        <div class="price-box">
+          <span class="regular-price">
+            <span class="price">$149.99</span>
+          </span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="99.99"
+        data-currency="USD"
+        data-description="Magento special price"
+      >
+        <div class="description">Magento special price format (sale)</div>
+        <div class="price-box">
+          <p class="old-price">
+            <span class="price">$129.99</span>
+          </p>
+          <p class="special-price">
+            <span class="price">$99.99</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h2>BigCommerce Price Formats</h2>
+
+    <div class="test-section">
+      <h3>BigCommerce Price Patterns</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="89.00"
+        data-currency="USD"
+        data-description="BigCommerce standard price"
+      >
+        <div class="description">Standard BigCommerce price format</div>
+        <div class="price-section">
+          <span class="price price--withoutTax">$89.00</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="119.00"
+        data-currency="USD"
+        data-description="BigCommerce price with data"
+      >
+        <div class="description">BigCommerce price with data attribute</div>
+        <div class="price-section" data-product-price-value="119.00">
+          <span class="price">$119.00</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Generic E-commerce Patterns</h2>
+
+    <div class="test-section">
+      <h3>Common Generic Price Classes</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="59.95"
+        data-currency="USD"
+        data-description="Generic price class"
+      >
+        <div class="description">Generic price class</div>
+        <div class="price">$59.95</div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="44.99"
+        data-currency="USD"
+        data-description="Sale price class"
+      >
+        <div class="description">Generic sale price class</div>
+        <div>
+          <span class="original-price">$64.99</span>
+          <span class="sale-price">$44.99</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="299.00"
+        data-currency="USD"
+        data-description="Current price class"
+      >
+        <div class="description">Generic current-price class</div>
+        <div class="current-price">$299.00</div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>Schema.org Microdata Prices</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="79.99"
+        data-currency="USD"
+        data-description="Price with schema.org markup"
+      >
+        <div class="description">Price with schema.org microdata markup</div>
+        <div itemscope itemtype="http://schema.org/Product">
+          <span itemprop="name">Bluetooth Headphones</span>
+          <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+            <span itemprop="price">$79.99</span>
+            <meta itemprop="priceCurrency" content="USD" />
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="159.00"
+        data-currency="EUR"
+        data-description="Euro price with schema.org markup"
+      >
+        <div class="description">Euro price with schema.org microdata markup</div>
+        <div itemscope itemtype="http://schema.org/Product">
+          <span itemprop="name">Wireless Earbuds</span>
+          <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+            <span itemprop="price">€159.00</span>
+            <meta itemprop="priceCurrency" content="EUR" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <a href="index.html">← Back to Index</a>
+      <a href="ebay.html">← eBay Prices</a>
+      <a href="composite-prices.html">Next: Composite Prices →</a>
+    </div>
+  </body>
+</html>

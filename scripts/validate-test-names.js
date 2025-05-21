@@ -20,8 +20,12 @@ function validateTestFileNames() {
     // Filter for test files
     const testFiles = stagedFiles.filter(
       (file) =>
-        // Include files that are in __tests__ directory but not in the mocks directory
-        (file.includes('__tests__') && !file.includes('__tests__/mocks/')) ||
+        // Include files that are in __tests__ directory but not in the mocks directory,
+        // setup directory, or test-pages directory
+        (file.includes('__tests__') &&
+          !file.includes('__tests__/mocks/') &&
+          !file.includes('__tests__/setup/') &&
+          !file.includes('__tests__/test-pages/')) ||
         // Or files that explicitly have .test. or .spec. in their name
         file.includes('.test.') ||
         file.includes('.spec.')

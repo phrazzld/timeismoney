@@ -35,6 +35,38 @@ export const AMAZON_PRICE_CLASSES = {
 };
 
 /**
+ * CSS class names used to identify eBay price elements
+ * eBay uses specific class patterns for prices across their site
+ *
+ * @type {string[]}
+ */
+export const EBAY_PRICE_CLASSES = [
+  's-item__price', // Search results price
+  'x-price-primary', // Item page primary price
+  'x-bin-price', // Buy it now price
+  'x-buybox__price-element', // Buy box price
+  'display-price', // Another common price class
+  'ux-textspans', // Price text span
+  'ux-price-display', // Price display container
+];
+
+/**
+ * CSS selectors for parent elements that may contain prices on eBay
+ * These selectors help identify blocks that might contain price elements
+ *
+ * @type {string[]}
+ */
+export const EBAY_PRICE_CONTAINERS = ['.x-price', '.x-buybox', '.vim-timer', '.vi-price'];
+
+/**
+ * Attributes to check for price-related content on eBay
+ * Some eBay price elements use data attributes to store price data
+ *
+ * @type {string[]}
+ */
+export const EBAY_PRICE_ATTRIBUTES = ['data-price', 'data-item-price'];
+
+/**
  * Maximum number of nodes to queue before forcing processing
  * Used to prevent memory issues with large DOM changes
  *

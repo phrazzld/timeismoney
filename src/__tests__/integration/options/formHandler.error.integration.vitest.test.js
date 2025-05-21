@@ -31,6 +31,13 @@ describe('FormHandler Error Handling', () => {
     // Set up DOM elements needed by the code
     setupTestDom();
 
+    // Create debug mode checkbox
+    const debugCheckbox = document.createElement('input');
+    debugCheckbox.id = 'enable-debug-mode';
+    debugCheckbox.type = 'checkbox';
+    debugCheckbox.checked = false;
+    document.body.appendChild(debugCheckbox);
+
     // Mock console.error
     console.error = vi.fn();
 

@@ -27,6 +27,13 @@ describe('FormHandler Storage Error UI Tests', () => {
     // Set up DOM elements needed by the tests
     setupTestDom();
 
+    // Create debug mode checkbox
+    const debugCheckbox = document.createElement('input');
+    debugCheckbox.id = 'enable-debug-mode';
+    debugCheckbox.type = 'checkbox';
+    debugCheckbox.checked = false;
+    document.body.appendChild(debugCheckbox);
+
     // Add additional DOM elements needed for these specific tests
     const saveButton = document.createElement('button');
     saveButton.id = 'save';

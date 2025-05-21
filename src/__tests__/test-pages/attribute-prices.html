@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Attribute-Based Prices - Detection Test Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        border-bottom: 2px solid #333;
+        padding-bottom: 10px;
+      }
+      h2 {
+        margin-top: 30px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+      }
+      h3 {
+        margin-top: 20px;
+        color: #555;
+      }
+      .test-section {
+        border: 1px solid #eee;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+      }
+      .test-case {
+        padding: 15px;
+        margin: 10px 0;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+      }
+      code {
+        background-color: #f0f0f0;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-family: monospace;
+      }
+      .description {
+        font-style: italic;
+        color: #666;
+        margin-bottom: 10px;
+      }
+      .nav-bar {
+        background-color: #ff5722;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      .nav-bar a {
+        color: white;
+        text-decoration: none;
+        margin-right: 15px;
+      }
+
+      /* Basic price styles */
+      .price-display {
+        font-weight: bold;
+        font-size: 18px;
+      }
+      .price-container {
+        margin-bottom: 10px;
+      }
+
+      /* Cart styles */
+      .cart-item {
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        padding: 10px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .cart-item-name {
+        font-weight: bold;
+      }
+      .cart-item-price {
+        font-weight: bold;
+      }
+
+      /* Product grid styles */
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .product-card {
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        padding: 10px;
+      }
+      .product-card-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .product-card-price {
+        color: #d32f2f;
+        font-weight: bold;
+      }
+
+      /* Custom API data structures */
+      .api-data {
+        font-family: monospace;
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-radius: 3px;
+      }
+      .api-price {
+        color: #388e3c;
+        font-weight: bold;
+      }
+    </style>
+    <script src="js/verify.js"></script>
+  </head>
+  <body>
+    <div class="nav-bar">
+      <a href="index.html">← Back to Index</a>
+      <a href="composite-prices.html">← Composite Prices</a>
+    </div>
+
+    <h1>Attribute-Based Prices - Detection Test Page</h1>
+
+    <p>
+      This page tests detection of price elements that are identified by attributes rather than text
+      content or class names. These patterns are common in modern web applications, especially those
+      using JavaScript frameworks or representing data from APIs.
+    </p>
+
+    <h2>Data Attribute Price Formats</h2>
+
+    <div class="test-section">
+      <h3>Standard Data Attributes</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="59.99"
+        data-currency="USD"
+        data-description="data-price attribute"
+      >
+        <div class="description">Element with data-price attribute</div>
+        <div class="price-container" data-price="59.99">
+          <span class="price-display">$59.99</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="149.95"
+        data-currency="USD"
+        data-description="data-amount attribute"
+      >
+        <div class="description">Element with data-amount attribute</div>
+        <div class="price-container" data-amount="149.95">
+          <span class="price-display">$149.95</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="29.99"
+        data-currency="USD"
+        data-description="data-value attribute"
+      >
+        <div class="description">Element with data-value attribute (commonly used in forms)</div>
+        <div class="price-container" data-value="29.99">
+          <span class="price-display">$29.99</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>E-commerce Specific Data Attributes</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="99.00"
+        data-currency="USD"
+        data-description="data-product-price attribute"
+      >
+        <div class="description">Element with data-product-price attribute</div>
+        <div class="product-info" data-product-price="99.00">
+          <div class="product-name">Bluetooth Speaker</div>
+          <div class="price-display">$99.00</div>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="24.99"
+        data-currency="USD"
+        data-description="data-sale-price attribute"
+      >
+        <div class="description">Element with data-sale-price attribute</div>
+        <div class="product-info" data-regular-price="34.99" data-sale-price="24.99">
+          <div class="product-name">Wireless Mouse</div>
+          <div>
+            <span style="text-decoration: line-through; color: #888">$34.99</span>
+            <span class="price-display">$24.99</span>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="199.99"
+        data-currency="USD"
+        data-description="data-currency-value attribute"
+      >
+        <div class="description">Element with data-currency-value and data-currency attributes</div>
+        <div class="product-info" data-currency-value="199.99" data-currency="USD">
+          <div class="product-name">Noise-Cancelling Headphones</div>
+          <div class="price-display">$199.99</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Schema.org and Microdata Attributes</h2>
+
+    <div class="test-section">
+      <h3>Structured Data Markup</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="129.00"
+        data-currency="USD"
+        data-description="itemprop price"
+      >
+        <div class="description">Element with itemprop="price" attribute (Schema.org)</div>
+        <div itemscope itemtype="http://schema.org/Product">
+          <span itemprop="name">Wireless Keyboard</span>
+          <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+            <span itemprop="price">$129.00</span>
+            <meta itemprop="priceCurrency" content="USD" />
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="499.99"
+        data-currency="USD"
+        data-description="itemprop offer with price in content"
+      >
+        <div class="description">Element with itemprop="price" in meta tag content</div>
+        <div itemscope itemtype="http://schema.org/Product">
+          <span itemprop="name">Tablet</span>
+          <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+            <meta itemprop="price" content="499.99" />
+            <meta itemprop="priceCurrency" content="USD" />
+            <span class="price-display">$499.99</span>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="89.99"
+        data-currency="EUR"
+        data-description="itemprop with Euro currency"
+      >
+        <div class="description">Element with itemprop="price" and EUR currency</div>
+        <div itemscope itemtype="http://schema.org/Product">
+          <span itemprop="name">Digital Scale</span>
+          <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+            <span itemprop="price">€89.99</span>
+            <meta itemprop="priceCurrency" content="EUR" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Shopping Cart Data Attributes</h2>
+
+    <div class="test-section">
+      <h3>Cart Item Prices</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="39.99"
+        data-currency="USD"
+        data-description="Cart item with data-price"
+      >
+        <div class="description">Cart item with data-price attribute</div>
+        <div class="cart-item" data-price="39.99">
+          <span class="cart-item-name">USB-C Cable (2m)</span>
+          <span class="cart-item-price">$39.99</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="249.99"
+        data-currency="USD"
+        data-description="Cart with data-item-price"
+      >
+        <div class="description">Cart item with data-item-price attribute</div>
+        <div class="cart-item" data-item-price="249.99">
+          <span class="cart-item-name">External Hard Drive (1TB)</span>
+          <span class="cart-item-price">$249.99</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="19.95"
+        data-currency="USD"
+        data-description="Cart total data attribute"
+      >
+        <div class="description">Cart totals with data-cart-total attribute</div>
+        <div class="cart-total" data-cart-total="19.95">
+          <div>Subtotal: $19.95</div>
+          <div>Shipping: Free</div>
+          <div>Total: <strong>$19.95</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <h2>JavaScript Framework Generated Prices</h2>
+
+    <div class="test-section">
+      <h3>Product Cards (React/Vue/Angular Style)</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="79.99"
+        data-currency="USD"
+        data-description="React-style data props"
+      >
+        <div class="description">React-style component with data-* attributes</div>
+        <div class="product-grid">
+          <div class="product-card" data-product-id="1234" data-product-price="79.99">
+            <div class="product-card-title">Wireless Charger</div>
+            <div class="product-card-price">$79.99</div>
+            <button>Add to Cart</button>
+          </div>
+          <div class="product-card" data-product-id="5678" data-product-price="129.99">
+            <div class="product-card-title">Smart Watch</div>
+            <div class="product-card-price">$129.99</div>
+            <button>Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="159.00"
+        data-currency="USD"
+        data-description="Vue-style v-bind values"
+      >
+        <div class="description">Vue-style binding with :price attribute</div>
+        <div class="product-card" data-v-12345 :price="159.00" price="159.00">
+          <div class="product-card-title">Home Security Camera</div>
+          <div class="product-card-price">$159.00</div>
+          <button>Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>API Data Representations</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="299.99"
+        data-currency="USD"
+        data-description="API data with data-raw attributes"
+      >
+        <div class="description">API data with data-raw-* attributes</div>
+        <div class="api-data" data-raw-price="299.99" data-raw-currency="USD">
+          { "product": { "id": "prod-12345", "name": "Smart Speaker", "price": { "amount":
+          <span class="api-price">"299.99"</span>, "currency": "USD" } } }
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="59.95"
+        data-currency="USD"
+        data-description="State data with angular bindings"
+      >
+        <div class="description">Angular-style state data binding</div>
+        <div
+          class="product-info"
+          ng-init="product = {price: 59.95, currency: 'USD'}"
+          data-price-value="59.95"
+        >
+          <div class="product-name">Smart Light Bulbs (4-pack)</div>
+          <div class="price-display">${{product.price}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <a href="index.html">← Back to Index</a>
+      <a href="composite-prices.html">← Composite Prices</a>
+    </div>
+  </body>
+</html>

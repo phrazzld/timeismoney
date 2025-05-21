@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Time Is Money - Price Detection Test Pages</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        border-bottom: 2px solid #333;
+        padding-bottom: 10px;
+      }
+      h2 {
+        margin-top: 20px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+      }
+      ul {
+        list-style-type: circle;
+        padding-left: 25px;
+      }
+      li {
+        margin-bottom: 8px;
+      }
+      .test-description {
+        background-color: #f7f7f7;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .note {
+        background-color: #ffffd9;
+        border-left: 4px solid #e7c000;
+        padding: 10px 15px;
+        margin: 15px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Time Is Money - Price Detection Test Pages</h1>
+
+    <div class="test-description">
+      <p>
+        These test pages provide standardized examples of various price formats across different
+        e-commerce sites and structural patterns. They serve as regression testing tools to ensure
+        the Time Is Money extension maintains robust price detection capabilities across versions.
+      </p>
+      <p>
+        Each page contains examples with metadata about how they should be detected, which can be
+        used to measure and validate the extension's detection accuracy.
+      </p>
+    </div>
+
+    <div class="note">
+      <strong>Note:</strong> To use these test pages, open them in a browser with the Time Is Money
+      extension installed. If detection debugging is enabled in the extension settings, you will see
+      visual highlighting of detected prices.
+    </div>
+
+    <h2>Site-Specific Test Pages</h2>
+    <ul>
+      <li>
+        <a href="amazon.html">Amazon Price Formats</a> - Tests both sx-price-* and a-price-*
+        patterns used across Amazon
+      </li>
+      <li>
+        <a href="ebay.html">eBay Price Formats</a> - Tests various eBay-specific price structures
+      </li>
+      <li>
+        <a href="general-ecommerce.html">General E-commerce Formats</a> - Common patterns from
+        Shopify, WooCommerce, and other platforms
+      </li>
+    </ul>
+
+    <h2>Structure-Specific Test Pages</h2>
+    <ul>
+      <li>
+        <a href="composite-prices.html">Composite Price Structures</a> - Tests prices split across
+        multiple elements
+      </li>
+      <li>
+        <a href="attribute-prices.html">Attribute-Based Prices</a> - Tests prices defined by
+        attributes rather than text content
+      </li>
+    </ul>
+
+    <h2>Verification</h2>
+    <p>Each test page includes metadata for price examples that indicates:</p>
+    <ul>
+      <li>
+        <strong>data-expect-detect</strong>: "true" if the price should be detected, "false"
+        otherwise
+      </li>
+      <li>
+        <strong>data-detector</strong>: Which detector should identify this price ("amazon", "ebay",
+        "attribute", "generic")
+      </li>
+      <li>
+        <strong>data-price-value</strong>: The expected numeric value that should be extracted
+      </li>
+      <li><strong>data-currency</strong>: The expected currency that should be detected</li>
+    </ul>
+
+    <p>
+      Use the <a href="javascript:void(0)" onclick="runVerification()">Verify Detection</a> button
+      on each page to check detection success rates.
+    </p>
+
+    <script>
+      function runVerification() {
+        alert('Verification tools must be opened on the individual test pages.');
+      }
+    </script>
+  </body>
+</html>

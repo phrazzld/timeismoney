@@ -298,7 +298,7 @@
     3. Logs detailed information about matched patterns
   - **Depends‑on:** None
 
-- [ ] **T024 · Feature · P1: Implement site-specific handler for eBay**
+- [x] **T024 · Feature · P1: Implement site-specific handler for eBay**
 
   - **Context:** eBay uses specific class patterns for price elements that are not being detected by the current implementation.
   - **Action:**
@@ -312,7 +312,7 @@
     3. Performance remains acceptable with the additional handler
   - **Depends‑on:** None
 
-- [ ] **T025 · Refactor · P1: Enhance element attribute-based price detection**
+- [x] **T025 · Refactor · P1: Enhance element attribute-based price detection**
 
   - **Context:** The current implementation relies too heavily on text nodes and may miss prices within structured elements.
   - **Action:**
@@ -326,7 +326,7 @@
     3. Increased detection rate for structured price elements
   - **Depends‑on:** None
 
-- [ ] **T026 · Test · P2: Create comprehensive testing pages for price detection**
+- [x] **T026 · Test · P2: Create comprehensive testing pages for price detection**
   - **Context:** We need standardized test cases to verify detection of different price formats across websites.
   - **Action:**
     1. Create a comprehensive test page with examples from major e-commerce sites

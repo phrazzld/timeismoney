@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amazon Price Formats - Detection Test Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        border-bottom: 2px solid #333;
+        padding-bottom: 10px;
+      }
+      h2 {
+        margin-top: 30px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+      }
+      h3 {
+        margin-top: 20px;
+        color: #555;
+      }
+      .test-section {
+        border: 1px solid #eee;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+      }
+      .test-case {
+        padding: 15px;
+        margin: 10px 0;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+      }
+      code {
+        background-color: #f0f0f0;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-family: monospace;
+      }
+      .description {
+        font-style: italic;
+        color: #666;
+        margin-bottom: 10px;
+      }
+      .amazon-orange {
+        color: #ff9900;
+      }
+      .nav-bar {
+        background-color: #232f3e;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      .nav-bar a {
+        color: white;
+        text-decoration: none;
+        margin-right: 15px;
+      }
+      /* Amazon sx-price format styling */
+      .sx-price {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+      }
+      .sx-price-currency {
+        font-size: 0.7em;
+        margin-right: 1px;
+      }
+      .sx-price-whole {
+        font-weight: bold;
+      }
+      .sx-price-decimal {
+        margin: 0 1px;
+      }
+      .sx-price-fractional {
+        font-size: 0.7em;
+      }
+
+      /* Amazon a-price format styling */
+      .a-price {
+        display: inline-flex;
+        flex-direction: row;
+        align-items: baseline;
+      }
+      .a-price-symbol {
+        font-size: 0.7em;
+        margin-right: 1px;
+        vertical-align: top;
+      }
+      .a-price-whole {
+        font-weight: bold;
+      }
+      .a-price-decimal {
+        margin: 0 1px;
+      }
+      .a-price-fraction {
+        font-size: 0.7em;
+      }
+      .a-text-price {
+        text-decoration: line-through;
+        color: #565959;
+      }
+      .a-color-price {
+        color: #b12704;
+      }
+      .a-price-range {
+        display: flex;
+      }
+      .a-price-dash {
+        margin: 0 5px;
+      }
+    </style>
+    <script src="js/verify.js"></script>
+  </head>
+  <body>
+    <div class="nav-bar">
+      <a href="index.html">← Back to Index</a>
+      <a href="ebay.html">Next: eBay Prices →</a>
+    </div>
+
+    <h1>Amazon Price Formats - Detection Test Page</h1>
+
+    <p>
+      This page tests the detection of Amazon-specific price formats. Amazon uses two main price
+      component structures across their site:
+    </p>
+    <ul>
+      <li>Older <code>sx-price-*</code> format</li>
+      <li>Newer <code>a-price-*</code> format</li>
+    </ul>
+    <p>
+      Both formats split prices into component parts (currency symbol, whole amount, decimal,
+      fractional amount), which requires special handling to detect and convert properly.
+    </p>
+
+    <h2>Amazon sx-price Format (Older Pattern)</h2>
+
+    <div class="test-section">
+      <h3>Standard Product Price</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="amazon"
+        data-price-value="19.99"
+        data-currency="USD"
+        data-description="Standard sx-price format"
+      >
+        <div class="description">Standard product price using sx-price format</div>
+        <span class="sx-price">
+          <span class="sx-price-currency">$</span>
+          <span class="sx-price-whole">19</span>
+          <span class="sx-price-decimal">.</span>
+          <span class="sx-price-fractional">99</span>
+        </span>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="amazon"
+        data-price-value="1299.00"
+        data-currency="USD"
+        data-description="High-value sx-price format"
+      >
+        <div class="description">Higher price value with thousands separator</div>
+        <span class="sx-price">
+          <span class="sx-price-currency">$</span>
+          <span class="sx-price-whole">1,299</span>
+          <span class="sx-price-decimal">.</span>
+          <span class="sx-price-fractional">00</span>
+        </span>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="amazon"
+        data-price-value="49.99"
+        data-currency="EUR"
+        data-description="Euro sx-price format"
+      >
+        <div class="description">Euro price using sx-price format</div>
+        <span class="sx-price">
+          <span class="sx-price-currency">€</span>
+          <span class="sx-price-whole">49</span>
+          <span class="sx-price-decimal">.</span>
+          <span class="sx-price-fractional">99</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>Variant with Text Decoration</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="amazon"
+        data-price-value="24.99"
+        data-currency="USD"
+        data-description="sx-price with text decoration"
+      >
+        <div class="description">Price with additional text decoration classes</div>
+        <span class="sx-price a-color-price">
+          <span class="sx-price-currency">$</span>
+          <span class="sx-price-whole">24</span>
+          <span class="sx-price-decimal">.</span>
+          <span class="sx-price-fractional">99</span>
+        </span>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="amazon"
+        data-price-value="129.95"
+        data-currency="USD"
+        data-description="sx-price in sale context"
+      >
+        <div class="description">Sale price with decorative elements</div>
+        <div>
+          <span class="a-text-strike">$149.99</span>
+          <span class="sx-price a-color-price">
+            <span class="sx-price-currency">$</span>
+            <span class="sx-price-whole">129</span>
+            <span class="sx-price-decimal">.</span>
+            <span class="sx-price-fractional">95</span>
+          </span>
+          <span class="a-color-success"> Save $20.04 (13%)</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Amazon a-price Format (Newer Pattern)</h2>
+
+    <div class="test-section">
+      <h3>Standard a-price Format</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="amazon"
+        data-price-value="29.99"
+        data-currency="USD"
+        data-description="Standard a-price format"
+      >
+        <div class="description">Standard product price using a-price format</div>
+        <span class="a-price">
+          <span class="a-price-symbol">$</span>
+          <span class="a-price-whole">29</span>
+          <span class="a-price-decimal">.</span>
+          <span class="a-price-fraction">99</span>
+        </span>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="amazon"
+        data-price-value="199.00"
+        data-currency="USD"
+        data-description="a-price with trailing zeros"
+      >
+        <div class="description">Price with trailing zeros</div>
+        <span class="a-price">
+          <span class="a-price-symbol">$</span>
+          <span class="a-price-whole">199</span>
+          <span class="a-price-decimal">.</span>
+          <span class="a-price-fraction">00</span>
+        </span>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="amazon"
+        data-price-value="1499.99"
+        data-currency="USD"
+        data-description="High-value a-price"
+      >
+        <div class="description">Higher price value with thousands separator</div>
+        <span class="a-price">
+          <span class="a-price-symbol">$</span>
+          <span class="a-price-whole">1,499</span>
+          <span class="a-price-decimal">.</span>
+          <span class="a-price-fraction">99</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>a-price Variant Formats</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="amazon"
+        data-price-value="39.99"
+        data-currency="USD"
+        data-description="a-price with nested spans"
+      >
+        <div class="description">
+          Price with additional nested spans (common in reviews section)
+        </div>
+        <span class="a-price a-text-normal">
+          <span>
+            <span class="a-price-symbol">$</span>
+            <span class="a-price-whole">39</span>
+            <span class="a-price-decimal">.</span>
+            <span class="a-price-fraction">99</span>
+          </span>
+        </span>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="amazon"
+        data-price-value="59.99"
+        data-currency="GBP"
+        data-description="a-price with different currency"
+      >
+        <div class="description">Price with British Pound currency</div>
+        <span class="a-price">
+          <span class="a-price-symbol">£</span>
+          <span class="a-price-whole">59</span>
+          <span class="a-price-decimal">.</span>
+          <span class="a-price-fraction">99</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>Price Ranges (Edge Cases)</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="amazon"
+        data-price-value="15.99"
+        data-currency="USD"
+        data-description="a-price in range (first value)"
+      >
+        <div class="description">Price range - should detect both prices individually</div>
+        <div class="a-price-range">
+          <span class="a-price">
+            <span class="a-price-symbol">$</span>
+            <span class="a-price-whole">15</span>
+            <span class="a-price-decimal">.</span>
+            <span class="a-price-fraction">99</span>
+          </span>
+          <span class="a-price-dash">-</span>
+          <span class="a-price">
+            <span class="a-price-symbol">$</span>
+            <span class="a-price-whole">24</span>
+            <span class="a-price-decimal">.</span>
+            <span class="a-price-fraction">99</span>
+          </span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="false"
+        data-detector="none"
+        data-description="Unavailable price"
+      >
+        <div class="description">Price currently unavailable - should not be detected</div>
+        <span class="a-price a-text-price">
+          <span>Price not available</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <a href="index.html">← Back to Index</a>
+      <a href="ebay.html">Next: eBay Prices →</a>
+    </div>
+  </body>
+</html>

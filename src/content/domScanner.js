@@ -6,6 +6,8 @@
  */
 
 import { processIfAmazon, createPriceState } from './amazonHandler.js';
+import { processIfEbay } from './ebayHandler.js';
+import { processElementAttributes } from './attributeDetector.js';
 import {
   CONVERTED_PRICE_CLASS,
   MAX_PENDING_NODES,
@@ -113,9 +115,11 @@ export const walk = (node, callback, settings, options = {}) => {
 
               // Handle Amazon price components with the dedicated handler
               // Pass the local price state to maintain state between sibling nodes
-              let amazonProcessed = false;
+              let specialHandlerProcessed = false;
+
+              // Try Amazon handler first
               try {
-                amazonProcessed = processIfAmazon(
+                specialHandlerProcessed = processIfAmazon(
                   child,
                   (textNode) => callback(textNode, settings),
                   amazonPriceState
@@ -128,8 +132,42 @@ export const walk = (node, callback, settings, options = {}) => {
                 );
               }
 
-              // Only continue normal processing if it wasn't handled as an Amazon component
-              if (!amazonProcessed) {
+              // If not processed by Amazon handler, try eBay handler
+              if (!specialHandlerProcessed) {
+                try {
+                  specialHandlerProcessed = processIfEbay(
+                    child,
+                    (textNode) => callback(textNode, settings),
+                    settings
+                  );
+                } catch (ebayError) {
+                  logger.error(
+                    'Error in eBay price processing:',
+                    ebayError.message,
+                    ebayError.stack
+                  );
+                }
+              }
+
+              // If not processed by site-specific handlers, try attribute-based detection
+              if (!specialHandlerProcessed) {
+                try {
+                  specialHandlerProcessed = processElementAttributes(
+                    child,
+                    (textNode) => callback(textNode, settings),
+                    settings
+                  );
+                } catch (attributeError) {
+                  logger.error(
+                    'Error in attribute-based price processing:',
+                    attributeError.message,
+                    attributeError.stack
+                  );
+                }
+              }
+
+              // Only continue normal processing if it wasn't handled by any special handler
+              if (!specialHandlerProcessed) {
                 walk(child, callback, settings, options);
               }
 

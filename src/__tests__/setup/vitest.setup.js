@@ -52,6 +52,7 @@ export const setupTestDom = () => {
   createFormElement('decimal', 'select', 'dot');
   createFormElement('debounce-interval', 'number', '200');
   createFormElement('enable-dynamic-scanning', 'checkbox').checked = true;
+  createFormElement('enable-debug-mode', 'checkbox').checked = false;
 };
 
 // Create a helper that can be used in each test file to reset mocks
