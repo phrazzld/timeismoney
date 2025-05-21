@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Composite Price Structures - Detection Test Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        border-bottom: 2px solid #333;
+        padding-bottom: 10px;
+      }
+      h2 {
+        margin-top: 30px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+      }
+      h3 {
+        margin-top: 20px;
+        color: #555;
+      }
+      .test-section {
+        border: 1px solid #eee;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+      }
+      .test-case {
+        padding: 15px;
+        margin: 10px 0;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+      }
+      code {
+        background-color: #f0f0f0;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-family: monospace;
+      }
+      .description {
+        font-style: italic;
+        color: #666;
+        margin-bottom: 10px;
+      }
+      .nav-bar {
+        background-color: #9c27b0;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      .nav-bar a {
+        color: white;
+        text-decoration: none;
+        margin-right: 15px;
+      }
+
+      /* Common composite price styles */
+      .price-component {
+        display: inline-block;
+      }
+      .currency-symbol {
+        font-size: 0.7em;
+        vertical-align: top;
+      }
+      .whole-part {
+        font-weight: bold;
+      }
+      .decimal-point {
+        font-weight: normal;
+      }
+      .decimal-part {
+        font-size: 0.7em;
+        vertical-align: top;
+      }
+
+      /* Vertical layout variants */
+      .price-vertical {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .price-vertical .currency-symbol {
+        font-size: 0.8em;
+      }
+      .price-vertical .whole-part {
+        font-size: 1.2em;
+        font-weight: bold;
+      }
+      .price-vertical .decimal-part {
+        font-size: 0.8em;
+      }
+
+      /* Nested component structures */
+      .price-nested {
+        position: relative;
+      }
+      .price-nested .currency-symbol {
+        position: absolute;
+        top: 0;
+        left: -0.7em;
+        font-size: 0.7em;
+      }
+      .price-nested .decimal-container {
+        display: inline-block;
+        vertical-align: top;
+        font-size: 0.7em;
+      }
+
+      /* Complex layouts */
+      .price-complex {
+        display: inline-flex;
+        flex-direction: row;
+        align-items: baseline;
+      }
+      .price-complex .currency-block {
+        margin-right: 2px;
+      }
+      .price-complex .amount-block {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .price-complex .whole-part {
+        font-weight: bold;
+        font-size: 1.2em;
+      }
+      .price-complex .decimal-point,
+      .price-complex .decimal-part {
+        font-size: 0.7em;
+      }
+
+      /* Delimited price patterns */
+      .price-delimited {
+        display: inline-block;
+      }
+      .price-delimited .delimiter {
+        margin: 0 1px;
+      }
+
+      /* Custom patterns */
+      .custom-price-format {
+        display: inline-block;
+        position: relative;
+      }
+      .custom-price-format > span {
+        display: inline-block;
+      }
+      .custom-price-format .custom-currency {
+        font-size: 0.7em;
+        vertical-align: top;
+        margin-right: 1px;
+      }
+      .custom-price-format .custom-amount {
+        font-weight: bold;
+      }
+      .custom-price-format .custom-cents {
+        font-size: 0.7em;
+        vertical-align: top;
+      }
+    </style>
+    <script src="js/verify.js"></script>
+  </head>
+  <body>
+    <div class="nav-bar">
+      <a href="index.html">← Back to Index</a>
+      <a href="general-ecommerce.html">← General E-commerce</a>
+      <a href="attribute-prices.html">Next: Attribute-Based Prices →</a>
+    </div>
+
+    <h1>Composite Price Structures - Detection Test Page</h1>
+
+    <p>
+      This page tests detection of composite price structures where the price is split across
+      multiple elements. These patterns are common in modern e-commerce sites that want precise
+      control over price display styling.
+    </p>
+
+    <h2>Basic Component-Based Price Structures</h2>
+
+    <div class="test-section">
+      <h3>Standard Component Split</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="49.99"
+        data-currency="USD"
+        data-description="Basic split components"
+      >
+        <div class="description">Price split into basic components with explicit class names</div>
+        <div class="price-wrapper">
+          <span class="currency-symbol">$</span>
+          <span class="whole-part">49</span>
+          <span class="decimal-point">.</span>
+          <span class="decimal-part">99</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="149.50"
+        data-currency="USD"
+        data-description="Split with generic classes"
+      >
+        <div class="description">Price split with more generic class names</div>
+        <div class="price">
+          <span class="symbol">$</span>
+          <span class="dollars">149</span>
+          <span class="cents">.50</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="999.00"
+        data-currency="USD"
+        data-description="High-value split format"
+      >
+        <div class="description">Large value price with comma formatting</div>
+        <div class="price-wrapper">
+          <span class="currency-symbol">$</span>
+          <span class="whole-part">999</span>
+          <span class="decimal-point">.</span>
+          <span class="decimal-part">00</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Vertical Layout Price Components</h2>
+
+    <div class="test-section">
+      <h3>Stacked Price Components</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="29.99"
+        data-currency="USD"
+        data-description="Vertically stacked price"
+      >
+        <div class="description">Price with components stacked vertically</div>
+        <div class="price-vertical">
+          <span class="currency-symbol">$</span>
+          <span class="whole-part">29</span>
+          <span class="decimal-part">.99</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="89.00"
+        data-currency="USD"
+        data-description="Partial vertical stack"
+      >
+        <div class="description">Price with partially stacked components</div>
+        <div class="price-wrapper">
+          <span class="currency-symbol">$</span>
+          <div class="price-vertical">
+            <span class="whole-part">89</span>
+            <span class="decimal-part">.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Nested Component Price Structures</h2>
+
+    <div class="test-section">
+      <h3>Deep Nesting</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="79.95"
+        data-currency="USD"
+        data-description="Deeply nested structure"
+      >
+        <div class="description">Price with deeply nested component structure</div>
+        <div class="price-nested">
+          <span class="currency-symbol">$</span>
+          <span class="whole-part">79</span>
+          <span class="decimal-container">
+            <span class="decimal-point">.</span>
+            <span class="decimal-part">95</span>
+          </span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="249.99"
+        data-currency="USD"
+        data-description="Complex nesting with wrappers"
+      >
+        <div class="description">Price with multiple wrapper elements</div>
+        <div class="price-wrapper">
+          <div class="currency-wrapper">
+            <span class="currency-symbol">$</span>
+          </div>
+          <div class="amount-wrapper">
+            <span class="whole-part">249</span>
+            <div class="decimal-wrapper">
+              <span class="decimal-point">.</span>
+              <span class="decimal-part">99</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Complex Layout Price Structures</h2>
+
+    <div class="test-section">
+      <h3>Grid and Flexbox Layouts</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="199.00"
+        data-currency="USD"
+        data-description="Complex flex layout"
+      >
+        <div class="description">Price with complex flexbox layout</div>
+        <div class="price-complex">
+          <div class="currency-block">
+            <span class="currency-symbol">$</span>
+          </div>
+          <div class="amount-block">
+            <span class="whole-part">199</span>
+            <div>
+              <span class="decimal-point">.</span>
+              <span class="decimal-part">00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="359.95"
+        data-currency="USD"
+        data-description="Price with non-standard ordering"
+      >
+        <div class="description">Price with non-standard component ordering</div>
+        <div class="price-wrapper">
+          <span class="whole-part">359</span>
+          <span class="decimal-part">.95</span>
+          <span class="currency-symbol">$</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Delimiter-Based Price Structures</h2>
+
+    <div class="test-section">
+      <h3>Text Node Boundaries</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="24.99"
+        data-currency="USD"
+        data-description="Dom tree delimiter format"
+      >
+        <div class="description">Price with delimiter spans</div>
+        <div class="price-delimited">
+          <span class="currency-symbol">$</span>
+          <span class="delimiter"></span>
+          <span class="whole-part">24</span>
+          <span class="delimiter"></span>
+          <span class="decimal-point">.</span>
+          <span class="delimiter"></span>
+          <span class="decimal-part">99</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="99.95"
+        data-currency="USD"
+        data-description="Non-empty text nodes between components"
+      >
+        <div class="description">Price with text nodes between components</div>
+        <div class="price-delimited">
+          <span class="currency-symbol">$</span>
+          <span class="delimiter"> </span>
+          <span class="whole-part">99</span>
+          <span class="delimiter"> </span>
+          <span class="decimal-point">.</span>
+          <span class="decimal-part">95</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Custom Price Component Structures</h2>
+
+    <div class="test-section">
+      <h3>Uncommon Class Patterns</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="129.99"
+        data-currency="USD"
+        data-description="Uncommon class names"
+      >
+        <div class="description">Price with uncommon but meaningful class names</div>
+        <div class="custom-price-format">
+          <span class="custom-currency">$</span>
+          <span class="custom-amount">129</span>
+          <span class="custom-cents">.99</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="54.50"
+        data-currency="USD"
+        data-description="Non-semantic markup"
+      >
+        <div class="description">Price with non-semantic markup</div>
+        <div><span>$</span><b>54</b><small>.50</small></div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="attribute"
+        data-price-value="799.00"
+        data-currency="USD"
+        data-description="Unrelated container with price nodes"
+      >
+        <div class="description">Price in container with unrelated purpose</div>
+        <div class="product-detail">
+          <div class="stock-info">In Stock</div>
+          <div class="price-info"><span>$</span><span>799</span><span>.00</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <a href="index.html">← Back to Index</a>
+      <a href="general-ecommerce.html">← General E-commerce</a>
+      <a href="attribute-prices.html">Next: Attribute-Based Prices →</a>
+    </div>
+  </body>
+</html>

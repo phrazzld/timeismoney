@@ -2,4 +2,4 @@
 node scripts/validate-test-names.js
 
 # Run lint-staged to automatically format and fix linting issues
-npm run format:staged
+pnpm run format:staged

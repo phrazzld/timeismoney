@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>eBay Price Formats - Detection Test Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        border-bottom: 2px solid #333;
+        padding-bottom: 10px;
+      }
+      h2 {
+        margin-top: 30px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+      }
+      h3 {
+        margin-top: 20px;
+        color: #555;
+      }
+      .test-section {
+        border: 1px solid #eee;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+      }
+      .test-case {
+        padding: 15px;
+        margin: 10px 0;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+      }
+      code {
+        background-color: #f0f0f0;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-family: monospace;
+      }
+      .description {
+        font-style: italic;
+        color: #666;
+        margin-bottom: 10px;
+      }
+      .nav-bar {
+        background-color: #e53238;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      .nav-bar a {
+        color: white;
+        text-decoration: none;
+        margin-right: 15px;
+      }
+
+      /* eBay specific styling */
+      .ebay-blue {
+        color: #0654ba;
+      }
+      .ebay-dark {
+        color: #333333;
+      }
+      .ebay-red {
+        color: #e53238;
+      }
+
+      /* eBay search result styles */
+      .s-item {
+        border: 1px solid #e5e5e5;
+        border-radius: 4px;
+        padding: 12px;
+        margin-bottom: 10px;
+      }
+      .s-item__title {
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+      .s-item__price {
+        font-size: 16px;
+        font-weight: bold;
+        color: #111;
+      }
+      .s-item__shipping {
+        font-size: 13px;
+        color: #707070;
+      }
+
+      /* eBay item page styles */
+      .x-price-primary {
+        font-size: 24px;
+        font-weight: bold;
+        color: #111;
+      }
+      .x-bin-price {
+        color: #0654ba;
+        font-weight: bold;
+      }
+      .x-buybox__price-element {
+        font-size: 18px;
+        color: #111;
+      }
+      .x-price {
+        padding: 5px 0;
+      }
+      .display-price {
+        font-weight: bold;
+      }
+      .ux-textspans {
+        display: inline-block;
+      }
+      .ux-price-display {
+        color: #111;
+      }
+
+      /* eBay data attribute containers */
+      .ebay-data-price {
+        font-weight: bold;
+        color: #111;
+      }
+    </style>
+    <script src="js/verify.js"></script>
+  </head>
+  <body>
+    <div class="nav-bar">
+      <a href="index.html">← Back to Index</a>
+      <a href="amazon.html">← Amazon Prices</a>
+      <a href="general-ecommerce.html">Next: General E-commerce →</a>
+    </div>
+
+    <h1>eBay Price Formats - Detection Test Page</h1>
+
+    <p>
+      This page tests the detection of eBay-specific price formats. eBay uses several different
+      class patterns for prices across their site, including specific attribute-based patterns.
+    </p>
+
+    <h2>eBay Search Results</h2>
+
+    <div class="test-section">
+      <h3>Standard Search Result Prices</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="ebay"
+        data-price-value="24.99"
+        data-currency="USD"
+        data-description="Search result price (s-item__price)"
+      >
+        <div class="description">Standard search result with s-item__price class</div>
+        <div class="s-item">
+          <div class="s-item__title">Vintage Camera with Lens and Case</div>
+          <div class="s-item__price">$24.99</div>
+          <div class="s-item__shipping">+$5.99 shipping</div>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="ebay"
+        data-price-value="150.00"
+        data-currency="USD"
+        data-description="Search result with whole number price"
+      >
+        <div class="description">Search result with whole number price</div>
+        <div class="s-item">
+          <div class="s-item__title">Professional Tripod for DSLR Cameras</div>
+          <div class="s-item__price">$150.00</div>
+          <div class="s-item__shipping">Free shipping</div>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="ebay"
+        data-price-value="1299.95"
+        data-currency="USD"
+        data-description="Search result with high-value price"
+      >
+        <div class="description">Search result with high value price</div>
+        <div class="s-item">
+          <div class="s-item__title">Professional Camera with Accessories Bundle</div>
+          <div class="s-item__price">$1,299.95</div>
+          <div class="s-item__shipping">Free shipping</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>eBay Product Page Prices</h2>
+
+    <div class="test-section">
+      <h3>Primary Prices (x-price-primary)</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="ebay"
+        data-price-value="59.99"
+        data-currency="USD"
+        data-description="Product page primary price"
+      >
+        <div class="description">Primary price display with x-price-primary class</div>
+        <div>
+          <span class="x-price-primary">$59.99</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="ebay"
+        data-price-value="249.99"
+        data-currency="USD"
+        data-description="Product page with multiple prices"
+      >
+        <div class="description">Primary price with additional price information</div>
+        <div>
+          <span class="x-price-primary">$249.99</span>
+          <div class="x-additional-info">
+            <span>Was: $299.99</span>
+            <span>You save: $50.00 (17%)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>Buy Box Prices</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="ebay"
+        data-price-value="78.50"
+        data-currency="USD"
+        data-description="Buy box price"
+      >
+        <div class="description">Buy box price with x-buybox__price-element class</div>
+        <div class="x-buybox">
+          <div class="x-buybox__price-element">
+            <span>$78.50</span>
+          </div>
+          <div>Free shipping</div>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="ebay"
+        data-price-value="35.00"
+        data-currency="USD"
+        data-description="Buy it now price"
+      >
+        <div class="description">Buy it now price with x-bin-price class</div>
+        <div>
+          <span class="x-bin-price">$35.00</span>
+          <span>Buy It Now</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>Other eBay Price Formats</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="ebay"
+        data-price-value="42.75"
+        data-currency="USD"
+        data-description="Display price format"
+      >
+        <div class="description">Display price format</div>
+        <div>
+          <span class="display-price">$42.75</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="ebay"
+        data-price-value="99.00"
+        data-currency="USD"
+        data-description="ux-textspans format"
+      >
+        <div class="description">ux-textspans format</div>
+        <div>
+          <span class="ux-textspans">$99.00</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="ebay"
+        data-price-value="125.00"
+        data-currency="USD"
+        data-description="ux-price-display format"
+      >
+        <div class="description">ux-price-display format</div>
+        <div class="ux-price-display">
+          <span>$125.00</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>eBay Data Attribute Prices</h2>
+
+    <div class="test-section">
+      <h3>Prices with Data Attributes</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="ebay"
+        data-price-value="89.99"
+        data-currency="USD"
+        data-description="Element with data-price attribute"
+      >
+        <div class="description">Element with data-price attribute</div>
+        <div data-price="89.99" class="ebay-data-price">$89.99</div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="ebay"
+        data-price-value="199.99"
+        data-currency="USD"
+        data-description="Element with data-item-price attribute"
+      >
+        <div class="description">Element with data-item-price attribute</div>
+        <div data-item-price="199.99" class="ebay-data-price">$199.99</div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>eBay Price Containers</h3>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="ebay"
+        data-price-value="64.50"
+        data-currency="USD"
+        data-description="Price in x-price container"
+      >
+        <div class="description">Price in x-price container</div>
+        <div class="x-price">
+          <span>$64.50</span>
+        </div>
+      </div>
+
+      <div
+        class="test-case"
+        data-expect-detect="true"
+        data-detector="ebay"
+        data-price-value="130.00"
+        data-currency="EUR"
+        data-description="Price in x-price container with Euro"
+      >
+        <div class="description">Euro price in x-price container</div>
+        <div class="x-price">
+          <span>€130.00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <a href="index.html">← Back to Index</a>
+      <a href="amazon.html">← Amazon Prices</a>
+      <a href="general-ecommerce.html">Next: General E-commerce →</a>
+    </div>
+  </body>
+</html>

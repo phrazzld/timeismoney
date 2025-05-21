@@ -18,6 +18,7 @@ import { AMAZON_PRICE_CLASSES } from '../utils/constants.js';
  *   - currency {string|null} - The currency symbol/code component
  *   - whole {string|null} - The whole number component
  *   - active {boolean} - Whether we're currently tracking a price component
+ *   - patternType {string|null} - Which Amazon price pattern is being used ('sx' or 'a')
  *   - reset {Function} - Function to reset the state
  */
 export const createPriceState = () => {
@@ -25,6 +26,7 @@ export const createPriceState = () => {
     currency: null,
     whole: null,
     active: false,
+    patternType: null,
     /**
      * Resets the price state to its initial values
      * Used to start a new price component scan or when abandoning incomplete price components
@@ -36,6 +38,7 @@ export const createPriceState = () => {
       this.currency = null;
       this.whole = null;
       this.active = false;
+      this.patternType = null;
     },
   };
 };
@@ -43,25 +46,42 @@ export const createPriceState = () => {
 /**
  * Checks if a DOM node belongs to Amazon's price component structure
  * Amazon uses specific class names for currency, whole number, and fractional parts
+ * Supports both 'sx-price-*' and 'a-price-*' patterns
  *
  * @param {Node} node - DOM node to check
- * @returns {boolean} True if node has an Amazon price component class (sx-price-*)
+ * @returns {boolean|string} False if not an Amazon price node, or the pattern type ('sx' or 'a') if it is
  */
 export const isAmazonPriceNode = (node) => {
   if (!node || !node.classList) return false;
 
   const className = node.classList.value;
-  return (
-    className === AMAZON_PRICE_CLASSES.CURRENCY ||
-    className === AMAZON_PRICE_CLASSES.WHOLE ||
-    className === AMAZON_PRICE_CLASSES.FRACTIONAL
-  );
+
+  // Check for sx-price-* pattern
+  if (
+    className === AMAZON_PRICE_CLASSES.CURRENCY.sx ||
+    className === AMAZON_PRICE_CLASSES.WHOLE.sx ||
+    className === AMAZON_PRICE_CLASSES.FRACTIONAL.sx
+  ) {
+    return 'sx';
+  }
+
+  // Check for a-price-* pattern
+  if (
+    className === AMAZON_PRICE_CLASSES.CURRENCY.a ||
+    className === AMAZON_PRICE_CLASSES.WHOLE.a ||
+    className === AMAZON_PRICE_CLASSES.FRACTIONAL.a
+  ) {
+    return 'a';
+  }
+
+  return false;
 };
 
 /**
  * Processes an Amazon price component node and updates price state
  * Handles the different component types (currency, whole, fractional)
  * and combines them into a complete price for processing
+ * Supports both 'sx-price-*' and 'a-price-*' patterns
  *
  * @param {Node} node - Amazon price component node to process
  * @param {Function} callback - Callback function to apply to the complete price node
@@ -71,22 +91,38 @@ export const isAmazonPriceNode = (node) => {
  * @param {string|null} state.currency - The currency symbol/code component
  * @param {string|null} state.whole - The whole number component
  * @param {boolean} state.active - Whether we're currently tracking a price component
+ * @param {string} patternType - The Amazon price pattern type ('sx' or 'a')
  * @returns {boolean} True if node was successfully processed as an Amazon price component
  */
-export const handleAmazonPrice = (node, callback, state) => {
+export const handleAmazonPrice = (node, callback, state, patternType) => {
   if (!node || !node.classList) return false;
 
   const classes = node.classList;
   const className = classes.value;
 
+  // Only process if we have a valid pattern type
+  if (patternType !== 'sx' && patternType !== 'a') {
+    return false;
+  }
+
+  // Use the appropriate pattern classes based on the pattern type
+  const currencyClass = AMAZON_PRICE_CLASSES.CURRENCY[patternType];
+  const wholeClass = AMAZON_PRICE_CLASSES.WHOLE[patternType];
+  const fractionalClass = AMAZON_PRICE_CLASSES.FRACTIONAL[patternType];
+
+  // Add pattern type to state for logging if debugMode is enabled
+  if (!state.patternType) {
+    state.patternType = patternType;
+  }
+
   switch (className) {
-    case AMAZON_PRICE_CLASSES.CURRENCY:
+    case currencyClass:
       state.currency = node.firstChild.nodeValue.toString();
       node.firstChild.nodeValue = null; // Clear the node value
       state.active = true;
       return true;
 
-    case AMAZON_PRICE_CLASSES.WHOLE:
+    case wholeClass:
       if (state.active && state.currency !== null) {
         // Combine currency and whole part
         const combinedPrice = state.currency + node.firstChild.nodeValue.toString();
@@ -103,7 +139,7 @@ export const handleAmazonPrice = (node, callback, state) => {
       }
       return false;
 
-    case AMAZON_PRICE_CLASSES.FRACTIONAL:
+    case fractionalClass:
       if (state.active) {
         // Clear the fractional part as it's already been processed with the whole part
         node.firstChild.nodeValue = null;
@@ -123,6 +159,7 @@ export const handleAmazonPrice = (node, callback, state) => {
  * Main entry point for Amazon price handling
  * Processes a node if it's an Amazon price component, applies callback as needed
  * This function orchestrates the Amazon-specific price processing logic
+ * Supports both 'sx-price-*' and 'a-price-*' patterns
  *
  * @param {Node} node - DOM node to process
  * @param {Function} callback - Callback to apply to complete price nodes
@@ -137,7 +174,10 @@ export const processIfAmazon = (node, callback, priceState) => {
   // Create a new state object if none was provided
   const state = priceState || createPriceState();
 
-  if (!isAmazonPriceNode(node)) {
+  // Check if this is an Amazon price node and get the pattern type
+  const patternType = isAmazonPriceNode(node);
+
+  if (!patternType) {
     // If we've been tracking Amazon price components but found a non-Amazon node,
     // reset the state to avoid incomplete processing
     if (state.active) {
@@ -146,5 +186,12 @@ export const processIfAmazon = (node, callback, priceState) => {
     return false;
   }
 
-  return handleAmazonPrice(node, callback, state);
+  // If we have a pattern type but it doesn't match the current state's pattern type
+  // and we're in the middle of processing a different pattern, reset the state
+  if (state.active && state.patternType && state.patternType !== patternType) {
+    state.reset();
+  }
+
+  // Process the node with the appropriate pattern
+  return handleAmazonPrice(node, callback, state, patternType);
 };

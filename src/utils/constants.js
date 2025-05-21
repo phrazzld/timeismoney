@@ -15,14 +15,56 @@ export const CONVERTED_PRICE_CLASS = 'tim-converted-price';
 /**
  * CSS class names used to identify Amazon price components
  * Amazon splits prices into separate DOM elements with these classes
+ * Supports both 'sx-price-*' and 'a-price-*' patterns
  *
- * @type {{[key: string]: string}}
+ * @type {{[key: string]: {sx: string, a: string}}}
  */
 export const AMAZON_PRICE_CLASSES = {
-  CURRENCY: 'sx-price-currency',
-  WHOLE: 'sx-price-whole',
-  FRACTIONAL: 'sx-price-fractional',
+  CURRENCY: {
+    sx: 'sx-price-currency',
+    a: 'a-price-symbol',
+  },
+  WHOLE: {
+    sx: 'sx-price-whole',
+    a: 'a-price-whole',
+  },
+  FRACTIONAL: {
+    sx: 'sx-price-fractional',
+    a: 'a-price-fraction',
+  },
 };
+
+/**
+ * CSS class names used to identify eBay price elements
+ * eBay uses specific class patterns for prices across their site
+ *
+ * @type {string[]}
+ */
+export const EBAY_PRICE_CLASSES = [
+  's-item__price', // Search results price
+  'x-price-primary', // Item page primary price
+  'x-bin-price', // Buy it now price
+  'x-buybox__price-element', // Buy box price
+  'display-price', // Another common price class
+  'ux-textspans', // Price text span
+  'ux-price-display', // Price display container
+];
+
+/**
+ * CSS selectors for parent elements that may contain prices on eBay
+ * These selectors help identify blocks that might contain price elements
+ *
+ * @type {string[]}
+ */
+export const EBAY_PRICE_CONTAINERS = ['.x-price', '.x-buybox', '.vim-timer', '.vi-price'];
+
+/**
+ * Attributes to check for price-related content on eBay
+ * Some eBay price elements use data attributes to store price data
+ *
+ * @type {string[]}
+ */
+export const EBAY_PRICE_ATTRIBUTES = ['data-price', 'data-item-price'];
 
 /**
  * Maximum number of nodes to queue before forcing processing
@@ -49,6 +91,20 @@ export const DEFAULT_DEBOUNCE_INTERVAL_MS = 200;
 export const TIME_ANNOTATION_PATTERN = '\\s\\(\\d+h\\s\\d+m\\)';
 
 /**
+ * Debug mode highlight CSS classes for price elements
+ * Used to visually identify the status of price elements during debugging
+ *
+ * @type {{[key: string]: string}}
+ */
+export const DEBUG_HIGHLIGHT_CLASSES = {
+  DETECTED: 'tim-debug-detected', // Price was detected
+  CONVERTED: 'tim-debug-converted', // Price was successfully converted
+  FAILED: 'tim-debug-failed', // Price detection/conversion failed
+  CANDIDATE: 'tim-debug-candidate', // Element that might contain a price
+  IGNORED: 'tim-debug-ignored', // Element that was explicitly ignored
+};
+
+/**
  * Default extension settings
  * Used when user settings are not available
  *
@@ -64,6 +120,7 @@ export const DEFAULT_SETTINGS = {
   disabled: false,
   debounceIntervalMs: DEFAULT_DEBOUNCE_INTERVAL_MS,
   enableDynamicScanning: true, // Whether to monitor DOM changes in real-time
+  debugMode: false, // Whether debug mode is enabled for price detection
 };
 
 /**

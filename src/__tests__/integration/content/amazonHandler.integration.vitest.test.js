@@ -25,8 +25,13 @@ const createNodeWithClass = (className) => {
   const node = document.createElement('span');
   node.classList.add(className);
 
-  // Add text content
-  const textNode = document.createTextNode(className === 'sx-price-currency' ? '$' : '10');
+  // Add text content based on class name pattern
+  let textContent = '10';
+  if (className === 'sx-price-currency' || className === 'a-price-symbol') {
+    textContent = '$';
+  }
+
+  const textNode = document.createTextNode(textContent);
   node.appendChild(textNode);
 
   return node;
@@ -69,10 +74,16 @@ describe('Amazon Price Handler', () => {
   });
 
   describe('isAmazonPriceNode', () => {
-    test('returns true for valid Amazon price component nodes', () => {
-      expect(isAmazonPriceNode(createNodeWithClass('sx-price-currency'))).toBe(true);
-      expect(isAmazonPriceNode(createNodeWithClass('sx-price-whole'))).toBe(true);
-      expect(isAmazonPriceNode(createNodeWithClass('sx-price-fractional'))).toBe(true);
+    test('returns correct pattern type for sx-price-* pattern nodes', () => {
+      expect(isAmazonPriceNode(createNodeWithClass('sx-price-currency'))).toBe('sx');
+      expect(isAmazonPriceNode(createNodeWithClass('sx-price-whole'))).toBe('sx');
+      expect(isAmazonPriceNode(createNodeWithClass('sx-price-fractional'))).toBe('sx');
+    });
+
+    test('returns correct pattern type for a-price-* pattern nodes', () => {
+      expect(isAmazonPriceNode(createNodeWithClass('a-price-symbol'))).toBe('a');
+      expect(isAmazonPriceNode(createNodeWithClass('a-price-whole'))).toBe('a');
+      expect(isAmazonPriceNode(createNodeWithClass('a-price-fraction'))).toBe('a');
     });
 
     test('returns false for non-Amazon price nodes', () => {
@@ -84,36 +95,104 @@ describe('Amazon Price Handler', () => {
   });
 
   describe('handleAmazonPrice', () => {
-    test('processes currency node and updates state', () => {
-      const node = createNodeWithClass('sx-price-currency');
-      const callback = vi.fn();
-      const state = createPriceState();
+    describe('sx pattern', () => {
+      test('processes currency node and updates state', () => {
+        const node = createNodeWithClass('sx-price-currency');
+        const callback = vi.fn();
+        const state = createPriceState();
 
-      const result = handleAmazonPrice(node, callback, state);
+        const result = handleAmazonPrice(node, callback, state, 'sx');
 
-      expect(result).toBe(true);
-      expect(state.currency).toBe('$');
-      expect(state.active).toBe(true);
-      expect(callback).not.toHaveBeenCalled();
-      expect(node.firstChild.nodeValue).toBe('');
+        expect(result).toBe(true);
+        expect(state.currency).toBe('$');
+        expect(state.active).toBe(true);
+        expect(callback).not.toHaveBeenCalled();
+        expect(node.firstChild.nodeValue).toBe('');
+      });
+
+      test('processes whole part node when currency is set', () => {
+        const node = createNodeWithClass('sx-price-whole');
+        const callback = vi.fn();
+        const state = createPriceState();
+
+        // Set up state as if currency node was processed
+        state.currency = '$';
+        state.active = true;
+
+        const result = handleAmazonPrice(node, callback, state, 'sx');
+
+        expect(result).toBe(true);
+        expect(callback).toHaveBeenCalled();
+        expect(node.firstChild.nodeValue).toBe('$10');
+        expect(state.currency).toBeNull();
+        expect(state.whole).toBe('$10');
+      });
+
+      test('processes fractional part and resets state', () => {
+        const node = createNodeWithClass('sx-price-fractional');
+        const callback = vi.fn();
+        const state = createPriceState();
+
+        // Set up state as if previous nodes were processed
+        state.active = true;
+
+        const result = handleAmazonPrice(node, callback, state, 'sx');
+
+        expect(result).toBe(true);
+        expect(node.firstChild.nodeValue).toBe('');
+        expect(state.active).toBe(false);
+        expect(callback).not.toHaveBeenCalled();
+      });
     });
 
-    test('processes whole part node when currency is set', () => {
-      const node = createNodeWithClass('sx-price-whole');
-      const callback = vi.fn();
-      const state = createPriceState();
+    describe('a pattern', () => {
+      test('processes symbol node and updates state', () => {
+        const node = createNodeWithClass('a-price-symbol');
+        const callback = vi.fn();
+        const state = createPriceState();
 
-      // Set up state as if currency node was processed
-      state.currency = '$';
-      state.active = true;
+        const result = handleAmazonPrice(node, callback, state, 'a');
 
-      const result = handleAmazonPrice(node, callback, state);
+        expect(result).toBe(true);
+        expect(state.currency).toBe('$');
+        expect(state.active).toBe(true);
+        expect(callback).not.toHaveBeenCalled();
+        expect(node.firstChild.nodeValue).toBe('');
+      });
 
-      expect(result).toBe(true);
-      expect(callback).toHaveBeenCalled();
-      expect(node.firstChild.nodeValue).toBe('$10');
-      expect(state.currency).toBeNull();
-      expect(state.whole).toBe('$10');
+      test('processes whole part node when currency is set', () => {
+        const node = createNodeWithClass('a-price-whole');
+        const callback = vi.fn();
+        const state = createPriceState();
+
+        // Set up state as if currency node was processed
+        state.currency = '$';
+        state.active = true;
+
+        const result = handleAmazonPrice(node, callback, state, 'a');
+
+        expect(result).toBe(true);
+        expect(callback).toHaveBeenCalled();
+        expect(node.firstChild.nodeValue).toBe('$10');
+        expect(state.currency).toBeNull();
+        expect(state.whole).toBe('$10');
+      });
+
+      test('processes fraction part and resets state', () => {
+        const node = createNodeWithClass('a-price-fraction');
+        const callback = vi.fn();
+        const state = createPriceState();
+
+        // Set up state as if previous nodes were processed
+        state.active = true;
+
+        const result = handleAmazonPrice(node, callback, state, 'a');
+
+        expect(result).toBe(true);
+        expect(node.firstChild.nodeValue).toBe('');
+        expect(state.active).toBe(false);
+        expect(callback).not.toHaveBeenCalled();
+      });
     });
 
     test('ignores whole part node when currency is not set', () => {
@@ -121,25 +200,9 @@ describe('Amazon Price Handler', () => {
       const callback = vi.fn();
       const state = createPriceState();
 
-      const result = handleAmazonPrice(node, callback, state);
+      const result = handleAmazonPrice(node, callback, state, 'sx');
 
       expect(result).toBe(false);
-      expect(callback).not.toHaveBeenCalled();
-    });
-
-    test('processes fractional part and resets state', () => {
-      const node = createNodeWithClass('sx-price-fractional');
-      const callback = vi.fn();
-      const state = createPriceState();
-
-      // Set up state as if previous nodes were processed
-      state.active = true;
-
-      const result = handleAmazonPrice(node, callback, state);
-
-      expect(result).toBe(true);
-      expect(node.firstChild.nodeValue).toBe('');
-      expect(state.active).toBe(false);
       expect(callback).not.toHaveBeenCalled();
     });
 
@@ -148,7 +211,7 @@ describe('Amazon Price Handler', () => {
       const callback = vi.fn();
       const state = createPriceState();
 
-      const result = handleAmazonPrice(node, callback, state);
+      const result = handleAmazonPrice(node, callback, state, 'sx');
 
       expect(result).toBe(false);
       expect(callback).not.toHaveBeenCalled();
@@ -159,7 +222,18 @@ describe('Amazon Price Handler', () => {
       const callback = vi.fn();
       const state = createPriceState();
 
-      const result = handleAmazonPrice(node, callback, state);
+      const result = handleAmazonPrice(node, callback, state, 'sx');
+
+      expect(result).toBe(false);
+      expect(callback).not.toHaveBeenCalled();
+    });
+
+    test('returns false for invalid pattern type', () => {
+      const node = createNodeWithClass('sx-price-currency');
+      const callback = vi.fn();
+      const state = createPriceState();
+
+      const result = handleAmazonPrice(node, callback, state, 'invalid-pattern');
 
       expect(result).toBe(false);
       expect(callback).not.toHaveBeenCalled();

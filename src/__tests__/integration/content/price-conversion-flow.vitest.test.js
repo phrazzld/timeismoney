@@ -63,9 +63,9 @@ describe('Price Conversion Integration Flow', () => {
     // Step 5: Verify results
     expect(result).toBe(true);
 
-    // The converted node should be replaced with a span
-    expect(parentNode.childNodes.length).toBe(1);
-    const span = parentNode.childNodes[0];
+    // Find the span that was added
+    const span = parentNode.querySelector(`.${CONVERTED_PRICE_CLASS}`);
+    expect(span).toBeTruthy();
     expect(span.tagName).toBe('SPAN');
     expect(span.className).toBe(CONVERTED_PRICE_CLASS);
     // The data-original-price attribute stores the entire match, not just the price
@@ -143,12 +143,15 @@ describe('Price Conversion Integration Flow', () => {
     // the wage is $15/hour for this test
 
     // First price: $10.99 / $15 ≈ 0.73 hours ≈ 44 minutes
-    expect(convertedElements[0].textContent).toContain('Item 1: $10.99');
+    expect(convertedElements[0].textContent).toContain('$10.99');
+    expect(convertedElements[0].textContent).toContain('0h 44m');
 
     // Second price: $24.50 / $15 ≈ 1.63 hours ≈ 1h 38m
-    expect(convertedElements[1].textContent).toContain('Item 2: $24.50');
+    expect(convertedElements[1].textContent).toContain('$24.50');
+    expect(convertedElements[1].textContent).toContain('1h 38m');
 
     // Third price: $35.49 / $15 ≈ 2.37 hours ≈ 2h 22m
-    expect(convertedElements[2].textContent).toContain('Your total is $35.49');
+    expect(convertedElements[2].textContent).toContain('$35.49');
+    expect(convertedElements[2].textContent).toContain('2h 22m');
   });
 });

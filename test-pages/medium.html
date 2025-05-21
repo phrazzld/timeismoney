@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medium Complexity Test Page - Time Is Money Benchmark</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+      .product {
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+      }
+      .price {
+        font-weight: bold;
+        color: #2a6496;
+      }
+      .price-usd::before {
+        content: '$';
+      }
+      .price-eur::before {
+        content: '€';
+      }
+      .price-gbp::before {
+        content: '£';
+      }
+      .price-jpy::before {
+        content: '¥';
+      }
+      .price-eur,
+      .price-gbp {
+        font-size: 1.1em;
+      }
+      header {
+        background: #f4f4f4;
+        padding: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      footer {
+        margin-top: 30px;
+        text-align: center;
+        font-size: 0.8em;
+        color: #666;
+      }
+      .category {
+        margin-bottom: 40px;
+      }
+      .review {
+        margin-top: 10px;
+        font-style: italic;
+        color: #666;
+        font-size: 0.9em;
+      }
+      .special-offer {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+      }
+      .currency-section {
+        margin: 30px 0;
+        padding: 20px;
+        background-color: #f0f7ff;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Medium Complexity Product Page</h1>
+      <p>This page contains a variety of products with different currency formats</p>
+    </header>
+
+    <main>
+      <section class="category">
+        <h2>US Products (USD)</h2>
+        <div class="product-grid">
+          <div class="product">
+            <h3>Premium Headphones</h3>
+            <p>Noise-cancelling with exceptional sound.</p>
+            <p class="price price-usd">149.99</p>
+            <div class="review">Great sound quality for the price!</div>
+          </div>
+
+          <div class="product">
+            <h3>Smart Watch</h3>
+            <p>Track fitness and receive notifications.</p>
+            <p class="price price-usd">299.95</p>
+            <div class="review">Battery lasts for days!</div>
+          </div>
+
+          <div class="product">
+            <h3>Wireless Keyboard</h3>
+            <p>Ergonomic design with long battery life.</p>
+            <p class="price price-usd">79.99</p>
+            <div class="review">Typing feels amazing on this keyboard.</div>
+          </div>
+
+          <div class="product">
+            <h3>External SSD</h3>
+            <p>1TB storage with fast transfer speeds.</p>
+            <p class="price price-usd">129.50</p>
+            <div class="review">Super fast and reliable storage.</div>
+          </div>
+
+          <div class="product">
+            <h3>Wireless Mouse</h3>
+            <p>Precise tracking and comfortable grip.</p>
+            <p class="price price-usd">49.99</p>
+            <div class="review">Feels great in hand and tracks well.</div>
+          </div>
+
+          <div class="product">
+            <h3>27" Monitor</h3>
+            <p>4K resolution with HDR support.</p>
+            <p class="price price-usd">349.99</p>
+            <div class="review">Amazing colors and clarity!</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="currency-section">
+        <h2>European Products (EUR)</h2>
+        <div class="product-grid">
+          <div class="product">
+            <h3>Coffee Machine</h3>
+            <p>Espresso and cappuccino maker.</p>
+            <p class="price price-eur">199,95</p>
+            <div class="review">Makes perfect coffee every time.</div>
+          </div>
+
+          <div class="product">
+            <h3>Wine Glasses Set</h3>
+            <p>Set of 6 crystal wine glasses.</p>
+            <p class="price price-eur">59,99</p>
+            <div class="review">Beautiful glasses, elegant design.</div>
+          </div>
+
+          <div class="product">
+            <h3>Electric Toothbrush</h3>
+            <p>Smart toothbrush with pressure sensor.</p>
+            <p class="price price-eur">89,50</p>
+            <div class="review">My teeth feel cleaner than ever!</div>
+          </div>
+        </div>
+
+        <p>All European products include 20% VAT and ship from Germany.</p>
+        <p>Standard shipping costs are €15,00 for orders under €100,00.</p>
+      </section>
+
+      <section class="currency-section">
+        <h2>UK Products (GBP)</h2>
+        <div class="product-grid">
+          <div class="product">
+            <h3>Wool Sweater</h3>
+            <p>100% Scottish wool, handmade.</p>
+            <p class="price price-gbp">79.99</p>
+            <div class="review">Warm and very comfortable.</div>
+          </div>
+
+          <div class="product">
+            <h3>Tea Set</h3>
+            <p>Porcelain tea set with 4 cups.</p>
+            <p class="price price-gbp">45.50</p>
+            <div class="review">Elegant set, perfect for afternoon tea.</div>
+          </div>
+
+          <div class="product">
+            <h3>Leather Wallet</h3>
+            <p>Genuine leather with RFID protection.</p>
+            <p class="price price-gbp">35.00</p>
+            <div class="review">Quality craftsmanship, will last years.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="currency-section">
+        <h2>Japanese Products (JPY)</h2>
+        <div class="product-grid">
+          <div class="product">
+            <h3>Rice Cooker</h3>
+            <p>Smart rice cooker with multiple settings.</p>
+            <p class="price price-jpy">14,500</p>
+            <div class="review">Perfect rice every time!</div>
+          </div>
+
+          <div class="product">
+            <h3>Chef's Knife</h3>
+            <p>Hand-forged steel knife from Osaka.</p>
+            <p class="price price-jpy">28,750</p>
+            <div class="review">Incredible sharpness and balance.</div>
+          </div>
+
+          <div class="product">
+            <h3>Matcha Tea Set</h3>
+            <p>Traditional matcha tea preparation kit.</p>
+            <p class="price price-jpy">9,800</p>
+            <div class="review">High quality, authentic experience.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="special-offer">
+        <h2>Special International Package</h2>
+        <p>Get products from around the world in one special package!</p>
+        <ul>
+          <li>Premium Headphones - <span class="price price-usd">149.99</span></li>
+          <li>Electric Toothbrush - <span class="price price-eur">89,50</span></li>
+          <li>Wool Sweater - <span class="price price-gbp">79.99</span></li>
+          <li>Chef's Knife - <span class="price price-jpy">28,750</span></li>
+        </ul>
+        <p>Total package price varies based on your local currency.</p>
+        <p>Shipping fees: US ($15), EU (€10), UK (£8), Japan (¥1500)</p>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2023 International Test Store</p>
+      <p>All prices shown in their local currencies</p>
+    </footer>
+
+    <!-- Performance measurement script will be injected by the testing framework -->
+  </body>
+</html>

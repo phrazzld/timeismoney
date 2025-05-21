@@ -127,6 +127,7 @@ export async function loadForm() {
     loadSavedOption('decimal', items.decimal);
     loadSavedOption('debounce-interval', items.debounceIntervalMs);
     loadSavedOption('enable-dynamic-scanning', items.enableDynamicScanning);
+    loadSavedOption('enable-debug-mode', items.debugMode);
 
     // Initialize formatting display
     document.getElementById('formatting').style.display = 'none';
@@ -174,6 +175,7 @@ export function saveOptions() {
   const rawDecimal = document.getElementById('decimal').value;
   const rawDebounceIntervalStr = document.getElementById('debounce-interval').value;
   const enableDynamicScanning = document.getElementById('enable-dynamic-scanning').checked;
+  const debugMode = document.getElementById('enable-debug-mode').checked;
   const status = document.getElementById('status');
 
   // Sanitize all inputs before validation
@@ -215,6 +217,7 @@ export function saveOptions() {
     decimal,
     debounceIntervalMs,
     enableDynamicScanning,
+    debugMode,
   })
     .then(() => {
       status.textContent = chrome.i18n.getMessage('saveSuccess');

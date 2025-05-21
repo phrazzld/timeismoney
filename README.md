@@ -8,6 +8,7 @@ Time Is Money is a Chrome extension that automatically converts prices online in
 
 - Automatically convert prices to hours of work based on your hourly wage
 - Supports various currency formats, including codes, symbols, and thousands' separators
+- Powered by Microsoft Recognizers Text and Money.js for accurate currency detection and handling across global currencies
 
 ## Featured On 🌟
 

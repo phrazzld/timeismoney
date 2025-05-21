@@ -24,6 +24,13 @@ describe('FormHandler Storage Error Direct Tests', () => {
     // Set up DOM elements needed by the tests
     setupTestDom();
 
+    // Create debug mode checkbox
+    const debugCheckbox = document.createElement('input');
+    debugCheckbox.id = 'enable-debug-mode';
+    debugCheckbox.type = 'checkbox';
+    debugCheckbox.checked = false;
+    document.body.appendChild(debugCheckbox);
+
     // Mock window.close so it doesn't throw error in tests
     window.close = vi.fn();
 
@@ -48,6 +55,7 @@ describe('FormHandler Storage Error Direct Tests', () => {
     document.getElementById('decimal').value = '.';
     document.getElementById('debounce-interval').value = '200';
     document.getElementById('enable-dynamic-scanning').checked = true;
+    document.getElementById('enable-debug-mode').checked = false;
   });
 
   afterEach(() => {
