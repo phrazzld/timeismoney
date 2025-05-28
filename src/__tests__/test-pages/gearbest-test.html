@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gearbest Price Test Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .product {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin: 10px 0;
+      }
+      .goods-price {
+        font-size: 24px;
+        color: #ff5722;
+        font-weight: bold;
+      }
+      .my-shop-price {
+        font-size: 20px;
+        color: #ff5722;
+      }
+      .price-label {
+        font-size: 14px;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Gearbest Price Detection Test Cases</h1>
+
+    <!-- Case 1: Standard Gearbest price format -->
+    <div class="product">
+      <h3>Product 1: USB Cable</h3>
+      <div class="goods-price">$4.99</div>
+    </div>
+
+    <!-- Case 2: Alternative price class -->
+    <div class="product">
+      <h3>Product 2: Phone Case</h3>
+      <div class="my-shop-price">€12.50</div>
+    </div>
+
+    <!-- Case 3: Price with currency separated -->
+    <div class="product">
+      <h3>Product 3: Headphones</h3>
+      <div class="goods-price">
+        <span class="currency">US$</span>
+        <span class="value">34.56</span>
+      </div>
+    </div>
+
+    <!-- Case 4: Price range format -->
+    <div class="product">
+      <h3>Product 4: Smart Watch</h3>
+      <div class="goods-price">$25.99 - $45.99</div>
+    </div>
+
+    <!-- Case 5: Price with additional text -->
+    <div class="product">
+      <h3>Product 5: Laptop Stand</h3>
+      <div class="price-label">Price:</div>
+      <div class="goods-price">USD 18.88</div>
+    </div>
+
+    <!-- Case 6: Complex nested structure -->
+    <div class="product">
+      <h3>Product 6: Wireless Mouse</h3>
+      <div class="product-price-wrapper">
+        <span class="price-label">Our Price: </span>
+        <span class="goods-price">£22.00</span>
+      </div>
+    </div>
+  </body>
+</html>

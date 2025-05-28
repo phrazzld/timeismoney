@@ -18,12 +18,38 @@ export const LOG_LEVEL = {
   ERROR: 3,
 };
 
+// Debug mode state
+let debugMode = false;
+
+/**
+ * Enable or disable debug mode
+ *
+ * @param {boolean} enabled - Whether to enable debug mode
+ */
+export function setDebugMode(enabled) {
+  debugMode = enabled;
+}
+
+/**
+ * Check if debug mode is enabled
+ *
+ * @returns {boolean} Whether debug mode is enabled
+ */
+export function isDebugMode() {
+  return debugMode;
+}
+
 /**
  * Get the minimum log level based on the current environment
  *
  * @returns {number} The minimum log level
  */
 function getMinLogLevel() {
+  // If debug mode is explicitly enabled, always use DEBUG level
+  if (debugMode) {
+    return LOG_LEVEL.DEBUG;
+  }
+
   const env = typeof process !== 'undefined' ? process.env.NODE_ENV : 'development';
 
   switch (env) {
@@ -38,9 +64,6 @@ function getMinLogLevel() {
   }
 }
 
-// Get the minimum log level based on the environment
-const MIN_LOG_LEVEL = getMinLogLevel();
-
 /**
  * Check if a message at the given level should be logged
  *
@@ -48,7 +71,9 @@ const MIN_LOG_LEVEL = getMinLogLevel();
  * @returns {boolean} True if the message should be logged
  */
 function shouldLog(level) {
-  return level >= MIN_LOG_LEVEL;
+  // Re-evaluate min log level if debug mode might have changed
+  const currentMinLevel = getMinLogLevel();
+  return level >= currentMinLevel;
 }
 
 /**
@@ -97,4 +122,25 @@ export function error(...args) {
     // eslint-disable-next-line no-console
     console.error(`${PREFIX}:`, ...args);
   }
+}
+
+/**
+ * Log debug message for price detection.
+ * Provides structured logging for price detection debugging
+ *
+ * @param {string} context - Context of the detection (e.g., 'pattern_match', 'dom_analysis')
+ * @param {object} data - Data to log
+ */
+export function debugPriceDetection(context, data) {
+  if (!shouldLog(LOG_LEVEL.DEBUG)) return;
+
+  const timestamp = new Date().toISOString();
+  const structuredLog = {
+    timestamp,
+    context,
+    ...data,
+  };
+
+  // eslint-disable-next-line no-console
+  console.debug(`${PREFIX}:PriceDetection:`, structuredLog);
 }
