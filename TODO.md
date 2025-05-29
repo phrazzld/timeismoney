@@ -68,11 +68,11 @@
 
 ### TASK-006: Create site-specific handlers module
 
-- [ ] Create `src/content/siteHandlers.js`
-- [ ] Amazon handler: aria-label + split price components
-- [ ] Cdiscount handler: "449€ 00" split format
-- [ ] eBay handler: multiple price representations
-- [ ] Gearbest handler: nested currency in child spans
+- [x] Create `src/content/siteHandlers.js`
+- [x] Amazon handler: aria-label + split price components
+- [x] Cdiscount handler: "449€ 00" split format
+- [x] eBay handler: multiple price representations
+- [x] Gearbest handler: nested currency in child spans
 - **Dependencies**: TASK-005
 - **Verification**: Each handler extracts its examples correctly
 - **Time**: 3 hours

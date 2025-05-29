@@ -5,9 +5,11 @@
  * @module content/domScanner
  */
 
-import { processIfAmazon, createPriceState } from './amazonHandler.js';
-import { processIfEbay } from './ebayHandler.js';
+import { processWithSiteHandler, registerExistingHandlers } from './siteHandlers.js';
 import { processElementAttributes } from './attributeDetector.js';
+
+// Register Amazon and eBay handlers
+registerExistingHandlers();
 import {
   CONVERTED_PRICE_CLASS,
   MAX_PENDING_NODES,
@@ -93,9 +95,6 @@ export const walk = (node, callback, settings, options = {}) => {
       return;
     }
 
-    // Create a local price state for this walk traversal
-    const amazonPriceState = createPriceState();
-
     let child, next;
 
     try {
@@ -117,36 +116,19 @@ export const walk = (node, callback, settings, options = {}) => {
               // Pass the local price state to maintain state between sibling nodes
               let specialHandlerProcessed = false;
 
-              // Try Amazon handler first
+              // Try site-specific handler first
               try {
-                specialHandlerProcessed = processIfAmazon(
+                specialHandlerProcessed = processWithSiteHandler(
                   child,
                   (textNode) => callback(textNode, settings),
-                  amazonPriceState
+                  settings
                 );
-              } catch (amazonError) {
+              } catch (siteHandlerError) {
                 logger.error(
-                  'Error in Amazon price processing:',
-                  amazonError.message,
-                  amazonError.stack
+                  'Error in site-specific price processing:',
+                  siteHandlerError.message,
+                  siteHandlerError.stack
                 );
-              }
-
-              // If not processed by Amazon handler, try eBay handler
-              if (!specialHandlerProcessed) {
-                try {
-                  specialHandlerProcessed = processIfEbay(
-                    child,
-                    (textNode) => callback(textNode, settings),
-                    settings
-                  );
-                } catch (ebayError) {
-                  logger.error(
-                    'Error in eBay price processing:',
-                    ebayError.message,
-                    ebayError.stack
-                  );
-                }
               }
 
               // If not processed by site-specific handlers, try attribute-based detection
