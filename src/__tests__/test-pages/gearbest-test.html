@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Gearbest Price Test Page</title>
+    <title>Gearbest Price Test Page (Based on Real gearbest.ma)</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -13,65 +13,63 @@
         padding: 15px;
         margin: 10px 0;
       }
-      .goods-price {
-        font-size: 24px;
+      .price_count {
+        font-size: 18px;
         color: #ff5722;
         font-weight: bold;
       }
-      .my-shop-price {
-        font-size: 20px;
-        color: #ff5722;
-      }
-      .price-label {
-        font-size: 14px;
+      .offer_grid .price_count del {
+        display: block;
+        font-size: 13px;
         color: #666;
+        text-decoration: line-through;
       }
     </style>
   </head>
   <body>
-    <h1>Gearbest Price Detection Test Cases</h1>
+    <h1>Gearbest Price Detection Test Cases (Real Structure)</h1>
 
-    <!-- Case 1: Standard Gearbest price format -->
+    <!-- Case 1: Real Gearbest price range format -->
     <div class="product">
-      <h3>Product 1: USB Cable</h3>
-      <div class="goods-price">$4.99</div>
+      <h3>Product 1: Electronics Item</h3>
+      <span class="price_count">6.00$ – 6.11$</span>
     </div>
 
-    <!-- Case 2: Alternative price class -->
+    <!-- Case 2: Another real price range -->
     <div class="product">
-      <h3>Product 2: Phone Case</h3>
-      <div class="my-shop-price">€12.50</div>
+      <h3>Product 2: Gadget</h3>
+      <span class="price_count">14.76$ – 15.36$</span>
     </div>
 
-    <!-- Case 3: Price with currency separated -->
+    <!-- Case 3: Sale pricing with original price -->
     <div class="product">
-      <h3>Product 3: Headphones</h3>
-      <div class="goods-price">
-        <span class="currency">US$</span>
-        <span class="value">34.56</span>
+      <h3>Product 3: Sale Item</h3>
+      <div class="offer_grid">
+        <span class="price_count">
+          <del>35.26$</del>
+          30.20$
+        </span>
       </div>
     </div>
 
-    <!-- Case 4: Price range format -->
+    <!-- Case 4: Single price point -->
     <div class="product">
-      <h3>Product 4: Smart Watch</h3>
-      <div class="goods-price">$25.99 - $45.99</div>
+      <h3>Product 4: Simple Item</h3>
+      <span class="price_count">25.99$</span>
     </div>
 
-    <!-- Case 5: Price with additional text -->
+    <!-- Case 5: Complex price with text -->
     <div class="product">
-      <h3>Product 5: Laptop Stand</h3>
-      <div class="price-label">Price:</div>
-      <div class="goods-price">USD 18.88</div>
+      <h3>Product 5: Special Offer</h3>
+      <span class="price_count"
+        >35.26$ Original price was: 35.26$. 30.20$ Current price is: 30.20$.</span
+      >
     </div>
 
-    <!-- Case 6: Complex nested structure -->
+    <!-- Case 6: Multiple pricing tiers -->
     <div class="product">
-      <h3>Product 6: Wireless Mouse</h3>
-      <div class="product-price-wrapper">
-        <span class="price-label">Our Price: </span>
-        <span class="goods-price">£22.00</span>
-      </div>
+      <h3>Product 6: Bulk Pricing</h3>
+      <span class="price_count">8.50$ – 12.99$</span>
     </div>
   </body>
 </html>

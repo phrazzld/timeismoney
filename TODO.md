@@ -57,11 +57,11 @@
 
 ### TASK-005: Create enhanced pattern library for real formats
 
-- [ ] Create `src/content/pricePatterns.js` with real-world patterns
-- [ ] Add patterns for space variations (272.46 €, € 14,32)
-- [ ] Add split component patterns (449€ 00 for Cdiscount)
-- [ ] Add contextual patterns (Under $X, from $X)
-- [ ] Add comma thousand separators ($2,500,000)
+- [x] Create `src/content/pricePatterns.js` with real-world patterns
+- [x] Add patterns for space variations (272.46 €, € 14,32)
+- [x] Add split component patterns (449€ 00 for Cdiscount)
+- [x] Add contextual patterns (Under $X, from $X)
+- [x] Add comma thousand separators ($2,500,000)
 - **Dependencies**: TASK-004
 - **Verification**: Patterns match all examples.md formats
 - **Time**: 2 hours
