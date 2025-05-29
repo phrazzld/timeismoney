@@ -1,5 +1,16 @@
 # TODO: Resolve Critical Site-Specific Price Detection Failures
 
+## Critical Updates Based on Real Examples (examples.md)
+
+**Major Discovery**: Real-world prices are often split across multiple DOM elements, use attributes like aria-label, and have formats we didn't anticipate:
+
+- Cdiscount: "449€ 00" (not "99€99") with cents in separate span
+- Amazon: Prices in aria-label or split across 4+ spans
+- Gearbest: Currency symbol in nested child element
+- Context prices: "Under $20", "from $2.99"
+
+**New Priority**: DOM analysis BEFORE pattern matching
+
 ## Phase 0: Setup & Analysis (Prerequisites)
 
 ### TASK-001: Set up feature branch and test infrastructure
@@ -13,95 +24,102 @@
 
 ### TASK-002: Analyze current price detection implementation
 
-- [ ] Deep dive into `priceFinder.js` current implementation
-- [ ] Document current pattern limitations
-- [ ] Identify exact failure points for problem sites
-- [ ] Create baseline performance metrics
+- [x] Deep dive into `priceFinder.js` current implementation
+- [x] Document current pattern limitations
+- [x] Identify exact failure points for problem sites
+- [x] Create baseline performance metrics
 - **Dependencies**: TASK-001
 - **Verification**: Analysis document with findings
 - **Time**: 1 hour
 
 ### TASK-003: Write tests for current price detection behavior
 
-- [ ] Create unit tests for existing `findPrices` function
-- [ ] Add tests that demonstrate current failures
-- [ ] Establish baseline test coverage
+- [x] Create unit tests for existing `findPrices` function
+- [x] Add tests that demonstrate current failures
+- [x] Add tests from real examples.md HTML snippets
+- [x] Test DOM-based price extraction scenarios
 - **Dependencies**: TASK-002
-- **Verification**: Tests pass for working cases, fail for known issues
-- **Time**: 1 hour
+- **Verification**: Tests pass for working cases, fail for known issues ✓
+- **Time**: 1.5 hours (actual: 2 hours)
 
-## Phase 1: Enhanced Pattern Recognition
+## Phase 1: DOM Analysis & Pattern Recognition
 
-### TASK-004: Create enhanced price pattern module
+### TASK-004: Create DOM price analyzer module (CRITICAL - NEW PRIORITY)
 
-- [ ] Create `src/content/pricePatterns.js` module
-- [ ] Implement pattern builder with standard patterns
-- [ ] Add support for separated currency patterns
-- [ ] Add special format patterns (cdiscount, ranges)
-- **Dependencies**: TASK-003
-- **Verification**: Unit tests for each pattern type
+- [x] Create `src/content/domPriceAnalyzer.js` module
+- [x] Implement attribute-based extraction (aria-label, data-\*)
+- [x] Handle split components (Amazon's multi-span prices)
+- [x] Support nested currency symbols (Gearbest's structure)
+- [x] Extract and combine text from complex DOM structures
+- **Dependencies**: TASK-003 ✓
+- **Verification**: Correctly extracts all examples.md prices ✓
+- **Time**: 3 hours (actual: 4 hours)
+
+### TASK-005: Create enhanced pattern library for real formats
+
+- [ ] Create `src/content/pricePatterns.js` with real-world patterns
+- [ ] Add patterns for space variations (272.46 €, € 14,32)
+- [ ] Add split component patterns (449€ 00 for Cdiscount)
+- [ ] Add contextual patterns (Under $X, from $X)
+- [ ] Add comma thousand separators ($2,500,000)
+- **Dependencies**: TASK-004
+- **Verification**: Patterns match all examples.md formats
 - **Time**: 2 hours
 
-### TASK-005: Implement pattern tests
+### TASK-006: Create site-specific handlers module
 
-- [ ] Write comprehensive unit tests for pattern module
-- [ ] Test each pattern variant with real-world examples
-- [ ] Include edge cases and format variations
-- [ ] Ensure 95%+ coverage for pattern module
-- **Dependencies**: TASK-004
-- **Verification**: All pattern tests pass
-- **Time**: 1 hour
+- [ ] Create `src/content/siteHandlers.js`
+- [ ] Amazon handler: aria-label + split price components
+- [ ] Cdiscount handler: "449€ 00" split format
+- [ ] eBay handler: multiple price representations
+- [ ] Gearbest handler: nested currency in child spans
+- **Dependencies**: TASK-005
+- **Verification**: Each handler extracts its examples correctly
+- **Time**: 3 hours
 
-### TASK-006: Create DOM structure analyzer module
+### TASK-007: Test DOM analyzer with real examples
 
-- [ ] Create `src/content/structureAnalyzer.js`
-- [ ] Implement `analyzePriceStructure` function
-- [ ] Add logic to combine text from related elements
-- [ ] Handle prices split across child elements
-- **Dependencies**: TASK-003
-- **Verification**: Unit tests for structure analysis
-- **Time**: 1.5 hours
-
-### TASK-007: Implement structure analyzer tests
-
-- [ ] Write unit tests for structure analyzer
-- [ ] Create mock DOM structures from failing sites
-- [ ] Test element combination logic
-- [ ] Verify correct text extraction
+- [ ] Create test suite from examples.md HTML snippets
+- [ ] Test attribute extraction (aria-label)
+- [ ] Test multi-element price assembly
+- [ ] Test nested currency symbol handling
+- [ ] Verify all real examples are correctly extracted
 - **Dependencies**: TASK-006
-- **Verification**: All structure tests pass
-- **Time**: 1 hour
+- **Verification**: 100% of examples.md prices extracted
+- **Time**: 2 hours
 
-### TASK-008: Create site configuration system
+### TASK-008: Create unified price extraction pipeline
 
-- [ ] Create `src/content/siteConfigs.js`
-- [ ] Define configuration schema
-- [ ] Add initial configs for problem sites
-- [ ] Implement config loading logic
+- [ ] Create `src/content/priceExtractor.js`
+- [ ] Integrate DOM analyzer as primary strategy
+- [ ] Fall back to pattern matching for simple cases
+- [ ] Apply site-specific handlers when available
+- [ ] Support multiple extraction strategies in order
 - **Dependencies**: TASK-004, TASK-006
-- **Verification**: Unit tests for config system
-- **Time**: 1 hour
+- **Verification**: Pipeline handles all example types
+- **Time**: 2 hours
 
-### TASK-009: Integrate enhanced patterns into priceFinder
+### TASK-009: Integrate new extraction into priceFinder
 
-- [ ] Refactor `findPrices` to use new pattern module
-- [ ] Integrate structure analyzer
-- [ ] Apply site-specific configurations
-- [ ] Maintain backward compatibility
-- **Dependencies**: TASK-004, TASK-006, TASK-008
-- **Verification**: Existing tests still pass
-- **Time**: 1.5 hours
+- [ ] Modify `findPrices` to use new extraction pipeline
+- [ ] Add DOM element parameter alongside text
+- [ ] Maintain backward compatibility for text-only
+- [ ] Log extraction strategy used for debugging
+- **Dependencies**: TASK-008
+- **Verification**: Existing + new tests pass
+- **Time**: 2 hours
 
-## Phase 2: Fallback Strategies
+## Phase 2: Multi-Strategy Detection
 
-### TASK-010: Implement multi-pass detection
+### TASK-010: Implement multi-pass detection with DOM priority
 
-- [ ] Create `standardDetection` function
-- [ ] Create `relaxedDetection` function
-- [ ] Create `contextualDetection` function
-- [ ] Implement pass orchestration logic
+- [ ] Pass 1: Site-specific handler (if available)
+- [ ] Pass 2: DOM attribute extraction (aria-label, data-\*)
+- [ ] Pass 3: DOM structure analysis (split components)
+- [ ] Pass 4: Enhanced pattern matching on extracted text
+- [ ] Pass 5: Contextual patterns (Under $X, from $X)
 - **Dependencies**: TASK-009
-- **Verification**: Unit tests for each pass
+- **Verification**: Each pass tested independently
 - **Time**: 2 hours
 
 ### TASK-011: Add element context analysis
@@ -126,15 +144,16 @@
 
 ## Phase 3: Testing & Validation
 
-### TASK-013: Create manual test pages
+### TASK-013: Test with real examples.md cases
 
-- [ ] Create test page for gearbest.com patterns
-- [ ] Create test page for cdiscount.com patterns
-- [ ] Create test page for aliexpress.com patterns
-- [ ] Add to test infrastructure
+- [ ] Convert examples.md to automated test cases
+- [ ] Test Cdiscount "449€ 00" split format
+- [ ] Test Amazon aria-label and split components
+- [ ] Test Gearbest nested currency symbols
+- [ ] Test contextual prices (Under $X)
 - **Dependencies**: TASK-012
-- **Verification**: Test pages render correctly
-- **Time**: 30 minutes
+- **Verification**: All examples detected correctly
+- **Time**: 2 hours
 
 ### TASK-014: Implement debug mode enhancements
 
@@ -201,13 +220,21 @@
 ## Summary
 
 - **Total Tasks**: 19
-- **Estimated Time**: ~20 hours
-- **Critical Path**: TASK-001 → TASK-002 → TASK-003 → TASK-004 → TASK-009 → TASK-010 → TASK-012 → TASK-016
+- **Estimated Time**: ~25 hours (increased due to DOM complexity)
+- **Critical Path**: TASK-001 → TASK-002 → TASK-003 → TASK-004 (DOM) → TASK-008 → TASK-009 → TASK-010 → TASK-013
+
+## Key Changes from Original Plan
+
+1. **DOM-First Approach**: Analyze element structure before text patterns
+2. **Real Examples**: Using examples.md instead of synthetic test pages
+3. **Site Handlers**: Active extraction logic, not just configuration
+4. **Multi-Strategy**: 5-pass detection including attributes and context
+5. **Complex Formats**: Handle split prices, nested elements, aria-labels
 
 ## Notes
 
-- Tasks are designed to be atomic and independently verifiable
-- TDD approach is used throughout (tests before implementation)
-- Performance validation is included to prevent regression
-- Each phase builds on the previous one with clear dependencies
-- Integration testing ensures changes work on real sites
+- DOM analysis is now the PRIMARY strategy, not a fallback
+- Pattern matching becomes a supplementary approach
+- Site-specific handlers are essential for major e-commerce sites
+- Must handle prices split across multiple elements
+- Performance impact expected but necessary for accuracy
