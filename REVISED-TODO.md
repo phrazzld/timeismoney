@@ -1,158 +1,131 @@
-# REVISED TODO: Enhanced Price Detection Based on Real-World Examples
+# REVISED TODO: Universal Price Detection System
 
-## Critical Discoveries from Real HTML
+## Critical Realization
 
-1. **Cdiscount uses "449€ 00" format**, not "99€99" - cents in separate span
-2. **Amazon splits prices across 4+ elements** with aria-labels
-3. **Gearbest nests currency symbols** in child spans
-4. **Many sites use attributes** (aria-label, data-\*) for prices
-5. **Contextual prices** ("Under $20", "from $2.99") are common
+Site-specific handlers are the WRONG approach. The patterns we discovered (split prices, nested currency, contextual phrases) are **universal e-commerce patterns** that should work everywhere.
 
-## Revised Phase 1: DOM Structure Analysis (NEW PRIORITY)
+## Completed Work (Keep These!)
 
-### TASK-004A: Create DOM structure analyzer (REVISED)
+### ✅ TASK-004: DOM Price Analyzer
 
-- [ ] Create `src/content/domPriceAnalyzer.js` module
-- [ ] Implement attribute-based extraction (aria-label, data-\*)
-- [ ] Handle split price components across multiple elements
-- [ ] Support currency symbols in child elements
-- [ ] Extract text from nested structures intelligently
-- **Dependencies**: TASK-003
-- **Verification**: Correctly extracts all examples.md prices
-- **Time**: 3 hours
+- Already universal! Works on any DOM structure
+- Extracts from attributes, split elements, nested structures
+- No refactoring needed
 
-### TASK-004B: Create element combination strategies
+### ✅ TASK-005: Enhanced Pattern Library
 
-- [ ] Implement smart text combination from child nodes
-- [ ] Handle "449€ 00" split format for Cdiscount
-- [ ] Handle Amazon's symbol/whole/fraction split
-- [ ] Handle Gearbest's nested currency symbols
-- [ ] Preserve proper spacing between components
-- **Dependencies**: TASK-004A
-- **Verification**: Unit tests for each example format
-- **Time**: 2 hours
+- Already universal! Patterns work on any text
+- Space variations, split components, contextual phrases
+- No refactoring needed
 
-## Revised Phase 2: Enhanced Pattern Recognition
+### ⚠️ TASK-006: Site Handlers (Needs Refactor)
 
-### TASK-005A: Create comprehensive pattern library
+- Built with wrong approach (domain-restricted)
+- Contains good pattern logic that should be universal
+- Need to extract patterns and remove domain checks
 
-- [ ] Add patterns for space variations (272.46 €, € 14,32)
-- [ ] Add split component patterns (449€ 00)
-- [ ] Add contextual patterns (Under $X, from $X)
-- [ ] Add comma thousand separators ($2,500,000)
-- [ ] Support attribute-extracted text patterns
-- **Dependencies**: TASK-004B
-- **Verification**: Pattern tests for all examples.md formats
-- **Time**: 2 hours
+## New Universal Approach Tasks
 
-### TASK-005B: Implement pattern selection logic
+### TASK-007: Create Universal Price Extractor
 
-- [ ] Auto-detect best pattern based on found elements
-- [ ] Try multiple patterns in order of likelihood
-- [ ] Handle pattern failures gracefully
-- [ ] Log pattern attempts for debugging
-- **Dependencies**: TASK-005A
-- **Verification**: Correct pattern selection for each site
-- **Time**: 1.5 hours
+- [ ] Create `src/content/universalPriceExtractor.js`
+- [ ] Combine ALL extraction strategies (DOM + patterns)
+- [ ] No domain checks - patterns work everywhere
+- [ ] Single unified extraction interface
+- **Dependencies**: TASK-004, TASK-005
+- **Time**: 1 hour
 
-## Revised Phase 3: Site-Specific Enhancements
+### TASK-008: Implement Currency Filtering
 
-### TASK-006A: Create site handler framework
+- [ ] Add currency detection logic
+- [ ] Filter to only process user's selected currency
+- [ ] Leave other currencies untouched
+- [ ] Add comprehensive tests
+- **Dependencies**: TASK-007
+- **Time**: 30 minutes
 
-- [ ] Create `src/content/siteHandlers.js` module
-- [ ] Define handler interface for custom extraction
-- [ ] Implement plugin system for site-specific logic
-- [ ] Support both CSS selectors and extraction functions
-- **Dependencies**: TASK-005B
-- **Verification**: Framework supports all example sites
-- **Time**: 2 hours
+### TASK-009: Refactor DOM Scanner
 
-### TASK-006B: Implement specific site handlers
+- [ ] Remove site-specific handler imports
+- [ ] Use universal extractor instead
+- [ ] Simplify the walk logic
+- [ ] Update all integration points
+- **Dependencies**: TASK-007, TASK-008
+- **Time**: 30 minutes
 
-- [ ] Amazon handler: aria-label + split components
-- [ ] Cdiscount handler: split euro format
-- [ ] eBay handler: handle strikethrough/hidden prices
-- [ ] Gearbest handler: nested currency symbols
-- [ ] Zillow handler: comma thousands
-- **Dependencies**: TASK-006A
-- **Verification**: Each handler extracts its examples correctly
-- **Time**: 3 hours
+### TASK-010: Universal Testing Suite
 
-## Revised Phase 4: Integration and Fallback
+- [ ] Test all patterns work on generic HTML
+- [ ] Remove site-specific test constraints
+- [ ] Add currency filtering tests
+- [ ] Verify examples.md patterns universally
+- **Dependencies**: TASK-009
+- **Time**: 1 hour
 
-### TASK-007A: Integrate DOM analysis with price finder
+### TASK-011: Cleanup and Documentation
 
-- [ ] Modify `findPrices` to use DOM analyzer first
-- [ ] Fall back to text-based detection
-- [ ] Combine results from multiple strategies
-- [ ] Maintain backward compatibility
-- **Dependencies**: TASK-006B
-- **Verification**: Existing + new tests pass
-- **Time**: 2 hours
+- [ ] Remove site-specific handler code
+- [ ] Update architecture documentation
+- [ ] Clean up unused imports/files
+- [ ] Update README with new approach
+- **Dependencies**: TASK-010
+- **Time**: 30 minutes
 
-### TASK-007B: Implement multi-pass detection
+## Deferred/Removed Tasks
 
-- [ ] Pass 1: Site-specific handler
-- [ ] Pass 2: DOM structure analysis
-- [ ] Pass 3: Attribute extraction
-- [ ] Pass 4: Text pattern matching
-- [ ] Pass 5: Contextual patterns
-- **Dependencies**: TASK-007A
-- **Verification**: Each pass tested independently
-- **Time**: 2 hours
+### ❌ Site-Specific Configurations
 
-## Phase 5: Testing with Real Examples
+- Not needed with universal approach
 
-### TASK-008: Create test suite from examples.md
+### ❌ Per-Site Test Pages
 
-- [ ] Convert each example to a test case
-- [ ] Test both detection and conversion
-- [ ] Verify no false positives
-- [ ] Performance benchmarks
-- **Dependencies**: TASK-007B
-- **Verification**: 100% of examples.md prices detected
-- **Time**: 2 hours
+- Patterns should work on ANY HTML
 
-## Critical Implementation Notes
+### ❌ Site Handler Framework
 
-### DOM-First Approach
+- Overly complex for no benefit
 
-Unlike our original plan which focused on regex patterns, we need a **DOM-first approach**:
+## Future Enhancements (Post-MVP)
 
-1. Analyze element structure
-2. Check attributes (aria-label, data-\*)
-3. Combine child elements intelligently
-4. THEN apply text patterns
+### Multi-Currency Support
 
-### Pattern Flexibility
+- [ ] Allow conversion between currencies
+- [ ] Real-time exchange rates
+- [ ] User can see prices in preferred currency
 
-Patterns must handle:
+### Pattern Learning
 
-- Space variations (before/after currency)
-- Split components (currency/amount in different elements)
-- Nested structures (currency symbol as child)
-- Contextual phrases ("Under", "from")
+- [ ] Detect new patterns automatically
+- [ ] Machine learning for price detection
+- [ ] Crowdsourced pattern updates
 
-### Site-Specific Knowledge
+### Performance Optimization
 
-Each major site needs custom handling:
+- [ ] Lazy pattern compilation
+- [ ] Caching extracted prices
+- [ ] Incremental DOM updates
 
-- **Amazon**: aria-label + component assembly
-- **Cdiscount**: split euro format
-- **eBay**: multiple price representations
-- **Gearbest**: WooCommerce structure
+## Architecture Principles
+
+1. **Universal First**: Every pattern works everywhere
+2. **Currency Aware**: Only convert user's selected currency
+3. **Simple Pipeline**: DOM → Extract → Filter → Convert
+4. **No Special Cases**: Avoid site-specific logic
 
 ## Success Metrics
 
-1. **Primary**: All examples.md prices detected and converted
-2. **Secondary**: No regression on existing functionality
-3. **Tertiary**: Performance impact < 10%
-4. **Bonus**: Framework extensible for new sites
+1. All examples.md prices detected universally
+2. Currency filtering working correctly
+3. Simplified codebase (less code than before)
+4. Better test coverage
+5. Faster execution (fewer checks)
 
-## Removed/Deprioritized Tasks
+## Implementation Order
 
-- Original TASK-004 (pattern-only approach) - replaced with DOM analysis
-- Original site configs - replaced with active handlers
-- Manual test pages - use real examples instead
+1. TASK-007: Universal extractor (foundation)
+2. TASK-008: Currency filtering (critical feature)
+3. TASK-009: DOM scanner refactor (integration)
+4. TASK-010: Testing (validation)
+5. TASK-011: Cleanup (polish)
 
-This revised approach addresses the **actual** complexity found in real-world e-commerce sites rather than our simplified assumptions.
+This approach is simpler, more maintainable, and more powerful than site-specific handlers.
