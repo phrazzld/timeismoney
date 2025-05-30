@@ -79,11 +79,11 @@
 
 ### TASK-007: Test DOM analyzer with real examples
 
-- [ ] Create test suite from examples.md HTML snippets
-- [ ] Test attribute extraction (aria-label)
-- [ ] Test multi-element price assembly
-- [ ] Test nested currency symbol handling
-- [ ] Verify all real examples are correctly extracted
+- [x] Create test suite from examples.md HTML snippets
+- [x] Test attribute extraction (aria-label)
+- [x] Test multi-element price assembly
+- [x] Test nested currency symbol handling
+- [x] Verify all real examples are correctly extracted
 - **Dependencies**: TASK-006
 - **Verification**: 100% of examples.md prices extracted
 - **Time**: 2 hours
