@@ -5,11 +5,8 @@
  * @module content/domScanner
  */
 
-import { processWithSiteHandler, registerExistingHandlers } from './siteHandlers.js';
+import { processWithUniversalExtractor } from './universalPriceExtractor.js';
 import { processElementAttributes } from './attributeDetector.js';
-
-// Register Amazon and eBay handlers
-registerExistingHandlers();
 import {
   CONVERTED_PRICE_CLASS,
   MAX_PENDING_NODES,
@@ -112,26 +109,24 @@ export const walk = (node, callback, settings, options = {}) => {
             try {
               next = child.nextSibling;
 
-              // Handle Amazon price components with the dedicated handler
-              // Pass the local price state to maintain state between sibling nodes
+              // Try universal price extraction first
               let specialHandlerProcessed = false;
 
-              // Try site-specific handler first
               try {
-                specialHandlerProcessed = processWithSiteHandler(
+                specialHandlerProcessed = processWithUniversalExtractor(
                   child,
                   (textNode) => callback(textNode, settings),
                   settings
                 );
-              } catch (siteHandlerError) {
+              } catch (extractorError) {
                 logger.error(
-                  'Error in site-specific price processing:',
-                  siteHandlerError.message,
-                  siteHandlerError.stack
+                  'Error in universal price extraction:',
+                  extractorError.message,
+                  extractorError.stack
                 );
               }
 
-              // If not processed by site-specific handlers, try attribute-based detection
+              // If not processed by universal extractor, try attribute-based detection
               if (!specialHandlerProcessed) {
                 try {
                   specialHandlerProcessed = processElementAttributes(
