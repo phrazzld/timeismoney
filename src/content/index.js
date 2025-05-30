@@ -321,7 +321,7 @@ document.addEventListener(
  * @param {string} [preloadedSettings.decimal] - Decimal separator format
  * @returns {void}
  */
-const convert = (textNode, preloadedSettings) => {
+const convert = async (textNode, preloadedSettings) => {
   try {
     // Validate text node
     if (!textNode || !textNode.nodeValue || textNode.nodeType !== 3) {
@@ -350,142 +350,124 @@ const convert = (textNode, preloadedSettings) => {
 
     // Use preloaded settings if provided, otherwise fetch them
     // The MutationObserver in domScanner.js will now always provide preloadedSettings
-    const settingsPromise = preloadedSettings ? Promise.resolve(preloadedSettings) : getSettings();
+    const settings = preloadedSettings || (await getSettings());
 
-    settingsPromise
-      .then((settings) => {
-        try {
-          // Validate settings
-          if (!settings || typeof settings !== 'object') {
-            logger.error('Invalid or missing settings for conversion');
-            return;
-          }
+    // Validate settings
+    if (!settings || typeof settings !== 'object') {
+      logger.error('Invalid or missing settings for conversion');
+      return;
+    }
 
-          // STEP 1: Prepare the format settings for price finding
-          const formatSettings = {
-            currencySymbol: settings.currencySymbol || '$', // Fallback to defaults if missing
-            currencyCode: settings.currencyCode || 'USD',
-            thousands: settings.thousands || 'commas',
-            decimal: settings.decimal || 'dot',
-            isReverseSearch: settings.disabled === true,
-          };
+    // STEP 1: Prepare the format settings for price finding
+    const formatSettings = {
+      currencySymbol: settings.currencySymbol || '$', // Fallback to defaults if missing
+      currencyCode: settings.currencyCode || 'USD',
+      thousands: settings.thousands || 'commas',
+      decimal: settings.decimal || 'dot',
+      isReverseSearch: settings.disabled === true,
+    };
 
-          // STEP 2: Use priceFinder to identify prices in the text
-          // First get the price patterns and formatters
-          let priceMatch;
-          try {
-            priceMatch = findPrices(textNode.nodeValue, formatSettings);
-          } catch (priceFinderError) {
-            logger.error('Error in price finding algorithm:', priceFinderError.message, {
-              textContent: textNode?.nodeValue?.substring(0, 50) + '...',
-              formatSettings,
-            });
-            return; // Skip this node on price finding error
-          }
-
-          // Exit if no price patterns were found (not an error condition)
-          if (!priceMatch) {
-            return;
-          }
-
-          // STEP 2b: Extract actual price information using the patterns
-          // Note: In the refactored approach, we don't need to extract matches manually as
-          // the recognitionService will handle this. However, we keep this for backward compatibility
-          // with the legacy implementation that expects pattern matching.
-          try {
-            // Use the pattern to check if there are matches in the text
-            const matches = textNode.nodeValue.match(priceMatch.pattern);
-            if (!matches || matches.length === 0) {
-              // No actual price matches in the text
-              return;
-            }
-
-            // We know there are matches, so we're good to proceed
-            logger.debug('Found price match in text:', matches[0], {
-              pattern: priceMatch.pattern.toString(),
-              thousands: priceMatch.thousands?.toString() || 'N/A',
-              decimal: priceMatch.decimal?.toString() || 'N/A',
-              culture: priceMatch.culture || 'en-US',
-              formatInfo: priceMatch.formatInfo,
-            });
-          } catch (matchError) {
-            logger.error('Error matching prices in text:', matchError.message, {
-              textContent: textNode?.nodeValue?.substring(0, 50) + '...',
-            });
-            return;
-          }
-
-          // STEP 3: Prepare conversion information for the converter
-          const conversionInfo = {
-            convertFn: convertPriceToTimeString,
-            // If priceMatch has a culture property, use it. Otherwise use default 'en-US'.
-            // This is the culture string used by the recognition service
-            culture: priceMatch.culture || 'en-US',
-            // Keep formatters for backward compatibility with legacy implementations
-            formatters: {
-              thousands: priceMatch.thousands,
-              decimal: priceMatch.decimal,
-            },
-            wageInfo: {
-              frequency: settings.frequency || 'hourly',
-              amount: settings.amount || '10', // Provide a reasonable default for amount
-              // Add currencyCode for the new service-based implementation
-              currencyCode: settings.currencyCode || 'USD',
-            },
-          };
-
-          // Verify the wage amount is provided and valid
-          if (
-            !conversionInfo.wageInfo.amount ||
-            isNaN(parseFloat(conversionInfo.wageInfo.amount)) ||
-            parseFloat(conversionInfo.wageInfo.amount) <= 0
-          ) {
-            logger.warn('Invalid wage amount, using default');
-            conversionInfo.wageInfo.amount = '10';
-          }
-
-          // STEP 4: Use domModifier to update the DOM with the converted prices
-          try {
-            // Update the call to use culture alongside formatters for backward compatibility
-            // This allows processTextNode to work with both the legacy and new service-based approach
-            const result = processTextNode(
-              textNode,
-              priceMatch,
-              conversionInfo,
-              formatSettings.isReverseSearch
-            );
-            if (result) {
-              logger.debug('Successfully converted price in DOM');
-            } else {
-              logger.warn('Failed to convert price in DOM - processTextNode returned false', {
-                textContent: textNode?.nodeValue?.substring(0, 50) + '...',
-              });
-            }
-          } catch (domModifierError) {
-            logger.error('Error in DOM modification:', domModifierError.message, {
-              textContent: textNode?.nodeValue?.substring(0, 50) + '...',
-              priceMatch:
-                typeof priceMatch === 'object'
-                  ? { pattern: priceMatch.pattern?.toString(), culture: priceMatch.culture }
-                  : 'Invalid priceMatch',
-              errorDetails: domModifierError.stack,
-            });
-          }
-        } catch (error) {
-          logger.error('Error converting price in text node:', error.message, {
-            textContent: textNode?.nodeValue?.substring(0, 50) + '...',
-            errorDetails: error.stack,
-          });
-        }
-      })
-      .catch((error) => {
-        // Handle settings retrieval errors separately to aid in debugging
-        if (error && error.message === 'Extension context invalidated') {
-          logger.debug('Conversion skipped: Extension context invalidated');
-        } else {
-          logger.error('Failed to get settings:', error?.message || 'Unknown error', error?.stack);
-        }
+    // STEP 2: Use priceFinder to identify prices in the text
+    // First get the price patterns and formatters
+    let priceMatch;
+    try {
+      priceMatch = await findPrices(textNode.nodeValue, formatSettings);
+    } catch (priceFinderError) {
+      logger.error('Error in price finding algorithm:', priceFinderError.message, {
+        textContent: textNode?.nodeValue?.substring(0, 50) + '...',
+        formatSettings,
       });
+      return; // Skip this node on price finding error
+    }
+
+    // Exit if no price patterns were found (not an error condition)
+    if (!priceMatch) {
+      return;
+    }
+
+    // STEP 2b: Extract actual price information using the patterns
+    // Note: In the refactored approach, we don't need to extract matches manually as
+    // the recognitionService will handle this. However, we keep this for backward compatibility
+    // with the legacy implementation that expects pattern matching.
+    try {
+      // Use the pattern to check if there are matches in the text
+      const matches = textNode.nodeValue.match(priceMatch.pattern);
+      if (!matches || matches.length === 0) {
+        // No actual price matches in the text
+        return;
+      }
+
+      // We know there are matches, so we're good to proceed
+      logger.debug('Found price match in text:', matches[0], {
+        pattern: priceMatch.pattern.toString(),
+        thousands: priceMatch.thousands?.toString() || 'N/A',
+        decimal: priceMatch.decimal?.toString() || 'N/A',
+        culture: priceMatch.culture || 'en-US',
+        formatInfo: priceMatch.formatInfo,
+      });
+    } catch (matchError) {
+      logger.error('Error matching prices in text:', matchError.message, {
+        textContent: textNode?.nodeValue?.substring(0, 50) + '...',
+      });
+      return;
+    }
+
+    // STEP 3: Prepare conversion information for the converter
+    const conversionInfo = {
+      convertFn: convertPriceToTimeString,
+      // If priceMatch has a culture property, use it. Otherwise use default 'en-US'.
+      // This is the culture string used by the recognition service
+      culture: priceMatch.culture || 'en-US',
+      // Keep formatters for backward compatibility with legacy implementations
+      formatters: {
+        thousands: priceMatch.thousands,
+        decimal: priceMatch.decimal,
+      },
+      wageInfo: {
+        frequency: settings.frequency || 'hourly',
+        amount: settings.amount || '10', // Provide a reasonable default for amount
+        // Add currencyCode for the new service-based implementation
+        currencyCode: settings.currencyCode || 'USD',
+      },
+    };
+
+    // Verify the wage amount is provided and valid
+    if (
+      !conversionInfo.wageInfo.amount ||
+      isNaN(parseFloat(conversionInfo.wageInfo.amount)) ||
+      parseFloat(conversionInfo.wageInfo.amount) <= 0
+    ) {
+      logger.warn('Invalid wage amount, using default');
+      conversionInfo.wageInfo.amount = '10';
+    }
+
+    // STEP 4: Use domModifier to update the DOM with the converted prices
+    try {
+      // Update the call to use culture alongside formatters for backward compatibility
+      // This allows processTextNode to work with both the legacy and new service-based approach
+      const result = processTextNode(
+        textNode,
+        priceMatch,
+        conversionInfo,
+        formatSettings.isReverseSearch
+      );
+      if (result) {
+        logger.debug('Successfully converted price in DOM');
+      } else {
+        logger.warn('Failed to convert price in DOM - processTextNode returned false', {
+          textContent: textNode?.nodeValue?.substring(0, 50) + '...',
+        });
+      }
+    } catch (domModifierError) {
+      logger.error('Error in DOM modification:', domModifierError.message, {
+        textContent: textNode?.nodeValue?.substring(0, 50) + '...',
+        priceMatch:
+          typeof priceMatch === 'object'
+            ? { pattern: priceMatch.pattern?.toString(), culture: priceMatch.culture }
+            : 'Invalid priceMatch',
+        errorDetails: domModifierError.stack,
+      });
+    }
   } catch (topLevelError) {
     // Catch all unexpected errors to prevent extension from breaking
     logger.error(

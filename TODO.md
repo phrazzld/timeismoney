@@ -101,10 +101,10 @@
 
 ### TASK-009: Integrate new extraction into priceFinder
 
-- [ ] Modify `findPrices` to use new extraction pipeline
-- [ ] Add DOM element parameter alongside text
-- [ ] Maintain backward compatibility for text-only
-- [ ] Log extraction strategy used for debugging
+- [x] Modify `findPrices` to use new extraction pipeline
+- [x] Add DOM element parameter alongside text
+- [x] Maintain backward compatibility for text-only
+- [x] Log extraction strategy used for debugging
 - **Dependencies**: TASK-008
 - **Verification**: Existing + new tests pass
 - **Time**: 2 hours
