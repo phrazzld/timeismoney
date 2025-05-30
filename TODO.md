@@ -90,11 +90,11 @@
 
 ### TASK-008: Create unified price extraction pipeline
 
-- [ ] Create `src/content/priceExtractor.js`
-- [ ] Integrate DOM analyzer as primary strategy
-- [ ] Fall back to pattern matching for simple cases
-- [ ] Apply site-specific handlers when available
-- [ ] Support multiple extraction strategies in order
+- [x] Create `src/content/priceExtractor.js`
+- [x] Integrate DOM analyzer as primary strategy
+- [x] Fall back to pattern matching for simple cases
+- [x] Apply site-specific handlers when available
+- [x] Support multiple extraction strategies in order
 - **Dependencies**: TASK-004, TASK-006
 - **Verification**: Pipeline handles all example types
 - **Time**: 2 hours
