@@ -111,7 +111,7 @@ export function extractPricesFromElement(element, options = {}) {
  * @param {Element} element - DOM element to analyze
  * @returns {Array} Array of price objects
  */
-function extractFromAttributes(element) {
+export function extractFromAttributes(element) {
   const prices = [];
 
   // Check aria-label attribute
@@ -171,7 +171,7 @@ function extractFromAttributes(element) {
  * @param {object} options - Configuration options
  * @returns {Array} Array of price objects
  */
-function assembleSplitComponents(element, options) {
+export function assembleSplitComponents(element, options) {
   const prices = [];
 
   // Pattern 1: Cdiscount split euro format (449€ 00)
@@ -232,7 +232,7 @@ function assembleSplitComponents(element, options) {
  * @param {Element} element - DOM element to analyze
  * @returns {Array} Array of price objects
  */
-function extractNestedCurrency(element) {
+export function extractNestedCurrency(element) {
   const prices = [];
 
   // WooCommerce pattern: <bdi>6.26<span class="woocommerce-Price-currencySymbol">$</span></bdi>
@@ -264,7 +264,7 @@ function extractNestedCurrency(element) {
  * @param {Element} element - DOM element to analyze
  * @returns {Array} Array of price objects
  */
-function extractContextualPrices(element) {
+export function extractContextualPrices(element) {
   const prices = [];
   const text = element.textContent?.trim();
 
@@ -300,13 +300,367 @@ function extractContextualPrices(element) {
 }
 
 /**
+ * Price-related patterns for context analysis
+ */
+const PRICE_CONTAINER_PATTERNS = [
+  /price/i,
+  /cost/i,
+  /amount/i,
+  /currency/i,
+  /money/i,
+  /product-price/i,
+  /sale-price/i,
+  /current-price/i,
+  /pricing/i,
+  /checkout/i,
+  /cart/i,
+  /total/i,
+];
+
+const PRICE_CLASS_PATTERNS = [
+  /price/i,
+  /cost/i,
+  /amount/i,
+  /currency/i,
+  /money/i,
+  /sale/i,
+  /current/i,
+  /original/i,
+  /regular/i,
+];
+
+const PRICE_DATA_ATTRIBUTES = [
+  'data-price',
+  'data-amount',
+  'data-value',
+  'data-cost',
+  'data-currency',
+  'data-currency-code',
+  'data-original-price',
+];
+
+const SEMANTIC_CONTEXTS = {
+  cart: /cart|basket|checkout/i,
+  shipping: /shipping|delivery|freight/i,
+  tax: /tax|vat|gst/i,
+  comparison: /compare|vs|versus/i,
+  product: /product|item|goods/i,
+};
+
+const PRICE_TYPE_PATTERNS = {
+  sale: /sale|discount|special/i,
+  original: /original|regular|was|before/i,
+  current: /current|now|today/i,
+  shipping: /shipping|delivery|freight/i,
+  tax: /tax|vat|gst/i,
+};
+
+/**
+ * Analyze element context for price detection
+ *
+ * @param {Element} element - DOM element to analyze
+ * @param {object} options - Configuration options
+ * @returns {object} Context analysis results
+ */
+export function getElementContext(element, options = {}) {
+  if (!element || typeof element.nodeType === 'undefined') {
+    return createEmptyContext();
+  }
+
+  const context = {
+    element,
+    confidence: 0,
+    priceIndicators: analyzePriceIndicators(element),
+    hierarchy: analyzeHierarchy(element, options.maxDepth || 5),
+    attributes: analyzeAttributes(element),
+    semantics: analyzeSemantics(element),
+  };
+
+  context.confidence = calculateConfidence(context);
+  return context;
+}
+
+/**
+ * Create empty context structure
+ *
+ * @returns {object} Empty context object
+ */
+function createEmptyContext() {
+  return {
+    element: null,
+    confidence: 0,
+    priceIndicators: {
+      hasParentContainer: false,
+      hasPriceClasses: false,
+      hasDataAttributes: false,
+      hasSemanticContext: false,
+    },
+    hierarchy: {
+      priceContainer: null,
+      depth: 0,
+      siblingCount: 0,
+    },
+    attributes: {
+      priceRelated: [],
+      dataAttributes: [],
+      ariaLabels: [],
+    },
+    semantics: {
+      containerType: null,
+      priceType: null,
+      currencyHint: null,
+    },
+  };
+}
+
+/**
+ * Analyze price indicators for element
+ *
+ * @param {Element} element - DOM element to analyze
+ * @returns {object} Price indicators analysis
+ */
+function analyzePriceIndicators(element) {
+  const attributes = analyzeAttributes(element);
+  const hierarchy = analyzeHierarchy(element, 5);
+  const semantics = analyzeSemantics(element);
+
+  return {
+    hasParentContainer: hierarchy.priceContainer !== null,
+    hasPriceClasses: attributes.priceRelated.length > 0,
+    hasDataAttributes: attributes.dataAttributes.length > 0,
+    hasSemanticContext: semantics.containerType !== null || semantics.priceType !== null,
+  };
+}
+
+/**
+ * Analyze element hierarchy and parent containers
+ *
+ * @param {Element} element - DOM element to analyze
+ * @param {number} maxDepth - Maximum depth to traverse up
+ * @returns {object} Hierarchy analysis
+ */
+function analyzeHierarchy(element, maxDepth = 5) {
+  const hierarchy = {
+    priceContainer: null,
+    depth: 0,
+    siblingCount: 0,
+  };
+
+  try {
+    // Find price container by traversing up the DOM tree
+    let current = element.parentElement;
+    let depth = 1;
+
+    while (current && depth <= maxDepth) {
+      if (isPriceContainer(current)) {
+        hierarchy.priceContainer = current;
+        hierarchy.depth = depth;
+        break;
+      }
+      current = current.parentElement;
+      depth++;
+    }
+
+    // Analyze siblings for price-related elements
+    if (element.parentElement) {
+      const siblings = Array.from(element.parentElement.children);
+      hierarchy.siblingCount = siblings.filter(
+        (sibling) => sibling !== element && isPriceRelatedElement(sibling)
+      ).length;
+    }
+  } catch (error) {
+    // Handle edge cases like detached elements
+  }
+
+  return hierarchy;
+}
+
+/**
+ * Analyze element attributes for price-related patterns
+ *
+ * @param {Element} element - DOM element to analyze
+ * @returns {object} Attributes analysis
+ */
+function analyzeAttributes(element) {
+  const attributes = {
+    priceRelated: [],
+    dataAttributes: [],
+    ariaLabels: [],
+  };
+
+  try {
+    // Check class names for price-related patterns
+    const className = element.className || '';
+    if (typeof className === 'string') {
+      const classNames = className.split(/\s+/);
+      attributes.priceRelated = classNames.filter((cls) =>
+        PRICE_CLASS_PATTERNS.some((pattern) => pattern.test(cls))
+      );
+    }
+
+    // Check data attributes
+    if (element.attributes) {
+      Array.from(element.attributes).forEach((attr) => {
+        if (PRICE_DATA_ATTRIBUTES.includes(attr.name)) {
+          attributes.dataAttributes.push(attr.name);
+        }
+      });
+    }
+
+    // Check aria-label
+    const ariaLabel = element.getAttribute('aria-label');
+    if (ariaLabel) {
+      attributes.ariaLabels.push(ariaLabel);
+    }
+  } catch (error) {
+    // Handle edge cases
+  }
+
+  return attributes;
+}
+
+/**
+ * Analyze semantic context of element
+ *
+ * @param {Element} element - DOM element to analyze
+ * @returns {object} Semantic analysis
+ */
+function analyzeSemantics(element) {
+  const semantics = {
+    containerType: null,
+    priceType: null,
+    currencyHint: null,
+  };
+
+  try {
+    // Check for container type by traversing up the tree
+    let current = element;
+    while (current && current !== document.body) {
+      const className = (current.className || '').toString();
+      const id = current.id || '';
+      const combined = `${className} ${id}`.toLowerCase();
+
+      // Check container type using SEMANTIC_CONTEXTS patterns
+      for (const [type, pattern] of Object.entries(SEMANTIC_CONTEXTS)) {
+        if (pattern.test(combined)) {
+          semantics.containerType = type;
+          break;
+        }
+      }
+
+      // Check for currency hints
+      if (/usd|dollar/i.test(combined)) {
+        semantics.currencyHint = 'USD';
+      } else if (/eur|euro/i.test(combined)) {
+        semantics.currencyHint = 'EUR';
+      } else if (/gbp|pound/i.test(combined)) {
+        semantics.currencyHint = 'GBP';
+      }
+
+      if (semantics.containerType && semantics.currencyHint) break;
+      current = current.parentElement;
+    }
+
+    // Check price type from element itself
+    const elementClass = (element.className || '').toString();
+    for (const [type, pattern] of Object.entries(PRICE_TYPE_PATTERNS)) {
+      if (pattern.test(elementClass)) {
+        semantics.priceType = type;
+        break;
+      }
+    }
+  } catch (error) {
+    // Handle edge cases
+  }
+
+  return semantics;
+}
+
+/**
+ * Calculate confidence score based on context analysis
+ *
+ * @param {object} context - Context analysis object
+ * @returns {number} Confidence score (0-1)
+ */
+function calculateConfidence(context) {
+  let confidence = 0;
+
+  // Base confidence from individual indicators (increased values)
+  if (context.priceIndicators.hasParentContainer) confidence += 0.4;
+  if (context.priceIndicators.hasPriceClasses) confidence += 0.4;
+  if (context.priceIndicators.hasDataAttributes) confidence += 0.3;
+  if (context.priceIndicators.hasSemanticContext) confidence += 0.25;
+
+  // Bonus for aria-label attributes
+  if (context.attributes.ariaLabels.length > 0) {
+    confidence += 0.3;
+  }
+
+  // Bonus for multiple indicators
+  const indicatorCount = Object.values(context.priceIndicators).filter(Boolean).length;
+  if (indicatorCount >= 3) confidence += 0.15;
+  else if (indicatorCount >= 2) confidence += 0.1;
+  else if (indicatorCount >= 1) confidence += 0.05;
+
+  // Bonus for shallow hierarchy (closer to price container)
+  if (context.hierarchy.priceContainer && context.hierarchy.depth <= 2) {
+    confidence += 0.15;
+  }
+
+  // Bonus for price-related siblings
+  if (context.hierarchy.siblingCount > 0) {
+    confidence += Math.min(0.15, context.hierarchy.siblingCount * 0.075);
+  }
+
+  // Ensure confidence is within bounds
+  return Math.min(1, Math.max(0, confidence));
+}
+
+/**
+ * Check if element is a price container
+ *
+ * @param {Element} element - DOM element to check
+ * @returns {boolean} True if element is price container
+ */
+function isPriceContainer(element) {
+  if (!element) return false;
+
+  try {
+    const className = (element.className || '').toString();
+    const id = element.id || '';
+    const combined = `${className} ${id}`.toLowerCase();
+
+    return PRICE_CONTAINER_PATTERNS.some((pattern) => pattern.test(combined));
+  } catch (error) {
+    return false;
+  }
+}
+
+/**
+ * Check if element is price-related
+ *
+ * @param {Element} element - DOM element to check
+ * @returns {boolean} True if element is price-related
+ */
+function isPriceRelatedElement(element) {
+  if (!element) return false;
+
+  try {
+    const className = (element.className || '').toString();
+    return PRICE_CLASS_PATTERNS.some((pattern) => pattern.test(className));
+  } catch (error) {
+    return false;
+  }
+}
+
+/**
  * Extract prices from text content (fallback strategy)
  *
  * @param {Element} element - DOM element to analyze
  * @param {object} options - Configuration options
  * @returns {Array} Array of price objects
  */
-function extractFromTextContent(element, options) {
+export function extractFromTextContent(element, options) {
   const prices = [];
 
   // Check main element text

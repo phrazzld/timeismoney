@@ -6,7 +6,14 @@
  */
 
 import * as logger from '../utils/logger.js';
-import { extractPricesFromElement } from './domPriceAnalyzer.js';
+import {
+  extractPricesFromElement,
+  extractFromAttributes,
+  assembleSplitComponents,
+  extractNestedCurrency,
+  extractContextualPrices,
+  getElementContext,
+} from './domPriceAnalyzer.js';
 import { getHandlerForCurrentSite, processWithSiteHandler } from './siteHandlers.js';
 import { selectBestPattern } from './pricePatterns.js';
 
@@ -364,8 +371,364 @@ class ExtractionPipeline {
   }
 }
 
+/**
+ * Multi-Pass Strategy Classes
+ * Each pass represents a different extraction approach with increasing scope
+ */
+
+/**
+ * Pass 1: Site-Specific Handler Pass
+ */
+const siteSpecificPass = {
+  name: 'site-specific',
+  priority: 1,
+
+  canHandle(input) {
+    return input.element && getHandlerForCurrentSite() !== null;
+  },
+
+  async extract(input, context) {
+    return siteSpecificStrategy.extract(input, context);
+  },
+};
+
+/**
+ * Pass 2: DOM Attribute Extraction Pass
+ */
+const attributeExtractionPass = {
+  name: 'attribute-extraction',
+  priority: 2,
+
+  canHandle(input) {
+    return !!input.element;
+  },
+
+  // eslint-disable-next-line no-unused-vars
+  async extract(input, _context) {
+    logDebug(this.name, 'Extracting from DOM attributes');
+
+    try {
+      const prices = extractFromAttributes(input.element) || [];
+
+      if (!Array.isArray(prices)) {
+        return [];
+      }
+
+      return prices.map((price) => ({
+        value: price.value,
+        currency: price.currency,
+        text: price.text,
+        confidence: price.confidence || 0.9,
+        strategy: this.name,
+        metadata: {
+          source: price.source,
+          extractionMethod: 'attribute',
+        },
+      }));
+    } catch (error) {
+      logDebug(this.name, 'Attribute extraction error', { error: error.message });
+      return [];
+    }
+  },
+};
+
+/**
+ * Pass 3: DOM Structure Analysis Pass
+ */
+const structureAnalysisPass = {
+  name: 'structure-analysis',
+  priority: 3,
+
+  canHandle(input) {
+    return !!input.element;
+  },
+
+  async extract(input, context) {
+    logDebug(this.name, 'Analyzing DOM structure');
+
+    try {
+      const allPrices = [];
+
+      // Get element context for enhanced analysis
+      const elementContext = getElementContext(input.element, context.options) || {
+        confidence: 0,
+        priceIndicators: { hasParentContainer: false },
+        semantics: { containerType: null, priceType: null },
+      };
+      logDebug(this.name, 'Element context analysis', {
+        confidence: elementContext.confidence,
+        hasParentContainer: elementContext.priceIndicators?.hasParentContainer,
+        containerType: elementContext.semantics?.containerType,
+      });
+
+      // Split components analysis
+      const splitPrices = assembleSplitComponents(input.element, context.options) || [];
+      if (Array.isArray(splitPrices)) {
+        allPrices.push(...splitPrices);
+      }
+
+      // Nested currency analysis
+      const nestedPrices = extractNestedCurrency(input.element) || [];
+      if (Array.isArray(nestedPrices)) {
+        allPrices.push(...nestedPrices);
+      }
+
+      // Context-enhanced extraction for high-confidence elements
+      if (elementContext.confidence > 0.7) {
+        logDebug(this.name, 'High-confidence context detected, applying enhanced extraction');
+
+        // Apply context-based confidence boost
+        const contextBoost = Math.min(0.2, elementContext.confidence * 0.2);
+
+        return allPrices.map((price) => ({
+          value: price.value,
+          currency: price.currency,
+          text: price.text,
+          confidence: Math.min(0.95, (price.confidence || 0.85) + contextBoost),
+          strategy: this.name,
+          metadata: {
+            source: price.source || 'structure-analysis',
+            extractionMethod: price.strategy || 'structure',
+            contextData: {
+              elementConfidence: elementContext.confidence,
+              containerType: elementContext.semantics.containerType,
+              priceType: elementContext.semantics.priceType,
+              hasParentContainer: elementContext.priceIndicators.hasParentContainer,
+            },
+          },
+        }));
+      }
+
+      return allPrices.map((price) => ({
+        value: price.value,
+        currency: price.currency,
+        text: price.text,
+        confidence: price.confidence || 0.85,
+        strategy: this.name,
+        metadata: {
+          source: price.source || 'structure-analysis',
+          extractionMethod: price.strategy || 'structure',
+          contextData: {
+            elementConfidence: elementContext.confidence,
+            containerType: elementContext.semantics.containerType,
+          },
+        },
+      }));
+    } catch (error) {
+      logDebug(this.name, 'Structure analysis error', { error: error.message });
+      return [];
+    }
+  },
+};
+
+/**
+ * Pass 4: Enhanced Pattern Matching Pass
+ */
+const patternMatchingPass = {
+  name: 'pattern-matching',
+  priority: 4,
+
+  canHandle(input) {
+    return !!input.text;
+  },
+
+  async extract(input, context) {
+    return patternMatchingStrategy.extract(input, context);
+  },
+};
+
+/**
+ * Pass 5: Contextual Patterns Pass
+ */
+const contextualPatternsPass = {
+  name: 'contextual-patterns',
+  priority: 5,
+
+  canHandle(input) {
+    return !!input.text || !!input.element;
+  },
+
+  // eslint-disable-next-line no-unused-vars
+  async extract(input, _context) {
+    logDebug(this.name, 'Extracting contextual patterns');
+
+    try {
+      // Handle element input
+      if (input.element) {
+        const prices = extractContextualPrices(input.element) || [];
+
+        if (!Array.isArray(prices)) {
+          return [];
+        }
+
+        return prices.map((price) => ({
+          value: price.value,
+          currency: price.currency,
+          text: price.text,
+          confidence: price.confidence || 0.7,
+          strategy: this.name,
+          metadata: {
+            source: price.source || 'contextual',
+            context: price.context,
+            extractionMethod: 'contextual',
+          },
+        }));
+      }
+
+      // Handle text-only input by creating a temporary element
+      if (input.text) {
+        const tempElement = document.createElement('div');
+        tempElement.textContent = input.text;
+
+        const prices = extractContextualPrices(tempElement) || [];
+
+        if (!Array.isArray(prices)) {
+          return [];
+        }
+
+        return prices.map((price) => ({
+          value: price.value,
+          currency: price.currency,
+          text: price.text,
+          confidence: price.confidence || 0.7,
+          strategy: this.name,
+          metadata: {
+            source: price.source || 'contextual',
+            context: price.context,
+            extractionMethod: 'contextual',
+          },
+        }));
+      }
+
+      return [];
+    } catch (error) {
+      logDebug(this.name, 'Contextual extraction error', { error: error.message });
+      return [];
+    }
+  },
+};
+
+/**
+ * Multi-Pass Pipeline Class
+ * Extends the base ExtractionPipeline to support explicit pass execution
+ */
+class MultiPassPipeline extends ExtractionPipeline {
+  constructor() {
+    const passes = [
+      siteSpecificPass,
+      attributeExtractionPass,
+      structureAnalysisPass,
+      patternMatchingPass,
+      contextualPatternsPass,
+    ];
+    super(passes);
+  }
+
+  /**
+   * Execute multi-pass extraction with enhanced logging and control
+   *
+   * @param {object} input - Input data
+   * @param {object} options - Extraction options
+   * @returns {Promise<Array>} Extracted prices
+   */
+  async extract(input, options = {}) {
+    if (options.multiPassMode) {
+      return this.executeMultiPassDetection(input, options);
+    }
+    return super.extract(input, options);
+  }
+
+  /**
+   * Execute explicit multi-pass detection
+   *
+   * @param {object} input - Input data
+   * @param {object} options - Extraction options
+   * @returns {Promise<Array>} Extracted prices
+   */
+  async executeMultiPassDetection(input, options) {
+    const context = this.prepareContext(input, options);
+    const results = [];
+    const passResults = [];
+
+    // Filter passes if onlyPass option is specified
+    let passesToRun = this.strategies;
+    if (options.onlyPass) {
+      passesToRun = this.strategies.filter((pass) => pass.name === options.onlyPass);
+      if (passesToRun.length === 0) {
+        logDebug('multi-pass', `Invalid pass name: ${options.onlyPass}`);
+        return [];
+      }
+    }
+
+    for (let i = 0; i < passesToRun.length; i++) {
+      const pass = passesToRun[i];
+
+      try {
+        logDebug('multi-pass', `Starting pass ${pass.name}`, {
+          passNumber: i + 1,
+          totalPasses: passesToRun.length,
+          canHandle: pass.canHandle(input),
+        });
+
+        // Skip passes that can't handle this input
+        if (!pass.canHandle(input)) {
+          logDebug('multi-pass', `Skipping ${pass.name} - cannot handle input`);
+          continue;
+        }
+
+        const passResult = await Promise.resolve(pass.extract(input, context));
+        passResults.push({ pass: pass.name, results: passResult });
+
+        logDebug('multi-pass', `Pass ${pass.name} completed`, {
+          resultCount: passResult.length,
+          confidence: passResult.map((r) => r.confidence),
+        });
+
+        if (passResult && passResult.length > 0) {
+          results.push(...passResult);
+
+          // Check for early termination
+          if (this.shouldTerminateAfterPass(results, options)) {
+            logDebug('multi-pass', 'Early termination - high confidence result found');
+            break;
+          }
+        }
+      } catch (error) {
+        logger.error(`Error in ${pass.name} pass:`, error);
+        logDebug('multi-pass', `Pass ${pass.name} failed`, { error: error.message });
+        // Continue with next pass
+      }
+    }
+
+    logDebug('multi-pass', 'Multi-pass detection complete', {
+      totalResults: results.length,
+      passesExecuted: passResults.map((p) => p.pass),
+    });
+
+    return this.processResults(results, options);
+  }
+
+  /**
+   * Check if pipeline should terminate after current pass
+   *
+   * @param {Array} results - Current results
+   * @param {object} options - Extraction options
+   * @returns {boolean} True if should terminate
+   */
+  shouldTerminateAfterPass(results, options) {
+    if (options.exhaustive || options.returnMultiple) {
+      return false;
+    }
+
+    // Terminate if we have a high-confidence result
+    const highConfidenceThreshold = options.earlyExitConfidence || 0.9;
+    return results.some((result) => result.confidence >= highConfidenceThreshold);
+  }
+}
+
 // Default pipeline instance
 let defaultPipeline = null;
+let multiPassPipeline = null;
 
 /**
  * Get or create the default pipeline
@@ -377,6 +740,18 @@ function getDefaultPipeline() {
     defaultPipeline = new ExtractionPipeline();
   }
   return defaultPipeline;
+}
+
+/**
+ * Get or create the multi-pass pipeline
+ *
+ * @returns {MultiPassPipeline} Multi-pass pipeline instance
+ */
+function getMultiPassPipeline() {
+  if (!multiPassPipeline) {
+    multiPassPipeline = new MultiPassPipeline();
+  }
+  return multiPassPipeline;
 }
 
 /**
@@ -450,7 +825,8 @@ export async function extractPrice(input, options = {}) {
     }
 
     // Get or create pipeline
-    const pipeline = options.pipeline || getDefaultPipeline();
+    const pipeline =
+      options.pipeline || (options.multiPassMode ? getMultiPassPipeline() : getDefaultPipeline());
 
     // Extract prices
     const results = await pipeline.extract(normalizedInput, options);

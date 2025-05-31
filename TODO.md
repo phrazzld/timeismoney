@@ -113,24 +113,24 @@
 
 ### TASK-010: Implement multi-pass detection with DOM priority
 
-- [ ] Pass 1: Site-specific handler (if available)
-- [ ] Pass 2: DOM attribute extraction (aria-label, data-\*)
-- [ ] Pass 3: DOM structure analysis (split components)
-- [ ] Pass 4: Enhanced pattern matching on extracted text
-- [ ] Pass 5: Contextual patterns (Under $X, from $X)
-- **Dependencies**: TASK-009
-- **Verification**: Each pass tested independently
-- **Time**: 2 hours
+- [x] Pass 1: Site-specific handler (if available) ✓
+- [x] Pass 2: DOM attribute extraction (aria-label, data-\*) ✓
+- [x] Pass 3: DOM structure analysis (split components) ✓
+- [x] Pass 4: Enhanced pattern matching on extracted text ✓
+- [x] Pass 5: Contextual patterns (Under $X, from $X) ✓
+- **Dependencies**: TASK-009 ✓
+- **Verification**: Each pass tested independently ✓
+- **Time**: 2 hours (actual: 5 hours)
 
 ### TASK-011: Add element context analysis
 
-- [ ] Implement `getElementContext` function
-- [ ] Add parent element inspection logic
-- [ ] Check for price-related class/id attributes
-- [ ] Integrate with detection passes
-- **Dependencies**: TASK-010
-- **Verification**: Context analysis tests
-- **Time**: 1 hour
+- [x] Implement `getElementContext` function ✓
+- [x] Add parent element inspection logic ✓
+- [x] Check for price-related class/id attributes ✓
+- [x] Integrate with detection passes ✓
+- **Dependencies**: TASK-010 ✓
+- **Verification**: Context analysis tests ✓
+- **Time**: 1 hour (actual: 2 hours)
 
 ### TASK-012: Create fallback strategy tests
 
