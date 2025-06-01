@@ -146,11 +146,11 @@
 
 ### TASK-013: Test with real examples.md cases
 
-- [ ] Convert examples.md to automated test cases
-- [ ] Test Cdiscount "449€ 00" split format
-- [ ] Test Amazon aria-label and split components
-- [ ] Test Gearbest nested currency symbols
-- [ ] Test contextual prices (Under $X)
+- [x] Convert examples.md to automated test cases
+- [x] Test Cdiscount "449€ 00" split format
+- [x] Test Amazon aria-label and split components
+- [x] Test Gearbest nested currency symbols
+- [x] Test contextual prices (Under $X)
 - **Dependencies**: TASK-012
 - **Verification**: All examples detected correctly
 - **Time**: 2 hours
