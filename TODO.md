@@ -134,10 +134,10 @@
 
 ### TASK-012: Create fallback strategy tests
 
-- [ ] Write integration tests for multi-pass detection
-- [ ] Test fallback behavior on failing examples
-- [ ] Verify no false positives
-- [ ] Ensure performance within bounds
+- [x] Write integration tests for multi-pass detection
+- [x] Test fallback behavior on failing examples
+- [x] Verify no false positives
+- [x] Ensure performance within bounds
 - **Dependencies**: TASK-010, TASK-011
 - **Verification**: All fallback tests pass
 - **Time**: 1 hour
