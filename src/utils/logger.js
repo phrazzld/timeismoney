@@ -125,22 +125,66 @@ export function error(...args) {
 }
 
 /**
- * Log debug message for price detection.
- * Provides structured logging for price detection debugging
+ * Generate a unique correlation ID for request tracing
  *
- * @param {string} context - Context of the detection (e.g., 'pattern_match', 'dom_analysis')
- * @param {object} data - Data to log
+ * @returns {string} Unique correlation ID
  */
-export function debugPriceDetection(context, data) {
-  if (!shouldLog(LOG_LEVEL.DEBUG)) return;
+function generateCorrelationId() {
+  return `pid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+}
+
+/**
+ * Enhanced debug logging for price detection with comprehensive diagnostics
+ * Follows DEVELOPMENT_PHILOSOPHY.md structured logging standards
+ *
+ * @param {string} phase - Detection phase (pipeline-start|strategy-attempt|strategy-result|pipeline-complete)
+ * @param {string} context - Specific context (site-specific|dom-analyzer|pattern-matching|pipeline)
+ * @param {object} data - Data to log (default: {})
+ * @param {object} timing - Performance timing data (start, end, duration)
+ * @param {string} correlationId - Request correlation ID (auto-generated if not provided)
+ * @param {object} siteConfig - Site configuration information
+ */
+export function debugPriceDetection(
+  phase,
+  context,
+  data = {},
+  timing = null,
+  correlationId = null,
+  siteConfig = null
+) {
+  // Check debug mode first, then shouldLog
+  if (!debugMode || !shouldLog(LOG_LEVEL.DEBUG)) return;
 
   const timestamp = new Date().toISOString();
+  const actualCorrelationId = correlationId || generateCorrelationId();
+
+  // Build structured log following DEVELOPMENT_PHILOSOPHY.md standards
   const structuredLog = {
     timestamp,
+    correlation_id: actualCorrelationId,
+    service_name: 'timeismoney-price-detection',
+    phase,
     context,
-    ...data,
+    message: `Price detection ${phase} in ${context}`,
+    data: data || {},
   };
 
+  // Add performance timing if provided
+  if (timing) {
+    structuredLog.timing = timing;
+    structuredLog.performance_metrics = {
+      duration: timing.duration || timing.end - timing.start,
+      start_time: timing.start,
+      end_time: timing.end,
+    };
+  }
+
+  // Add site configuration if provided
+  if (siteConfig) {
+    structuredLog.site_config = siteConfig;
+  }
+
+  // Log with structured output
   // eslint-disable-next-line no-console
   console.debug(`${PREFIX}:PriceDetection:`, structuredLog);
 }

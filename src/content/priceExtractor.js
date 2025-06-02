@@ -6,6 +6,7 @@
  */
 
 import * as logger from '../utils/logger.js';
+import { debugPriceDetection } from '../utils/logger.js';
 import {
   extractPricesFromElement,
   extractFromAttributes,
@@ -53,25 +54,7 @@ export function getDebugLog() {
   return [...debugLog];
 }
 
-/**
- * Log debug information
- *
- * @param {string} strategy - Strategy name
- * @param {string} message - Debug message
- * @param {object} data - Additional data
- */
-function logDebug(strategy, message, data = {}) {
-  if (debugMode) {
-    const entry = {
-      timestamp: Date.now(),
-      strategy,
-      message,
-      ...data,
-    };
-    debugLog.push(entry);
-    logger.debug(`[${strategy}] ${message}`, data);
-  }
-}
+// logDebug function removed - replaced with enhanced debugPriceDetection
 
 /**
  * Extraction strategy interface
@@ -100,7 +83,7 @@ const siteSpecificStrategy = {
       return [];
     }
 
-    logDebug(this.name, 'Using site-specific handler', { handler: handler.name });
+    debugPriceDetection('strategy-attempt', 'site-specific', { handler: handler.name });
 
     const results = [];
     const processCallback = (textNode) => {
@@ -127,7 +110,10 @@ const siteSpecificStrategy = {
     try {
       processWithSiteHandler(input.element, processCallback, context.settings);
     } catch (error) {
-      logDebug(this.name, 'Site handler error', { error: error.message });
+      debugPriceDetection('strategy-result', 'site-specific', {
+        error: error.message,
+        success: false,
+      });
     }
 
     return results;
@@ -146,13 +132,16 @@ const domAnalyzerStrategy = {
   },
 
   extract(input, context) {
-    logDebug(this.name, 'Analyzing DOM element');
+    debugPriceDetection('strategy-attempt', 'dom-analyzer', { elementType: input.element.tagName });
 
     try {
       const analyzerResults = extractPricesFromElement(input.element, context.options);
 
       if (!analyzerResults.prices || analyzerResults.prices.length === 0) {
-        logDebug(this.name, 'No prices found in DOM');
+        debugPriceDetection('strategy-result', 'dom-analyzer', {
+          success: false,
+          message: 'No prices found in DOM',
+        });
         return [];
       }
 
@@ -170,10 +159,17 @@ const domAnalyzerStrategy = {
         },
       }));
 
-      logDebug(this.name, 'Found prices', { count: results.length });
+      debugPriceDetection('strategy-result', 'dom-analyzer', {
+        success: true,
+        count: results.length,
+        extractionTime: analyzerResults.metadata?.extractionTime,
+      });
       return results;
     } catch (error) {
-      logDebug(this.name, 'DOM analyzer error', { error: error.message });
+      debugPriceDetection('strategy-result', 'dom-analyzer', {
+        success: false,
+        error: error.message,
+      });
       return [];
     }
   },
@@ -191,13 +187,18 @@ const patternMatchingStrategy = {
   },
 
   extract(input, context) {
-    logDebug(this.name, 'Matching patterns in text', { text: input.text });
+    debugPriceDetection('strategy-attempt', 'pattern-matching', {
+      textLength: input.text?.length || 0,
+    });
 
     try {
       const patternMatch = selectBestPattern(input.text, context.patternContext);
 
       if (!patternMatch) {
-        logDebug(this.name, 'No pattern match found');
+        debugPriceDetection('strategy-result', 'pattern-matching', {
+          success: false,
+          message: 'No pattern match found',
+        });
         return [];
       }
 
@@ -212,10 +213,17 @@ const patternMatchingStrategy = {
         },
       };
 
-      logDebug(this.name, 'Pattern matched', { pattern: patternMatch.pattern });
+      debugPriceDetection('strategy-result', 'pattern-matching', {
+        success: true,
+        pattern: patternMatch.pattern,
+        confidence: result.confidence,
+      });
       return [result];
     } catch (error) {
-      logDebug(this.name, 'Pattern matching error', { error: error.message });
+      debugPriceDetection('strategy-result', 'pattern-matching', {
+        success: false,
+        error: error.message,
+      });
       return [];
     }
   },
@@ -250,13 +258,19 @@ class ExtractionPipeline {
       try {
         // Skip strategies that can't handle this input
         if (!strategy.canHandle(input)) {
-          logDebug('pipeline', `Skipping ${strategy.name} - cannot handle input`);
+          debugPriceDetection('pipeline-strategy', 'strategy-skip', {
+            strategy: strategy.name,
+            reason: 'cannot handle input',
+          });
           continue;
         }
 
         // Skip specific strategies if excluded
         if (options.excludeStrategies?.includes(strategy.name)) {
-          logDebug('pipeline', `Skipping ${strategy.name} - excluded by options`);
+          debugPriceDetection('pipeline-strategy', 'strategy-skip', {
+            strategy: strategy.name,
+            reason: 'excluded by options',
+          });
           continue;
         }
 
@@ -268,7 +282,10 @@ class ExtractionPipeline {
 
           // Early exit if high-confidence result found
           if (this.shouldEarlyExit(results, options)) {
-            logDebug('pipeline', 'Early exit - high confidence result found');
+            debugPriceDetection('pipeline-complete', 'early-exit', {
+              reason: 'high confidence result found',
+              resultCount: results.length,
+            });
             break;
           }
         }
@@ -278,7 +295,7 @@ class ExtractionPipeline {
       }
     }
 
-    logDebug('pipeline', 'Pipeline complete', {
+    debugPriceDetection('pipeline-complete', 'extraction-complete', {
       processedStrategies,
       resultCount: results.length,
     });
@@ -405,7 +422,9 @@ const attributeExtractionPass = {
 
   // eslint-disable-next-line no-unused-vars
   async extract(input, _context) {
-    logDebug(this.name, 'Extracting from DOM attributes');
+    debugPriceDetection('strategy-attempt', 'attribute-extraction', {
+      elementType: input.element?.tagName,
+    });
 
     try {
       const prices = extractFromAttributes(input.element) || [];
@@ -426,7 +445,10 @@ const attributeExtractionPass = {
         },
       }));
     } catch (error) {
-      logDebug(this.name, 'Attribute extraction error', { error: error.message });
+      debugPriceDetection('strategy-result', 'attribute-extraction', {
+        success: false,
+        error: error.message,
+      });
       return [];
     }
   },
@@ -444,7 +466,9 @@ const structureAnalysisPass = {
   },
 
   async extract(input, context) {
-    logDebug(this.name, 'Analyzing DOM structure');
+    debugPriceDetection('strategy-attempt', 'structure-analysis', {
+      elementType: input.element?.tagName,
+    });
 
     try {
       const allPrices = [];
@@ -455,7 +479,7 @@ const structureAnalysisPass = {
         priceIndicators: { hasParentContainer: false },
         semantics: { containerType: null, priceType: null },
       };
-      logDebug(this.name, 'Element context analysis', {
+      debugPriceDetection('strategy-context', 'element-analysis', {
         confidence: elementContext.confidence,
         hasParentContainer: elementContext.priceIndicators?.hasParentContainer,
         containerType: elementContext.semantics?.containerType,
@@ -475,7 +499,9 @@ const structureAnalysisPass = {
 
       // Context-enhanced extraction for high-confidence elements
       if (elementContext.confidence > 0.7) {
-        logDebug(this.name, 'High-confidence context detected, applying enhanced extraction');
+        debugPriceDetection('strategy-context', 'enhanced-extraction', {
+          elementConfidence: elementContext.confidence,
+        });
 
         // Apply context-based confidence boost
         const contextBoost = Math.min(0.2, elementContext.confidence * 0.2);
@@ -515,7 +541,10 @@ const structureAnalysisPass = {
         },
       }));
     } catch (error) {
-      logDebug(this.name, 'Structure analysis error', { error: error.message });
+      debugPriceDetection('strategy-result', 'structure-analysis', {
+        success: false,
+        error: error.message,
+      });
       return [];
     }
   },
@@ -550,7 +579,9 @@ const contextualPatternsPass = {
 
   // eslint-disable-next-line no-unused-vars
   async extract(input, _context) {
-    logDebug(this.name, 'Extracting contextual patterns');
+    debugPriceDetection('strategy-attempt', 'contextual-patterns', {
+      inputType: input.element ? 'element' : 'text',
+    });
 
     try {
       // Handle element input
@@ -602,7 +633,10 @@ const contextualPatternsPass = {
 
       return [];
     } catch (error) {
-      logDebug(this.name, 'Contextual extraction error', { error: error.message });
+      debugPriceDetection('strategy-result', 'contextual-patterns', {
+        success: false,
+        error: error.message,
+      });
       return [];
     }
   },
@@ -655,7 +689,7 @@ class MultiPassPipeline extends ExtractionPipeline {
     if (options.onlyPass) {
       passesToRun = this.strategies.filter((pass) => pass.name === options.onlyPass);
       if (passesToRun.length === 0) {
-        logDebug('multi-pass', `Invalid pass name: ${options.onlyPass}`);
+        debugPriceDetection('pipeline-error', 'invalid-pass', { requestedPass: options.onlyPass });
         return [];
       }
     }
@@ -664,7 +698,8 @@ class MultiPassPipeline extends ExtractionPipeline {
       const pass = passesToRun[i];
 
       try {
-        logDebug('multi-pass', `Starting pass ${pass.name}`, {
+        debugPriceDetection('pipeline-start', 'pass-start', {
+          passName: pass.name,
           passNumber: i + 1,
           totalPasses: passesToRun.length,
           canHandle: pass.canHandle(input),
@@ -672,14 +707,18 @@ class MultiPassPipeline extends ExtractionPipeline {
 
         // Skip passes that can't handle this input
         if (!pass.canHandle(input)) {
-          logDebug('multi-pass', `Skipping ${pass.name} - cannot handle input`);
+          debugPriceDetection('pipeline-skip', 'pass-skip', {
+            passName: pass.name,
+            reason: 'cannot handle input',
+          });
           continue;
         }
 
         const passResult = await Promise.resolve(pass.extract(input, context));
         passResults.push({ pass: pass.name, results: passResult });
 
-        logDebug('multi-pass', `Pass ${pass.name} completed`, {
+        debugPriceDetection('pipeline-result', 'pass-complete', {
+          passName: pass.name,
           resultCount: passResult.length,
           confidence: passResult.map((r) => r.confidence),
         });
@@ -689,18 +728,23 @@ class MultiPassPipeline extends ExtractionPipeline {
 
           // Check for early termination
           if (this.shouldTerminateAfterPass(results, options)) {
-            logDebug('multi-pass', 'Early termination - high confidence result found');
+            debugPriceDetection('pipeline-complete', 'early-termination', {
+              totalResults: results.length,
+            });
             break;
           }
         }
       } catch (error) {
         logger.error(`Error in ${pass.name} pass:`, error);
-        logDebug('multi-pass', `Pass ${pass.name} failed`, { error: error.message });
+        debugPriceDetection('pipeline-error', 'pass-failed', {
+          passName: pass.name,
+          error: error.message,
+        });
         // Continue with next pass
       }
     }
 
-    logDebug('multi-pass', 'Multi-pass detection complete', {
+    debugPriceDetection('pipeline-complete', 'multi-pass-complete', {
       totalResults: results.length,
       passesExecuted: passResults.map((p) => p.pass),
     });
@@ -815,14 +859,29 @@ function normalizeInput(input) {
  * @returns {Promise<object|Array|null>} Extracted price(s) or null
  */
 export async function extractPrice(input, options = {}) {
+  const startTime = Date.now();
+
   try {
     // Normalize input
     const normalizedInput = normalizeInput(input);
 
     if (!normalizedInput.element && !normalizedInput.text) {
-      logDebug('extractPrice', 'No valid input provided');
+      debugPriceDetection('pipeline-start', 'invalid-input', {
+        hasElement: !!normalizedInput.element,
+        hasText: !!normalizedInput.text,
+      });
       return options.returnMultiple ? [] : null;
     }
+
+    // Log pipeline start
+    debugPriceDetection('pipeline-start', 'extraction-start', {
+      hasElement: !!normalizedInput.element,
+      hasText: !!normalizedInput.text,
+      textLength: normalizedInput.text?.length || 0,
+      elementType: normalizedInput.element?.tagName,
+      multiPassMode: !!options.multiPassMode,
+      returnMultiple: !!options.returnMultiple,
+    });
 
     // Get or create pipeline
     const pipeline =
@@ -831,6 +890,23 @@ export async function extractPrice(input, options = {}) {
     // Extract prices
     const results = await pipeline.extract(normalizedInput, options);
 
+    // Log pipeline completion
+    const endTime = Date.now();
+    debugPriceDetection(
+      'pipeline-complete',
+      'extraction-complete',
+      {
+        resultCount: results.length,
+        duration: endTime - startTime,
+        pipelineType: options.multiPassMode ? 'multi-pass' : 'default',
+      },
+      {
+        start: startTime,
+        end: endTime,
+        duration: endTime - startTime,
+      }
+    );
+
     // Return based on options
     if (options.returnMultiple) {
       return results;
@@ -838,6 +914,21 @@ export async function extractPrice(input, options = {}) {
 
     return results[0] || null;
   } catch (error) {
+    const endTime = Date.now();
+    debugPriceDetection(
+      'pipeline-error',
+      'extraction-failed',
+      {
+        error: error.message,
+        duration: endTime - startTime,
+      },
+      {
+        start: startTime,
+        end: endTime,
+        duration: endTime - startTime,
+      }
+    );
+
     logger.error('Error in extractPrice:', error);
     return options.returnMultiple ? [] : null;
   }

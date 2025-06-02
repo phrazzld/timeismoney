@@ -6,6 +6,7 @@
  */
 
 import * as logger from '../utils/logger.js';
+import { debugPriceDetection } from '../utils/logger.js';
 import { extractPricesFromElement } from './domPriceAnalyzer.js';
 import { matchSplitComponents } from './pricePatterns.js';
 
@@ -54,7 +55,15 @@ function getCurrentDomain() {
  */
 export function getHandlerForCurrentSite() {
   const domain = getCurrentDomain();
-  return SITE_HANDLERS.get(domain) || null;
+  const handler = SITE_HANDLERS.get(domain) || null;
+
+  debugPriceDetection('site-specific', 'handler-lookup', {
+    domain,
+    handlerFound: !!handler,
+    handlerName: handler?.name || null,
+  });
+
+  return handler;
 }
 
 /**
@@ -69,12 +78,30 @@ export function processWithSiteHandler(node, callback, settings) {
   const handler = getHandlerForCurrentSite();
 
   if (!handler) {
+    debugPriceDetection('site-specific', 'no-handler', { domain: getCurrentDomain() });
     return false;
   }
 
+  debugPriceDetection('site-specific', 'handler-process', {
+    handlerName: handler.name,
+    nodeType: node?.tagName || 'unknown',
+  });
+
   try {
-    return handler.process(node, callback, settings);
+    const result = handler.process(node, callback, settings);
+
+    debugPriceDetection('site-specific', 'handler-result', {
+      handlerName: handler.name,
+      success: !!result,
+    });
+
+    return result;
   } catch (error) {
+    debugPriceDetection('site-specific', 'handler-error', {
+      handlerName: handler.name,
+      error: error.message,
+    });
+
     logger.error(`Error in ${handler.name} handler:`, error);
     return false;
   }
@@ -122,13 +149,20 @@ export const cdiscountHandler = {
    */
   process(node, callback) {
     if (!this.isTargetNode(node)) {
+      debugPriceDetection('site-specific', 'cdiscount-skip', { reason: 'not target node' });
       return false;
     }
+
+    debugPriceDetection('site-specific', 'cdiscount-process', { nodeType: node?.tagName });
 
     try {
       // Strategy 1: Check for split format (449€ 00)
       const splitMatch = this.extractSplitFormat(node);
       if (splitMatch) {
+        debugPriceDetection('site-specific', 'cdiscount-success', {
+          strategy: 'split-format',
+          price: splitMatch,
+        });
         const textNode = document.createTextNode(splitMatch);
         callback(textNode);
         return true;
@@ -137,6 +171,10 @@ export const cdiscountHandler = {
       // Strategy 2: Check for superscript components
       const superscriptMatch = this.extractSuperscriptFormat(node);
       if (superscriptMatch) {
+        debugPriceDetection('site-specific', 'cdiscount-success', {
+          strategy: 'superscript-format',
+          price: superscriptMatch,
+        });
         const textNode = document.createTextNode(superscriptMatch);
         callback(textNode);
         return true;
@@ -145,6 +183,11 @@ export const cdiscountHandler = {
       // Strategy 3: Use DOM analyzer for complex structures
       const analyzerResults = extractPricesFromElement(node);
       if (analyzerResults.prices.length > 0) {
+        debugPriceDetection('site-specific', 'cdiscount-success', {
+          strategy: 'dom-analyzer',
+          priceCount: analyzerResults.prices.length,
+          prices: analyzerResults.prices.map((p) => p.text),
+        });
         analyzerResults.prices.forEach((price) => {
           const textNode = document.createTextNode(price.text);
           callback(textNode);
@@ -155,13 +198,19 @@ export const cdiscountHandler = {
       // Strategy 4: Simple text content
       const textContent = node.textContent.trim();
       if (textContent && /\d/.test(textContent) && /€/.test(textContent)) {
+        debugPriceDetection('site-specific', 'cdiscount-success', {
+          strategy: 'text-content',
+          price: textContent,
+        });
         const textNode = document.createTextNode(textContent);
         callback(textNode);
         return true;
       }
 
+      debugPriceDetection('site-specific', 'cdiscount-failed', { reason: 'no strategies matched' });
       return false;
     } catch (error) {
+      debugPriceDetection('site-specific', 'cdiscount-error', { error: error.message });
       logger.error('Error in Cdiscount handler:', error);
       return false;
     }
