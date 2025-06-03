@@ -177,12 +177,12 @@
 
 ### TASK-016: Integration testing on real sites
 
-- [ ] Test on live gearbest.com
-- [ ] Test on live cdiscount.com
-- [ ] Test on live aliexpress.com
-- [ ] Verify Amazon/eBay still work
-- **Dependencies**: TASK-015
-- **Verification**: All sites detect prices correctly
+- [x] Test on live gearbest.com ✓
+- [x] Test on live cdiscount.com ✓
+- [x] Test on live aliexpress.com ✓
+- [x] Verify Amazon/eBay still work ✓
+- **Dependencies**: TASK-015 ✓
+- **Verification**: All sites detect prices correctly ✓
 - **Time**: 1 hour
 
 ### TASK-017: Update existing test suite
