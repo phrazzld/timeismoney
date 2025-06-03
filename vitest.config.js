@@ -63,7 +63,7 @@ export default defineConfig({
     // Comprehensive coverage configuration
     coverage: {
       provider: 'v8',
-      enabled: false, // Will be enabled via CLI flag when needed
+      enabled: true, // Enable coverage by default
       reporter: ['text', 'html', 'json', 'lcov'],
       reportsDirectory: './coverage',
       exclude: ['**/node_modules/**', '**/dist/**', '**/__tests__/**', '**/test-helpers.js'],

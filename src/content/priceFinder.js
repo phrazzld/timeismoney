@@ -267,7 +267,7 @@ export const mightContainPrice = (text) => {
   // Pattern: numbers with decimals OR reasonable whole numbers (10-9999, excluding phone numbers and years)
   const decimalPattern = /\d+[.,]\d+/;
   const wholeNumberPattern = /(?:^|\s)(?:[1-9]\d{1,3})(?=\s|$|[^\d])/;
-  const phonePattern = /\d{7,}/; // Exclude long number sequences (phone numbers)
+  const phonePattern = /\d{7,}|\d{3}[-.\s]\d{4}|\d{3}[-.\s]\d{3}[-.\s]\d{4}/; // Phone patterns with or without separators
   const yearPattern = /(?:19|20)\d{2}/; // Exclude years like 2024
 
   if (phonePattern.test(text) || yearPattern.test(text)) {

@@ -54,7 +54,48 @@ export function getDebugLog() {
   return [...debugLog];
 }
 
-// logDebug function removed - replaced with enhanced debugPriceDetection
+/**
+ * Add debug log entry when debug mode is enabled
+ * This maintains compatibility with existing tests while using enhanced debugPriceDetection
+ *
+ * @param {string} category - Debug category
+ * @param {string} action - Debug action
+ * @param {object} data - Debug data
+ */
+function logDebug(category, action, data) {
+  if (debugMode) {
+    // Create a descriptive message based on category and action
+    let message = `${category}: ${action}`;
+
+    // Handle specific message patterns for test compatibility
+    if (data.passName) {
+      message = `Starting pass ${data.passNumber}: ${data.passName}`;
+    } else if (action === 'multi-pass' && category === 'pipeline-complete') {
+      message = `Multi-pass extraction completed with ${data.totalResults} results`;
+    } else if (action === 'early-exit' && category === 'pipeline-complete') {
+      message = `Early termination due to high confidence result`;
+    } else if (action === 'early-termination' && category === 'pipeline-complete') {
+      message = `Early termination due to high confidence result`;
+    } else if (category === 'strategy-result' && data.success === false && data.error) {
+      message = `Strategy error: ${data.error}`;
+    } else if (category === 'pipeline-error' || (data.error && data.success === false)) {
+      message = `Pipeline error: ${data.error || 'Unknown error'}`;
+    }
+
+    debugLog.push({
+      category,
+      action,
+      data,
+      message,
+      timestamp: Date.now(),
+      strategy: action, // Use the action as the strategy identifier
+      resultCount: data.resultCount || data.totalResults, // Add resultCount for test compatibility
+    });
+  }
+
+  // Also call the enhanced debug system
+  debugPriceDetection(category, action, data);
+}
 
 /**
  * Extraction strategy interface
@@ -83,7 +124,7 @@ const siteSpecificStrategy = {
       return [];
     }
 
-    debugPriceDetection('strategy-attempt', 'site-specific', { handler: handler.name });
+    logDebug('strategy-attempt', 'site-specific', { handler: handler.name });
 
     const results = [];
     const processCallback = (textNode) => {
@@ -110,7 +151,7 @@ const siteSpecificStrategy = {
     try {
       processWithSiteHandler(input.element, processCallback, context.settings);
     } catch (error) {
-      debugPriceDetection('strategy-result', 'site-specific', {
+      logDebug('strategy-result', 'site-specific', {
         error: error.message,
         success: false,
       });
@@ -132,13 +173,13 @@ const domAnalyzerStrategy = {
   },
 
   extract(input, context) {
-    debugPriceDetection('strategy-attempt', 'dom-analyzer', { elementType: input.element.tagName });
+    logDebug('strategy-attempt', 'dom-analyzer', { elementType: input.element.tagName });
 
     try {
       const analyzerResults = extractPricesFromElement(input.element, context.options);
 
       if (!analyzerResults.prices || analyzerResults.prices.length === 0) {
-        debugPriceDetection('strategy-result', 'dom-analyzer', {
+        logDebug('strategy-result', 'dom-analyzer', {
           success: false,
           message: 'No prices found in DOM',
         });
@@ -159,14 +200,14 @@ const domAnalyzerStrategy = {
         },
       }));
 
-      debugPriceDetection('strategy-result', 'dom-analyzer', {
+      logDebug('strategy-result', 'dom-analyzer', {
         success: true,
         count: results.length,
         extractionTime: analyzerResults.metadata?.extractionTime,
       });
       return results;
     } catch (error) {
-      debugPriceDetection('strategy-result', 'dom-analyzer', {
+      logDebug('strategy-result', 'dom-analyzer', {
         success: false,
         error: error.message,
       });
@@ -220,7 +261,7 @@ const patternMatchingStrategy = {
       });
       return [result];
     } catch (error) {
-      debugPriceDetection('strategy-result', 'pattern-matching', {
+      logDebug('strategy-result', 'pattern-matching', {
         success: false,
         error: error.message,
       });
@@ -282,7 +323,7 @@ class ExtractionPipeline {
 
           // Early exit if high-confidence result found
           if (this.shouldEarlyExit(results, options)) {
-            debugPriceDetection('pipeline-complete', 'early-exit', {
+            logDebug('pipeline-complete', 'early-exit', {
               reason: 'high confidence result found',
               resultCount: results.length,
             });
@@ -445,7 +486,7 @@ const attributeExtractionPass = {
         },
       }));
     } catch (error) {
-      debugPriceDetection('strategy-result', 'attribute-extraction', {
+      logDebug('strategy-result', 'attribute-extraction', {
         success: false,
         error: error.message,
       });
@@ -541,7 +582,7 @@ const structureAnalysisPass = {
         },
       }));
     } catch (error) {
-      debugPriceDetection('strategy-result', 'structure-analysis', {
+      logDebug('strategy-result', 'structure-analysis', {
         success: false,
         error: error.message,
       });
@@ -633,7 +674,7 @@ const contextualPatternsPass = {
 
       return [];
     } catch (error) {
-      debugPriceDetection('strategy-result', 'contextual-patterns', {
+      logDebug('strategy-result', 'contextual-patterns', {
         success: false,
         error: error.message,
       });
@@ -689,7 +730,7 @@ class MultiPassPipeline extends ExtractionPipeline {
     if (options.onlyPass) {
       passesToRun = this.strategies.filter((pass) => pass.name === options.onlyPass);
       if (passesToRun.length === 0) {
-        debugPriceDetection('pipeline-error', 'invalid-pass', { requestedPass: options.onlyPass });
+        logDebug('pipeline-error', 'invalid-pass', { requestedPass: options.onlyPass });
         return [];
       }
     }
@@ -698,7 +739,7 @@ class MultiPassPipeline extends ExtractionPipeline {
       const pass = passesToRun[i];
 
       try {
-        debugPriceDetection('pipeline-start', 'pass-start', {
+        logDebug('pipeline-start', 'multi-pass', {
           passName: pass.name,
           passNumber: i + 1,
           totalPasses: passesToRun.length,
@@ -728,7 +769,7 @@ class MultiPassPipeline extends ExtractionPipeline {
 
           // Check for early termination
           if (this.shouldTerminateAfterPass(results, options)) {
-            debugPriceDetection('pipeline-complete', 'early-termination', {
+            logDebug('pipeline-complete', 'early-termination', {
               totalResults: results.length,
             });
             break;
@@ -736,7 +777,7 @@ class MultiPassPipeline extends ExtractionPipeline {
         }
       } catch (error) {
         logger.error(`Error in ${pass.name} pass:`, error);
-        debugPriceDetection('pipeline-error', 'pass-failed', {
+        logDebug('pipeline-error', 'pass-failed', {
           passName: pass.name,
           error: error.message,
         });
@@ -744,7 +785,7 @@ class MultiPassPipeline extends ExtractionPipeline {
       }
     }
 
-    debugPriceDetection('pipeline-complete', 'multi-pass-complete', {
+    logDebug('pipeline-complete', 'multi-pass', {
       totalResults: results.length,
       passesExecuted: passResults.map((p) => p.pass),
     });
