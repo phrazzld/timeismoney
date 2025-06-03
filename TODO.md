@@ -157,22 +157,22 @@
 
 ### TASK-014: Implement debug mode enhancements
 
-- [ ] Create `debugPriceDetection` function
-- [ ] Add detailed logging for pattern attempts
-- [ ] Include site config information
-- [ ] Add performance timing data
+- [x] Create `debugPriceDetection` function
+- [x] Add detailed logging for pattern attempts
+- [x] Include site config information
+- [x] Add performance timing data
 - **Dependencies**: TASK-012
-- **Verification**: Debug output is comprehensive
+- **Verification**: Debug output is comprehensive ✓
 - **Time**: 1 hour
 
 ### TASK-015: Performance validation
 
-- [ ] Run performance benchmarks on enhanced detection
-- [ ] Compare with baseline metrics
-- [ ] Optimize hot paths if needed
-- [ ] Document performance impact
+- [x] Run performance benchmarks on enhanced detection
+- [x] Compare with baseline metrics
+- [x] Optimize hot paths if needed
+- [x] Document performance impact
 - **Dependencies**: TASK-014
-- **Verification**: Performance within 10% of baseline
+- **Verification**: Performance within 10% of baseline ✓
 - **Time**: 1 hour
 
 ### TASK-016: Integration testing on real sites
