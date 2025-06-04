@@ -1,16 +1,13 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  vi,
-  resetTestMocks,
-} from '../../setup/vitest-imports.js';
+// Import vi directly from vitest for mock setup
+// eslint-disable-next-line no-restricted-imports
+import { vi } from 'vitest';
 
 // Mock the storage module BEFORE imports
 vi.mock('../../../utils/storage.js', () => ({
   getSettings: vi.fn(),
 }));
+
+import { describe, it, expect, beforeEach, resetTestMocks } from '../../setup/vitest-imports.js';
 
 import { walk } from '../../../content/domScanner.js';
 import { getSettings } from '../../../utils/storage.js';

@@ -5,15 +5,15 @@
  * @vitest-environment jsdom
  */
 
+// Import all vitest functions directly to avoid import hoisting issues with mocks
 // eslint-disable-next-line no-restricted-imports
-import { vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { resetTestMocks } from '../setup/vitest-imports.js';
 
 // Mock dependencies
 vi.mock('../../content/domPriceAnalyzer.js');
 vi.mock('../../content/siteHandlers.js');
 vi.mock('../../content/pricePatterns.js');
-
-import { describe, it, expect, beforeEach, resetTestMocks } from '../setup/vitest-imports.js';
 
 import {
   extractPrice,
