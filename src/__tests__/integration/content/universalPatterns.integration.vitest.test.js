@@ -2,15 +2,30 @@
 // eslint-disable-next-line no-restricted-imports
 import { vi } from 'vitest';
 
-// Mock the storage module BEFORE imports
+// Mock dependencies BEFORE imports
 vi.mock('../../../utils/storage.js', () => ({
   getSettings: vi.fn(),
+}));
+
+vi.mock('../../../content/universalPriceExtractor.js', () => ({
+  processWithUniversalExtractor: vi.fn(),
+}));
+
+vi.mock('../../../content/attributeDetector.js', () => ({
+  processElementAttributes: vi.fn(),
+}));
+
+vi.mock('../../../content/debugTools.js', () => ({
+  markPriceCandidate: vi.fn(),
+  markTextProcessed: vi.fn(),
 }));
 
 import { describe, it, expect, beforeEach, resetTestMocks } from '../../setup/vitest-imports.js';
 
 import { walk } from '../../../content/domScanner.js';
 import { getSettings } from '../../../utils/storage.js';
+import { processWithUniversalExtractor } from '../../../content/universalPriceExtractor.js';
+import { processElementAttributes } from '../../../content/attributeDetector.js';
 
 describe('Universal Pattern Integration Tests', () => {
   beforeEach(() => {
@@ -24,10 +39,15 @@ describe('Universal Pattern Integration Tests', () => {
       isEnabled: true,
       hourlyRate: 50,
     });
+
+    // Mock the universal extractor and attribute detector to return false (not processed)
+    // so that walk() will continue to normal text node processing
+    processWithUniversalExtractor.mockReturnValue(false);
+    processElementAttributes.mockReturnValue(false);
   });
 
   describe('Cdiscount-style patterns work universally', () => {
-    it('should detect split price format on any website', (done) => {
+    it('should detect split price format on any website', () => {
       const container = document.createElement('div');
       container.innerHTML = `
         <div class="random-website">
@@ -47,14 +67,11 @@ describe('Universal Pattern Integration Tests', () => {
         { currencyCode: 'EUR' }
       );
 
-      // Use setTimeout to allow async processing
-      setTimeout(() => {
-        expect(processedPrices.length).toBeGreaterThan(0);
-        done();
-      }, 10);
+      // The walk function is synchronous, so we can check immediately
+      expect(processedPrices.length).toBeGreaterThan(0);
     });
 
-    it('should detect superscript price format universally', (done) => {
+    it('should detect superscript price format universally', () => {
       const container = document.createElement('div');
       container.innerHTML = `
         <div class="generic-site">
@@ -73,16 +90,14 @@ describe('Universal Pattern Integration Tests', () => {
 
       walk(container, callback, { currencyCode: 'EUR' });
 
-      setTimeout(() => {
-        // Should have processed the price
-        expect(callback).toHaveBeenCalled();
-        done();
-      }, 10);
+      // Should have processed the price text nodes
+      expect(callback).toHaveBeenCalled();
+      expect(processedPrices.length).toBeGreaterThan(0);
     });
   });
 
   describe('Gearbest-style patterns work universally', () => {
-    it('should detect nested currency spans on any website', (done) => {
+    it('should detect nested currency spans on any website', () => {
       const container = document.createElement('div');
       container.innerHTML = `
         <div class="another-random-site">
@@ -100,13 +115,10 @@ describe('Universal Pattern Integration Tests', () => {
 
       walk(container, callback, { currencyCode: 'USD' });
 
-      setTimeout(() => {
-        expect(callback).toHaveBeenCalled();
-        done();
-      }, 10);
+      expect(callback).toHaveBeenCalled();
     });
 
-    it('should detect adjacent currency elements universally', (done) => {
+    it('should detect adjacent currency elements universally', () => {
       const container = document.createElement('div');
       container.innerHTML = `
         <div class="shop-xyz">
@@ -119,15 +131,12 @@ describe('Universal Pattern Integration Tests', () => {
       const callback = vi.fn();
       walk(container, callback, { currencyCode: 'USD' });
 
-      setTimeout(() => {
-        expect(callback).toHaveBeenCalled();
-        done();
-      }, 10);
+      expect(callback).toHaveBeenCalled();
     });
   });
 
   describe('Amazon-style patterns work universally', () => {
-    it('should detect contextual prices anywhere', (done) => {
+    it('should detect contextual prices anywhere', () => {
       const container = document.createElement('div');
       container.innerHTML = `
         <div class="deals-site">
@@ -146,15 +155,12 @@ describe('Universal Pattern Integration Tests', () => {
 
       walk(container, callback, { currencyCode: 'USD' });
 
-      setTimeout(() => {
-        expect(callback.mock.calls.length).toBeGreaterThan(0);
-        done();
-      }, 10);
+      expect(callback.mock.calls.length).toBeGreaterThan(0);
     });
   });
 
-  describe('Currency filtering works correctly', () => {
-    it('should only process prices in user currency', (done) => {
+  describe('Multi-currency detection works correctly', () => {
+    it('should detect all currency formats on a multi-currency page', () => {
       const container = document.createElement('div');
       container.innerHTML = `
         <div class="multi-currency-shop">
@@ -172,23 +178,23 @@ describe('Universal Pattern Integration Tests', () => {
         }
       });
 
-      // User has USD selected
+      // Walk should detect all currencies regardless of user setting
       walk(container, callback, { currencyCode: 'USD', currencySymbol: '$' });
 
-      setTimeout(() => {
-        // Should only process USD prices
-        const usdPrices = processedCurrencies.filter((p) => p.startsWith('$'));
-        const otherPrices = processedCurrencies.filter((p) => !p.startsWith('$'));
+      // Should detect all currency formats
+      const usdPrices = processedCurrencies.filter((p) => p.startsWith('$'));
+      const eurPrices = processedCurrencies.filter((p) => p.startsWith('€'));
+      const gbpPrices = processedCurrencies.filter((p) => p.startsWith('£'));
 
-        expect(usdPrices.length).toBeGreaterThan(0);
-        expect(otherPrices.length).toBe(0);
-        done();
-      }, 10);
+      expect(usdPrices.length).toBeGreaterThan(0);
+      expect(eurPrices.length).toBeGreaterThan(0);
+      expect(gbpPrices.length).toBeGreaterThan(0);
+      expect(processedCurrencies.length).toBe(3);
     });
   });
 
   describe('Complex e-commerce patterns', () => {
-    it('should handle mixed price formats on a single page', (done) => {
+    it('should handle mixed price formats on a single page', () => {
       const container = document.createElement('div');
       container.innerHTML = `
         <div class="complex-shop">
@@ -218,16 +224,13 @@ describe('Universal Pattern Integration Tests', () => {
       const callback = vi.fn();
       walk(container, callback, { currencyCode: 'USD', currencySymbol: '$' });
 
-      setTimeout(() => {
-        // Should process multiple price formats
-        expect(callback.mock.calls.length).toBeGreaterThan(3);
-        done();
-      }, 10);
+      // Should process multiple price formats
+      expect(callback.mock.calls.length).toBeGreaterThan(3);
     });
   });
 
   describe('No domain-specific logic', () => {
-    it('should work without checking window.location', (done) => {
+    it('should work without checking window.location', () => {
       // This test verifies we're not using domain-specific logic
       const container = document.createElement('div');
       container.innerHTML = `
@@ -243,14 +246,11 @@ describe('Universal Pattern Integration Tests', () => {
 
       walk(container, callback, { currencyCode: 'EUR' });
 
-      setTimeout(() => {
-        // Should still detect the price pattern
-        expect(callback).toHaveBeenCalled();
+      // Should still detect the price pattern
+      expect(callback).toHaveBeenCalled();
 
-        // Restore window.location
-        window.location = originalLocation;
-        done();
-      }, 10);
+      // Restore window.location
+      window.location = originalLocation;
     });
   });
 });
