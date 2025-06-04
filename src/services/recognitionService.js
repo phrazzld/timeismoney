@@ -9,10 +9,8 @@
  * @module services/recognitionService
  */
 
-import * as RecognizersTextSuite from '@microsoft/recognizers-text-suite';
-
-// Extract the recognizeCurrency function from the library
-const { recognizeCurrency } = RecognizersTextSuite;
+// Import directly from the ES5 module to avoid browser bundle issues
+import { recognizeCurrency } from '@microsoft/recognizers-text-suite/dist/recognizers-text-suite.es5.js';
 import { debug, warn, error } from '../utils/logger.js';
 
 /**
