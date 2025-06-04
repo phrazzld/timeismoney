@@ -82,6 +82,23 @@ export const applyConversion = (textNode, pattern, convertFn) => {
       }
 
       if (matches.length === 0) {
+        // Add detailed debugging for pattern matching failures
+        // Reset the pattern before testing to avoid lastIndex issues
+        pattern.lastIndex = 0;
+        const testMatch = pattern.test(text);
+        pattern.lastIndex = 0; // Reset again after test
+
+        logger.warn('applyConversion: No pattern matches found', {
+          textContent: text.substring(0, 100),
+          textLength: text.length,
+          pattern: pattern.toString(),
+          patternGlobal: pattern.global,
+          patternSource: pattern.source,
+          testMatch: testMatch,
+          textNodeValue: textNode.nodeValue?.substring(0, 100),
+          textNodeParent: textNode.parentNode?.tagName,
+          textNodeClass: textNode.parentNode?.className,
+        });
         return false;
       }
 
@@ -302,11 +319,30 @@ export const processTextNode = (textNode, priceMatch, conversionInfo, shouldReve
       return false;
     }
 
+    // Debug logging before calling applyConversion
+    logger.debug('processTextNode: About to call applyConversion', {
+      textNodeValue: textNode.nodeValue?.substring(0, 100),
+      textLength: textNode.nodeValue?.length,
+      pattern: priceMatch.pattern.toString(),
+      patternSource: priceMatch.pattern.source,
+      nodeParent: textNode.parentNode?.tagName,
+      nodeClass: textNode.parentNode?.className,
+    });
+
     // Create a converter function that will transform price strings
     const converter = createPriceToTimeConverter(conversionInfo);
 
     // Apply the conversion to the DOM
-    return applyConversion(textNode, priceMatch.pattern, converter);
+    const result = applyConversion(textNode, priceMatch.pattern, converter);
+
+    if (!result) {
+      logger.warn('processTextNode: applyConversion returned false', {
+        textNodeValue: textNode.nodeValue?.substring(0, 100),
+        pattern: priceMatch.pattern.toString(),
+      });
+    }
+
+    return result;
   } catch (error) {
     logger.error('Error in processTextNode:', error.message, error.stack);
     return false;

@@ -371,6 +371,11 @@ const convert = async (textNode, preloadedSettings) => {
     // First get the price patterns and formatters
     let priceMatch;
     try {
+      logger.debug('convert: About to call findPrices', {
+        textContent: textNode.nodeValue?.substring(0, 50) + '...',
+        textLength: textNode.nodeValue?.length,
+        formatSettings,
+      });
       priceMatch = await findPrices(textNode.nodeValue, formatSettings);
     } catch (priceFinderError) {
       logger.error('Error in price finding algorithm:', priceFinderError.message, {
@@ -391,9 +396,20 @@ const convert = async (textNode, preloadedSettings) => {
     // with the legacy implementation that expects pattern matching.
     try {
       // Use the pattern to check if there are matches in the text
+      // Reset pattern lastIndex to avoid issues with global patterns
+      priceMatch.pattern.lastIndex = 0;
       const matches = textNode.nodeValue.match(priceMatch.pattern);
       if (!matches || matches.length === 0) {
-        // No actual price matches in the text
+        // No actual price matches in the text - this could be a timing issue
+        logger.warn('convert: Pattern does not match text after findPrices succeeded', {
+          textContent: textNode.nodeValue?.substring(0, 100),
+          textLength: textNode.nodeValue?.length,
+          pattern: priceMatch.pattern.toString(),
+          patternSource: priceMatch.pattern.source,
+          patternGlobal: priceMatch.pattern.global,
+          nodeParent: textNode.parentNode?.tagName,
+          nodeClass: textNode.parentNode?.className,
+        });
         return;
       }
 
@@ -404,6 +420,7 @@ const convert = async (textNode, preloadedSettings) => {
         decimal: priceMatch.decimal?.toString() || 'N/A',
         culture: priceMatch.culture || 'en-US',
         formatInfo: priceMatch.formatInfo,
+        textNodeValue: textNode.nodeValue?.substring(0, 100),
       });
     } catch (matchError) {
       logger.error('Error matching prices in text:', matchError.message, {
@@ -445,6 +462,12 @@ const convert = async (textNode, preloadedSettings) => {
     try {
       // Update the call to use culture alongside formatters for backward compatibility
       // This allows processTextNode to work with both the legacy and new service-based approach
+      logger.debug('convert: About to call processTextNode', {
+        textContent: textNode.nodeValue?.substring(0, 50) + '...',
+        textLength: textNode.nodeValue?.length,
+        priceMatchPattern: priceMatch.pattern?.toString(),
+        hasPriceMatch: !!priceMatch,
+      });
       const result = processTextNode(
         textNode,
         priceMatch,
@@ -456,6 +479,8 @@ const convert = async (textNode, preloadedSettings) => {
       } else {
         logger.warn('Failed to convert price in DOM - processTextNode returned false', {
           textContent: textNode?.nodeValue?.substring(0, 50) + '...',
+          textLength: textNode.nodeValue?.length,
+          priceMatchPattern: priceMatch.pattern?.toString(),
         });
       }
     } catch (domModifierError) {
