@@ -9,7 +9,10 @@
  * @module services/recognitionService
  */
 
-import { recognizeCurrency } from '@microsoft/recognizers-text-suite';
+import * as RecognizersTextSuite from '@microsoft/recognizers-text-suite';
+
+// Extract the recognizeCurrency function from the library
+const { recognizeCurrency } = RecognizersTextSuite;
 import { debug, warn, error } from '../utils/logger.js';
 
 /**

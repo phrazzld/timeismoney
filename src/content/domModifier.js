@@ -100,6 +100,17 @@ export const applyConversion = (textNode, pattern, convertFn) => {
 
           const originalPrice = match[0];
 
+          // Validate that originalPrice is a string
+          if (typeof originalPrice !== 'string') {
+            logger.error('applyConversion: originalPrice is not a string', {
+              originalPrice,
+              type: typeof originalPrice,
+              match,
+              matchIndex: match.index,
+            });
+            return; // Skip this match
+          }
+
           // Skip if the match is just whitespace or too short to be a price
           if (!originalPrice || originalPrice.trim().length < 2) {
             return; // Skip and continue
@@ -211,21 +222,36 @@ export const revertAll = (root) => {
  *
  * @param {object} conversionInfo - Info needed for the conversion
  * @param {Function} conversionInfo.convertFn - Function that converts price strings
- * @param {object} conversionInfo.formatters - Formatting options for currency
+ * @param {string} [conversionInfo.culture] - Culture string for modern approach (e.g., 'en-US')
+ * @param {object} [conversionInfo.formatters] - Formatting options for legacy currency approach
  * @param {object} conversionInfo.wageInfo - Information about hourly wage for conversion
  * @returns {Function} A function that converts a price string to a display string
  */
 const createPriceToTimeConverter = (conversionInfo) => {
   return (priceString) => {
     try {
-      return conversionInfo.convertFn(
-        priceString,
-        conversionInfo.formatters,
-        conversionInfo.wageInfo
-      );
+      // Validate priceString input - it should be a string
+      if (typeof priceString !== 'string') {
+        logger.error('createPriceToTimeConverter: priceString is not a string', {
+          priceString,
+          type: typeof priceString,
+          conversionInfo: {
+            hasCulture: !!conversionInfo.culture,
+            hasFormatters: !!conversionInfo.formatters,
+            culture: conversionInfo.culture,
+          },
+        });
+        return priceString; // Return original value if not a string
+      }
+
+      // Use culture for modern approach if available, otherwise fall back to formatters for legacy
+      const cultureOrFormatters = conversionInfo.culture || conversionInfo.formatters;
+
+      return conversionInfo.convertFn(priceString, cultureOrFormatters, conversionInfo.wageInfo);
     } catch (error) {
       logger.error('Error in price conversion function:', error.message, {
         priceString,
+        priceStringType: typeof priceString,
         errorDetails: error.stack,
       });
       return priceString; // Return original price if conversion fails
