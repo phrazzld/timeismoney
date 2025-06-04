@@ -1,5 +1,6 @@
 # Build output
 dist/
+*.zip
 timeismoney.zip
 build/
 
@@ -80,3 +81,28 @@ codemod-report-*.md
 migration-report-*.md
 *-plan.md
 *-task.md
+
+# Temporary analysis and working files
+CI-FAILURE-SUMMARY.md
+CI-RESOLUTION-COMPLETE.md
+CI-RESOLUTION-PLAN.md
+CLEANUP-PLAN.md
+ISSUE-*-revised-approach.md
+PLAN-CONTEXT.md
+PLAN.md
+PR-DESCRIPTION.md
+REVIEW-CONTEXT.md
+REVISED-TODO.md
+TASK-*-analysis.md
+TASK-*-findings.md
+TICKET-CONTEXT.md
+examples.md
+live-site-validation-report.md
+pattern-analysis.md
+performance-analysis-report.md
+site-failures.md
+ROOT-CLEANUP-PLAN.md
+
+# Temporary directories
+temp/
+temporary/
