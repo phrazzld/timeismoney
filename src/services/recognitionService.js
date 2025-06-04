@@ -65,6 +65,19 @@ export class RecognitionService {
       return [];
     }
 
+    // Check for "[object Object]" string which indicates an object was converted to string
+    if (text.trim() === '[object Object]') {
+      error(
+        'RecognitionService.extractCurrencies: Detected "[object Object]" string - invalid object conversion',
+        {
+          text,
+          culture,
+          message: 'An object was improperly converted to string upstream',
+        }
+      );
+      return [];
+    }
+
     debug('RecognitionService.extractCurrencies: Processing text', {
       textLength: text.length,
       culture,

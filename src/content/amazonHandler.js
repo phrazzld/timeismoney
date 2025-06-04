@@ -117,15 +117,24 @@ export const handleAmazonPrice = (node, callback, state, patternType) => {
 
   switch (className) {
     case currencyClass:
-      state.currency = node.firstChild.nodeValue.toString();
-      node.firstChild.nodeValue = null; // Clear the node value
-      state.active = true;
-      return true;
+      // Safely extract currency value with validation
+      if (node.firstChild && typeof node.firstChild.nodeValue === 'string') {
+        state.currency = node.firstChild.nodeValue;
+        node.firstChild.nodeValue = null; // Clear the node value
+        state.active = true;
+        return true;
+      }
+      return false;
 
     case wholeClass:
-      if (state.active && state.currency !== null) {
+      if (
+        state.active &&
+        state.currency !== null &&
+        node.firstChild &&
+        typeof node.firstChild.nodeValue === 'string'
+      ) {
         // Combine currency and whole part
-        const combinedPrice = state.currency + node.firstChild.nodeValue.toString();
+        const combinedPrice = state.currency + node.firstChild.nodeValue;
         node.firstChild.nodeValue = combinedPrice;
 
         // Apply the callback to the whole part node (which now contains the full price)
@@ -133,7 +142,7 @@ export const handleAmazonPrice = (node, callback, state, patternType) => {
         callback(node.firstChild);
 
         // Reset currency since we've used it
-        state.whole = node.firstChild.nodeValue.toString();
+        state.whole = node.firstChild.nodeValue;
         state.currency = null;
         return true;
       }
@@ -142,7 +151,10 @@ export const handleAmazonPrice = (node, callback, state, patternType) => {
     case fractionalClass:
       if (state.active) {
         // Clear the fractional part as it's already been processed with the whole part
-        node.firstChild.nodeValue = null;
+        // Only clear if we have a valid firstChild with nodeValue
+        if (node.firstChild && node.firstChild.nodeValue !== null) {
+          node.firstChild.nodeValue = null;
+        }
 
         // Reset the price state after completing a price
         state.reset();
