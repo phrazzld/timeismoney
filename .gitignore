@@ -86,15 +86,16 @@ migration-report-*.md
 CI-FAILURE-SUMMARY.md
 CI-RESOLUTION-COMPLETE.md
 CI-RESOLUTION-PLAN.md
-CLEANUP-PLAN.md
+CLEANUP-*.md
+CLEANUP-*.txt
 ISSUE-*-revised-approach.md
 PLAN-CONTEXT.md
 PLAN.md
 PR-DESCRIPTION.md
 REVIEW-CONTEXT.md
 REVISED-TODO.md
-TASK-*-analysis.md
-TASK-*-findings.md
+TASK-*-*.md
+TASK-*.md
 TICKET-CONTEXT.md
 examples.md
 live-site-validation-report.md
@@ -102,6 +103,13 @@ pattern-analysis.md
 performance-analysis-report.md
 site-failures.md
 ROOT-CLEANUP-PLAN.md
+FINAL-CLEANUP-STATUS.md
+GIT-CLEANUP-COMMANDS.md
+EXECUTE-CLEANUP-COMMIT.sh
+ESLINT-WARNING-POLICY.md
+*-report.md
+*-analysis.md
+*-failures.md
 
 # Temporary directories
 temp/

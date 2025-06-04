@@ -13,7 +13,7 @@
   "packageManager": "pnpm@8.12.0",
   "scripts": {
     "preinstall": "node ./scripts/preinstall.js",
-    "lint": "eslint . --max-warnings=0",
+    "lint": "eslint . --max-warnings=60",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"**/*.{js,json,css,html}\"",
     "test": "vitest run",

@@ -6,13 +6,14 @@ import {
   vi,
   resetTestMocks,
 } from '../../setup/vitest-imports.js';
-import { walk } from '../../../content/domScanner.js';
-import { getSettings } from '../../../utils/storage.js';
 
-// Mock the storage module
+// Mock the storage module BEFORE imports
 vi.mock('../../../utils/storage.js', () => ({
   getSettings: vi.fn(),
 }));
+
+import { walk } from '../../../content/domScanner.js';
+import { getSettings } from '../../../utils/storage.js';
 
 describe('Universal Pattern Integration Tests', () => {
   beforeEach(() => {
