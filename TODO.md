@@ -67,7 +67,7 @@
     2. The job fails when the `check for critical vulnerabilities` step finds the failure artifact.
   - **Depends‑on:** [T004]
 
-- [ ] **T007 · Test · P1: validate end-to-end pipeline with a vulnerable package**
+- [x] **T007 · Test · P1: validate end-to-end pipeline with a vulnerable package**
   - **Context:** Implementation Checklist · Week 2: Integration & Validation
   - **Action:**
     1. On a new branch, temporarily add a dependency with a known `critical` or `high` vulnerability.
