@@ -23,7 +23,7 @@
     1. The `scripts/security-config.js` module exists and exports the correct configuration structure.
   - **Depends‑on:** none
 
-- [ ] **T003 · Feature · P0: implement vulnerability parser module**
+- [x] **T003 · Feature · P0: implement vulnerability parser module**
 
   - **Context:** Modular Component Structure · `scripts/vulnerability-parser.js`
   - **Action:**
@@ -33,7 +33,7 @@
     1. The module correctly parses valid `pnpm audit` JSON, including cases with zero vulnerabilities.
   - **Depends‑on:** none
 
-- [ ] **T004 · Feature · P0: implement core security audit script**
+- [x] **T004 · Feature · P0: implement core security audit script**
 
   - **Context:** Phase 1: Foundation Security Infrastructure · 1.3 Security Audit Processing Script
   - **Action:**
@@ -45,7 +45,7 @@
     2. The script creates the `critical-vulnerabilities.json` file and exits non-zero only when a policy violation occurs.
   - **Depends‑on:** [T002, T003]
 
-- [ ] **T005 · Test · P1: add unit tests for security audit system**
+- [x] **T005 · Test · P1: add unit tests for security audit system**
 
   - **Context:** Phase 1: Foundation Security Infrastructure · Testing Strategy
   - **Action:**
@@ -56,7 +56,7 @@
     2. Code coverage for the new security scripts is at an acceptable level (e.g., >90%).
   - **Depends‑on:** [T004]
 
-- [ ] **T006 · Feature · P1: add security scan job to CI workflow**
+- [x] **T006 · Feature · P1: add security scan job to CI workflow**
 
   - **Context:** Phase 1: Foundation Security Infrastructure · 1.2 Enhanced CI Security Job
   - **Action:**
