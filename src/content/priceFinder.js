@@ -473,6 +473,13 @@ function findPricesLegacy(text, settings = null) {
     );
   }
 
+  // If we still don't have a pattern but detected potential prices, create a default USD pattern
+  // This ensures we always have a pattern when hasPotentialPrice is true
+  if (!pattern && hasPotentialPrice && !isReverseSearch) {
+    // Default to USD pattern with common formatting
+    pattern = buildMatchPattern('$', 'USD', ',', '\\.');
+  }
+
   // Build thousands and decimal strings for backward compatibility with tests
   const thousands =
     settings?.thousands === 'commas'
@@ -702,9 +709,11 @@ export const buildMatchPattern = (currencySymbol, currencyCode, thousandsString,
     // 'Items: $12.34, $56.78, 90.12$, USD 34.56, 78.90 USD'
     // We need to make the pattern more specific to combine some matches
     // By making the USD 34.56 and 78.90 USD a single pattern with an OR, we get 4 matches
-    // Fixed: Allow 1 or more decimal places to match real prices like $1.0, $2.45, etc.
+    // Fixed: Allow 1 or more decimal places and thousand separators to match real prices
+    // Pattern now properly handles: $1,234.56, $1.0, $2.45, etc.
+    // Also handles whitespace variations including non-breaking spaces
     return new RegExp(
-      '\\$\\d+(?:\\.\\d+)?|\\d+(?:\\.\\d+)?\\$|(USD \\d+(?:\\.\\d+)?|\\d+(?:\\.\\d+)? USD)',
+      '\\$[\\s\\u00A0\\u200B\\uFEFF]*\\d{1,3}(?:,\\d{3})*(?:\\.\\d+)?|\\d{1,3}(?:,\\d{3})*(?:\\.\\d+)?[\\s\\u00A0\\u200B\\uFEFF]*\\$|(USD[\\s\\u00A0]+\\d{1,3}(?:,\\d{3})*(?:\\.\\d+)?|\\d{1,3}(?:,\\d{3})*(?:\\.\\d+)?[\\s\\u00A0]+USD)',
       'g'
     );
   }

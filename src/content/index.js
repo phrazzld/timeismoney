@@ -395,6 +395,16 @@ const convert = async (textNode, preloadedSettings) => {
     // the recognitionService will handle this. However, we keep this for backward compatibility
     // with the legacy implementation that expects pattern matching.
     try {
+      // Check if pattern exists before using it
+      if (!priceMatch.pattern) {
+        logger.warn('convert: No pattern found in priceMatch', {
+          hasPotentialPrice: priceMatch.hasPotentialPrice,
+          culture: priceMatch.culture,
+          textContent: textNode.nodeValue?.substring(0, 100),
+        });
+        return;
+      }
+
       // Use the pattern to check if there are matches in the text
       // Reset pattern lastIndex to avoid issues with global patterns
       priceMatch.pattern.lastIndex = 0;
