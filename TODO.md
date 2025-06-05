@@ -13,7 +13,7 @@
     1. After merging, navigate to the repository's `Settings > Code security and analysis > Dependabot` and confirm the configuration is recognized.
   - **Depends‑on:** none
 
-- [ ] **T002 · Feature · P0: create security policy configuration module**
+- [~] **T002 · Feature · P0: create security policy configuration module**
 
   - **Context:** Phase 1: Foundation Security Infrastructure · 1.3 Security Policy Configuration
   - **Action:**
