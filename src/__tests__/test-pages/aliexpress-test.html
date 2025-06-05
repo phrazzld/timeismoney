@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>AliExpress Price Test Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .product {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin: 10px 0;
+      }
+      .product-price-value {
+        font-size: 24px;
+        color: #ff4747;
+        font-weight: bold;
+      }
+      .uniform-banner-box-price {
+        font-size: 20px;
+        color: #ff4747;
+      }
+      .price-now {
+        font-size: 22px;
+        color: #ff4747;
+        font-weight: bold;
+      }
+      .currency {
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>AliExpress Price Detection Test Cases</h1>
+
+    <!-- Case 1: Standard AliExpress price format -->
+    <div class="product">
+      <h3>Product 1: LED Strip Lights</h3>
+      <div class="product-price-value">US $8.52</div>
+    </div>
+
+    <!-- Case 2: Price range format -->
+    <div class="product">
+      <h3>Product 2: Phone Accessories</h3>
+      <div class="product-price-value">$2.99 - $15.99</div>
+    </div>
+
+    <!-- Case 3: Banner price format -->
+    <div class="product">
+      <h3>Product 3: Wireless Earbuds</h3>
+      <div class="uniform-banner-box-price">
+        <span class="currency">US</span>
+        <span>$25.64</span>
+      </div>
+    </div>
+
+    <!-- Case 4: Price with currency code -->
+    <div class="product">
+      <h3>Product 4: Smart Watch Band</h3>
+      <div class="price-now">
+        <span>USD</span>
+        <span>18.90</span>
+      </div>
+    </div>
+
+    <!-- Case 5: Price with multiple currencies -->
+    <div class="product">
+      <h3>Product 5: USB Hub</h3>
+      <div class="product-price">
+        <span class="product-price-value">€ 14,32</span>
+        <span class="converted-price">(US $15.88)</span>
+      </div>
+    </div>
+
+    <!-- Case 6: Complex price structure with discount -->
+    <div class="product">
+      <h3>Product 6: Laptop Bag</h3>
+      <div class="price-wrapper">
+        <div class="price-original" style="text-decoration: line-through">US $45.00</div>
+        <div class="price-sale">
+          <span class="product-price-value">US $32.50</span>
+          <span class="discount">-28%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 7: Price per unit -->
+    <div class="product">
+      <h3>Product 7: Cable (per meter)</h3>
+      <div class="product-price-value">$1.20 / piece</div>
+    </div>
+  </body>
+</html>

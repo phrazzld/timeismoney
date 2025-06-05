@@ -9,7 +9,8 @@
  * @module services/recognitionService
  */
 
-import { recognizeCurrency } from '@microsoft/recognizers-text-suite';
+// Import directly from the ES5 module to avoid browser bundle issues
+import { recognizeCurrency } from '@microsoft/recognizers-text-suite/dist/recognizers-text-suite.es5.js';
 import { debug, warn, error } from '../utils/logger.js';
 
 /**
@@ -59,6 +60,19 @@ export class RecognitionService {
     // Handle empty text case
     if (!text.trim()) {
       debug('RecognitionService.extractCurrencies: Empty text received', { culture });
+      return [];
+    }
+
+    // Check for "[object Object]" string which indicates an object was converted to string
+    if (text.trim() === '[object Object]') {
+      error(
+        'RecognitionService.extractCurrencies: Detected "[object Object]" string - invalid object conversion',
+        {
+          text,
+          culture,
+          message: 'An object was improperly converted to string upstream',
+        }
+      );
       return [];
     }
 

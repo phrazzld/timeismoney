@@ -119,7 +119,7 @@ export const handleEbayPrice = (node, callback, settings) => {
             if (nodeElement) {
               debugTools.markConversionSuccess(
                 nodeElement,
-                textNode.nodeValue,
+                textNode.nodeValue || '',
                 'Processed by eBay handler'
               );
             }

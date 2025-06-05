@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gearbest Price Test Page (Based on Real gearbest.ma)</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .product {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin: 10px 0;
+      }
+      .price_count {
+        font-size: 18px;
+        color: #ff5722;
+        font-weight: bold;
+      }
+      .offer_grid .price_count del {
+        display: block;
+        font-size: 13px;
+        color: #666;
+        text-decoration: line-through;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Gearbest Price Detection Test Cases (Real Structure)</h1>
+
+    <!-- Case 1: Real Gearbest price range format -->
+    <div class="product">
+      <h3>Product 1: Electronics Item</h3>
+      <span class="price_count">6.00$ – 6.11$</span>
+    </div>
+
+    <!-- Case 2: Another real price range -->
+    <div class="product">
+      <h3>Product 2: Gadget</h3>
+      <span class="price_count">14.76$ – 15.36$</span>
+    </div>
+
+    <!-- Case 3: Sale pricing with original price -->
+    <div class="product">
+      <h3>Product 3: Sale Item</h3>
+      <div class="offer_grid">
+        <span class="price_count">
+          <del>35.26$</del>
+          30.20$
+        </span>
+      </div>
+    </div>
+
+    <!-- Case 4: Single price point -->
+    <div class="product">
+      <h3>Product 4: Simple Item</h3>
+      <span class="price_count">25.99$</span>
+    </div>
+
+    <!-- Case 5: Complex price with text -->
+    <div class="product">
+      <h3>Product 5: Special Offer</h3>
+      <span class="price_count"
+        >35.26$ Original price was: 35.26$. 30.20$ Current price is: 30.20$.</span
+      >
+    </div>
+
+    <!-- Case 6: Multiple pricing tiers -->
+    <div class="product">
+      <h3>Product 6: Bulk Pricing</h3>
+      <span class="price_count">8.50$ – 12.99$</span>
+    </div>
+  </body>
+</html>

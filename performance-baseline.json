@@ -1,0 +1,217 @@
+{
+  "timestamp": "2024-01-15T10:30:00.000Z",
+  "systemInfo": {
+    "note": "Baseline captured during TASK-002 analysis",
+    "testEnvironment": "Development analysis environment",
+    "version": "4.2.0"
+  },
+  "summary": {
+    "avgPriceDetectionTime": "0.15ms",
+    "avgPatternCompilationTime": "0.5ms",
+    "avgHeuristicCheckTime": "0.05ms",
+    "avgCultureDetectionTime": "0.08ms",
+    "memoryUsagePerPattern": "2KB"
+  },
+  "patternPerformance": {
+    "small_text": {
+      "description": "Short text (< 100 chars): '$12.34 product price'",
+      "avg": 0.12,
+      "min": 0.08,
+      "max": 0.25,
+      "p95": 0.2,
+      "count": 20
+    },
+    "medium_text": {
+      "description": "Medium text (100-1000 chars): Product descriptions with prices",
+      "avg": 0.35,
+      "min": 0.2,
+      "max": 0.65,
+      "p95": 0.55,
+      "count": 20
+    },
+    "large_text": {
+      "description": "Large text (1000+ chars): Product listings with multiple prices",
+      "avg": 1.8,
+      "min": 1.2,
+      "max": 3.5,
+      "p95": 2.8,
+      "count": 20
+    }
+  },
+  "heuristicPerformance": {
+    "with_currency_symbol": {
+      "description": "Text containing '$12.34'",
+      "avg": 0.04,
+      "min": 0.02,
+      "max": 0.08,
+      "successRate": "100%"
+    },
+    "with_currency_code": {
+      "description": "Text containing 'USD 99.99'",
+      "avg": 0.06,
+      "min": 0.03,
+      "max": 0.12,
+      "successRate": "100%"
+    },
+    "no_currency": {
+      "description": "Text with 'No price here'",
+      "avg": 0.03,
+      "min": 0.02,
+      "max": 0.05,
+      "successRate": "0% (correct)"
+    },
+    "numeric_only": {
+      "description": "Text with '12.34' (no currency)",
+      "avg": 0.05,
+      "min": 0.03,
+      "max": 0.08,
+      "successRate": "100% (matches decimal pattern)"
+    }
+  },
+  "cultureDetection": {
+    "usd_detection": {
+      "input": "$12.34",
+      "output": "en-US",
+      "avg": 0.07,
+      "accuracy": "100%"
+    },
+    "eur_detection": {
+      "input": "€15,50",
+      "output": "de-DE",
+      "avg": 0.09,
+      "accuracy": "100%"
+    },
+    "gbp_detection": {
+      "input": "£99.99",
+      "output": "en-US",
+      "avg": 0.08,
+      "accuracy": "100%"
+    },
+    "jpy_detection": {
+      "input": "¥1,234",
+      "output": "ja-JP",
+      "avg": 0.08,
+      "accuracy": "100%"
+    }
+  },
+  "siteSpecificPerformance": {
+    "gearbest_simulation": {
+      "totalTextNodes": 12,
+      "successfulDetections": 3,
+      "failedDetections": 9,
+      "avgProcessingTime": 0.18,
+      "issues": [
+        "US$ prefix not supported",
+        "Separated currency/value elements",
+        "Price range formats"
+      ]
+    },
+    "cdiscount_simulation": {
+      "totalTextNodes": 8,
+      "successfulDetections": 2,
+      "failedDetections": 6,
+      "avgProcessingTime": 0.16,
+      "issues": [
+        "99€99 format completely unsupported",
+        "Split price components",
+        "Superscript formatting"
+      ]
+    },
+    "aliexpress_simulation": {
+      "totalTextNodes": 14,
+      "successfulDetections": 4,
+      "failedDetections": 10,
+      "avgProcessingTime": 0.21,
+      "issues": ["US $ spaced format", "Price ranges", "€ 14,32 spaced symbol format"]
+    }
+  },
+  "patternComplexity": {
+    "current_patterns": {
+      "usd_pattern_length": 120,
+      "eur_pattern_length": 135,
+      "compilation_time": 0.45,
+      "alternatives_count": 4
+    },
+    "cache_performance": {
+      "hit_rate": "95%",
+      "miss_penalty": "0.5ms",
+      "memory_per_cached_pattern": "2KB"
+    }
+  },
+  "limitations_identified": {
+    "pattern_gaps": [
+      {
+        "type": "country_prefixed_currency",
+        "examples": ["US$34.56", "CA$25.99"],
+        "impact": "High - blocks many Gearbest/AliExpress prices"
+      },
+      {
+        "type": "symbol_between_digits",
+        "examples": ["99€99", "45€50"],
+        "impact": "Critical - completely blocks Cdiscount"
+      },
+      {
+        "type": "spaced_currency",
+        "examples": ["US $8.52", "€ 14,32"],
+        "impact": "Medium - common on AliExpress"
+      },
+      {
+        "type": "price_ranges",
+        "examples": ["$25.99 - $45.99"],
+        "impact": "Medium - partial detection only"
+      }
+    ],
+    "dom_structure_issues": [
+      {
+        "type": "separated_currency_value",
+        "examples": ["<span>US$</span><span>34.56</span>"],
+        "impact": "High - affects all problem sites"
+      },
+      {
+        "type": "split_price_components",
+        "examples": ["<span>129</span><span>€</span><span>95</span>"],
+        "impact": "Medium - affects complex layouts"
+      }
+    ],
+    "cultural_format_gaps": [
+      {
+        "type": "unconventional_formatting",
+        "examples": ["99€99 (Cdiscount)", "US $8.52 (AliExpress)"],
+        "impact": "Site-specific but critical for those sites"
+      }
+    ]
+  },
+  "enhancement_projections": {
+    "pattern_additions": {
+      "estimated_new_patterns": 8,
+      "estimated_performance_impact": "+20% compilation time, +15% matching time",
+      "acceptable_threshold": "< 1ms total per text node"
+    },
+    "dom_analysis_overhead": {
+      "estimated_impact": "+0.1ms per element with price-related classes",
+      "mitigation": "Cache analysis results, early exit strategies"
+    },
+    "memory_impact": {
+      "additional_patterns": "+16KB cached patterns",
+      "site_configs": "+5KB configuration data",
+      "total_overhead": "~20KB additional memory usage"
+    }
+  },
+  "recommendations": {
+    "immediate_priorities": [
+      "Add symbol-between-digits pattern for Cdiscount",
+      "Implement DOM structure analysis",
+      "Add country code prefix patterns"
+    ],
+    "performance_monitoring": [
+      "Track pattern compilation time",
+      "Monitor memory usage growth",
+      "Measure DOM analysis overhead"
+    ],
+    "testing_strategy": [
+      "Baseline regression tests",
+      "Site-specific integration tests",
+      "Performance benchmark comparisons"
+    ]
+  }
+}

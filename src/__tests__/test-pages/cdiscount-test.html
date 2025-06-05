@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cdiscount Price Test Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .product {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin: 10px 0;
+      }
+      .price {
+        font-size: 24px;
+        color: #e74c3c;
+        font-weight: bold;
+      }
+      .fpPrice {
+        font-size: 20px;
+        color: #e74c3c;
+      }
+      .priceSup {
+        font-size: 14px;
+        vertical-align: super;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Cdiscount Price Detection Test Cases</h1>
+
+    <!-- Case 1: Cdiscount special format (99€99) -->
+    <div class="product">
+      <h3>Product 1: Gaming Chair</h3>
+      <div class="price">99€99</div>
+    </div>
+
+    <!-- Case 2: Another Cdiscount format -->
+    <div class="product">
+      <h3>Product 2: Coffee Machine</h3>
+      <div class="fpPrice">45€50</div>
+    </div>
+
+    <!-- Case 3: Price with superscript cents -->
+    <div class="product">
+      <h3>Product 3: Vacuum Cleaner</h3>
+      <div class="price">
+        <span>129</span>
+        <span class="priceSup">€</span>
+        <span class="priceSup">95</span>
+      </div>
+    </div>
+
+    <!-- Case 4: Standard price format -->
+    <div class="product">
+      <h3>Product 4: Bluetooth Speaker</h3>
+      <div class="price">€ 23,90</div>
+    </div>
+
+    <!-- Case 5: Price with old price crossed out -->
+    <div class="product">
+      <h3>Product 5: Kitchen Scale</h3>
+      <div class="old-price" style="text-decoration: line-through">35€00</div>
+      <div class="price">28€99</div>
+    </div>
+
+    <!-- Case 6: Multiple prices for variants -->
+    <div class="product">
+      <h3>Product 6: Phone Cases</h3>
+      <div class="price-range">
+        <span class="min-price">12€90</span>
+        <span> - </span>
+        <span class="max-price">18€90</span>
+      </div>
+    </div>
+  </body>
+</html>
