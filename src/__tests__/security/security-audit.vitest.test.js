@@ -1,0 +1,330 @@
+/**
+ * Unit tests for the security audit system
+ * Tests audit script, parser, and policy logic using mock vulnerability data
+ */
+
+/* eslint-disable no-console */
+
+import { vi, describe, it, expect, beforeEach, afterEach, mock } from '../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../vitest.setup.js';
+
+// Mock fs/promises module
+mock('fs/promises', () => ({
+  readFile: vi.fn(),
+  writeFile: vi.fn(),
+  access: vi.fn(),
+  constants: {
+    F_OK: 0,
+    R_OK: 4,
+  },
+}));
+
+// Import modules after mocking
+import { readFile, writeFile, access } from 'fs/promises';
+import {
+  readAuditResults,
+  applySeverityPolicy,
+  createCriticalVulnerabilitiesFile,
+  main,
+} from '../../../scripts/security-audit.js';
+
+describe('Security Audit System', () => {
+  beforeEach(() => {
+    resetTestMocks();
+
+    // Mock console methods
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    // Mock process.exit to prevent actual exits during tests
+    vi.spyOn(process, 'exit').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  // Mock audit data for testing
+  const createMockAuditData = (vulnerabilities = {}) => ({
+    auditReportVersion: 2,
+    vulnerabilities,
+    metadata: {
+      vulnerabilities: Object.keys(vulnerabilities).length,
+      dependencies: 150,
+      devDependencies: 75,
+      optionalDependencies: 2,
+    },
+  });
+
+  const createMockVulnerability = (severity, overrides = {}) => ({
+    severity,
+    title: `Mock ${severity} vulnerability`,
+    description: `A ${severity} severity vulnerability for testing`,
+    range: '*',
+    nodes: ['node_modules/mock-package'],
+    fixAvailable: true,
+    isDirect: false,
+    effects: [],
+    via: [
+      {
+        source: 'mock-source',
+        name: 'mock-package',
+        dependency: 'mock-package',
+        title: `Mock ${severity} vulnerability`,
+        url: 'https://example.com/advisory',
+        severity,
+        cwe: ['CWE-123'],
+        cvss: { score: severity === 'critical' ? 9.5 : severity === 'high' ? 7.5 : 4.5 },
+      },
+    ],
+    ...overrides,
+  });
+
+  describe('readAuditResults', () => {
+    it('should read and parse valid audit results', async () => {
+      const mockAuditData = createMockAuditData({
+        'mock-package': createMockVulnerability('high'),
+      });
+
+      access.mockResolvedValue();
+      readFile.mockResolvedValue(JSON.stringify(mockAuditData));
+
+      const result = await readAuditResults();
+
+      expect(access).toHaveBeenCalledWith('audit-results.json', 4); // F_OK | R_OK
+      expect(readFile).toHaveBeenCalledWith('audit-results.json', 'utf-8');
+      expect(result).toEqual(mockAuditData);
+    });
+
+    it('should throw error when audit results file not found', async () => {
+      const error = new Error('File not found');
+      error.code = 'ENOENT';
+      access.mockRejectedValue(error);
+
+      await expect(readAuditResults()).rejects.toThrow(
+        'Audit results file not found: audit-results.json'
+      );
+    });
+
+    it('should throw error when audit data is invalid JSON', async () => {
+      access.mockResolvedValue();
+      readFile.mockResolvedValue('invalid json');
+
+      await expect(readAuditResults()).rejects.toThrow('Failed to read audit results:');
+    });
+
+    it('should accept audit data with empty vulnerabilities', async () => {
+      const mockAuditData = createMockAuditData({});
+
+      access.mockResolvedValue();
+      readFile.mockResolvedValue(JSON.stringify(mockAuditData));
+
+      const result = await readAuditResults();
+      expect(result).toEqual(mockAuditData);
+    });
+  });
+
+  describe('applySeverityPolicy', () => {
+    it('should filter vulnerabilities by severity policy', () => {
+      const vulnerabilities = [
+        { id: '1', severity: 'critical', package: 'pkg1' },
+        { id: '2', severity: 'high', package: 'pkg2' },
+        { id: '3', severity: 'medium', package: 'pkg3' },
+        { id: '4', severity: 'low', package: 'pkg4' },
+      ];
+
+      const result = applySeverityPolicy(vulnerabilities);
+
+      // Should only include critical and high severity (from SECURITY_CONFIG.failOnSeverity)
+      expect(result).toHaveLength(2);
+      expect(result[0].severity).toBe('critical');
+      expect(result[1].severity).toBe('high');
+    });
+
+    it('should return empty array for invalid input', () => {
+      expect(applySeverityPolicy(null)).toEqual([]);
+      expect(applySeverityPolicy(undefined)).toEqual([]);
+      expect(applySeverityPolicy('not an array')).toEqual([]);
+    });
+
+    it('should handle empty vulnerabilities array', () => {
+      const result = applySeverityPolicy([]);
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('createCriticalVulnerabilitiesFile', () => {
+    it('should create critical vulnerabilities file with correct structure', async () => {
+      const criticalVulns = [
+        { id: '1', severity: 'critical', package: 'pkg1', title: 'Critical issue' },
+        { id: '2', severity: 'high', package: 'pkg2', title: 'High issue' },
+      ];
+
+      writeFile.mockResolvedValue();
+
+      await createCriticalVulnerabilitiesFile(criticalVulns);
+
+      expect(writeFile).toHaveBeenCalledWith(
+        'critical-vulnerabilities.json',
+        expect.any(String),
+        'utf-8'
+      );
+
+      const [, content] = writeFile.mock.calls[0];
+      const parsedContent = JSON.parse(content);
+
+      expect(parsedContent).toMatchObject({
+        policyViolation: true,
+        criticalCount: 2,
+        vulnerabilities: criticalVulns,
+        summary: {
+          total: 2,
+          bySeverity: {
+            critical: 1,
+            high: 1,
+          },
+          uniquePackages: 2,
+        },
+      });
+      expect(parsedContent.timestamp).toBeDefined();
+      expect(parsedContent.failOnSeverity).toEqual(['critical', 'high']);
+    });
+
+    it('should throw error when file write fails', async () => {
+      const criticalVulns = [
+        { id: '1', severity: 'critical', package: 'pkg1', title: 'Critical issue' },
+      ];
+
+      writeFile.mockRejectedValue(new Error('Write permission denied'));
+
+      await expect(createCriticalVulnerabilitiesFile(criticalVulns)).rejects.toThrow(
+        'Failed to create critical vulnerabilities file: Write permission denied'
+      );
+    });
+  });
+
+  describe('main audit workflow', () => {
+    it('should complete successful audit with no critical vulnerabilities', async () => {
+      const mockAuditData = createMockAuditData({
+        'medium-pkg': createMockVulnerability('medium'),
+        'low-pkg': createMockVulnerability('low'),
+      });
+
+      access.mockResolvedValue();
+      readFile.mockResolvedValue(JSON.stringify(mockAuditData));
+
+      await main();
+
+      expect(console.log).toHaveBeenCalledWith('🔍 Starting security audit...');
+      expect(console.log).toHaveBeenCalledWith('📋 Parsed 2 vulnerabilities from audit results');
+      expect(console.log).toHaveBeenCalledWith('🔍 Security audit completed');
+      expect(console.log).toHaveBeenCalledWith(
+        '✅ All vulnerabilities are below the failure threshold'
+      );
+      expect(console.log).toHaveBeenCalledWith(
+        '🎉 Security audit passed - no critical vulnerabilities detected'
+      );
+      expect(process.exit).toHaveBeenCalledWith(0);
+    });
+
+    it('should fail audit with critical vulnerabilities', async () => {
+      const mockAuditData = createMockAuditData({
+        'critical-pkg': createMockVulnerability('critical'),
+        'high-pkg': createMockVulnerability('high'),
+        'medium-pkg': createMockVulnerability('medium'),
+      });
+
+      access.mockResolvedValue();
+      readFile.mockResolvedValue(JSON.stringify(mockAuditData));
+      writeFile.mockResolvedValue();
+
+      await main();
+
+      expect(console.log).toHaveBeenCalledWith('🔍 Starting security audit...');
+      expect(console.log).toHaveBeenCalledWith('📋 Parsed 3 vulnerabilities from audit results');
+      expect(console.log).toHaveBeenCalledWith('⚠️  Critical vulnerabilities: 2');
+      expect(console.error).toHaveBeenCalledWith(
+        expect.stringContaining('Critical vulnerabilities detected!')
+      );
+      expect(writeFile).toHaveBeenCalledWith(
+        'critical-vulnerabilities.json',
+        expect.any(String),
+        'utf-8'
+      );
+      expect(process.exit).toHaveBeenCalledWith(1);
+    });
+
+    it('should handle audit with no vulnerabilities', async () => {
+      const mockAuditData = createMockAuditData({});
+
+      access.mockResolvedValue();
+      readFile.mockResolvedValue(JSON.stringify(mockAuditData));
+
+      await main();
+
+      expect(console.log).toHaveBeenCalledWith('📋 Parsed 0 vulnerabilities from audit results');
+      expect(console.log).toHaveBeenCalledWith('📊 Total vulnerabilities found: 0');
+      expect(console.log).toHaveBeenCalledWith('⚠️  Critical vulnerabilities: 0');
+      expect(process.exit).toHaveBeenCalledWith(0);
+    });
+
+    it('should handle file read errors gracefully', async () => {
+      const error = new Error('File not found');
+      error.code = 'ENOENT';
+      access.mockRejectedValue(error);
+
+      await main();
+
+      expect(console.error).toHaveBeenCalledWith(
+        '❌ Security audit failed:',
+        'Audit results file not found: audit-results.json'
+      );
+      expect(process.exit).toHaveBeenCalledWith(1);
+    });
+
+    it('should log detailed vulnerability breakdown', async () => {
+      const mockAuditData = createMockAuditData({
+        'critical-pkg1': createMockVulnerability('critical'),
+        'critical-pkg2': createMockVulnerability('critical'),
+        'high-pkg1': createMockVulnerability('high'),
+        'medium-pkg1': createMockVulnerability('medium'),
+        'low-pkg1': createMockVulnerability('low'),
+      });
+
+      access.mockResolvedValue();
+      readFile.mockResolvedValue(JSON.stringify(mockAuditData));
+      writeFile.mockResolvedValue();
+
+      await main();
+
+      expect(console.log).toHaveBeenCalledWith('📊 Total vulnerabilities found: 5');
+      expect(console.log).toHaveBeenCalledWith('📈 Breakdown by severity:');
+      expect(console.log).toHaveBeenCalledWith('   🔴 critical: 2');
+      expect(console.log).toHaveBeenCalledWith('   🟠 high: 1');
+      expect(console.log).toHaveBeenCalledWith('   🟡 medium: 1');
+      expect(console.log).toHaveBeenCalledWith('   🟡 low: 1');
+      expect(console.log).toHaveBeenCalledWith('🎯 Policy threshold: critical, high');
+      expect(console.log).toHaveBeenCalledWith('⚠️  Critical vulnerabilities: 3');
+    });
+  });
+
+  describe('edge cases and error handling', () => {
+    it('should handle malformed vulnerability data gracefully', async () => {
+      const mockAuditData = {
+        auditReportVersion: 2,
+        vulnerabilities: {
+          'malformed-pkg': null, // Malformed vulnerability
+        },
+        metadata: { vulnerabilities: 1, dependencies: 1 },
+      };
+
+      access.mockResolvedValue();
+      readFile.mockResolvedValue(JSON.stringify(mockAuditData));
+
+      await main();
+
+      // Should not crash and should handle gracefully
+      expect(process.exit).toHaveBeenCalledWith(0);
+    });
+  });
+});
