@@ -1,3 +1,6 @@
+# Run glance to analyze codebase (async)
+glance ./ &
+
 # Validate test file naming conventions
 node scripts/validate-test-names.js
 
