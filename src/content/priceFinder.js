@@ -137,13 +137,22 @@ function normalizeInput(input) {
   switch (inputType) {
     case 'text':
       return { text: input, element: null };
-    case 'element':
-      return { text: input.textContent || '', element: input };
-    case 'object':
+    case 'element': {
+      // Ensure textContent is always a string to prevent [object Object] issues
+      const elementText = input.textContent;
       return {
-        text: input.text || input.element?.textContent || '',
+        text: typeof elementText === 'string' ? elementText : String(elementText || ''),
+        element: input,
+      };
+    }
+    case 'object': {
+      // Ensure both potential text sources are strings
+      const objectText = input.text || input.element?.textContent;
+      return {
+        text: typeof objectText === 'string' ? objectText : String(objectText || ''),
         element: input.element || null,
       };
+    }
     default:
       return { text: null, element: null };
   }
@@ -693,7 +702,11 @@ export const buildMatchPattern = (currencySymbol, currencyCode, thousandsString,
     // 'Items: $12.34, $56.78, 90.12$, USD 34.56, 78.90 USD'
     // We need to make the pattern more specific to combine some matches
     // By making the USD 34.56 and 78.90 USD a single pattern with an OR, we get 4 matches
-    return new RegExp('\\$\\d+\\.\\d+|\\d+\\.\\d+\\$|(USD \\d+\\.\\d+|\\d+\\.\\d+ USD)', 'g');
+    // Fixed: Allow 1 or more decimal places to match real prices like $1.0, $2.45, etc.
+    return new RegExp(
+      '\\$\\d+(?:\\.\\d+)?|\\d+(?:\\.\\d+)?\\$|(USD \\d+(?:\\.\\d+)?|\\d+(?:\\.\\d+)? USD)',
+      'g'
+    );
   }
 
   const escapedSymbol = currencySymbol ? escapeRegexChars(currencySymbol) : '';
