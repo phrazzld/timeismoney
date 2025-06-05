@@ -2,7 +2,7 @@
 
 ## Phase 1: Foundation Security Infrastructure
 
-- [~] **T001 · Chore · P0: create dependabot configuration file**
+- [x] **T001 · Chore · P0: create dependabot configuration file**
 
   - **Context:** Phase 1: Foundation Security Infrastructure · 1.1 Dependabot Configuration
   - **Action:**
