@@ -7,6 +7,7 @@
 
 import { getSettings, onSettingsChanged } from '../utils/storage.js';
 import * as logger from '../utils/logger.js';
+import { DEFAULT_SETTINGS } from '../utils/constants.js';
 
 /**
  * Tracks whether the extension is currently disabled on the page
@@ -16,6 +17,78 @@ import * as logger from '../utils/logger.js';
  * @private
  */
 let disabledOnPage = true;
+
+/**
+ * Cached settings to avoid redundant Chrome storage calls
+ *
+ * @type {object|null}
+ * @private
+ */
+let cachedSettings = null;
+
+/**
+ * Timestamp of last successful settings fetch
+ *
+ * @type {number}
+ * @private
+ */
+let lastSettingsFetch = 0;
+
+/**
+ * Cache duration in milliseconds (5 seconds)
+ *
+ * @type {number}
+ * @private
+ */
+const SETTINGS_CACHE_DURATION = 5000;
+
+/**
+ * Gets settings with caching to reduce Chrome storage calls
+ *
+ * @returns {Promise<object>} Promise that resolves to settings
+ * @private
+ */
+function getCachedSettings() {
+  const now = Date.now();
+
+  // Return cached settings if still valid
+  if (cachedSettings && now - lastSettingsFetch < SETTINGS_CACHE_DURATION) {
+    return Promise.resolve(cachedSettings);
+  }
+
+  // Fetch fresh settings
+  return getSettings()
+    .then((settings) => {
+      if (settings && typeof settings === 'object') {
+        cachedSettings = { ...DEFAULT_SETTINGS, ...settings };
+        lastSettingsFetch = now;
+        return cachedSettings;
+      }
+      throw new Error('Invalid settings received');
+    })
+    .catch((error) => {
+      // Return cached settings as fallback, or defaults if no cache
+      if (cachedSettings) {
+        logger.debug('Using cached settings due to storage error:', error.message);
+        return cachedSettings;
+      }
+
+      // Use safe defaults
+      logger.warn('Using default settings due to storage error:', error.message);
+      cachedSettings = { ...DEFAULT_SETTINGS };
+      return cachedSettings;
+    });
+}
+
+/**
+ * Invalidates the settings cache
+ *
+ * @private
+ */
+function invalidateSettingsCache() {
+  cachedSettings = null;
+  lastSettingsFetch = 0;
+}
 
 /**
  * Initializes settings and applies them to the page if needed
@@ -41,7 +114,7 @@ export function initSettings(callback) {
       return Promise.resolve({ disabled: true });
     }
 
-    return getSettings()
+    return getCachedSettings()
       .then((settings) => {
         // Validate settings
         if (!settings || typeof settings !== 'object') {
@@ -97,6 +170,9 @@ export function onSettingsChange(callback) {
 
     onSettingsChanged((updatedSettings) => {
       try {
+        // Invalidate cache when settings change
+        invalidateSettingsCache();
+
         // Validate document and body exist
         if (!document) {
           logger.warn('TimeIsMoney: Document not available in settings change handler');
@@ -177,7 +253,7 @@ export function handleVisibilityChange(callback) {
 
           // Only process when document becomes visible
           if (!document.hidden) {
-            getSettings()
+            getCachedSettings()
               .then((settings) => {
                 try {
                   // Validate settings
@@ -265,6 +341,15 @@ export function handleVisibilityChange(callback) {
  */
 export function isDisabled() {
   return disabledOnPage;
+}
+
+/**
+ * Gets cached settings for use by other modules
+ *
+ * @returns {Promise<object>} Promise that resolves to cached settings
+ */
+export function getSettingsWithCache() {
+  return getCachedSettings();
 }
 
 /**

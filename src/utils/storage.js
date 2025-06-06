@@ -23,7 +23,14 @@ export function getSettings() {
         return;
       }
 
+      // Add timeout to prevent hanging storage calls
+      const timeoutId = setTimeout(() => {
+        reject(new Error('Storage operation timed out'));
+      }, 3000);
+
       chrome.storage.sync.get(DEFAULT_SETTINGS, (items) => {
+        clearTimeout(timeoutId);
+
         // Check inside callback in case context was invalidated during async operation
         if (!isValidChromeRuntime()) {
           reject(new Error('Extension context invalidated'));

@@ -15,8 +15,12 @@
  */
 
 // Restore proper ES6 imports
-import { getSettings } from '../utils/storage.js';
-import { initSettings, onSettingsChange, handleVisibilityChange } from './settingsManager.js';
+import {
+  initSettings,
+  onSettingsChange,
+  handleVisibilityChange,
+  getSettingsWithCache,
+} from './settingsManager.js';
 import { walk, startObserver, stopObserver, createDomScannerState } from './domScanner.js';
 import { findPrices } from './priceFinder.js';
 import { convertPriceToTimeString } from '../utils/converter.js';
@@ -68,7 +72,7 @@ function processPage(root, settings) {
 
     // If no settings were provided, fetch them first
     if (!settings) {
-      getSettings()
+      getSettingsWithCache()
         .then((fetchedSettings) => {
           // Validate settings before proceeding
           if (!fetchedSettings || typeof fetchedSettings !== 'object') {
@@ -322,6 +326,8 @@ document.addEventListener(
  * @returns {void}
  */
 const convert = (textNode, preloadedSettings) => {
+  const startTime = performance.now();
+
   try {
     // Validate text node
     if (!textNode || !textNode.nodeValue || textNode.nodeType !== 3) {
@@ -348,9 +354,11 @@ const convert = (textNode, preloadedSettings) => {
       return;
     }
 
-    // Use preloaded settings if provided, otherwise fetch them
+    // Use preloaded settings if provided, otherwise fetch them from cache
     // The MutationObserver in domScanner.js will now always provide preloadedSettings
-    const settingsPromise = preloadedSettings ? Promise.resolve(preloadedSettings) : getSettings();
+    const settingsPromise = preloadedSettings
+      ? Promise.resolve(preloadedSettings)
+      : getSettingsWithCache();
 
     settingsPromise
       .then((settings) => {
@@ -479,11 +487,17 @@ const convert = (textNode, preloadedSettings) => {
         }
       })
       .catch((error) => {
+        const processingTime = Math.round(performance.now() - startTime);
         // Handle settings retrieval errors separately to aid in debugging
         if (error && error.message === 'Extension context invalidated') {
-          logger.debug('Conversion skipped: Extension context invalidated');
+          // This is expected during page unload - don't log as error
+          return;
+        } else if (error && error.message.includes('Extension context')) {
+          // Other extension context issues - debug level
+          logger.debug('Conversion skipped due to extension context issue:', error.message);
         } else {
-          logger.error('Failed to get settings:', error?.message || 'Unknown error', error?.stack);
+          // Only log actual errors that might need attention
+          logger.warn(`Processing failed after ${processingTime}ms due to settings error`);
         }
       });
   } catch (topLevelError) {
