@@ -1,20 +1,18 @@
 version: 2
 updates:
-  # Configuration for patch and minor updates (auto-merge eligible)
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "daily"
       time: "09:00"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 15
     commit-message:
       prefix: "chore(deps)"
       include: "scope"
-    labels: ["dependencies", "auto-merge"]
-    # No reviewers for automated low-risk updates
+    labels: ["dependencies"]
     pull-request-branch-name:
       separator: "/"
-    # Group patch and minor updates together to reduce PR volume
+    # Group patch and minor updates to reduce PR volume
     groups:
       minor-and-patch:
         patterns:
@@ -22,21 +20,3 @@ updates:
         update-types:
           - "minor"
           - "patch"
-  
-  # Separate configuration for major updates (manual review required)
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    labels: ["dependencies", "major-update", "requires-review"]
-    reviewers: ["security-team"]
-    # Only major version updates - require manual review
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]

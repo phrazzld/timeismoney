@@ -30,44 +30,29 @@ Our dependency management strategy balances security, stability, and development
 
 ## Dependabot Configuration
 
-### Low-Risk Update Configuration
+Our dependabot configuration uses a single update policy with intelligent auto-merge detection:
+
 ```yaml
-# Daily patch/minor updates with auto-merge
-- package-ecosystem: "npm"
-  directory: "/"
-  schedule:
-    interval: "daily"
-    time: "09:00"
-  open-pull-requests-limit: 10
-  commit-message:
-    prefix: "chore(deps)"
-    include: "scope"
-  labels: ["dependencies", "auto-merge"]
-  groups:
-    minor-and-patch:
-      patterns: ["*"]
-      update-types: ["minor", "patch"]
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "09:00"
+    open-pull-requests-limit: 15
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    labels: ["dependencies"]
+    # Group patch and minor updates to reduce PR volume
+    groups:
+      minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
 ```
 
-### High-Risk Update Configuration
-```yaml
-# Weekly major updates with manual review
-- package-ecosystem: "npm"
-  directory: "/"
-  schedule:
-    interval: "weekly"
-    day: "monday"
-    time: "09:00"
-  open-pull-requests-limit: 5
-  commit-message:
-    prefix: "chore(deps)"
-    include: "scope"
-  labels: ["dependencies", "major-update", "requires-review"]
-  reviewers: ["security-team"]
-  ignore:
-    - dependency-name: "*"
-      update-types: ["version-update:semver-minor", "version-update:semver-patch"]
-```
+**Auto-merge Detection**: The GitHub Actions workflow automatically detects update types by checking PR titles for the "minor-and-patch" group name, enabling auto-merge for low-risk updates while flagging major updates for manual review.
 
 ## Security Integration
 
