@@ -780,8 +780,8 @@ export const stopObserver = (state = defaultState) => {
             state.domObserver.disconnect();
           } catch (disconnectCallError) {
             // Just log but continue execution
-            logger.error(
-              'Error calling MutationObserver.disconnect():',
+            logger.warn(
+              'MutationObserver.disconnect() failed (non-critical):',
               disconnectCallError.message
             );
           }
