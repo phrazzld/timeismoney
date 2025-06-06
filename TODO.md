@@ -141,7 +141,7 @@
     1. Both documentation files are created, reviewed, and merged.
   - **Depends‑on:** none
 
-- [ ] **T014 · Feature · P2: implement emergency bypass for security checks**
+- [x] **T014 · Feature · P2: implement emergency bypass for security checks**
 
   - **Context:** Rollback Procedures · Emergency Bypass
   - **Action:**
