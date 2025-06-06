@@ -4,7 +4,7 @@ This document tracks all CI test failures that need to be fixed before merging.
 
 ## Priority 1: SettingsManager Error Test Consistency
 
-- [ ] **Fix non-integration settingsManager error tests**
+- [x] **Fix non-integration settingsManager error tests**
   - **File**: `src/__tests__/content/settingsManager.error.vitest.test.js`
   - **Issue**: Tests expect `console.error` calls but improved error handling now uses `console.warn`
   - **Action**: Update test expectations to match new graceful error behavior (like integration tests)
