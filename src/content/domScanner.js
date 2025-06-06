@@ -320,13 +320,22 @@ export const startObserver = (
     // Cap the debounce interval to reasonable values (50ms - 2000ms)
     debounceInterval = Math.max(50, Math.min(2000, debounceInterval));
 
-    // Initialize debug mode
+    // Initialize debug mode with graceful fallback for test environments
     getSettings()
       .then((settings) => {
         debugTools.initDebugMode(settings);
       })
       .catch((error) => {
-        logger.error('Error initializing debug mode:', error.message);
+        // Handle Chrome context errors gracefully for debug mode
+        if (error && error.message === 'Extension context invalidated') {
+          logger.debug('Debug mode unavailable: Extension context invalidated');
+          // Initialize debug mode with disabled state for test environments
+          debugTools.initDebugMode({ debugMode: false });
+        } else {
+          logger.warn('Debug mode initialization failed:', error.message);
+          // Fallback to disabled debug mode for any other errors
+          debugTools.initDebugMode({ debugMode: false });
+        }
       });
 
     // Create the observer if it doesn't exist
