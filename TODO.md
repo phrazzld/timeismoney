@@ -79,7 +79,7 @@
 
 ## Phase 2: Advanced Monitoring & Automation
 
-- [ ] **T008 · Feature · P2: implement vulnerability allowlist mechanism**
+- [x] **T008 · Feature · P2: implement vulnerability allowlist mechanism**
 
   - **Context:** Risk Assessment & Mitigation · False positives blocking CI
   - **Action:**
@@ -90,7 +90,7 @@
     2. Unit tests are updated to cover this allowlist logic.
   - **Depends‑on:** [T004, T005]
 
-- [ ] **T009 · Feature · P2: generate security report as a CI artifact**
+- [x] **T009 · Feature · P2: generate security report as a CI artifact**
 
   - **Context:** Phase 1.3 Security Audit Processing Script · `generateSecurityReport()`
   - **Action:**

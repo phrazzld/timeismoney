@@ -114,6 +114,14 @@ jobs:
           node scripts/security-audit.js
         continue-on-error: false
       
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-report
+          path: security-report.md
+          if-no-files-found: warn
+      
       - name: Check for critical vulnerabilities
         run: |
           if [ -f "critical-vulnerabilities.json" ]; then

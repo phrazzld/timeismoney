@@ -27,6 +27,7 @@ import {
   createCriticalVulnerabilitiesFile,
   main,
 } from '../../../scripts/security-audit.js';
+import { SECURITY_CONFIG } from '../../../scripts/security-config.js';
 
 describe('Security Audit System', () => {
   beforeEach(() => {
@@ -150,6 +151,119 @@ describe('Security Audit System', () => {
     it('should handle empty vulnerabilities array', () => {
       const result = applySeverityPolicy([]);
       expect(result).toEqual([]);
+    });
+
+    it('should filter out vulnerabilities in allowList', () => {
+      // Store original allowList to restore later
+      const originalAllowList = [...SECURITY_CONFIG.vulnerability.allowList];
+
+      // Temporarily modify the allowList
+      SECURITY_CONFIG.vulnerability.allowList = [
+        { id: '1', reason: 'False positive', expires: '2024-12-31' },
+        { id: '3', reason: 'Risk accepted', expires: '2024-06-30' },
+      ];
+
+      const vulnerabilities = [
+        { id: '1', severity: 'critical', package: 'pkg1', title: 'Critical issue' },
+        { id: '2', severity: 'high', package: 'pkg2', title: 'High issue' },
+        { id: '3', severity: 'critical', package: 'pkg3', title: 'Another critical' },
+        { id: '4', severity: 'medium', package: 'pkg4', title: 'Medium issue' },
+      ];
+
+      const result = applySeverityPolicy(vulnerabilities);
+
+      // Should only include ID '2' (high severity, not in allowList)
+      // IDs '1' and '3' are in allowList and should be filtered out
+      // ID '4' is medium severity and excluded by severity policy
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('2');
+      expect(result[0].severity).toBe('high');
+
+      // Restore original allowList
+      SECURITY_CONFIG.vulnerability.allowList = originalAllowList;
+    });
+
+    it('should work correctly when allowList is empty', () => {
+      const vulnerabilities = [
+        { id: '1', severity: 'critical', package: 'pkg1' },
+        { id: '2', severity: 'high', package: 'pkg2' },
+        { id: '3', severity: 'medium', package: 'pkg3' },
+      ];
+
+      const result = applySeverityPolicy(vulnerabilities);
+
+      // Should include all critical and high severity vulnerabilities
+      expect(result).toHaveLength(2);
+      expect(result[0].severity).toBe('critical');
+      expect(result[1].severity).toBe('high');
+    });
+
+    it('should work correctly when allowList is undefined or null', () => {
+      // Store original allowList to restore later
+      const originalAllowList = SECURITY_CONFIG.vulnerability.allowList;
+
+      // Temporarily set allowList to null
+      SECURITY_CONFIG.vulnerability.allowList = null;
+
+      const vulnerabilities = [
+        { id: '1', severity: 'critical', package: 'pkg1' },
+        { id: '2', severity: 'high', package: 'pkg2' },
+      ];
+
+      const result = applySeverityPolicy(vulnerabilities);
+
+      expect(result).toHaveLength(2);
+
+      // Restore original allowList
+      SECURITY_CONFIG.vulnerability.allowList = originalAllowList;
+    });
+
+    it('should handle allowList with non-matching IDs correctly', () => {
+      // Store original allowList to restore later
+      const originalAllowList = [...SECURITY_CONFIG.vulnerability.allowList];
+
+      // Temporarily modify the allowList with non-matching IDs
+      SECURITY_CONFIG.vulnerability.allowList = [
+        { id: 'non-existent-1', reason: 'Test', expires: '2024-12-31' },
+        { id: 'non-existent-2', reason: 'Test', expires: '2024-12-31' },
+      ];
+
+      const vulnerabilities = [
+        { id: '1', severity: 'critical', package: 'pkg1' },
+        { id: '2', severity: 'high', package: 'pkg2' },
+      ];
+
+      const result = applySeverityPolicy(vulnerabilities);
+
+      // All vulnerabilities should be included since none match allowList
+      expect(result).toHaveLength(2);
+
+      // Restore original allowList
+      SECURITY_CONFIG.vulnerability.allowList = originalAllowList;
+    });
+
+    it('should filter all vulnerabilities if all are in allowList', () => {
+      // Store original allowList to restore later
+      const originalAllowList = [...SECURITY_CONFIG.vulnerability.allowList];
+
+      // Temporarily modify the allowList to include all test vulnerabilities
+      SECURITY_CONFIG.vulnerability.allowList = [
+        { id: '1', reason: 'False positive', expires: '2024-12-31' },
+        { id: '2', reason: 'Risk accepted', expires: '2024-12-31' },
+      ];
+
+      const vulnerabilities = [
+        { id: '1', severity: 'critical', package: 'pkg1' },
+        { id: '2', severity: 'high', package: 'pkg2' },
+      ];
+
+      const result = applySeverityPolicy(vulnerabilities);
+
+      // All vulnerabilities should be filtered out
+      expect(result).toHaveLength(0);
+
+      // Restore original allowList
+      SECURITY_CONFIG.vulnerability.allowList = originalAllowList;
     });
   });
 

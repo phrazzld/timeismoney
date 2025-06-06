@@ -21,6 +21,7 @@ import { SECURITY_CONFIG } from './security-config.js';
  */
 const AUDIT_RESULTS_FILE = 'audit-results.json';
 const CRITICAL_VULNERABILITIES_FILE = 'critical-vulnerabilities.json';
+const SECURITY_REPORT_FILE = 'security-report.md';
 
 /**
  * Reads and validates audit results from the audit-results.json file
@@ -172,6 +173,198 @@ function logAuditSummary(allVulnerabilities, criticalVulnerabilities) {
 }
 
 /**
+ * Generates a human-readable markdown security report
+ *
+ * @param {Array<object>} allVulnerabilities - All parsed vulnerabilities
+ * @param {Array<object>} criticalVulnerabilities - Filtered critical vulnerabilities
+ * @returns {string} Markdown formatted security report
+ */
+function generateSecurityReport(allVulnerabilities, criticalVulnerabilities) {
+  const timestamp = new Date().toISOString();
+  const summary = generateVulnerabilitySummary(allVulnerabilities);
+  const { failOnSeverity, allowList } = SECURITY_CONFIG.vulnerability;
+
+  let report = `# Security Audit Report
+
+**Generated:** ${timestamp}  
+**Audit Status:** ${criticalVulnerabilities.length > 0 ? '❌ FAILED' : '✅ PASSED'}  
+**Total Vulnerabilities:** ${summary.total}  
+**Critical Vulnerabilities:** ${criticalVulnerabilities.length}
+
+## Executive Summary
+
+`;
+
+  if (summary.total === 0) {
+    report += `🎉 **No vulnerabilities detected** - Your dependencies are secure!
+
+`;
+  } else {
+    report += `Found **${summary.total}** vulnerabilities across **${summary.uniquePackages}** packages.
+
+`;
+
+    if (criticalVulnerabilities.length > 0) {
+      report += `⚠️  **${criticalVulnerabilities.length}** vulnerabilities exceed the failure threshold and require immediate attention.
+
+`;
+    } else {
+      report += `✅ All vulnerabilities are below the failure threshold.
+
+`;
+    }
+  }
+
+  // Policy Configuration Section
+  report += `## Policy Configuration
+
+- **Failure Threshold:** ${failOnSeverity.join(', ')}
+- **Maximum Age:** ${SECURITY_CONFIG.vulnerability.maxAge} days
+- **Allowlist Entries:** ${allowList ? allowList.length : 0}
+
+`;
+
+  // Vulnerability Breakdown
+  if (summary.total > 0) {
+    report += `## Vulnerability Breakdown
+
+`;
+
+    Object.entries(summary.bySeverity).forEach(([severity, count]) => {
+      const icon =
+        severity === 'critical'
+          ? '🔴'
+          : severity === 'high'
+            ? '🟠'
+            : severity === 'medium'
+              ? '🟡'
+              : '🟢';
+      const isBlocking = failOnSeverity.includes(severity);
+      const status = isBlocking ? ' (Blocking)' : ' (Non-blocking)';
+      report += `- **${icon} ${severity.toUpperCase()}${status}:** ${count}\n`;
+    });
+
+    report += `
+`;
+
+    // Critical Vulnerabilities Details
+    if (criticalVulnerabilities.length > 0) {
+      report += `## Critical Vulnerabilities (Blocking Build)
+
+`;
+
+      criticalVulnerabilities.forEach((vuln, index) => {
+        report += `### ${index + 1}. ${vuln.package}
+
+- **Severity:** ${vuln.severity.toUpperCase()}
+- **Title:** ${vuln.title}
+- **ID:** ${vuln.id || 'N/A'}
+- **Fix Available:** ${vuln.fixAvailable ? 'Yes' : 'No'}
+
+`;
+      });
+    }
+
+    // Non-Critical Vulnerabilities Summary
+    const nonCriticalVulns = allVulnerabilities.filter(
+      (vuln) => !criticalVulnerabilities.some((critical) => critical.id === vuln.id)
+    );
+
+    if (nonCriticalVulns.length > 0) {
+      report += `## Other Vulnerabilities (Non-blocking)
+
+`;
+
+      const nonCriticalByPackage = {};
+      nonCriticalVulns.forEach((vuln) => {
+        if (!nonCriticalByPackage[vuln.package]) {
+          nonCriticalByPackage[vuln.package] = [];
+        }
+        nonCriticalByPackage[vuln.package].push(vuln);
+      });
+
+      Object.entries(nonCriticalByPackage).forEach(([packageName, vulns]) => {
+        report += `- **${packageName}:** ${vulns.length} vulnerabilities (${vulns.map((v) => v.severity).join(', ')})\n`;
+      });
+
+      report += `
+`;
+    }
+  }
+
+  // Allowlist Section
+  if (allowList && allowList.length > 0) {
+    report += `## Allowlist
+
+The following vulnerabilities are temporarily approved and will not block builds:
+
+`;
+
+    allowList.forEach((entry, index) => {
+      report += `${index + 1}. **ID:** ${entry.id}
+   - **Reason:** ${entry.reason}
+   - **Expires:** ${entry.expires}
+
+`;
+    });
+  }
+
+  // Recommendations Section
+  report += `## Recommendations
+
+`;
+
+  if (criticalVulnerabilities.length > 0) {
+    report += `⚠️  **Immediate Action Required:**
+- Review and update packages with critical/high severity vulnerabilities
+- Consider using \`pnpm update\` to update to latest secure versions
+- If fixes are not available, consider adding temporary allowlist entries with expiration dates
+
+`;
+  }
+
+  if (summary.total > 0) {
+    report += `📋 **General Maintenance:**
+- Regularly run \`pnpm audit\` to check for new vulnerabilities
+- Keep dependencies updated to their latest secure versions
+- Monitor vulnerability databases for emerging threats
+
+`;
+  }
+
+  report += `📊 **Monitoring:**
+- This report is generated on every CI run
+- Download security reports from GitHub Actions artifacts
+- Review allowlist entries before their expiration dates
+
+---
+
+*Report generated by automated security audit system*
+`;
+
+  return report;
+}
+
+/**
+ * Creates the security report markdown file for CI artifact collection
+ *
+ * @param {Array<object>} allVulnerabilities - All parsed vulnerabilities
+ * @param {Array<object>} criticalVulnerabilities - Filtered critical vulnerabilities
+ * @returns {Promise<void>}
+ * @throws {Error} When file cannot be written
+ */
+async function createSecurityReportFile(allVulnerabilities, criticalVulnerabilities) {
+  try {
+    const reportContent = generateSecurityReport(allVulnerabilities, criticalVulnerabilities);
+    await writeFile(SECURITY_REPORT_FILE, reportContent, 'utf-8');
+
+    console.log(`📄 Security report generated: ${SECURITY_REPORT_FILE}`);
+  } catch (error) {
+    throw new Error(`Failed to create security report file: ${error.message}`);
+  }
+}
+
+/**
  * Main audit processing function
  * Orchestrates the entire security audit workflow
  *
@@ -193,6 +386,9 @@ async function main() {
     // Log summary information
     logAuditSummary(allVulnerabilities, criticalVulnerabilities);
 
+    // Always generate security report for CI artifacts (regardless of pass/fail status)
+    await createSecurityReportFile(allVulnerabilities, criticalVulnerabilities);
+
     // If we have critical vulnerabilities, create the failure artifact and exit with error
     if (criticalVulnerabilities.length > 0) {
       await createCriticalVulnerabilitiesFile(criticalVulnerabilities);
@@ -213,4 +409,11 @@ if (import.meta.url === `file://${resolve(process.argv[1])}`) {
   main();
 }
 
-export { readAuditResults, applySeverityPolicy, createCriticalVulnerabilitiesFile, main };
+export {
+  readAuditResults,
+  applySeverityPolicy,
+  createCriticalVulnerabilitiesFile,
+  generateSecurityReport,
+  createSecurityReportFile,
+  main,
+};

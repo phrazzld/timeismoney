@@ -28,7 +28,13 @@ export const SECURITY_CONFIG = {
      *
      * @type {Array}
      */
-    allowList: [],
+    allowList: [
+      {
+        id: 'test-critical-vulnerability',
+        reason: 'Testing allowlist functionality - will be removed',
+        expires: '2024-12-31',
+      },
+    ],
 
     /**
      * Maximum age in days before forcing update of vulnerable dependencies
