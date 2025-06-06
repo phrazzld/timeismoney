@@ -19,14 +19,14 @@ This document tracks all CI test failures that need to be fixed before merging.
   - **Action**: Fix mock imports and ensure proper Vitest mocking syntax
   - **Details**: The `mock('fs/promises')` syntax may not be working correctly with Vitest
 
-- [ ] **Verify security audit test coverage**
+- [x] **Verify security audit test coverage**
   - **Dependencies**: Fix fs/promises mocking first
   - **Action**: Ensure all security audit functions have proper test coverage
   - **Details**: Check readAuditResults, applySeverityPolicy, createCriticalVulnerabilitiesFile, main functions
 
 ## Priority 2: Performance and Observer Test Issues
 
-- [ ] **Fix DOM scanning performance test errors**
+- [x] **Fix DOM scanning performance test errors**
 
   - **File**: `src/__tests__/content/performance.vitest.test.js`
   - **Issue**: `TypeError: Cannot read properties of undefined (reading 'pop')` in domScanner.js:556

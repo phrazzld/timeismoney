@@ -553,7 +553,9 @@ export const processPendingNodes = (callback, options = {}, state = defaultState
               'element-nodes-start',
               'element-nodes-end'
             );
-            const elementMeasure = performance.getEntriesByName('Element Nodes Processing').pop();
+            const elementMeasures = performance.getEntriesByName('Element Nodes Processing');
+            const elementMeasure =
+              elementMeasures && elementMeasures.length > 0 ? elementMeasures.pop() : null;
             if (elementMeasure) {
               logger.debug(
                 `Processed ${nodeCount} element nodes in ${Math.round(elementMeasure.duration)}ms`
@@ -587,7 +589,8 @@ export const processPendingNodes = (callback, options = {}, state = defaultState
 
             performance.mark('text-nodes-end');
             performance.measure('Text Nodes Processing', 'text-nodes-start', 'text-nodes-end');
-            const textMeasure = performance.getEntriesByName('Text Nodes Processing').pop();
+            const textMeasures = performance.getEntriesByName('Text Nodes Processing');
+            const textMeasure = textMeasures && textMeasures.length > 0 ? textMeasures.pop() : null;
             if (textMeasure) {
               logger.debug(
                 `Processed ${textNodeCount} text nodes in ${Math.round(textMeasure.duration)}ms`
