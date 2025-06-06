@@ -122,7 +122,7 @@
 
 ## Phase 3: Operational Excellence
 
-- [ ] **T012 · Chore · P2: document vulnerability response procedures**
+- [x] **T012 · Chore · P2: document vulnerability response procedures**
 
   - **Context:** Phase 3: Operational Excellence · 3.1 Documentation & Procedures
   - **Action:**
