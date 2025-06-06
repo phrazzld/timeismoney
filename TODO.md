@@ -111,7 +111,7 @@
     1. Observe that a low-risk Dependabot PR is automatically merged after all required checks pass.
   - **Depends‑on:** [T001, T007]
 
-- [ ] **T011 · Chore · P2: create github issue template for vulnerability tracking**
+- [x] **T011 · Chore · P2: create github issue template for vulnerability tracking**
   - **Context:** Phase 2: Advanced Monitoring & Automation · 2.2 Security Monitoring Dashboard
   - **Action:**
     1. Create a new issue template file at `.github/ISSUE_TEMPLATE/security_vulnerability.yml`.
