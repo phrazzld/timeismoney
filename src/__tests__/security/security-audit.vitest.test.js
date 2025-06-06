@@ -5,22 +5,36 @@
 
 /* eslint-disable no-console */
 
-import { vi, describe, it, expect, beforeEach, afterEach, mock } from '../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../vitest.setup.js';
+// eslint-disable-next-line no-restricted-imports
+import { vi } from 'vitest';
 
-// Mock fs/promises module
-mock('fs/promises', () => ({
-  readFile: vi.fn(),
-  writeFile: vi.fn(),
-  access: vi.fn(),
-  constants: {
-    F_OK: 0,
-    R_OK: 4,
-  },
-}));
+// Mock fs/promises module using proper Vitest syntax
+vi.mock('fs/promises', () => {
+  const mockFunctions = {
+    readFile: vi.fn(),
+    writeFile: vi.fn(),
+    access: vi.fn(),
+    constants: {
+      F_OK: 0,
+      R_OK: 4,
+    },
+  };
+  return {
+    default: mockFunctions,
+    ...mockFunctions,
+  };
+});
+
+import { describe, it, expect, beforeEach, afterEach } from '../setup/vitest-imports.js';
+import { resetTestMocks } from '../../../vitest.setup.js';
 
 // Import modules after mocking
 import { readFile, writeFile, access } from 'fs/promises';
+
+// Wrap imported functions with vi.mocked for proper mock access
+const mockedAccess = vi.mocked(access);
+const mockedReadFile = vi.mocked(readFile);
+const mockedWriteFile = vi.mocked(writeFile);
 import {
   readAuditResults,
   applySeverityPolicy,
@@ -87,20 +101,20 @@ describe('Security Audit System', () => {
         'mock-package': createMockVulnerability('high'),
       });
 
-      access.mockResolvedValue();
-      readFile.mockResolvedValue(JSON.stringify(mockAuditData));
+      mockedAccess.mockResolvedValue();
+      mockedReadFile.mockResolvedValue(JSON.stringify(mockAuditData));
 
       const result = await readAuditResults();
 
-      expect(access).toHaveBeenCalledWith('audit-results.json', 4); // F_OK | R_OK
-      expect(readFile).toHaveBeenCalledWith('audit-results.json', 'utf-8');
+      expect(mockedAccess).toHaveBeenCalledWith('audit-results.json', 4); // F_OK | R_OK
+      expect(mockedReadFile).toHaveBeenCalledWith('audit-results.json', 'utf-8');
       expect(result).toEqual(mockAuditData);
     });
 
     it('should throw error when audit results file not found', async () => {
       const error = new Error('File not found');
       error.code = 'ENOENT';
-      access.mockRejectedValue(error);
+      mockedAccess.mockRejectedValue(error);
 
       await expect(readAuditResults()).rejects.toThrow(
         'Audit results file not found: audit-results.json'
@@ -108,8 +122,8 @@ describe('Security Audit System', () => {
     });
 
     it('should throw error when audit data is invalid JSON', async () => {
-      access.mockResolvedValue();
-      readFile.mockResolvedValue('invalid json');
+      mockedAccess.mockResolvedValue();
+      mockedReadFile.mockResolvedValue('invalid json');
 
       await expect(readAuditResults()).rejects.toThrow('Failed to read audit results:');
     });
@@ -117,8 +131,8 @@ describe('Security Audit System', () => {
     it('should accept audit data with empty vulnerabilities', async () => {
       const mockAuditData = createMockAuditData({});
 
-      access.mockResolvedValue();
-      readFile.mockResolvedValue(JSON.stringify(mockAuditData));
+      mockedAccess.mockResolvedValue();
+      mockedReadFile.mockResolvedValue(JSON.stringify(mockAuditData));
 
       const result = await readAuditResults();
       expect(result).toEqual(mockAuditData);
@@ -274,17 +288,17 @@ describe('Security Audit System', () => {
         { id: '2', severity: 'high', package: 'pkg2', title: 'High issue' },
       ];
 
-      writeFile.mockResolvedValue();
+      mockedWriteFile.mockResolvedValue();
 
       await createCriticalVulnerabilitiesFile(criticalVulns);
 
-      expect(writeFile).toHaveBeenCalledWith(
+      expect(mockedWriteFile).toHaveBeenCalledWith(
         'critical-vulnerabilities.json',
         expect.any(String),
         'utf-8'
       );
 
-      const [, content] = writeFile.mock.calls[0];
+      const [, content] = mockedWriteFile.mock.calls[0];
       const parsedContent = JSON.parse(content);
 
       expect(parsedContent).toMatchObject({
@@ -309,7 +323,7 @@ describe('Security Audit System', () => {
         { id: '1', severity: 'critical', package: 'pkg1', title: 'Critical issue' },
       ];
 
-      writeFile.mockRejectedValue(new Error('Write permission denied'));
+      mockedWriteFile.mockRejectedValue(new Error('Write permission denied'));
 
       await expect(createCriticalVulnerabilitiesFile(criticalVulns)).rejects.toThrow(
         'Failed to create critical vulnerabilities file: Write permission denied'
@@ -324,8 +338,8 @@ describe('Security Audit System', () => {
         'low-pkg': createMockVulnerability('low'),
       });
 
-      access.mockResolvedValue();
-      readFile.mockResolvedValue(JSON.stringify(mockAuditData));
+      mockedAccess.mockResolvedValue();
+      mockedReadFile.mockResolvedValue(JSON.stringify(mockAuditData));
 
       await main();
 
@@ -348,9 +362,9 @@ describe('Security Audit System', () => {
         'medium-pkg': createMockVulnerability('medium'),
       });
 
-      access.mockResolvedValue();
-      readFile.mockResolvedValue(JSON.stringify(mockAuditData));
-      writeFile.mockResolvedValue();
+      mockedAccess.mockResolvedValue();
+      mockedReadFile.mockResolvedValue(JSON.stringify(mockAuditData));
+      mockedWriteFile.mockResolvedValue();
 
       await main();
 
@@ -360,7 +374,7 @@ describe('Security Audit System', () => {
       expect(console.error).toHaveBeenCalledWith(
         expect.stringContaining('Critical vulnerabilities detected!')
       );
-      expect(writeFile).toHaveBeenCalledWith(
+      expect(mockedWriteFile).toHaveBeenCalledWith(
         'critical-vulnerabilities.json',
         expect.any(String),
         'utf-8'
@@ -371,8 +385,8 @@ describe('Security Audit System', () => {
     it('should handle audit with no vulnerabilities', async () => {
       const mockAuditData = createMockAuditData({});
 
-      access.mockResolvedValue();
-      readFile.mockResolvedValue(JSON.stringify(mockAuditData));
+      mockedAccess.mockResolvedValue();
+      mockedReadFile.mockResolvedValue(JSON.stringify(mockAuditData));
 
       await main();
 
@@ -385,7 +399,7 @@ describe('Security Audit System', () => {
     it('should handle file read errors gracefully', async () => {
       const error = new Error('File not found');
       error.code = 'ENOENT';
-      access.mockRejectedValue(error);
+      mockedAccess.mockRejectedValue(error);
 
       await main();
 
@@ -405,9 +419,9 @@ describe('Security Audit System', () => {
         'low-pkg1': createMockVulnerability('low'),
       });
 
-      access.mockResolvedValue();
-      readFile.mockResolvedValue(JSON.stringify(mockAuditData));
-      writeFile.mockResolvedValue();
+      mockedAccess.mockResolvedValue();
+      mockedReadFile.mockResolvedValue(JSON.stringify(mockAuditData));
+      mockedWriteFile.mockResolvedValue();
 
       await main();
 
@@ -432,8 +446,8 @@ describe('Security Audit System', () => {
         metadata: { vulnerabilities: 1, dependencies: 1 },
       };
 
-      access.mockResolvedValue();
-      readFile.mockResolvedValue(JSON.stringify(mockAuditData));
+      mockedAccess.mockResolvedValue();
+      mockedReadFile.mockResolvedValue(JSON.stringify(mockAuditData));
 
       await main();
 
