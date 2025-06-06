@@ -131,7 +131,7 @@
     1. The document is created, reviewed for clarity, and merged.
   - **Depends‑on:** none
 
-- [ ] **T013 · Chore · P2: document dependency management and escalation procedures**
+- [x] **T013 · Chore · P2: document dependency management and escalation procedures**
 
   - **Context:** Phase 3: Operational Excellence · 3.1 Documentation & Procedures
   - **Action:**
