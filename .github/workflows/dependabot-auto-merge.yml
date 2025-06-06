@@ -1,0 +1,46 @@
+name: Dependabot Auto Merge
+
+on:
+  pull_request:
+    types: [opened, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    name: Auto-merge dependabot PRs
+    runs-on: ubuntu-latest
+    if: |
+      github.actor == 'dependabot[bot]' && 
+      contains(github.event.pull_request.labels.*.name, 'auto-merge')
+    
+    steps:
+      - name: Enable auto-merge for dependabot PRs
+        run: |
+          echo "🤖 Dependabot PR detected with auto-merge label"
+          echo "Title: ${{ github.event.pull_request.title }}"
+          echo "Labels: ${{ join(github.event.pull_request.labels.*.name, ', ') }}"
+          echo "Enabling auto-merge with squash strategy..."
+          
+          # Enable auto-merge - GitHub will automatically merge when all required checks pass
+          gh pr merge --auto --squash "${{ github.event.pull_request.number }}"
+          
+          echo "✅ Auto-merge enabled successfully"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Add auto-merge comment
+        run: |
+          gh pr comment "${{ github.event.pull_request.number }}" --body \
+            "🤖 **Auto-merge enabled** for this dependabot PR.
+
+            This PR will be automatically merged when:
+            - ✅ All required CI checks pass (lint, test, security, build)
+            - ✅ No conflicts exist
+            - ✅ Branch protection rules are satisfied
+
+            If CI fails, auto-merge will be cancelled and manual review will be required."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

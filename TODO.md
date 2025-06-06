@@ -100,7 +100,7 @@
     1. The `security-report.md` artifact is available for download on every CI run.
   - **Depends‑on:** [T004, T006]
 
-- [ ] **T010 · Chore · P2: configure dependabot auto-merge for low-risk updates**
+- [x] **T010 · Chore · P2: configure dependabot auto-merge for low-risk updates**
 
   - **Context:** Phase 2: Advanced Monitoring & Automation · 2.1 Automated PR Management
   - **Action:**
