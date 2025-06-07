@@ -107,41 +107,41 @@ export const applyConversion = (textNode, pattern, convertFn) => {
 
           const convertedText = convertFn(originalPrice);
 
+          // Extract time portion from convertedText (e.g., "3h 0m" from "$30.00 (3h 0m)")
+          const timeMatch = convertedText.match(/\(([^)]+)\)/);
+          let timeDisplay = timeMatch ? timeMatch[1] : convertedText;
+
+          // Format time nicely - omit hours when zero
+          timeDisplay = timeDisplay.replace(/^0h\s*/, ''); // Remove "0h " from start
+          if (!timeDisplay.trim()) {
+            timeDisplay = '0m'; // Fallback if empty
+          }
+
           // Add text before the match
           if (match.index > lastIndex) {
             fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
           }
 
-          // Create the badge with both original price and converted time
-          const badge = document.createElement('span');
-          badge.className = CONVERTED_PRICE_CLASS;
-          badge.setAttribute('data-original-price', originalPrice);
+          // Create clean time-only replacement
+          const timeElement = document.createElement('span');
+          timeElement.className = CONVERTED_PRICE_CLASS;
+          timeElement.setAttribute('data-original-price', originalPrice);
 
-          // Hardcoded badge HTML with inline styles - rapid prototype approach
-          badge.innerHTML = `
-            <span style="text-decoration: line-through; opacity: 0.7;">${originalPrice}</span>
-            <span style="margin: 0 2px;"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" style="vertical-align: middle;"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1" fill="none"/><path d="M6 3 L6 6 L8.5 6" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round"/></svg></span>
-            <span style="font-weight: 600;">${convertedText}</span>
+          // Simple time display with clock icon
+          timeElement.innerHTML = `
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" style="vertical-align: middle; margin-right: 3px;"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1" fill="none"/><path d="M6 3 L6 6 L8.5 6" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round"/></svg>${timeDisplay}
           `;
 
-          // Hardcoded badge styling - make it look like a modern badge
-          badge.style.cssText = `
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: #2563eb;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
+          // Subtle styling that integrates better with host sites
+          timeElement.style.cssText = `
+            color: #059669;
+            font-weight: 600;
+            font-size: inherit;
             white-space: nowrap;
             vertical-align: baseline;
-            margin: 0 2px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
           `;
 
-          fragment.appendChild(badge);
+          fragment.appendChild(timeElement);
 
           lastIndex = match.index + originalPrice.length;
         } catch (matchError) {

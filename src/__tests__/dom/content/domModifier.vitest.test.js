@@ -69,10 +69,11 @@ describe('DOM Modifier Module', () => {
       expect(span.tagName).toBe('SPAN');
       expect(span.className).toBe(CONVERTED_PRICE_CLASS);
       expect(span.getAttribute('data-original-price')).toBe('$30.00');
-      // Badge now contains both original price and converted time with clock icon
-      expect(span.textContent).toContain('$30.00');
-      expect(span.textContent).toContain('$30.00 (3h 0m)');
-      // Clock icon is now SVG (not text) so check for SVG element instead
+      // Time-only display with clock icon - should contain just the time portion
+      expect(span.textContent).toContain('3h 0m');
+      // Should NOT contain original price (we replaced it entirely)
+      expect(span.textContent).not.toContain('$30.00');
+      // Clock icon should be present as SVG element
       expect(span.querySelector('svg')).toBeTruthy();
     });
 
@@ -124,10 +125,11 @@ describe('DOM Modifier Module', () => {
       expect(span.tagName).toBe('SPAN');
       expect(span.className).toBe(CONVERTED_PRICE_CLASS);
       expect(span.getAttribute('data-original-price')).toBe('$30.00');
-      // Badge now contains both original price and converted time with clock icon
-      expect(span.textContent).toContain('$30.00');
-      expect(span.textContent).toContain('$30.00 (3h 0m)');
-      // Clock icon is now SVG (not text) so check for SVG element instead
+      // Time-only display with clock icon - should contain just the time portion
+      expect(span.textContent).toContain('3h 0m');
+      // Should NOT contain original price (we replaced it entirely)
+      expect(span.textContent).not.toContain('$30.00');
+      // Clock icon should be present as SVG element
       expect(span.querySelector('svg')).toBeTruthy();
     });
   });

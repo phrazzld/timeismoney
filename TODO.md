@@ -43,7 +43,7 @@ _Goal: Fix critical UX issues discovered in manual testing_
 - Dramatically shorter, integrates better with existing layouts
 - More professional appearance, less intrusive to site design
 
-- [ ] **S0.5.1 - Implement replace-only strategy** 🔧
+- [x] **S0.5.1 - Implement replace-only strategy** 🔧
 
   - Action: Replace crossed-out price + badge with clean time-only display
   - Format: `🕐 3h 15m` or `🕐 15m` (omit hours when zero)
