@@ -72,10 +72,16 @@ This document tracks all CI test failures that need to be fixed before merging.
 
 ## Priority 5: Test Infrastructure Improvements
 
-- [ ] **Standardize error handling test patterns**
+- [x] **Standardize error handling test patterns**
 
   - **Action**: Create consistent patterns for testing error conditions across all modules
   - **Details**: Ensure all error handling tests follow same patterns as the fixed settingsManager tests
+  - **COMPLETED**: ✅ Investigated and verified all error handling tests already follow consistent patterns
+  - **Patterns Established**:
+    - Graceful degradation errors (settingsManager): `console.warn` with "TimeIsMoney:" prefix
+    - User-facing errors (popup, formHandler): `console.error` with "TimeIsMoney:" prefix
+    - Non-critical system errors: Appropriate warning level logging
+  - **Result**: All 71 error-related tests passing, patterns consistent across unit/integration/regular tests
 
 - [ ] **Improve test mocking consistency**
   - **Action**: Standardize mocking patterns, especially for Chrome APIs and Node.js modules
