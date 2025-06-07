@@ -3,18 +3,30 @@
  * Tests error handling for Chrome storage operations
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from '../../setup/vitest-imports.js';
-import { resetTestMocks } from '../../setup/vitest.setup.js';
+import { resetTestMocks } from '../../../../vitest.setup.js';
 import { getSettings, saveSettings, onSettingsChanged } from '../../../utils/storage.js';
 import { DEFAULT_SETTINGS } from '../../../utils/constants.js';
 
 beforeEach(() => {
   resetTestMocks();
+
+  // Restore the Chrome runtime mock implementation after reset
+  chrome.runtime.getManifest.mockReturnValue({
+    version: '1.0.0',
+    name: 'Mock Extension',
+  });
 });
 
 describe('Storage Error Handling', () => {
   beforeEach(() => {
     // Reset mocks before each test
     resetTestMocks();
+
+    // Restore the Chrome runtime mock implementation after reset
+    chrome.runtime.getManifest.mockReturnValue({
+      version: '1.0.0',
+      name: 'Mock Extension',
+    });
 
     // Remove any lastError that might be set from previous tests
     if (chrome.runtime.lastError) {

@@ -58,9 +58,17 @@ This document tracks all CI test failures that need to be fixed before merging.
   - **Fix**: Added null/undefined check in vulnerability parser to skip invalid entries gracefully
   - **Result**: All 909 tests now passing, 2 skipped (expected), 0 failures
 
-- [ ] **Fix converter/storage test inconsistencies**
+- [x] **Fix converter/storage test inconsistencies**
   - **Action**: Check if any converter or storage tests have similar mocking issues
   - **Details**: Verify test isolation and mocking consistency
+  - **COMPLETED**: ✅ Standardized mocking patterns across all converter and storage tests
+  - **Issues Fixed**:
+    - Import path inconsistencies for resetTestMocks
+    - Duplicate beforeEach calls
+    - Mixed usage of mock() vs vi.mock()
+    - Chrome API mock setup inconsistencies after resetTestMocks
+  - **Files Modified**: 4 test files standardized for consistent mocking patterns
+  - **Result**: All 909 tests passing, proper mock isolation and consistency
 
 ## Priority 5: Test Infrastructure Improvements
 

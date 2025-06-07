@@ -12,8 +12,7 @@ vi.mock('../../../utils/logger', () => ({
   debug: vi.fn(),
 }));
 import { describe, test, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
-
-import { resetTestMocks } from '../../setup/vitest.setup.js';
+import { resetTestMocks } from '../../../../vitest.setup.js';
 
 import {
   normalizePrice,
@@ -30,13 +29,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  resetTestMocks();
-});
-
-// Mock logger to prevent console output during tests
-
-beforeEach(() => {
-  // Reset mocks before each test
   resetTestMocks();
 });
 

@@ -2,18 +2,16 @@
  * Tests for the storage utility functions
  */
 import { vi, describe, it, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
-import { setupChromeMocks, resetAllMocks } from '../../mocks/setup-mocks.js';
 import { resetTestMocks } from '../../../../vitest.setup.js';
 import { getSettings, saveSettings } from '../../../utils/storage.js';
 
 describe('Storage Utilities', () => {
   beforeEach(() => {
-    // Set up Chrome API mock
-    setupChromeMocks();
     // Reset all mocks before each test
     resetTestMocks();
-    // Re-setup the getManifest mock after reset
-    chrome.runtime.getManifest = vi.fn().mockReturnValue({
+
+    // Restore the Chrome runtime mock implementation after reset
+    chrome.runtime.getManifest.mockReturnValue({
       version: '1.0.0',
       name: 'Mock Extension',
     });
@@ -21,7 +19,7 @@ describe('Storage Utilities', () => {
 
   afterEach(() => {
     // Clean up all mocks after each test
-    resetAllMocks();
+    resetTestMocks();
   });
 
   describe('getSettings', () => {
@@ -32,7 +30,7 @@ describe('Storage Utilities', () => {
       expect(global.chrome).toBeDefined();
       expect(global.chrome.runtime).toBeDefined();
       expect(global.chrome.runtime.getManifest).toBeDefined();
-      expect(global.chrome.runtime.getManifest()).toBeDefined();
+      expect(global.chrome.runtime.getManifest()).toBeTruthy();
 
       chrome.storage.sync.get.mockImplementation((defaults, callback) => {
         callback(mockItems);
