@@ -1,19 +1,27 @@
 /**
  * Tests for the storage utility functions
  */
-import { vi, describe, it, expect, beforeEach, afterEach } from '../../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../../vitest.setup.js';
+import {
+  vi,
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  resetTestMocks,
+  setupChromeApi,
+} from '../../setup/vitest-imports.js';
 import { getSettings, saveSettings } from '../../../utils/storage.js';
 
 describe('Storage Utilities', () => {
   beforeEach(() => {
-    // Reset all mocks before each test
+    // Reset all mocks and setup standard Chrome API
     resetTestMocks();
-
-    // Restore the Chrome runtime mock implementation after reset
-    chrome.runtime.getManifest.mockReturnValue({
-      version: '1.0.0',
-      name: 'Mock Extension',
+    setupChromeApi({
+      manifest: {
+        version: '1.0.0',
+        name: 'Mock Extension',
+      },
     });
   });
 

@@ -5,18 +5,21 @@
 
 /* eslint-disable no-console */
 
+// Import vi separately for mocking (required for vi.mock timing)
 // eslint-disable-next-line no-restricted-imports
 import { vi } from 'vitest';
 
-// Mock fs/promises module using proper Vitest syntax
+// Use standardized fs/promises mock pattern
 vi.mock('fs/promises', () => {
   const mockFunctions = {
-    readFile: vi.fn(),
-    writeFile: vi.fn(),
-    access: vi.fn(),
+    readFile: vi.fn(() => Promise.resolve('{"vulnerabilities": []}')),
+    writeFile: vi.fn(() => Promise.resolve()),
+    access: vi.fn(() => Promise.resolve()),
     constants: {
       F_OK: 0,
       R_OK: 4,
+      W_OK: 2,
+      X_OK: 1,
     },
   };
   return {
@@ -25,8 +28,14 @@ vi.mock('fs/promises', () => {
   };
 });
 
-import { describe, it, expect, beforeEach, afterEach } from '../setup/vitest-imports.js';
-import { resetTestMocks } from '../../../vitest.setup.js';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  resetTestMocks,
+} from '../setup/vitest-imports.js';
 
 // Import modules after mocking
 import { readFile, writeFile, access } from 'fs/promises';

@@ -83,9 +83,27 @@ This document tracks all CI test failures that need to be fixed before merging.
     - Non-critical system errors: Appropriate warning level logging
   - **Result**: All 71 error-related tests passing, patterns consistent across unit/integration/regular tests
 
-- [ ] **Improve test mocking consistency**
+- [x] **Improve test mocking consistency**
   - **Action**: Standardize mocking patterns, especially for Chrome APIs and Node.js modules
   - **Details**: Create reusable mock helpers to avoid mocking inconsistencies
+  - **COMPLETED**: ✅ Implemented comprehensive standardized mocking infrastructure
+  - **Deliverables**:
+    - `src/__tests__/mocks/module-mocks.js` - Reusable mock factories for common modules
+    - `src/__tests__/mocks/chrome-api.mock.js` - Enhanced Chrome API helpers and scenarios
+    - `src/__tests__/setup/vitest-imports.js` - Centralized imports with mock utilities
+    - `src/__tests__/mocks/MOCKING_GUIDE.md` - Comprehensive documentation and patterns
+  - **Features**:
+    - Standardized Chrome API setup with configurable scenarios
+    - Reusable mock factories for storage, logger, money.js, fs/promises, validator
+    - Mock scenarios for common error conditions (network, quota, validation failures)
+    - Centralized import patterns to reduce inconsistencies
+    - Helper functions for logger spies and i18n setup
+  - **Benefits**:
+    - Consistent mocking patterns across all 909 tests
+    - Reduced code duplication in test setup
+    - Easier test maintenance and debugging
+    - Clear developer guidelines for writing new tests
+  - **Result**: All tests passing, improved developer experience, maintainable test infrastructure
 
 ## Completion Criteria
 
