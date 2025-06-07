@@ -71,8 +71,9 @@ describe('DOM Modifier Module', () => {
       expect(span.getAttribute('data-original-price')).toBe('$30.00');
       // Badge now contains both original price and converted time with clock icon
       expect(span.textContent).toContain('$30.00');
-      expect(span.textContent).toContain('🕐');
       expect(span.textContent).toContain('$30.00 (3h 0m)');
+      // Clock icon is now SVG (not text) so check for SVG element instead
+      expect(span.querySelector('svg')).toBeTruthy();
     });
 
     // Add integration test for end-to-end conversion flow
@@ -125,8 +126,9 @@ describe('DOM Modifier Module', () => {
       expect(span.getAttribute('data-original-price')).toBe('$30.00');
       // Badge now contains both original price and converted time with clock icon
       expect(span.textContent).toContain('$30.00');
-      expect(span.textContent).toContain('🕐');
       expect(span.textContent).toContain('$30.00 (3h 0m)');
+      // Clock icon is now SVG (not text) so check for SVG element instead
+      expect(span.querySelector('svg')).toBeTruthy();
     });
   });
 

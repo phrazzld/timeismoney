@@ -120,7 +120,7 @@ export const applyConversion = (textNode, pattern, convertFn) => {
           // Hardcoded badge HTML with inline styles - rapid prototype approach
           badge.innerHTML = `
             <span style="text-decoration: line-through; opacity: 0.7;">${originalPrice}</span>
-            <span style="margin: 0 2px;">🕐</span>
+            <span style="margin: 0 2px;"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" style="vertical-align: middle;"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1" fill="none"/><path d="M6 3 L6 6 L8.5 6" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round"/></svg></span>
             <span style="font-weight: 600;">${convertedText}</span>
           `;
 

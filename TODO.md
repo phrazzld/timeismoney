@@ -6,14 +6,14 @@
 
 _Goal: Get a badge rendering SOMEWHERE to build confidence_
 
-- [ ] **S0.1 - Quick Win: Hardcoded badge in DOM** ⚡
+- [x] **S0.1 - Quick Win: Hardcoded badge in DOM** ⚡
 
   - Action: Add a hardcoded badge element directly in `domModifier.js` - just HTML + inline styles
   - Success: Can see a badge render on ANY website when price detected
   - Time: 2 hours
   - No dependencies, no design tokens, just SHIP SOMETHING
 
-- [ ] **S0.2 - Basic clock icon** ⚡
+- [x] **S0.2 - Basic clock icon** ⚡
 
   - Action: Find any clock SVG, embed as data URI, slap it in the badge
   - Success: Badge has a clock icon (ugly is fine)
