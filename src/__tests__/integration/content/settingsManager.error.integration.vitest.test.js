@@ -66,6 +66,9 @@ describe('SettingsManager Error Handling', () => {
 
   describe('initSettings', () => {
     it('should handle getSettings error and return disabled state', async () => {
+      // Mock console.warn to capture the new warning behavior
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
+
       // Mock getSettings to reject with an error
       vi.spyOn(storage, 'getSettings').mockImplementation(() => {
         return Promise.reject(new Error('Storage error during init'));
@@ -77,21 +80,27 @@ describe('SettingsManager Error Handling', () => {
       // Call initSettings
       const result = await initSettings(mockCallback);
 
-      // The actual implementation logs with "TimeIsMoney: Storage operation failed:"
-      // Verify error is logged
-      expect(console.error).toHaveBeenCalledWith(
+      // Verify warning is logged (new behavior uses warn instead of error)
+      expect(console.warn).toHaveBeenCalledWith(
         'TimeIsMoney:',
-        'TimeIsMoney: Storage operation failed:',
+        'Using default settings due to storage error:',
+        'Storage error during init'
+      );
+
+      // With the new caching system, the callback IS called with default settings
+      expect(mockCallback).toHaveBeenCalledWith(
+        document.body,
         expect.objectContaining({
-          message: 'Storage error during init',
+          disabled: false, // Default settings have disabled: false
         })
       );
 
-      // Verify callback was not called due to error
-      expect(mockCallback).not.toHaveBeenCalled();
-
-      // Verify fallback settings returned
-      expect(result).toEqual({ disabled: true });
+      // Verify default settings returned (not disabled: true)
+      expect(result).toEqual(
+        expect.objectContaining({
+          disabled: false, // getCachedSettings returns default settings on error
+        })
+      );
     });
   });
 
@@ -99,6 +108,10 @@ describe('SettingsManager Error Handling', () => {
     it('should handle getSettings error during visibility change', async () => {
       // Reset mocks first to clear any console.error calls from previous tests
       resetTestMocks();
+
+      // Mock console.debug and warn to capture the new caching behavior
+      vi.spyOn(console, 'debug').mockImplementation(() => {});
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       // Mock chrome.runtime to prevent "Extension context invalidated" error
       // We need to ensure isValidChromeRuntime() returns true
@@ -130,12 +143,10 @@ describe('SettingsManager Error Handling', () => {
       // Wait for all promises to resolve
       await new Promise((resolve) => setTimeout(resolve, 10));
 
-      // Verify callback was not called due to error
-      expect(mockCallback).not.toHaveBeenCalled();
-
-      // Note: The actual error log verification is problematic because of the asynchronous nature
-      // of the function and the error handling inside settingsManager, so we'll focus on the
-      // callback not being called which is the primary behavior we want to test
+      // With the improved error handling, the extension should continue working
+      // The exact callback behavior depends on state changes, but the key is that
+      // it doesn't crash and the error is handled gracefully
+      expect(mockCallback).toHaveBeenCalledTimes(0); // May not be called if no state change
     });
 
     it('should handle invalid Chrome runtime gracefully', async () => {

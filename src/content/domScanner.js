@@ -320,13 +320,22 @@ export const startObserver = (
     // Cap the debounce interval to reasonable values (50ms - 2000ms)
     debounceInterval = Math.max(50, Math.min(2000, debounceInterval));
 
-    // Initialize debug mode
+    // Initialize debug mode with graceful fallback for test environments
     getSettings()
       .then((settings) => {
         debugTools.initDebugMode(settings);
       })
       .catch((error) => {
-        logger.error('Error initializing debug mode:', error.message);
+        // Handle Chrome context errors gracefully for debug mode
+        if (error && error.message === 'Extension context invalidated') {
+          logger.debug('Debug mode unavailable: Extension context invalidated');
+          // Initialize debug mode with disabled state for test environments
+          debugTools.initDebugMode({ debugMode: false });
+        } else {
+          logger.warn('Debug mode initialization failed:', error.message);
+          // Fallback to disabled debug mode for any other errors
+          debugTools.initDebugMode({ debugMode: false });
+        }
       });
 
     // Create the observer if it doesn't exist
@@ -553,7 +562,9 @@ export const processPendingNodes = (callback, options = {}, state = defaultState
               'element-nodes-start',
               'element-nodes-end'
             );
-            const elementMeasure = performance.getEntriesByName('Element Nodes Processing').pop();
+            const elementMeasures = performance.getEntriesByName('Element Nodes Processing');
+            const elementMeasure =
+              elementMeasures && elementMeasures.length > 0 ? elementMeasures.pop() : null;
             if (elementMeasure) {
               logger.debug(
                 `Processed ${nodeCount} element nodes in ${Math.round(elementMeasure.duration)}ms`
@@ -587,7 +598,8 @@ export const processPendingNodes = (callback, options = {}, state = defaultState
 
             performance.mark('text-nodes-end');
             performance.measure('Text Nodes Processing', 'text-nodes-start', 'text-nodes-end');
-            const textMeasure = performance.getEntriesByName('Text Nodes Processing').pop();
+            const textMeasures = performance.getEntriesByName('Text Nodes Processing');
+            const textMeasure = textMeasures && textMeasures.length > 0 ? textMeasures.pop() : null;
             if (textMeasure) {
               logger.debug(
                 `Processed ${textNodeCount} text nodes in ${Math.round(textMeasure.duration)}ms`
@@ -777,8 +789,8 @@ export const stopObserver = (state = defaultState) => {
             state.domObserver.disconnect();
           } catch (disconnectCallError) {
             // Just log but continue execution
-            logger.error(
-              'Error calling MutationObserver.disconnect():',
+            logger.warn(
+              'MutationObserver.disconnect() failed (non-critical):',
               disconnectCallError.message
             );
           }

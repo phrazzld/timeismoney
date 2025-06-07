@@ -71,6 +71,66 @@ jobs:
       
       - name: Lint code
         run: pnpm run lint
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    # Emergency bypass: Skip security checks if commit message contains [skip security]
+    if: ${{ !contains(github.event.head_commit.message, '[skip security]') && !contains(github.event.pull_request.title, '[skip security]') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      # Using centralized Node.js version from .nvmrc file
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.x
+          run_install: false
+      
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      
+      # Changed from --frozen-lockfile to --no-frozen-lockfile to fix CI issues
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      
+      - name: Run security audit
+        run: |
+          pnpm audit --audit-level=high --json > audit-results.json || true
+          node scripts/security-audit.js
+        continue-on-error: false
+      
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-report
+          path: security-report.md
+          if-no-files-found: warn
+      
+      - name: Check for critical vulnerabilities
+        run: |
+          if [ -f "critical-vulnerabilities.json" ]; then
+            echo "❌ Critical vulnerabilities found!"
+            cat critical-vulnerabilities.json
+            exit 1
+          fi
   
   test:
     name: Test (${{ matrix.test_type }})

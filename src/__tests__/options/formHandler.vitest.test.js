@@ -2,12 +2,30 @@
  * Unit tests for options form validation
  */
 
+// Import vi separately for mocking (required for vi.mock timing)
 // eslint-disable-next-line no-restricted-imports
 import { vi } from 'vitest';
+
+// Use standardized storage mock pattern
 vi.mock('../../utils/storage.js', () => ({
-  saveSettings: vi.fn(() => Promise.resolve(true)),
-  getSettings: vi.fn(() => Promise.resolve({})),
+  getSettings: vi.fn(() =>
+    Promise.resolve({
+      amount: '15.00',
+      frequency: 'hourly',
+      currencySymbol: '$',
+      currencyCode: 'USD',
+      thousands: ',',
+      decimal: '.',
+      debounceIntervalMs: 200,
+      enableDynamicScanning: true,
+      debugMode: false,
+      disabled: false,
+    })
+  ),
+  saveSettings: vi.fn(() => Promise.resolve()),
+  onSettingsChanged: vi.fn((callback) => () => {}),
 }));
+
 import {
   describe,
   it,
@@ -15,9 +33,10 @@ import {
   expect,
   beforeEach,
   afterEach,
+  beforeAll,
   resetTestMocks,
   setupTestDom,
-  beforeAll,
+  setupChromeApi,
 } from '../setup/vitest-imports.js';
 
 // Import the modules we want to test
@@ -42,19 +61,22 @@ import { saveSettings } from '../../utils/storage.js';
 // Mock storage module at the module level
 
 describe('Options Form Validation', () => {
-  beforeAll(() => {
-    // Mock getMessage to return the key itself
-    chrome.i18n.getMessage = vi.fn((key) => key);
-  });
-
   beforeEach(() => {
-    // Reset mocks
+    // Reset all mocks and setup standard Chrome API
     resetTestMocks();
 
-    // Set up DOM elements
+    // Setup DOM for form tests
     setupTestDom();
 
-    resetTestMocks();
+    // Setup Chrome API with test configuration
+    setupChromeApi({
+      i18nMessages: {
+        // Default i18n setup - will be overridden below for specific test needs
+      },
+    });
+
+    // Override i18n to return key as message for these specific tests
+    chrome.i18n.getMessage = vi.fn((key) => key);
   });
 
   describe('Comprehensive validation tests', () => {

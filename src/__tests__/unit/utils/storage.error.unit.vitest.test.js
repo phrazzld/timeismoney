@@ -3,18 +3,30 @@
  * Tests error handling for Chrome storage operations
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from '../../setup/vitest-imports.js';
-import { resetTestMocks } from '../../setup/vitest.setup.js';
+import { resetTestMocks } from '../../../../vitest.setup.js';
 import { getSettings, saveSettings, onSettingsChanged } from '../../../utils/storage.js';
 import { DEFAULT_SETTINGS } from '../../../utils/constants.js';
 
 beforeEach(() => {
   resetTestMocks();
+
+  // Restore the Chrome runtime mock implementation after reset
+  chrome.runtime.getManifest.mockReturnValue({
+    version: '1.0.0',
+    name: 'Mock Extension',
+  });
 });
 
 describe('Storage Error Handling', () => {
   beforeEach(() => {
     // Reset mocks before each test
     resetTestMocks();
+
+    // Restore the Chrome runtime mock implementation after reset
+    chrome.runtime.getManifest.mockReturnValue({
+      version: '1.0.0',
+      name: 'Mock Extension',
+    });
 
     // Remove any lastError that might be set from previous tests
     if (chrome.runtime.lastError) {
@@ -71,6 +83,19 @@ describe('Storage Error Handling', () => {
       });
 
       await expect(getSettings()).rejects.toEqual(mockError);
+      expect(chrome.storage.sync.get).toHaveBeenCalledWith(DEFAULT_SETTINGS, expect.any(Function));
+    });
+
+    it('should handle chrome storage API throwing without callback execution', async () => {
+      // Simulate chrome.storage.sync.get throwing an error before calling the callback
+      const mockError = new Error('Chrome storage API unavailable');
+      chrome.storage.sync.get.mockImplementation(() => {
+        throw mockError;
+      });
+
+      await expect(getSettings()).rejects.toEqual(
+        new Error('Failed to access storage: Chrome storage API unavailable')
+      );
       expect(chrome.storage.sync.get).toHaveBeenCalledWith(DEFAULT_SETTINGS, expect.any(Function));
     });
   });

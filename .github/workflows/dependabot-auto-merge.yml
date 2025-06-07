@@ -1,0 +1,67 @@
+name: Dependabot Auto Merge
+
+on:
+  pull_request:
+    types: [opened, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    name: Auto-merge dependabot PRs
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    
+    steps:
+      - name: Check update type and enable auto-merge
+        run: |
+          echo "🤖 Dependabot PR detected"
+          echo "Title: ${{ github.event.pull_request.title }}"
+          echo "Labels: ${{ join(github.event.pull_request.labels.*.name, ', ') }}"
+          
+          # Check if this is a patch/minor update (auto-merge eligible)
+          # Dependabot groups patch/minor updates with "minor-and-patch" in the title
+          if [[ "${{ github.event.pull_request.title }}" == *"minor-and-patch"* ]]; then
+            echo "✅ Detected patch/minor update - enabling auto-merge"
+            echo "Enabling auto-merge with squash strategy..."
+            
+            # Enable auto-merge - GitHub will automatically merge when all required checks pass
+            gh pr merge --auto --squash "${{ github.event.pull_request.number }}"
+            
+            echo "✅ Auto-merge enabled successfully"
+          else
+            echo "⚠️ Detected major update - requires manual review"
+            echo "Adding requires-review label..."
+            gh pr edit "${{ github.event.pull_request.number }}" --add-label "requires-review"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Add PR comment
+        run: |
+          # Add different comments based on update type
+          if [[ "${{ github.event.pull_request.title }}" == *"minor-and-patch"* ]]; then
+            gh pr comment "${{ github.event.pull_request.number }}" --body \
+              "🤖 **Auto-merge enabled** for this patch/minor dependabot PR.
+
+              This PR will be automatically merged when:
+              - ✅ All required CI checks pass (lint, test, security, build)
+              - ✅ No conflicts exist
+              - ✅ Branch protection rules are satisfied
+
+              If CI fails, auto-merge will be cancelled and manual review will be required."
+          else
+            gh pr comment "${{ github.event.pull_request.number }}" --body \
+              "⚠️ **Manual review required** for this major version dependabot PR.
+
+              Major version updates require security team review because:
+              - 🔍 May contain breaking changes
+              - 🚨 Potential security implications
+              - 📋 Need compatibility assessment
+
+              Please review the changelog and test thoroughly before merging."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

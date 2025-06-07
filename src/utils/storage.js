@@ -16,6 +16,7 @@ import * as logger from './logger.js';
  */
 export function getSettings() {
   return new Promise((resolve, reject) => {
+    let timeoutId;
     try {
       // Check if Chrome runtime is valid before proceeding
       if (!isValidChromeRuntime()) {
@@ -23,7 +24,14 @@ export function getSettings() {
         return;
       }
 
+      // Add timeout to prevent hanging storage calls
+      timeoutId = setTimeout(() => {
+        reject(new Error('Storage operation timed out'));
+      }, 3000);
+
       chrome.storage.sync.get(DEFAULT_SETTINGS, (items) => {
+        clearTimeout(timeoutId);
+
         // Check inside callback in case context was invalidated during async operation
         if (!isValidChromeRuntime()) {
           reject(new Error('Extension context invalidated'));
@@ -37,6 +45,7 @@ export function getSettings() {
         }
       });
     } catch (error) {
+      clearTimeout(timeoutId);
       reject(new Error(`Failed to access storage: ${error.message}`));
     }
   });
