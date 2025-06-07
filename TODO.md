@@ -105,6 +105,36 @@ This document tracks all CI test failures that need to be fixed before merging.
     - Clear developer guidelines for writing new tests
   - **Result**: All tests passing, improved developer experience, maintainable test infrastructure
 
+## Priority 6: Critical Code Review Issues (BLOCKING)
+
+- [ ] **Fix Performance API array access vulnerability**
+
+  - **File**: `src/content/domScanner.js:556-558, 590-592`
+  - **Issue**: Calling `.pop()` on potentially empty arrays from `performance.getEntriesByName()` causes TypeError when accessing properties on `undefined`
+  - **Impact**: Complete DOM scanner failure, extension stops working
+  - **Action**: Check array length before calling `.pop()` and add null safety
+  - **Details**: Replace direct `.pop()` calls with safe array access patterns
+  - **Fix Pattern**:
+    ```javascript
+    const elementMeasures = performance.getEntriesByName('Element Nodes Processing');
+    const elementMeasure = elementMeasures.length > 0 ? elementMeasures.pop() : null;
+    ```
+
+- [ ] **Fix promise timeout memory leak in storage utility**
+
+  - **File**: `src/utils/storage.js:23-34`
+  - **Issue**: Timeout not cleared on early promise rejection, causing unhandled promise rejections
+  - **Impact**: Console noise and potential memory leaks
+  - **Action**: Always clear timeout in both success and error paths
+  - **Details**: Add `clearTimeout(timeoutId)` at start of chrome.storage.sync.get callback
+
+- [ ] **Fix settings cache staleness after storage errors**
+  - **File**: `src/content/settingsManager.js:47-80`
+  - **Issue**: Failed storage reads return stale cached settings indefinitely without invalidation
+  - **Impact**: User settings changes not reflected, extension appears "stuck"
+  - **Action**: Implement consecutive failure tracking and cache invalidation strategy
+  - **Details**: After 3+ consecutive failures, invalidate cache and surface warning to user
+
 ## Completion Criteria
 
 All tasks must be completed and CI must pass 100% before merging the PR. Each task should:
