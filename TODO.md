@@ -19,9 +19,48 @@ _Goal: Get a badge rendering SOMEWHERE to build confidence_
   - Success: Badge has a clock icon (ugly is fine)
   - Time: 1 hour
 
-- [ ] **S0.3 - Manual test on Amazon** ⚡
+- [x] **S0.3 - Manual test on Amazon** ⚡
   - Action: Load extension, visit Amazon, see if badges appear
   - Success: Can screenshot working badge on real site
+  - Time: 30 minutes
+  - **RESULT**: Major UX issues identified - badges too long, layout breaking, visual clutter
+
+## 🔄 SPRINT 0.5 (4 hours) - UX REDESIGN BASED ON REAL USAGE 🎯
+
+_Goal: Fix critical UX issues discovered in manual testing_
+
+**Key Insights from Amazon Testing:**
+
+- Current badges are 2-3x longer than original prices → layout breaks, text cuts off
+- Showing both prices simultaneously creates visual clutter and cognitive overload
+- Clock icon placement is illogical (between prices vs. with time)
+- "0h 15m" format is unnecessarily verbose when hours are zero
+- Blue badge background conflicts with host site design systems
+
+**New Strategy: Replace + Tooltip Approach**
+
+- Replace price entirely with clean time conversion, show original in tooltip
+- Dramatically shorter, integrates better with existing layouts
+- More professional appearance, less intrusive to site design
+
+- [ ] **S0.5.1 - Implement replace-only strategy** 🔧
+
+  - Action: Replace crossed-out price + badge with clean time-only display
+  - Format: `🕐 3h 15m` or `🕐 15m` (omit hours when zero)
+  - Success: Much shorter replacement that doesn't break layouts
+  - Time: 2 hours
+
+- [ ] **S0.5.2 - Add tooltip with original price** 💡
+
+  - Action: Show original price in tooltip on hover: "Originally $30.00"
+  - Use browser native tooltip or simple positioned div
+  - Success: Original price discoverable but not cluttering display
+  - Time: 1.5 hours
+
+- [ ] **S0.5.3 - Refine styling for host site integration** ✨
+  - Action: Remove blue badge background, use subtle styling that integrates better
+  - Match host site text colors, use minimal visual distinction
+  - Success: Conversions look native to the site rather than injected
   - Time: 30 minutes
 
 ## SPRINT 1 (2-3 days) - FUNCTIONAL MVP 🎯
@@ -142,12 +181,20 @@ _Nice-to-haves that don't block shipping_
 
 ## ENGINEERING PRINCIPLES 🎯
 
-### Sprint 0: Prove it works
+### Sprint 0: Prove it works ✅
 
-- Hardcode everything
-- Copy-paste is fine
-- Ugly code is acceptable
-- Just get pixels on screen
+- Hardcode everything ✅
+- Copy-paste is fine ✅
+- Ugly code is acceptable ✅
+- Just get pixels on screen ✅
+- **Real-world test early** ✅ _(Revealed critical UX issues)_
+
+### Sprint 0.5: Fix UX based on real usage
+
+- Replace, don't augment (shorter is better)
+- Tooltip for secondary information
+- Integrate with host site design
+- Length/layout preservation is critical
 
 ### Sprint 1: Make it functional
 
@@ -172,9 +219,10 @@ _Nice-to-haves that don't block shipping_
 
 ## DEFINITION OF DONE ✅
 
-**Sprint 0**: Screenshot of badge on real website  
-**Sprint 1**: All detected prices show as badges with no crashes  
-**Sprint 2**: Badges look professional and work across multiple sites  
+**Sprint 0**: Screenshot of badge on real website ✅ _(COMPLETED - revealed major UX issues)_  
+**Sprint 0.5**: Clean time-only replacements that don't break site layouts  
+**Sprint 1**: All detected prices show as time conversions with tooltips, no crashes  
+**Sprint 2**: Conversions look native and work across multiple sites  
 **Sprint 3**: Full test coverage and ready for user rollout
 
 ## ANTI-PATTERNS TO AVOID ⚠️
@@ -184,3 +232,5 @@ _Nice-to-haves that don't block shipping_
 - ❌ Optimizing before measuring performance problems
 - ❌ Adding complexity that doesn't serve users
 - ❌ Perfectionism blocking iteration
+- ❌ **Skipping real-world testing** (Sprint 0 taught us our badge approach broke layouts)
+- ❌ **Showing too much information simultaneously** (original + converted prices created clutter)
