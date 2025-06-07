@@ -120,13 +120,19 @@ This document tracks all CI test failures that need to be fixed before merging.
     - Line 602: `const textMeasure = textMeasures && textMeasures.length > 0 ? textMeasures.pop() : null;`
   - **Verification**: All performance tests and full CI pipeline (909 tests) pass successfully
 
-- [ ] **Fix promise timeout memory leak in storage utility**
+- [x] **Fix promise timeout memory leak in storage utility**
 
   - **File**: `src/utils/storage.js:23-34`
   - **Issue**: Timeout not cleared on early promise rejection, causing unhandled promise rejections
   - **Impact**: Console noise and potential memory leaks
   - **Action**: Always clear timeout in both success and error paths
   - **Details**: Add `clearTimeout(timeoutId)` at start of chrome.storage.sync.get callback
+  - **COMPLETED**: ✅ Fixed timeout memory leak by clearing timeout in catch block
+  - **Implementation**:
+    - Moved `timeoutId` declaration to Promise scope for catch block access
+    - Added `clearTimeout(timeoutId)` in catch block (line 47)
+    - Added test case for Chrome storage API throwing before callback execution
+  - **Verification**: All 909 tests pass, including new test for timeout leak scenario
 
 - [ ] **Fix settings cache staleness after storage errors**
   - **File**: `src/content/settingsManager.js:47-80`

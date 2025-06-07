@@ -16,6 +16,7 @@ import * as logger from './logger.js';
  */
 export function getSettings() {
   return new Promise((resolve, reject) => {
+    let timeoutId;
     try {
       // Check if Chrome runtime is valid before proceeding
       if (!isValidChromeRuntime()) {
@@ -24,7 +25,7 @@ export function getSettings() {
       }
 
       // Add timeout to prevent hanging storage calls
-      const timeoutId = setTimeout(() => {
+      timeoutId = setTimeout(() => {
         reject(new Error('Storage operation timed out'));
       }, 3000);
 
@@ -44,6 +45,7 @@ export function getSettings() {
         }
       });
     } catch (error) {
+      clearTimeout(timeoutId);
       reject(new Error(`Failed to access storage: ${error.message}`));
     }
   });

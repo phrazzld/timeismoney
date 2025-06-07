@@ -85,6 +85,19 @@ describe('Storage Error Handling', () => {
       await expect(getSettings()).rejects.toEqual(mockError);
       expect(chrome.storage.sync.get).toHaveBeenCalledWith(DEFAULT_SETTINGS, expect.any(Function));
     });
+
+    it('should handle chrome storage API throwing without callback execution', async () => {
+      // Simulate chrome.storage.sync.get throwing an error before calling the callback
+      const mockError = new Error('Chrome storage API unavailable');
+      chrome.storage.sync.get.mockImplementation(() => {
+        throw mockError;
+      });
+
+      await expect(getSettings()).rejects.toEqual(
+        new Error('Failed to access storage: Chrome storage API unavailable')
+      );
+      expect(chrome.storage.sync.get).toHaveBeenCalledWith(DEFAULT_SETTINGS, expect.any(Function));
+    });
   });
 
   describe('saveSettings error handling', () => {
