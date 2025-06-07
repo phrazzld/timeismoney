@@ -78,7 +78,10 @@ describe('DOM Modifier Module', () => {
       expect(span.tagName).toBe('SPAN');
       expect(span.className).toBe(CONVERTED_PRICE_CLASS);
       expect(span.getAttribute('data-original-price')).toBe('$30.00');
-      expect(span.textContent).toBe('$30.00 (3h 0m)');
+      // Badge now contains both original price and converted time with clock icon
+      expect(span.textContent).toContain('$30.00');
+      expect(span.textContent).toContain('🕐');
+      expect(span.textContent).toContain('$30.00 (3h 0m)');
     });
 
     // Add integration test for end-to-end conversion flow
@@ -134,7 +137,10 @@ describe('DOM Modifier Module', () => {
       expect(span.tagName).toBe('SPAN');
       expect(span.className).toBe(CONVERTED_PRICE_CLASS);
       expect(span.getAttribute('data-original-price')).toBe('$30.00');
-      expect(span.textContent).toBe('$30.00 (3h 0m)');
+      // Badge now contains both original price and converted time with clock icon
+      expect(span.textContent).toContain('$30.00');
+      expect(span.textContent).toContain('🕐');
+      expect(span.textContent).toContain('$30.00 (3h 0m)');
     });
   });
 

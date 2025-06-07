@@ -112,12 +112,36 @@ export const applyConversion = (textNode, pattern, convertFn) => {
             fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
           }
 
-          // Create the span with the converted price
-          const span = document.createElement('span');
-          span.className = CONVERTED_PRICE_CLASS;
-          span.setAttribute('data-original-price', originalPrice);
-          span.textContent = convertedText;
-          fragment.appendChild(span);
+          // Create the badge with both original price and converted time
+          const badge = document.createElement('span');
+          badge.className = CONVERTED_PRICE_CLASS;
+          badge.setAttribute('data-original-price', originalPrice);
+
+          // Hardcoded badge HTML with inline styles - rapid prototype approach
+          badge.innerHTML = `
+            <span style="text-decoration: line-through; opacity: 0.7;">${originalPrice}</span>
+            <span style="margin: 0 2px;">🕐</span>
+            <span style="font-weight: 600;">${convertedText}</span>
+          `;
+
+          // Hardcoded badge styling - make it look like a modern badge
+          badge.style.cssText = `
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #2563eb;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            vertical-align: baseline;
+            margin: 0 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+          `;
+
+          fragment.appendChild(badge);
 
           lastIndex = match.index + originalPrice.length;
         } catch (matchError) {

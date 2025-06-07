@@ -68,7 +68,10 @@ describe('DOM Modifier Module', () => {
           spanFound = true;
           expect(node.className).toBe(CONVERTED_PRICE_CLASS);
           expect(node.getAttribute('data-original-price')).toBe('$30.00');
-          expect(node.textContent).toBe('$30.00 (3h 0m)');
+          // Badge now contains both original price and converted time with clock icon
+          expect(node.textContent).toContain('$30.00');
+          expect(node.textContent).toContain('🕐');
+          expect(node.textContent).toContain('$30.00 (3h 0m)');
           break;
         }
       }
@@ -122,7 +125,10 @@ describe('DOM Modifier Module', () => {
           spanFound = true;
           expect(node.className).toBe(CONVERTED_PRICE_CLASS);
           expect(node.getAttribute('data-original-price')).toBe('$30.00');
-          expect(node.textContent).toBe('$30.00 (3h 0m)');
+          // Badge now contains both original price and converted time with clock icon
+          expect(node.textContent).toContain('$30.00');
+          expect(node.textContent).toContain('🕐');
+          expect(node.textContent).toContain('$30.00 (3h 0m)');
           break;
         }
       }
