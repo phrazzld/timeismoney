@@ -43,6 +43,22 @@ let lastSettingsFetch = 0;
 const SETTINGS_CACHE_DURATION = 5000;
 
 /**
+ * Maximum consecutive storage failures before invalidating cache
+ *
+ * @type {number}
+ * @private
+ */
+const MAX_CACHE_FAILURES = 3;
+
+/**
+ * Count of consecutive storage failures
+ *
+ * @type {number}
+ * @private
+ */
+let consecutiveFailures = 0;
+
+/**
  * Gets settings with caching to reduce Chrome storage calls
  *
  * @returns {Promise<object>} Promise that resolves to settings
@@ -62,11 +78,25 @@ function getCachedSettings() {
       if (settings && typeof settings === 'object') {
         cachedSettings = { ...DEFAULT_SETTINGS, ...settings };
         lastSettingsFetch = now;
+        consecutiveFailures = 0; // Reset failure count on success
         return cachedSettings;
       }
       throw new Error('Invalid settings received');
     })
     .catch((error) => {
+      consecutiveFailures++;
+
+      // After multiple consecutive failures, invalidate cache and use defaults
+      if (consecutiveFailures >= MAX_CACHE_FAILURES) {
+        logger.warn(
+          `Storage failed ${consecutiveFailures} consecutive times, invalidating cache and using defaults:`,
+          error.message
+        );
+        cachedSettings = null; // Invalidate cache
+        lastSettingsFetch = 0;
+        return { ...DEFAULT_SETTINGS };
+      }
+
       // Return cached settings as fallback, or defaults if no cache
       if (cachedSettings) {
         logger.debug('Using cached settings due to storage error:', error.message);
@@ -78,6 +108,17 @@ function getCachedSettings() {
       cachedSettings = { ...DEFAULT_SETTINGS };
       return cachedSettings;
     });
+}
+
+/**
+ * Resets the cache state for testing purposes
+ *
+ * @private
+ */
+function resetCacheState() {
+  cachedSettings = null;
+  lastSettingsFetch = 0;
+  consecutiveFailures = 0;
 }
 
 /**
@@ -350,6 +391,15 @@ export function isDisabled() {
  */
 export function getSettingsWithCache() {
   return getCachedSettings();
+}
+
+/**
+ * Resets cache state for testing purposes
+ *
+ * @private
+ */
+export function resetCacheStateForTesting() {
+  resetCacheState();
 }
 
 /**
