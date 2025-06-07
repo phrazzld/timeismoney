@@ -94,6 +94,129 @@ export { afterAll };
 export { resetTestMocks, setupTestDom } from '../../../vitest.setup.js';
 
 /**
+ * Chrome API mock helpers and scenarios
+ * Import these for standardized Chrome API testing patterns
+ */
+export { chromeScenarios, setupChromeApi, resetChromeMocks } from '../mocks/chrome-api.mock.js';
+
+/**
+ * Standardized mock factories and helpers
+ * Import these instead of creating manual mocks
+ */
+export {
+  createStorageMock,
+  createLoggerMock,
+  createMoneyMock,
+  createFsPromisesMock,
+  createValidatorMock,
+  mockScenarios,
+  setupLoggerSpies,
+  setupI18nMock,
+} from '../mocks/module-mocks.js';
+
+/**
+ * Standardized vi.mock factory functions
+ * These need to be called directly in vi.mock() callbacks to avoid import timing issues
+ *
+ * Example usage:
+ * vi.mock('../../utils/storage.js', () => mockFactories.createStandardStorageMock());
+ */
+export const mockFactories = {
+  /**
+   * Creates a standard storage mock - use in vi.mock() callback
+   *
+   * @returns {object} Standard storage module mock
+   */
+  createStandardStorageMock: () => ({
+    getSettings: vi.fn(() =>
+      Promise.resolve({
+        amount: '15.00',
+        frequency: 'hourly',
+        currencySymbol: '$',
+        currencyCode: 'USD',
+        thousands: ',',
+        decimal: '.',
+        debounceIntervalMs: 200,
+        enableDynamicScanning: true,
+        debugMode: false,
+        disabled: false,
+      })
+    ),
+    saveSettings: vi.fn(() => Promise.resolve()),
+    onSettingsChanged: vi.fn(() => () => {}),
+  }),
+
+  /**
+   * Creates a standard logger mock - use in vi.mock() callback
+   *
+   * @returns {object} Standard logger module mock
+   */
+  createStandardLoggerMock: () => ({
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    LOG_LEVEL: {
+      DEBUG: 0,
+      INFO: 1,
+      WARN: 2,
+      ERROR: 3,
+    },
+  }),
+
+  /**
+   * Creates a standard money.js mock - use in vi.mock() callback
+   *
+   * @returns {object} Standard money.js module mock
+   */
+  createStandardMoneyMock: () => {
+    const mock = {
+      rates: { USD: 1, EUR: 0.85, GBP: 0.73 },
+      base: 'USD',
+      convert: vi.fn((amount, options) => {
+        const { from = 'USD', to = 'USD' } = options || {};
+        if (from === to) return amount;
+        const rates = { USD: 1, EUR: 0.85, GBP: 0.73 };
+        return (amount / rates[from]) * rates[to];
+      }),
+    };
+    return { default: mock, ...mock };
+  },
+
+  /**
+   * Creates a standard fs/promises mock - use in vi.mock() callback
+   *
+   * @returns {object} Standard fs/promises module mock
+   */
+  createStandardFsPromisesMock: () => {
+    const mockFunctions = {
+      readFile: vi.fn(() => Promise.resolve('{"vulnerabilities": []}')),
+      writeFile: vi.fn(() => Promise.resolve()),
+      access: vi.fn(() => Promise.resolve()),
+      constants: {
+        F_OK: 0,
+        R_OK: 4,
+        W_OK: 2,
+        X_OK: 1,
+      },
+    };
+    return { default: mockFunctions, ...mockFunctions };
+  },
+
+  /**
+   * Creates a standard validator mock - use in vi.mock() callback
+   *
+   * @returns {object} Standard validator module mock
+   */
+  createStandardValidatorMock: () => ({
+    validateCurrencySymbol: vi.fn(() => true),
+    validateCurrencyCode: vi.fn(() => true),
+    validateAmount: vi.fn(() => true),
+    validateDebounceInterval: vi.fn(() => true),
+  }),
+};
+
+/**
  * Creates a spy on an object's method, similar to jest.spyOn
  *
  * @param {object} object - The object containing the method to spy on

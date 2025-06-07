@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "09:00"
+    open-pull-requests-limit: 15
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    labels: ["dependencies"]
+    pull-request-branch-name:
+      separator: "/"
+    # Group patch and minor updates to reduce PR volume
+    groups:
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"

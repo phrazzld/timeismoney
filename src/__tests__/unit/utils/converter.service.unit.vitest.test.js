@@ -2,20 +2,21 @@
  * Unit tests for the refactored converter module that uses services
  */
 
+// eslint-disable-next-line no-restricted-imports
+import { vi } from 'vitest';
+
+// Mock the service modules using proper vi.mock syntax
+vi.mock('../../../services/recognitionService.js');
+vi.mock('../../../services/currencyService.js');
+vi.mock('../../../utils/logger.js');
+
 import {
   describe,
   it,
   expect,
-  vi,
   beforeEach,
   afterEach,
-  mock,
 } from '../../../__tests__/setup/vitest-imports.js';
-
-// Mock the service modules
-mock('../../../services/recognitionService.js');
-mock('../../../services/currencyService.js');
-mock('../../../utils/logger.js');
 
 // Import the modules after mocking
 import * as converter from '../../../utils/converter.js';
