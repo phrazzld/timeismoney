@@ -109,23 +109,17 @@ export class PriceBadge {
         defensiveStyles: false, // Icons typically don't need defensive styles
       });
 
-      // Clear, recognizable clock icon with classic 10:10 positioning
-      // Enhanced design with prominent hour markers and distinct hands
+      // Clean, minimal clock icon with classic 10:10 positioning
+      // Simplified design for better readability and less visual clutter
       return `<svg viewBox="0 0 16 16" style="${iconStyles}" aria-hidden="true">
-        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.2" fill="none"/>
         <circle cx="8" cy="8" r="0.5" fill="currentColor"/>
-        
-        <!-- Hour markers at 12, 3, 6, 9 -->
-        <line x1="8" y1="2" x2="8" y2="3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="14" y1="8" x2="12.5" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="8" y1="14" x2="8" y2="12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="2" y1="8" x2="3.5" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         
         <!-- Clock hands in classic 10:10 position -->
         <!-- Hour hand pointing to 10 (shorter, thicker) -->
-        <line x1="8" y1="8" x2="5.5" y2="4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="8" y1="8" x2="5.5" y2="4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         <!-- Minute hand pointing to 2 (longer, thinner) -->
-        <line x1="8" y1="8" x2="11.5" y2="4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="8" y1="8" x2="11.5" y2="4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
       </svg>`;
     } catch (error) {
       logger.error('Error creating clock icon:', error.message);

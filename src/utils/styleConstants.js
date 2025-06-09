@@ -12,9 +12,9 @@
 export const COLORS = {
   // Primary brand colors
   primary: {
-    main: '#059669', // Green-600, professional and trustworthy
-    light: '#10b981', // Green-500, lighter variant
-    dark: '#047857', // Green-700, darker variant
+    main: '#2563eb', // Blue-600, professional and highly readable
+    light: '#3b82f6', // Blue-500, lighter variant for dark backgrounds
+    dark: '#1d4ed8', // Blue-700, darker variant for emphasis
   },
 
   // Neutral colors for text and backgrounds
@@ -36,10 +36,10 @@ export const COLORS = {
 
   // Semantic colors for different states
   semantic: {
-    success: '#10b981',
+    success: '#3b82f6', // Blue-500, matches primary theme
     warning: '#f59e0b',
     error: '#ef4444',
-    info: '#3b82f6',
+    info: '#2563eb', // Blue-600, primary brand color
   },
 };
 

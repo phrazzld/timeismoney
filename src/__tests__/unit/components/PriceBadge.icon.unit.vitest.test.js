@@ -95,9 +95,9 @@ describe('PriceBadge Professional Clock Icon (S2.4)', () => {
       // Should contain clock hands (lines)
       expect(svgHTML).toContain('<line');
 
-      // Should use professional stroke weights (current implementation)
-      expect(svgHTML).toContain('stroke-width="1.5"');
-      expect(svgHTML).toContain('stroke-width="2"');
+      // Should use clean, professional stroke weights (updated cleaner design)
+      expect(svgHTML).toContain('stroke-width="1.2"');
+      expect(svgHTML).toContain('stroke-width="1.8"');
     });
 
     test('has rounded line caps and joins', () => {
@@ -275,7 +275,7 @@ describe('PriceBadge Professional Clock Icon (S2.4)', () => {
       // Should contain new icon characteristics
       expect(svgHTML).toContain('viewBox="0 0 16 16"'); // New viewBox
       expect(svgHTML).toContain('r="7"'); // New outer circle
-      expect(svgHTML).toContain('stroke-width="1.5"'); // New thicker stroke (current implementation)
+      expect(svgHTML).toContain('stroke-width="1.2"'); // Clean stroke for circle (updated design)
       expect(svgHTML).toContain('x2="5.5" y2="4.5"'); // New 10:10 positioning (current coordinates)
     });
   });
