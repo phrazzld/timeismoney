@@ -107,17 +107,23 @@ export class PriceBadge {
         defensiveStyles: false, // Icons typically don't need defensive styles
       });
 
-      // Professional clock icon with 10:10 positioning for visual appeal
-      // Optimized for small sizes with appropriate stroke weights
+      // Clear, recognizable clock icon with classic 10:10 positioning
+      // Enhanced design with prominent hour markers and distinct hands
       return `<svg viewBox="0 0 16 16" style="${iconStyles}" aria-hidden="true">
-        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.2" fill="none"/>
-        <circle cx="8" cy="8" r="0.8" fill="currentColor"/>
-        <path d="M8 4.5 L8 8 L6.2 5.8" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M8 8 L10.5 5.5" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="8" cy="3" r="0.3" fill="currentColor"/>
-        <circle cx="13" cy="8" r="0.3" fill="currentColor"/>
-        <circle cx="8" cy="13" r="0.3" fill="currentColor"/>
-        <circle cx="3" cy="8" r="0.3" fill="currentColor"/>
+        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        <circle cx="8" cy="8" r="0.5" fill="currentColor"/>
+        
+        <!-- Hour markers at 12, 3, 6, 9 -->
+        <line x1="8" y1="2" x2="8" y2="3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="14" y1="8" x2="12.5" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="8" y1="14" x2="8" y2="12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="2" y1="8" x2="3.5" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        
+        <!-- Clock hands in classic 10:10 position -->
+        <!-- Hour hand pointing to 10 (shorter, thicker) -->
+        <line x1="8" y1="8" x2="5.5" y2="4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <!-- Minute hand pointing to 2 (longer, thinner) -->
+        <line x1="8" y1="8" x2="11.5" y2="4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
       </svg>`;
     } catch (error) {
       logger.error('Error creating clock icon:', error.message);
@@ -238,6 +244,11 @@ export class PriceBadge {
         this._createAccessibleTooltip();
       }
 
+      // Add hover toggle functionality if hover is enabled
+      if (this.config.enableHover) {
+        this._addHoverToggle(element);
+      }
+
       return element;
     } catch (error) {
       logger.error('Error creating badge element:', error.message);
@@ -285,6 +296,73 @@ export class PriceBadge {
       });
     } catch (error) {
       logger.error('Error creating accessible tooltip:', error.message);
+    }
+  }
+
+  /**
+   * Adds hover functionality to toggle between time and price display
+   * Smoothly transitions the badge content on hover
+   *
+   * @private
+   * @param {HTMLElement} element - The badge element to add hover functionality to
+   */
+  _addHoverToggle(element) {
+    try {
+      if (!element) return;
+
+      // Store the original content spans for toggling
+      const timeContent = element.innerHTML;
+      const priceContent = this.config.originalPrice;
+
+      // Track hover state
+      let isHovering = false;
+
+      // Add smooth transition for content changes
+      const currentTransition = element.style.transition || '';
+      element.style.transition = currentTransition
+        ? `${currentTransition}, opacity 200ms ease-out`
+        : 'opacity 200ms ease-out';
+
+      // Handle mouse enter - show original price
+      element.addEventListener('mouseenter', () => {
+        if (isHovering) return;
+        isHovering = true;
+
+        // Fade out, change content, fade in
+        element.style.opacity = '0.7';
+
+        setTimeout(() => {
+          if (isHovering) {
+            // Remove clock icon and show price
+            element.textContent = priceContent;
+            element.style.opacity = '1';
+          }
+        }, 100);
+      });
+
+      // Handle mouse leave - restore time display
+      element.addEventListener('mouseleave', () => {
+        if (!isHovering) return;
+        isHovering = false;
+
+        // Fade out, change content, fade in
+        element.style.opacity = '0.7';
+
+        setTimeout(() => {
+          if (!isHovering) {
+            // Restore time content with icon
+            element.innerHTML = timeContent;
+            element.style.opacity = '1';
+          }
+        }, 100);
+      });
+
+      logger.debug('Hover toggle added to badge', {
+        originalPrice: this.config.originalPrice,
+        timeDisplay: this.config.timeDisplay,
+      });
+    } catch (error) {
+      logger.error('Error adding hover toggle:', error.message);
     }
   }
 
@@ -482,6 +560,8 @@ export class PriceBadge {
       if (this.tooltipElement && this.tooltipElement.parentNode) {
         this.tooltipElement.parentNode.removeChild(this.tooltipElement);
       }
+
+      // Note: No need to clean up hover event listeners as they'll be removed with the element
 
       // Clear references
       this.element = null;

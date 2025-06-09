@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Time is Money - Hover Test</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        padding: 40px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      h1 {
+        color: #333;
+      }
+      .price-list {
+        margin: 30px 0;
+      }
+      .price-item {
+        padding: 15px;
+        margin: 10px 0;
+        background: #f5f5f5;
+        border-radius: 8px;
+        font-size: 18px;
+      }
+      .instructions {
+        background: #e8f4f8;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #1976d2;
+        margin-bottom: 30px;
+      }
+      .instructions h2 {
+        margin-top: 0;
+        color: #1976d2;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Time is Money - Hover Interaction Test</h1>
+
+    <div class="instructions">
+      <h2>Testing Instructions:</h2>
+      <ol>
+        <li>Make sure the Time is Money extension is enabled</li>
+        <li>Set your hourly wage in the extension settings</li>
+        <li>Prices below should convert to time equivalents</li>
+        <li><strong>Hover over the converted times to see the original price</strong></li>
+        <li>When you move your mouse away, it should transition back to time</li>
+      </ol>
+    </div>
+
+    <h2>Sample Prices:</h2>
+    <div class="price-list">
+      <div class="price-item">Coffee: $4.50</div>
+      <div class="price-item">Lunch: $12.99</div>
+      <div class="price-item">Movie ticket: $15.00</div>
+      <div class="price-item">Dinner for two: $85.00</div>
+      <div class="price-item">Weekend trip: $450.00</div>
+      <div class="price-item">New laptop: $1,299.99</div>
+    </div>
+
+    <h2>Inline Prices:</h2>
+    <p>
+      I spent $25.50 on groceries yesterday. The new book costs $18.99, but I found it on sale for
+      $12.49. My monthly gym membership is $49.99.
+    </p>
+
+    <h2>Different Formats:</h2>
+    <p>USD: $99.99 | EUR style: 99,99€ | Large amount: $1,234.56</p>
+  </body>
+</html>
