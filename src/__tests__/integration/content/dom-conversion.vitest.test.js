@@ -47,12 +47,13 @@ describe('DOM Conversion Integration', () => {
 
     // Get all price text nodes
     const priceElements = document.querySelectorAll('.price');
+    const legacySettings = { badgeDisplayMode: 'legacy' }; // Use legacy mode for integration tests
     priceElements.forEach((element) => {
       // Get the text node
       const textNode = element.firstChild;
 
       // Apply conversion directly using the test pattern and mock convert function
-      applyConversion(textNode, testPricePattern, mockConvertFn);
+      applyConversion(textNode, testPricePattern, mockConvertFn, legacySettings);
     });
 
     // Assertions based on user-visible outcomes, not implementation details
@@ -96,12 +97,13 @@ describe('DOM Conversion Integration', () => {
 
     // Apply conversions
     const priceElements = document.querySelectorAll('.price');
+    const legacySettings = { badgeDisplayMode: 'legacy' }; // Use legacy mode for integration tests
     priceElements.forEach((element) => {
       // Get the text node
       const textNode = element.firstChild;
 
       // Apply conversion directly using the test pattern and mock convert function
-      applyConversion(textNode, testPricePattern, mockConvertFn);
+      applyConversion(textNode, testPricePattern, mockConvertFn, legacySettings);
     });
 
     // Verify conversions were applied by checking visible content
@@ -135,7 +137,13 @@ describe('DOM Conversion Integration', () => {
 
     // Convert initial price
     const initialPriceElement = document.querySelector('.price');
-    applyConversion(initialPriceElement.firstChild, testPricePattern, mockConvertFn);
+    const legacySettings = { badgeDisplayMode: 'legacy' }; // Use legacy mode for integration tests
+    applyConversion(
+      initialPriceElement.firstChild,
+      testPricePattern,
+      mockConvertFn,
+      legacySettings
+    );
 
     // Verify initial conversion by checking text content
     const initialPriceParent = container.querySelector('p');
@@ -151,7 +159,7 @@ describe('DOM Conversion Integration', () => {
     // Convert newly added price
     const priceElements = document.querySelectorAll('.price');
     const newPriceElement = priceElements[1];
-    applyConversion(newPriceElement.firstChild, testPricePattern, mockConvertFn);
+    applyConversion(newPriceElement.firstChild, testPricePattern, mockConvertFn, legacySettings);
 
     // Verify both conversions exist by checking content of both paragraphs
     const paragraphs = container.querySelectorAll('p');

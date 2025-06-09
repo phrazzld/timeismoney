@@ -117,23 +117,29 @@ export const handleAmazonPrice = (node, callback, state, patternType) => {
 
   switch (className) {
     case currencyClass:
+      // Store currency component and hide it from display
       state.currency = node.firstChild.nodeValue.toString();
-      node.firstChild.nodeValue = null; // Clear the node value
+      node.firstChild.nodeValue = ''; // Hide currency component to prevent duplication
       state.active = true;
       return true;
 
     case wholeClass:
       if (state.active && state.currency !== null) {
-        // Combine currency and whole part
-        const combinedPrice = state.currency + node.firstChild.nodeValue.toString();
+        // Combine currency and whole part for processing
+        const wholeValue = node.firstChild.nodeValue.toString();
+        const combinedPrice = state.currency + wholeValue;
+
+        // Store the combined price for tracking
+        state.whole = combinedPrice;
+
+        // Set the combined price in the whole part node for badge system processing
         node.firstChild.nodeValue = combinedPrice;
 
-        // Apply the callback to the whole part node (which now contains the full price)
-        // The callback is expected to handle settings parameter which is passed through from the domScanner
+        // Apply the callback to let the badge system handle DOM modification
+        // The badge system will replace this text node with a styled badge
         callback(node.firstChild);
 
         // Reset currency since we've used it
-        state.whole = node.firstChild.nodeValue.toString();
         state.currency = null;
         return true;
       }
@@ -141,8 +147,8 @@ export const handleAmazonPrice = (node, callback, state, patternType) => {
 
     case fractionalClass:
       if (state.active) {
-        // Clear the fractional part as it's already been processed with the whole part
-        node.firstChild.nodeValue = null;
+        // Hide fractional part since it's already included in the whole part
+        node.firstChild.nodeValue = '';
 
         // Reset the price state after completing a price
         state.reset();

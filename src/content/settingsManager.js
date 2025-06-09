@@ -314,11 +314,22 @@ export function handleVisibilityChange(callback) {
                   disabledOnPage = !!settings.disabled; // Force boolean type
                   lastKnownDebounceInterval = settings.debounceIntervalMs;
 
-                  if (disabledChanged || debounceChanged) {
-                    // Log the change for debugging
-                    if (disabledChanged) {
+                  // Always re-process page when it becomes visible since conversions
+                  // may have been cleaned up during page hide events
+                  if (!settings.disabled) {
+                    // Log the reason for processing
+                    if (disabledChanged || debounceChanged) {
                       logger.debug(
-                        `TimeIsMoney: Extension ${settings.disabled ? 'disabled' : 'enabled'} after visibility change`
+                        `TimeIsMoney: Re-processing page due to settings change after visibility change`
+                      );
+                      if (disabledChanged) {
+                        logger.debug(
+                          `TimeIsMoney: Extension ${settings.disabled ? 'disabled' : 'enabled'} after visibility change`
+                        );
+                      }
+                    } else {
+                      logger.debug(
+                        `TimeIsMoney: Re-processing page after visibility change to restore conversions`
                       );
                     }
 
@@ -331,7 +342,7 @@ export function handleVisibilityChange(callback) {
                     }
 
                     try {
-                      // Process the page with the current settings
+                      // Always process the page when it becomes visible to restore conversions
                       callback(document.body, settings);
                     } catch (callbackError) {
                       logger.error(
@@ -341,6 +352,8 @@ export function handleVisibilityChange(callback) {
                       // Revert state change if callback fails to avoid inconsistent state
                       disabledOnPage = previousDisabled;
                     }
+                  } else {
+                    logger.debug('TimeIsMoney: Extension is disabled, skipping page processing');
                   }
                 } catch (settingsError) {
                   logger.error(

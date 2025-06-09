@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Theme Adaptation Demo - S2.2</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .demo-section {
+        margin: 40px 0;
+        padding: 20px;
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+      }
+
+      .light-background {
+        background-color: #ffffff;
+        color: #111827;
+      }
+
+      .gray-background {
+        background-color: #f9fafb;
+        color: #374151;
+      }
+
+      .dark-background {
+        background-color: #1f2937;
+        color: #f9fafb;
+      }
+
+      .very-dark-background {
+        background-color: #111827;
+        color: #ffffff;
+      }
+
+      .price {
+        font-size: 18px;
+        margin: 10px 0;
+        font-weight: 600;
+      }
+
+      h1 {
+        text-align: center;
+        color: #059669;
+      }
+
+      h2 {
+        margin-bottom: 15px;
+      }
+
+      .info {
+        background-color: #dbeafe;
+        border: 1px solid #3b82f6;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 20px 0;
+        color: #1e40af;
+      }
+
+      .expected {
+        font-style: italic;
+        font-size: 14px;
+        color: #6b7280;
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>S2.2 Dynamic Theme Adaptation Demo</h1>
+
+      <div class="info">
+        <strong>Test Instructions:</strong> This page demonstrates the dynamic theme adaptation
+        feature. Load this page in a Chrome extension test environment and observe how the price
+        badges automatically adapt their colors to match the background they're placed on.
+      </div>
+
+      <!-- Light Background Section -->
+      <div class="demo-section light-background">
+        <h2>Light Background (White)</h2>
+        <div class="price">Product A: $29.99</div>
+        <div class="price">Product B: $199.99</div>
+        <div class="price">Special offer: $15.50</div>
+        <div class="expected">Expected: Green badges (#059669) with light background (#f9fafb)</div>
+      </div>
+
+      <!-- Gray Background Section -->
+      <div class="demo-section gray-background">
+        <h2>Light Gray Background</h2>
+        <div class="price">Item 1: $45.99</div>
+        <div class="price">Item 2: $99.99</div>
+        <div class="price">Bundle deal: $89.50</div>
+        <div class="expected">
+          Expected: Green badges (#059669) with light background - same as white
+        </div>
+      </div>
+
+      <!-- Dark Background Section -->
+      <div class="demo-section dark-background">
+        <h2>Dark Background</h2>
+        <div class="price">Premium item: $299.99</div>
+        <div class="price">Standard item: $149.99</div>
+        <div class="price">Budget option: $59.99</div>
+        <div class="expected">
+          Expected: Light green badges (#10b981) with dark background (#1f2937)
+        </div>
+      </div>
+
+      <!-- Very Dark Background Section -->
+      <div class="demo-section very-dark-background">
+        <h2>Very Dark Background</h2>
+        <div class="price">Enterprise plan: $999.99</div>
+        <div class="price">Pro plan: $499.99</div>
+        <div class="price">Basic plan: $99.99</div>
+        <div class="expected">
+          Expected: Light green badges (#10b981) with dark background - adapts to very dark
+        </div>
+      </div>
+
+      <div class="info">
+        <strong>Implementation Details:</strong>
+        <ul>
+          <li>Uses <code>getComputedStyle()</code> to detect background colors</li>
+          <li>Walks up DOM tree to find meaningful background colors</li>
+          <li>Calculates perceived brightness using relative luminance formula</li>
+          <li>Automatically switches between light (#059669) and dark (#10b981) theme colors</li>
+          <li>Provides graceful fallbacks when detection fails</li>
+          <li>Limits DOM traversal depth to prevent infinite loops</li>
+        </ul>
+      </div>
+    </div>
+
+    <script type="module">
+      // This would be injected by the actual extension content script
+      console.log('Theme Adaptation Demo Page Loaded');
+      console.log(
+        'Load this page with the TimeIsMoney extension to see dynamic theme adaptation in action'
+      );
+
+      // Simulate what the extension would detect
+      const sections = document.querySelectorAll('.demo-section');
+      sections.forEach((section, index) => {
+        const style = window.getComputedStyle(section);
+        const bgColor = style.backgroundColor;
+        console.log(`Section ${index + 1}: Background detected as ${bgColor}`);
+      });
+    </script>
+  </body>
+</html>

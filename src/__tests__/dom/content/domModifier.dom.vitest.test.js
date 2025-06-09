@@ -78,7 +78,14 @@ describe('DOM Modifier Module', () => {
       expect(span.tagName).toBe('SPAN');
       expect(span.className).toBe(CONVERTED_PRICE_CLASS);
       expect(span.getAttribute('data-original-price')).toBe('$30.00');
-      expect(span.textContent).toBe('$30.00 (3h 0m)');
+      // Time-only display with clock icon - should contain just the time portion
+      expect(span.textContent).toContain('3h 0m');
+      // Should NOT contain original price (we replaced it entirely)
+      expect(span.textContent).not.toContain('$30.00');
+      // Clock icon should be present as SVG element
+      expect(span.querySelector('svg')).toBeTruthy();
+      // Should show original price in aria-label (modern badges use ARIA)
+      expect(span.getAttribute('aria-label')).toContain('$30.00');
     });
 
     // Add integration test for end-to-end conversion flow
@@ -134,7 +141,14 @@ describe('DOM Modifier Module', () => {
       expect(span.tagName).toBe('SPAN');
       expect(span.className).toBe(CONVERTED_PRICE_CLASS);
       expect(span.getAttribute('data-original-price')).toBe('$30.00');
-      expect(span.textContent).toBe('$30.00 (3h 0m)');
+      // Time-only display with clock icon - should contain just the time portion
+      expect(span.textContent).toContain('3h 0m');
+      // Should NOT contain original price (we replaced it entirely)
+      expect(span.textContent).not.toContain('$30.00');
+      // Clock icon should be present as SVG element
+      expect(span.querySelector('svg')).toBeTruthy();
+      // Should show original price in aria-label (modern badges use ARIA)
+      expect(span.getAttribute('aria-label')).toContain('$30.00');
     });
   });
 

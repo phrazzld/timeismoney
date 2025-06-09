@@ -55,20 +55,20 @@ describe('DOM Conversion Integration', () => {
     });
 
     // Assertions based on user-visible outcomes, not implementation details
-    const prices = document.querySelectorAll('p, div.product > span');
+    const convertedPrices = document.querySelectorAll('.tim-converted-price');
 
     // Verify the number of converted elements
-    expect(prices.length).toBe(3);
+    expect(convertedPrices.length).toBe(3);
 
-    // Check conversions by examining text content
-    expect(prices[0].textContent).toContain('$199.99');
-    expect(prices[0].textContent).toContain('8.0h');
+    // Check conversions by examining text content and aria-label
+    expect(convertedPrices[0].getAttribute('aria-label')).toContain('$199.99');
+    expect(convertedPrices[0].textContent).toContain('8.0h');
 
-    expect(prices[1].textContent).toContain('$24.50');
-    expect(prices[1].textContent).toContain('1.0h');
+    expect(convertedPrices[1].getAttribute('aria-label')).toContain('$24.50');
+    expect(convertedPrices[1].textContent).toContain('1.0h');
 
-    expect(prices[2].textContent).toContain('$49.99');
-    expect(prices[2].textContent).toContain('2.0h');
+    expect(convertedPrices[2].getAttribute('aria-label')).toContain('$49.99');
+    expect(convertedPrices[2].textContent).toContain('2.0h');
   });
 
   test('revertAll restores original price elements', () => {
@@ -139,8 +139,9 @@ describe('DOM Conversion Integration', () => {
     // Verify initial conversion by checking text content
     const initialPriceParent = container.querySelector('p');
     expect(initialPriceParent).not.toBeNull();
-    expect(initialPriceParent.textContent).toContain('$99.99');
-    expect(initialPriceParent.textContent).toContain('4.0h');
+    const convertedPrice = initialPriceParent.querySelector('.tim-converted-price');
+    expect(convertedPrice.getAttribute('aria-label')).toContain('$99.99');
+    expect(convertedPrice.textContent).toContain('4.0h');
 
     // Simulate dynamic DOM update
     container.innerHTML += `
@@ -157,12 +158,14 @@ describe('DOM Conversion Integration', () => {
     expect(paragraphs.length).toBe(2);
 
     // Verify first paragraph still shows conversion
-    expect(paragraphs[0].textContent).toContain('$99.99');
-    expect(paragraphs[0].textContent).toContain('4.0h');
+    const firstConvertedPrice = paragraphs[0].querySelector('.tim-converted-price');
+    expect(firstConvertedPrice.getAttribute('aria-label')).toContain('$99.99');
+    expect(firstConvertedPrice.textContent).toContain('4.0h');
 
     // Verify second paragraph shows conversion
-    expect(paragraphs[1].textContent).toContain('$149.99');
-    expect(paragraphs[1].textContent).toContain('6.0h');
+    const secondConvertedPrice = paragraphs[1].querySelector('.tim-converted-price');
+    expect(secondConvertedPrice.getAttribute('aria-label')).toContain('$149.99');
+    expect(secondConvertedPrice.textContent).toContain('6.0h');
 
     // Revert all
     revertAll(container);

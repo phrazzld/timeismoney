@@ -7,6 +7,123 @@
 
 import { CONVERTED_PRICE_CLASS } from '../utils/constants.js';
 import * as logger from '../utils/logger.js';
+import { createPriceBadge } from '../components/PriceBadge.js';
+import { createShadowPriceBadge } from '../components/ShadowPriceBadge.js';
+
+/**
+ * Creates a time conversion badge element with clock icon and tooltip
+ * Supports both modern (PriceBadge) and legacy display modes via feature flag
+ *
+ * @param {string} originalPrice - The original price string (e.g., "$30.00")
+ * @param {string} timeDisplay - The formatted time display (e.g., "3h 0m" or "45m")
+ * @param {HTMLElement} [context] - DOM context for theme detection and styling
+ * @param {object} [settings] - Extension settings including badgeDisplayMode
+ * @returns {HTMLElement} A configured span element showing the time with tooltip
+ */
+const createBadge = (originalPrice, timeDisplay, context = null, settings = null) => {
+  try {
+    // Check the badgeDisplayMode setting to determine which badge style to use
+    const badgeMode = settings?.badgeDisplayMode || 'modern';
+    const useShadowDOM = settings?.useShadowDOM || false;
+
+    if (badgeMode === 'legacy') {
+      // Use legacy badge creation for backward compatibility/rollback
+      return createLegacyBadge(originalPrice, timeDisplay, context);
+    } else if (useShadowDOM) {
+      // Use Shadow DOM badge for perfect style isolation (experimental)
+      return createShadowPriceBadge(originalPrice, timeDisplay, context);
+    } else {
+      // Use the modern PriceBadge component class via factory function (default)
+      // Enable hover toggle for modern badge mode (including invalid modes that fall back to modern)
+      const isModernMode = badgeMode === 'modern' || !['legacy', 'shadow'].includes(badgeMode);
+      const badgeOptions = isModernMode ? { enableHoverToggle: true } : {};
+      return createPriceBadge(originalPrice, timeDisplay, context, badgeOptions);
+    }
+  } catch (error) {
+    logger.error('Error creating badge:', error.message, {
+      originalPrice,
+      timeDisplay,
+      badgeMode: settings?.badgeDisplayMode || 'modern',
+      useShadowDOM: settings?.useShadowDOM || false,
+    });
+    // Return a simple fallback element
+    return createFallbackBadge(originalPrice, timeDisplay);
+  }
+};
+
+/**
+ * Creates a legacy badge with the original simple style
+ * Provides backward compatibility and rollback option for users
+ *
+ * @param {string} originalPrice - The original price string
+ * @param {string} timeDisplay - The formatted time display
+ * @returns {HTMLElement} A legacy-styled badge element
+ */
+const createLegacyBadge = (originalPrice, timeDisplay) => {
+  try {
+    const timeElement = document.createElement('span');
+    timeElement.className = CONVERTED_PRICE_CLASS;
+    timeElement.setAttribute('data-original-price', originalPrice);
+    timeElement.title = `Originally ${originalPrice}`;
+
+    // Legacy format: show both original price and time conversion
+    // Example: "$30.00 (3h 0m)" - the old augmentation style
+    timeElement.textContent = `${originalPrice} (${timeDisplay})`;
+
+    // Legacy styling - simple green text with basic formatting
+    timeElement.style.cssText = [
+      'color: #059669',
+      'font-weight: 600',
+      'font-size: inherit',
+      'white-space: nowrap',
+      'vertical-align: baseline',
+      'text-decoration: none',
+      'opacity: 0.9',
+      'margin-left: 0.25em', // Small spacing from preceding text
+    ].join('; ');
+
+    return timeElement;
+  } catch (legacyError) {
+    logger.error('Error creating legacy badge:', legacyError.message);
+    // Fall back to the simple fallback badge
+    return createFallbackBadge(originalPrice, timeDisplay);
+  }
+};
+
+/**
+ * Creates a fallback badge when the main badge creation fails
+ * Simplified fallback that doesn't depend on the component system
+ *
+ * @param {string} originalPrice - The original price string
+ * @param {string} timeDisplay - The formatted time display
+ * @returns {HTMLElement} A simple badge element with basic styling
+ */
+const createFallbackBadge = (originalPrice, timeDisplay) => {
+  try {
+    const timeElement = document.createElement('span');
+    timeElement.className = CONVERTED_PRICE_CLASS;
+    timeElement.setAttribute('data-original-price', originalPrice);
+    timeElement.title = `Originally ${originalPrice}`;
+    timeElement.textContent = timeDisplay;
+
+    // Basic fallback styles
+    timeElement.style.cssText = [
+      'color: #059669',
+      'font-weight: 600',
+      'font-size: inherit',
+      'white-space: nowrap',
+      'vertical-align: baseline',
+      'text-decoration: none',
+      'opacity: 0.9',
+    ].join('; ');
+
+    return timeElement;
+  } catch (fallbackError) {
+    logger.error('Error creating fallback badge:', fallbackError.message);
+    // Last resort: return a simple text node
+    return document.createTextNode(timeDisplay);
+  }
+};
 
 /**
  * Checks if a node is valid for processing and not already processed
@@ -44,9 +161,10 @@ export const isValidForProcessing = (textNode) => {
  * @param {Node} textNode - The DOM text node containing price text
  * @param {RegExp} pattern - Regex pattern for matching prices
  * @param {Function} convertFn - Function that converts a price string to a display string
+ * @param {object} [settings] - Extension settings including badgeDisplayMode
  * @returns {boolean} True if modifications were made, false otherwise
  */
-export const applyConversion = (textNode, pattern, convertFn) => {
+export const applyConversion = (textNode, pattern, convertFn, settings = null) => {
   try {
     if (!textNode || !textNode.nodeValue || !pattern || !convertFn) {
       return false;
@@ -107,17 +225,30 @@ export const applyConversion = (textNode, pattern, convertFn) => {
 
           const convertedText = convertFn(originalPrice);
 
+          // Extract time portion from convertedText (e.g., "3h 0m" from "$30.00 (3h 0m)")
+          const timeMatch = convertedText.match(/\(([^)]+)\)/);
+          let timeDisplay = timeMatch ? timeMatch[1] : convertedText;
+
+          // Format time nicely - omit hours when zero
+          timeDisplay = timeDisplay.replace(/^0h\s*/, ''); // Remove "0h " from start
+          if (!timeDisplay.trim()) {
+            timeDisplay = '0m'; // Fallback if empty
+          }
+
           // Add text before the match
           if (match.index > lastIndex) {
             fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
           }
 
-          // Create the span with the converted price
-          const span = document.createElement('span');
-          span.className = CONVERTED_PRICE_CLASS;
-          span.setAttribute('data-original-price', originalPrice);
-          span.textContent = convertedText;
-          fragment.appendChild(span);
+          // Create clean time-only replacement using extracted function
+          // Pass the parent element as context for theme detection and settings for display mode
+          const timeElement = createBadge(
+            originalPrice,
+            timeDisplay,
+            textNode.parentElement,
+            settings
+          );
+          fragment.appendChild(timeElement);
 
           lastIndex = match.index + originalPrice.length;
         } catch (matchError) {
@@ -151,6 +282,51 @@ export const applyConversion = (textNode, pattern, convertFn) => {
   } catch (error) {
     logger.error('Error in applyConversion:', error.message, error.stack);
     return false;
+  }
+};
+
+/**
+ * Performs global cleanup of all price conversions across the entire document
+ * This is a higher-level cleanup function that ensures no converted prices remain
+ *
+ * @returns {number} The total number of elements cleaned up
+ */
+export const globalCleanup = () => {
+  try {
+    logger.info('Performing global cleanup of all price conversions');
+    const cleanupCount = revertAll(document.body || document.documentElement);
+
+    // Additional cleanup: remove any orphaned elements that might have lost their parent
+    try {
+      const orphanedElements = document.querySelectorAll(`.${CONVERTED_PRICE_CLASS}`);
+      let orphanCount = 0;
+      orphanedElements.forEach((element) => {
+        try {
+          if (element.parentNode) {
+            const originalPrice = element.getAttribute('data-original-price');
+            if (originalPrice) {
+              const textNode = document.createTextNode(originalPrice);
+              element.parentNode.replaceChild(textNode, element);
+              orphanCount++;
+            }
+          }
+        } catch (cleanupError) {
+          logger.debug('Error cleaning up orphaned element:', cleanupError.message);
+        }
+      });
+
+      if (orphanCount > 0) {
+        logger.info(`Cleaned up ${orphanCount} orphaned conversion elements`);
+      }
+
+      return cleanupCount + orphanCount;
+    } catch (orphanCleanupError) {
+      logger.error('Error during orphan cleanup:', orphanCleanupError.message);
+      return cleanupCount;
+    }
+  } catch (error) {
+    logger.error('Error in global cleanup:', error.message, error.stack);
+    return 0;
   }
 };
 
@@ -248,9 +424,16 @@ const createPriceToTimeConverter = (conversionInfo) => {
  * @param {object} conversionInfo.formatters - Formatting options for currency
  * @param {object} conversionInfo.wageInfo - Information about hourly wage for conversion
  * @param {boolean} shouldRevert - Whether to revert conversions instead of applying them
+ * @param {object} [settings] - Extension settings including badgeDisplayMode
  * @returns {boolean} True if modifications were made, false otherwise
  */
-export const processTextNode = (textNode, priceMatch, conversionInfo, shouldRevert) => {
+export const processTextNode = (
+  textNode,
+  priceMatch,
+  conversionInfo,
+  shouldRevert,
+  settings = null
+) => {
   try {
     if (!textNode) {
       logger.error('processTextNode called with invalid text node');
@@ -280,7 +463,7 @@ export const processTextNode = (textNode, priceMatch, conversionInfo, shouldReve
     const converter = createPriceToTimeConverter(conversionInfo);
 
     // Apply the conversion to the DOM
-    return applyConversion(textNode, priceMatch.pattern, converter);
+    return applyConversion(textNode, priceMatch.pattern, converter, settings);
   } catch (error) {
     logger.error('Error in processTextNode:', error.message, error.stack);
     return false;

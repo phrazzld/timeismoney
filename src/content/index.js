@@ -24,8 +24,14 @@ import {
 import { walk, startObserver, stopObserver, createDomScannerState } from './domScanner.js';
 import { findPrices } from './priceFinder.js';
 import { convertPriceToTimeString } from '../utils/converter.js';
-import { processTextNode, isValidForProcessing } from './domModifier.js';
+import { processTextNode, isValidForProcessing, globalCleanup } from './domModifier.js';
 import { DEFAULT_DEBOUNCE_INTERVAL_MS } from '../utils/constants.js';
+import {
+  invalidateResponsiveCaches,
+  warmStyleCaches,
+  getCacheStatistics,
+} from '../utils/styleCache.js';
+import { mark, measure } from '../utils/performance.js';
 import * as logger from '../utils/logger.js';
 
 // Import service instances
@@ -172,6 +178,14 @@ function initDomObserver(root, callback, settings, state = domScannerState) {
 
 // Initialize settings and set up event handlers
 initSettings((root, settings) => {
+  // Warm style caches on initialization
+  try {
+    warmStyleCaches();
+    logger.debug('Style caches warmed on extension initialization');
+  } catch (error) {
+    logger.debug('Error warming style caches:', error.message);
+  }
+
   // Process the page initially
   processPage(root, settings);
 
@@ -181,7 +195,24 @@ initSettings((root, settings) => {
 
 // Handle settings changes
 onSettingsChange((root, updatedSettings) => {
-  // Process the page with updated settings
+  // Check if extension was disabled - if so, clean up all conversions
+  if (updatedSettings.disabled === true) {
+    logger.info('Extension disabled, cleaning up all price conversions');
+    try {
+      const cleanedCount = globalCleanup();
+      if (cleanedCount > 0) {
+        logger.info(`Cleaned up ${cleanedCount} price conversions after extension disable`);
+      }
+    } catch (cleanupError) {
+      logger.error('Error cleaning up conversions on disable:', cleanupError.message);
+    }
+
+    // Stop observer when disabled
+    stopObserver(domScannerState);
+    return; // Don't process page or reinitialize observer when disabled
+  }
+
+  // Process the page with updated settings (only if not disabled)
   processPage(root, updatedSettings);
 
   // Check if dynamic scanning setting or debounce interval changed
@@ -231,6 +262,17 @@ function handleUnload(state = domScannerState) {
       return;
     }
 
+    // STEP 1: Clean up all converted price elements from the DOM
+    try {
+      const cleanedCount = globalCleanup();
+      if (cleanedCount > 0) {
+        logger.debug(`TimeIsMoney: Cleaned up ${cleanedCount} price conversions during unload`);
+      }
+    } catch (cleanupError) {
+      logger.debug('TimeIsMoney: Error during DOM cleanup:', cleanupError.message);
+    }
+
+    // STEP 2: Clean up DOM scanner state
     // Create a local copy of the domScannerState to prevent any reference issues
     const localState = state;
 
@@ -306,6 +348,72 @@ document.addEventListener(
   { passive: true }
 );
 
+// Add viewport change listener for cache invalidation
+window.addEventListener(
+  'resize',
+  () => {
+    try {
+      invalidateResponsiveCaches();
+      logger.debug('Responsive caches invalidated due to viewport change');
+    } catch (error) {
+      logger.debug('Error invalidating responsive caches:', error.message);
+    }
+  },
+  { passive: true }
+);
+
+// Add periodic performance monitoring (every 30 seconds when active)
+let performanceMonitorInterval = null;
+
+const startPerformanceMonitoring = () => {
+  if (performanceMonitorInterval) {
+    clearInterval(performanceMonitorInterval);
+  }
+
+  performanceMonitorInterval = setInterval(() => {
+    try {
+      const cacheStats = getCacheStatistics();
+      if (cacheStats && Object.keys(cacheStats.statistics).length > 0) {
+        logger.debug('Style Cache Performance Report:', {
+          cacheHitRates: cacheStats.performance,
+          cacheUtilization: cacheStats.caches,
+          totalRequests: Object.values(cacheStats.statistics).reduce(
+            (total, stat) => total + stat.hits + stat.misses,
+            0
+          ),
+        });
+      }
+    } catch (error) {
+      logger.debug('Error collecting cache statistics:', error.message);
+    }
+  }, 30000); // Report every 30 seconds
+};
+
+const stopPerformanceMonitoring = () => {
+  if (performanceMonitorInterval) {
+    clearInterval(performanceMonitorInterval);
+    performanceMonitorInterval = null;
+  }
+};
+
+// Start monitoring when page is visible
+if (document.visibilityState === 'visible') {
+  startPerformanceMonitoring();
+}
+
+// Handle visibility changes for performance monitoring
+document.addEventListener(
+  'visibilitychange',
+  () => {
+    if (document.visibilityState === 'visible') {
+      startPerformanceMonitoring();
+    } else {
+      stopPerformanceMonitoring();
+    }
+  },
+  { passive: true }
+);
+
 /**
  * Orchestrates the price conversion pipeline by separating the process into discrete steps:
  * 1. Check if the node is valid and not already processed (using domModifier.isValidForProcessing)
@@ -326,6 +434,8 @@ document.addEventListener(
  * @returns {void}
  */
 const convert = (textNode, preloadedSettings) => {
+  // Start performance tracking
+  mark('convert_start');
   const startTime = performance.now();
 
   try {
@@ -380,10 +490,13 @@ const convert = (textNode, preloadedSettings) => {
 
           // STEP 2: Use priceFinder to identify prices in the text
           // First get the price patterns and formatters
+          mark('price_find_start');
           let priceMatch;
           try {
             priceMatch = findPrices(textNode.nodeValue, formatSettings);
+            measure('price_find');
           } catch (priceFinderError) {
+            measure('price_find');
             logger.error('Error in price finding algorithm:', priceFinderError.message, {
               textContent: textNode?.nodeValue?.substring(0, 50) + '...',
               formatSettings,
@@ -453,6 +566,7 @@ const convert = (textNode, preloadedSettings) => {
           }
 
           // STEP 4: Use domModifier to update the DOM with the converted prices
+          mark('dom_modify_start');
           try {
             // Update the call to use culture alongside formatters for backward compatibility
             // This allows processTextNode to work with both the legacy and new service-based approach
@@ -460,16 +574,24 @@ const convert = (textNode, preloadedSettings) => {
               textNode,
               priceMatch,
               conversionInfo,
-              formatSettings.isReverseSearch
+              formatSettings.isReverseSearch,
+              settings
             );
+            measure('dom_modify');
+
             if (result) {
               logger.debug('Successfully converted price in DOM');
+              // End the overall conversion measurement on success
+              measure('convert');
             } else {
+              measure('convert');
               logger.warn('Failed to convert price in DOM - processTextNode returned false', {
                 textContent: textNode?.nodeValue?.substring(0, 50) + '...',
               });
             }
           } catch (domModifierError) {
+            measure('dom_modify');
+            measure('convert');
             logger.error('Error in DOM modification:', domModifierError.message, {
               textContent: textNode?.nodeValue?.substring(0, 50) + '...',
               priceMatch:
