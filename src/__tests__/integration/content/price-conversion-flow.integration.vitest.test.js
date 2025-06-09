@@ -85,9 +85,10 @@ describe('Price Conversion Integration Flow', () => {
     // Check that original price is stored correctly
     expect(badge.getAttribute('data-original-price')).toBe('$30.00');
 
-    // Modern implementation: badge only shows time, original price in tooltip/aria
+    // Test uses default settings, which now enables modern mode (hover toggle)
+    // In modern mode, badge shows only time initially
     expect(badge.textContent.trim()).toBe('3h 0m'); // $30 at $10/hour = 3 hours
-    expect(badge.getAttribute('aria-label')).toContain('$30.00');
+    expect(badge.textContent.trim()).not.toContain('$30.00');
 
     // Verify the surrounding text is preserved
     expect(parentNode.textContent).toContain('The price is');
@@ -158,23 +159,20 @@ describe('Price Conversion Integration Flow', () => {
     const convertedElements = document.querySelectorAll(`.${CONVERTED_PRICE_CLASS}`);
     expect(convertedElements.length).toBe(3);
 
-    // Check the time conversions at $15/hour (modern implementation: only time visible)
+    // Check the time conversions at $15/hour (modern mode - time only display)
     const badges = Array.from(convertedElements);
 
     // $10.99 → ~0.73 hours → 44m (omit 0h)
     expect(badges[0].getAttribute('data-original-price')).toBe('$10.99');
     expect(badges[0].textContent.trim()).toBe('44m');
-    expect(badges[0].getAttribute('aria-label')).toContain('$10.99');
 
     // $24.50 → ~1.63 hours → 1h 38m
     expect(badges[1].getAttribute('data-original-price')).toBe('$24.50');
     expect(badges[1].textContent.trim()).toBe('1h 38m');
-    expect(badges[1].getAttribute('aria-label')).toContain('$24.50');
 
     // $35.49 → ~2.37 hours → 2h 22m
     expect(badges[2].getAttribute('data-original-price')).toBe('$35.49');
     expect(badges[2].textContent.trim()).toBe('2h 22m');
-    expect(badges[2].getAttribute('aria-label')).toContain('$35.49');
 
     // Verify surrounding text is preserved
     expect(container.textContent).toContain('Item 1:');

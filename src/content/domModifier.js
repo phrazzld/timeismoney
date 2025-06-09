@@ -34,7 +34,10 @@ const createBadge = (originalPrice, timeDisplay, context = null, settings = null
       return createShadowPriceBadge(originalPrice, timeDisplay, context);
     } else {
       // Use the modern PriceBadge component class via factory function (default)
-      return createPriceBadge(originalPrice, timeDisplay, context);
+      // Enable hover toggle for modern badge mode (including invalid modes that fall back to modern)
+      const isModernMode = badgeMode === 'modern' || !['legacy', 'shadow'].includes(badgeMode);
+      const badgeOptions = isModernMode ? { enableHoverToggle: true } : {};
+      return createPriceBadge(originalPrice, timeDisplay, context, badgeOptions);
     }
   } catch (error) {
     logger.error('Error creating badge:', error.message, {

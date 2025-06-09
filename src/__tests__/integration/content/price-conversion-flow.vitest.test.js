@@ -72,8 +72,8 @@ describe('Price Conversion Integration Flow', () => {
     expect(span.getAttribute('data-original-price')).toContain('$30.00');
 
     // 30 dollars at 10 dollars per hour should be 3 hours
-    expect(span.textContent).toContain('$30.00');
-    expect(span.textContent).toContain('3h 0m');
+    // Modern mode shows only time
+    expect(span.textContent.trim()).toBe('3h 0m');
   });
 
   test('complex page with multiple prices properly converts all prices', () => {
@@ -143,15 +143,12 @@ describe('Price Conversion Integration Flow', () => {
     // the wage is $15/hour for this test
 
     // First price: $10.99 / $15 ≈ 0.73 hours ≈ 44 minutes
-    expect(convertedElements[0].textContent).toContain('$10.99');
-    expect(convertedElements[0].textContent).toContain('44m');
+    expect(convertedElements[0].textContent.trim()).toBe('44m');
 
     // Second price: $24.50 / $15 ≈ 1.63 hours ≈ 1h 38m
-    expect(convertedElements[1].textContent).toContain('$24.50');
-    expect(convertedElements[1].textContent).toContain('1h 38m');
+    expect(convertedElements[1].textContent.trim()).toBe('1h 38m');
 
     // Third price: $35.49 / $15 ≈ 2.37 hours ≈ 2h 22m
-    expect(convertedElements[2].textContent).toContain('$35.49');
-    expect(convertedElements[2].textContent).toContain('2h 22m');
+    expect(convertedElements[2].textContent.trim()).toBe('2h 22m');
   });
 });
