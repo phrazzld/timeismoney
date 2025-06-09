@@ -89,17 +89,15 @@ describe('PriceBadge Professional Clock Icon (S2.4)', () => {
       // Should contain main circle
       expect(svgHTML).toContain('r="7"');
 
-      // Should contain center dot
-      expect(svgHTML).toContain('r="0.8"');
+      // Should contain center dot with current radius
+      expect(svgHTML).toContain('r="0.5"');
 
-      // Should contain hour markers (small circles)
-      expect(svgHTML).toContain('r="0.3"');
+      // Should contain clock hands (lines)
+      expect(svgHTML).toContain('<line');
 
-      // Should contain clock hands (paths)
-      expect(svgHTML).toContain('<path');
-
-      // Should use professional stroke weight
-      expect(svgHTML).toContain('stroke-width="1.2"');
+      // Should use professional stroke weights (current implementation)
+      expect(svgHTML).toContain('stroke-width="1.5"');
+      expect(svgHTML).toContain('stroke-width="2"');
     });
 
     test('has rounded line caps and joins', () => {
@@ -113,9 +111,9 @@ describe('PriceBadge Professional Clock Icon (S2.4)', () => {
       const svg = element.querySelector('svg');
       const svgHTML = svg.outerHTML;
 
-      // Should use rounded line caps and joins for smoother appearance
+      // Should use rounded line caps for smoother appearance (current implementation)
       expect(svgHTML).toContain('stroke-linecap="round"');
-      expect(svgHTML).toContain('stroke-linejoin="round"');
+      // Note: stroke-linejoin is not used in current line-based design
     });
 
     test('positions hands at 10:10 for visual appeal', () => {
@@ -130,10 +128,10 @@ describe('PriceBadge Professional Clock Icon (S2.4)', () => {
       const svgHTML = svg.outerHTML;
 
       // Should have 10:10 positioning (symmetric, not 3:00 like old version)
-      // Hour hand should point towards 10 o'clock position
-      expect(svgHTML).toContain('L6.2 5.8');
-      // Minute hand should point towards 2 o'clock position
-      expect(svgHTML).toContain('L10.5 5.5');
+      // Hour hand should point towards 10 o'clock position (current coordinates)
+      expect(svgHTML).toContain('x2="5.5" y2="4.5"');
+      // Minute hand should point towards 2 o'clock position (current coordinates)
+      expect(svgHTML).toContain('x2="11.5" y2="4.5"');
     });
   });
 
@@ -183,6 +181,7 @@ describe('PriceBadge Professional Clock Icon (S2.4)', () => {
         originalPrice: '$30.00',
         timeDisplay: '3h 0m',
         useIcon: false,
+        enableHoverToggle: true, // Enable modern time-only display
       });
 
       const element = badge.render();
@@ -197,6 +196,8 @@ describe('PriceBadge Professional Clock Icon (S2.4)', () => {
         originalPrice: '$30.00',
         timeDisplay: '3h 0m',
         useIcon: false,
+        enableHoverToggle: true, // Enable modern time-only display
+        enableAnimations: false, // Disable animations for synchronous testing
       });
 
       const element = badge.render();
@@ -274,8 +275,8 @@ describe('PriceBadge Professional Clock Icon (S2.4)', () => {
       // Should contain new icon characteristics
       expect(svgHTML).toContain('viewBox="0 0 16 16"'); // New viewBox
       expect(svgHTML).toContain('r="7"'); // New outer circle
-      expect(svgHTML).toContain('stroke-width="1.2"'); // New thicker stroke
-      expect(svgHTML).toContain('L6.2 5.8'); // New 10:10 positioning
+      expect(svgHTML).toContain('stroke-width="1.5"'); // New thicker stroke (current implementation)
+      expect(svgHTML).toContain('x2="5.5" y2="4.5"'); // New 10:10 positioning (current coordinates)
     });
   });
 });

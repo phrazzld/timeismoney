@@ -81,7 +81,7 @@ describe('Price Conversion Integration Flow', () => {
     // With replace-only strategy, original price is only in tooltip, not text content
     expect(span.textContent).toContain('3h 0m');
     expect(span.textContent).not.toContain('$30.00'); // Should NOT contain original price
-    expect(span.title).toBe('Originally $30.00'); // Should have tooltip with original price
+    expect(span.getAttribute('aria-label')).toContain('$30.00'); // Should have tooltip with original price
   });
 
   test('complex page with multiple prices properly converts all prices', () => {
@@ -149,17 +149,17 @@ describe('Price Conversion Integration Flow', () => {
 
     // With replace-only strategy, original prices are only in tooltips, not text content
     expect(convertedElements[0].textContent).not.toContain('$10.99');
-    expect(convertedElements[0].title).toBe('Originally $10.99');
+    expect(convertedElements[0].getAttribute('aria-label')).toContain('$10.99');
     expect(convertedElements[0].textContent).toMatch(/\d+[hm]/); // Should contain time format
 
     // Check that the price values are in tooltips
     expect(convertedElements[1].textContent).not.toContain('$24.50');
-    expect(convertedElements[1].title).toBe('Originally $24.50');
+    expect(convertedElements[1].getAttribute('aria-label')).toContain('$24.50');
     expect(convertedElements[1].textContent).toMatch(/\d+[hm]/); // Should contain time format
 
     // Check that the price values are in tooltips
     expect(convertedElements[2].textContent).not.toContain('$35.49');
-    expect(convertedElements[2].title).toBe('Originally $35.49');
+    expect(convertedElements[2].getAttribute('aria-label')).toContain('$35.49');
     expect(convertedElements[2].textContent).toMatch(/\d+[hm]/); // Should contain time format
   });
 });

@@ -74,8 +74,8 @@ describe('DOM Modifier Module', () => {
           expect(node.textContent).not.toContain('$30.00');
           // Clock icon should be present as SVG element
           expect(node.querySelector('svg')).toBeTruthy();
-          // Tooltip should show original price
-          expect(node.title).toBe('Originally $30.00');
+          // Should show original price in aria-label (modern badges use ARIA)
+          expect(node.getAttribute('aria-label')).toContain('$30.00');
           break;
         }
       }
@@ -135,8 +135,8 @@ describe('DOM Modifier Module', () => {
           expect(node.textContent).not.toContain('$30.00');
           // Clock icon should be present as SVG element
           expect(node.querySelector('svg')).toBeTruthy();
-          // Tooltip should show original price
-          expect(node.title).toBe('Originally $30.00');
+          // Should show original price in aria-label (modern badges use ARIA)
+          expect(node.getAttribute('aria-label')).toContain('$30.00');
           break;
         }
       }

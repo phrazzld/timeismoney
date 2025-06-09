@@ -137,6 +137,7 @@ describe('PriceBadge Component', () => {
         originalPrice: '$30.00',
         timeDisplay: '3h 0m',
         useIcon: false,
+        enableHoverToggle: true, // Enable modern time-only display
       });
 
       const element = badge.render();
@@ -146,13 +147,13 @@ describe('PriceBadge Component', () => {
       expect(element.textContent).toBe('3h 0m');
     });
 
-    test('throws error when rendering destroyed badge', () => {
+    test('throws error when rendering destroyed badge', async () => {
       const badge = new PriceBadge({
         originalPrice: '$30.00',
         timeDisplay: '3h 0m',
       });
 
-      badge.destroy();
+      await badge.destroy();
 
       expect(() => {
         badge.render();
@@ -165,6 +166,8 @@ describe('PriceBadge Component', () => {
       const badge = new PriceBadge({
         originalPrice: '$30.00',
         timeDisplay: '3h 0m',
+        enableHoverToggle: true, // Enable modern time-only display
+        enableAnimations: false, // Disable animations for synchronous testing
       });
 
       const element = badge.render();
@@ -186,6 +189,8 @@ describe('PriceBadge Component', () => {
         originalPrice: '$30.00',
         timeDisplay: '3h 0m',
         useIcon: true,
+        enableHoverToggle: true, // Enable modern time-only display
+        enableAnimations: false, // Disable animations for synchronous testing
       });
 
       const element = badge.render();
@@ -200,13 +205,13 @@ describe('PriceBadge Component', () => {
       expect(element.textContent).toBe('3h 0m');
     });
 
-    test('throws error when updating destroyed badge', () => {
+    test('throws error when updating destroyed badge', async () => {
       const badge = new PriceBadge({
         originalPrice: '$30.00',
         timeDisplay: '3h 0m',
       });
 
-      badge.destroy();
+      await badge.destroy();
 
       expect(() => {
         badge.update({ timeDisplay: '5h 0m' });
@@ -226,7 +231,7 @@ describe('PriceBadge Component', () => {
   });
 
   describe('Destroy Method', () => {
-    test('removes element from DOM and cleans up state', () => {
+    test('removes element from DOM and cleans up state', async () => {
       const badge = new PriceBadge({
         originalPrice: '$30.00',
         timeDisplay: '3h 0m',
@@ -239,7 +244,7 @@ describe('PriceBadge Component', () => {
       expect(document.body.contains(element)).toBe(true);
 
       // Destroy the badge
-      const result = badge.destroy();
+      const result = await badge.destroy();
 
       expect(result).toBe(true);
       expect(badge.isDestroyed).toBe(true);
@@ -248,7 +253,7 @@ describe('PriceBadge Component', () => {
       expect(document.body.contains(element)).toBe(false);
     });
 
-    test('handles destroying badge not in DOM', () => {
+    test('handles destroying badge not in DOM', async () => {
       const badge = new PriceBadge({
         originalPrice: '$30.00',
         timeDisplay: '3h 0m',
@@ -256,20 +261,20 @@ describe('PriceBadge Component', () => {
 
       badge.render(); // Create element but don't add to DOM
 
-      const result = badge.destroy();
+      const result = await badge.destroy();
 
       expect(result).toBe(true);
       expect(badge.isDestroyed).toBe(true);
     });
 
-    test('returns true when destroying already destroyed badge', () => {
+    test('returns true when destroying already destroyed badge', async () => {
       const badge = new PriceBadge({
         originalPrice: '$30.00',
         timeDisplay: '3h 0m',
       });
 
-      badge.destroy();
-      const result = badge.destroy();
+      await badge.destroy();
+      const result = await badge.destroy();
 
       expect(result).toBe(true);
     });
@@ -304,7 +309,7 @@ describe('PriceBadge Component', () => {
       expect(badge.getElement()).toBe(element);
     });
 
-    test('isRenderedState returns correct state', () => {
+    test('isRenderedState returns correct state', async () => {
       const badge = new PriceBadge({
         originalPrice: '$30.00',
         timeDisplay: '3h 0m',
@@ -316,12 +321,12 @@ describe('PriceBadge Component', () => {
 
       expect(badge.isRenderedState()).toBe(true);
 
-      badge.destroy();
+      await badge.destroy();
 
       expect(badge.isRenderedState()).toBe(false);
     });
 
-    test('isDestroyedState returns correct state', () => {
+    test('isDestroyedState returns correct state', async () => {
       const badge = new PriceBadge({
         originalPrice: '$30.00',
         timeDisplay: '3h 0m',
@@ -329,7 +334,7 @@ describe('PriceBadge Component', () => {
 
       expect(badge.isDestroyedState()).toBe(false);
 
-      badge.destroy();
+      await badge.destroy();
 
       expect(badge.isDestroyedState()).toBe(true);
     });

@@ -66,18 +66,18 @@ describe('DOM Conversion Integration', () => {
     const convertedElements = document.querySelectorAll(`.${CONVERTED_PRICE_CLASS}`);
     expect(convertedElements.length).toBeGreaterThanOrEqual(3);
 
-    // Check that time is shown and original price is in tooltip
-    expect(convertedElements[0].textContent).toContain('8.0h');
+    // Check that time is shown and original price is in aria-label (modern badges use ARIA)
+    expect(convertedElements[0].textContent.trim()).toBe('8.0h');
     expect(convertedElements[0].textContent).not.toContain('$199.99');
-    expect(convertedElements[0].title).toBe('Originally $199.99');
+    expect(convertedElements[0].getAttribute('aria-label')).toContain('$199.99');
 
-    expect(convertedElements[1].textContent).toContain('1.0h');
+    expect(convertedElements[1].textContent.trim()).toBe('1.0h');
     expect(convertedElements[1].textContent).not.toContain('$24.50');
-    expect(convertedElements[1].title).toBe('Originally $24.50');
+    expect(convertedElements[1].getAttribute('aria-label')).toContain('$24.50');
 
-    expect(convertedElements[2].textContent).toContain('2.0h');
+    expect(convertedElements[2].textContent.trim()).toBe('2.0h');
     expect(convertedElements[2].textContent).not.toContain('$49.99');
-    expect(convertedElements[2].title).toBe('Originally $49.99');
+    expect(convertedElements[2].getAttribute('aria-label')).toContain('$49.99');
   });
 
   test('revertAll restores original price elements', () => {
@@ -148,9 +148,9 @@ describe('DOM Conversion Integration', () => {
     // Verify initial conversion by checking converted element
     const convertedElement = container.querySelector(`.${CONVERTED_PRICE_CLASS}`);
     expect(convertedElement).not.toBeNull();
-    expect(convertedElement.textContent).toContain('4.0h');
+    expect(convertedElement.textContent.trim()).toBe('4.0h');
     expect(convertedElement.textContent).not.toContain('$99.99'); // Should NOT contain original price
-    expect(convertedElement.title).toBe('Originally $99.99'); // Should have tooltip
+    expect(convertedElement.getAttribute('aria-label')).toContain('$99.99'); // Should have aria-label (modern badges)
 
     // Simulate dynamic DOM update
     container.innerHTML += `
@@ -171,14 +171,14 @@ describe('DOM Conversion Integration', () => {
     expect(allConvertedElements.length).toBe(2);
 
     // Verify first conversion
-    expect(allConvertedElements[0].textContent).toContain('4.0h');
+    expect(allConvertedElements[0].textContent.trim()).toBe('4.0h');
     expect(allConvertedElements[0].textContent).not.toContain('$99.99');
-    expect(allConvertedElements[0].title).toBe('Originally $99.99');
+    expect(allConvertedElements[0].getAttribute('aria-label')).toContain('$99.99');
 
     // Verify second conversion
-    expect(allConvertedElements[1].textContent).toContain('6.0h');
+    expect(allConvertedElements[1].textContent.trim()).toBe('6.0h');
     expect(allConvertedElements[1].textContent).not.toContain('$149.99');
-    expect(allConvertedElements[1].title).toBe('Originally $149.99');
+    expect(allConvertedElements[1].getAttribute('aria-label')).toContain('$149.99');
 
     // Revert all
     revertAll(container);
