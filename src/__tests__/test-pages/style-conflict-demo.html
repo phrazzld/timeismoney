@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>S2.5 Style Conflict Prevention Demo</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+        font-style: italic;
+      }
+
+      .test-section {
+        margin: 40px 0;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: #fafafa;
+      }
+
+      .test-section h2 {
+        color: #444;
+        margin-top: 0;
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 10px;
+      }
+
+      .price-examples {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .price-item {
+        padding: 15px;
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+      }
+
+      .price-item h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+        font-size: 16px;
+      }
+
+      .price {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 8px 0;
+      }
+
+      /* HOSTILE CSS - These styles will try to interfere with our badges */
+
+      /* Global aggressive styles */
+      * {
+        /* This would normally break everything! */
+      }
+
+      span {
+        color: red !important;
+        background-color: yellow !important;
+        font-weight: normal !important;
+        font-size: 10px !important;
+        text-transform: uppercase !important;
+        padding: 0 !important;
+        margin: 20px !important;
+        text-decoration: underline !important;
+        letter-spacing: 3px !important;
+        word-spacing: 10px !important;
+        display: block !important;
+        float: left !important;
+        border: 3px solid purple !important;
+        border-radius: 50% !important;
+        opacity: 0.3 !important;
+        transform: rotate(15deg) !important;
+        position: relative !important;
+        top: 10px !important;
+        left: 20px !important;
+        z-index: -1 !important;
+        list-style: decimal !important;
+        vertical-align: top !important;
+        white-space: pre-wrap !important;
+      }
+
+      /* More specific hostile styles */
+      .price span {
+        font-family: 'Comic Sans MS', cursive !important;
+        font-style: italic !important;
+        text-shadow: 2px 2px 4px #000 !important;
+        outline: 2px dashed lime !important;
+      }
+
+      /* Even more specific */
+      .price-item .price span {
+        animation: bounce 2s infinite !important;
+        cursor: not-allowed !important;
+      }
+
+      /* Animation that would interfere */
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-20px) rotate(10deg);
+        }
+      }
+
+      /* Styles targeting our class name (if they figured it out) */
+      .tim-converted-price {
+        color: lime !important;
+        background: black !important;
+        border: 5px solid red !important;
+        font-size: 24px !important;
+        transform: scale(2) !important;
+      }
+
+      /* Table context interference */
+      table span {
+        display: table-cell !important;
+        border-collapse: collapse !important;
+        caption-side: bottom !important;
+      }
+
+      /* List context interference */
+      ul span,
+      ol span {
+        list-style-type: disc !important;
+        list-style-position: inside !important;
+      }
+
+      /* Flexbox context interference */
+      .flex-container span {
+        flex-grow: 10 !important;
+        flex-shrink: 0 !important;
+        order: 999 !important;
+        align-self: stretch !important;
+      }
+
+      /* Grid context interference */
+      .grid-container span {
+        grid-area: 1 / 1 / 3 / 3 !important;
+        justify-self: end !important;
+      }
+
+      /* Reset styles that might help */
+      .protected-area {
+        all: unset;
+      }
+
+      .protected-area span {
+        all: unset;
+      }
+
+      /* Test result styles */
+      .test-result {
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 6px;
+        font-weight: bold;
+      }
+
+      .test-pass {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .test-fail {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .test-warning {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
+
+      /* Demo controls */
+      .controls {
+        margin: 20px 0;
+        padding: 15px;
+        background: #e9ecef;
+        border-radius: 6px;
+        text-align: center;
+      }
+
+      .controls button {
+        margin: 5px;
+        padding: 8px 16px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .controls button:hover {
+        background: #0056b3;
+      }
+
+      .controls button.active {
+        background: #28a745;
+      }
+
+      /* Specific context tests */
+      .flex-container {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 10px;
+        background: #e3f2fd;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+
+      .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 10px;
+        background: #f3e5f5;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+
+      .table-container table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+      }
+
+      .table-container td,
+      .table-container th {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      .table-container th {
+        background: #f8f9fa;
+      }
+
+      /* High specificity attempts */
+      html body .container .test-section .price-item .price span.tim-converted-price {
+        color: magenta !important;
+        font-size: 30px !important;
+        transform: skew(45deg) !important;
+      }
+
+      /* ID-based attacks (if someone added IDs) */
+      #tim-badge {
+        display: none !important;
+      }
+
+      /* Pseudo-element/class attacks */
+      span:before {
+        content: 'HACKED! ' !important;
+      }
+
+      span:after {
+        content: ' BROKEN!' !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>S2.5 Style Conflict Prevention</h1>
+      <p class="subtitle">Testing badge resistance against hostile host site CSS</p>
+
+      <div class="controls">
+        <p><strong>Demo Instructions:</strong></p>
+        <p>
+          This page contains extremely hostile CSS designed to break our badges. The badges should
+          remain intact and readable.
+        </p>
+        <button onclick="toggleHostileStyles()" id="hostileToggle">Disable Hostile CSS</button>
+        <button onclick="runProtectionTests()">Run Protection Tests</button>
+        <button onclick="clearTestResults()">Clear Results</button>
+      </div>
+
+      <div id="test-results"></div>
+
+      <!-- Basic Price Examples -->
+      <div class="test-section">
+        <h2>1. Basic Hostile Environment</h2>
+        <p>
+          These prices are surrounded by CSS that tries to destroy our styling with !important
+          declarations.
+        </p>
+        <div class="price-examples">
+          <div class="price-item">
+            <h3>Electronics Store</h3>
+            <div class="price">Laptop: $999.99</div>
+            <div class="price">Phone: $699.99</div>
+            <div class="price">Tablet: $399.99</div>
+          </div>
+          <div class="price-item">
+            <h3>Clothing Store</h3>
+            <div class="price">Jeans: $89.99</div>
+            <div class="price">Shirt: $29.99</div>
+            <div class="price">Shoes: $149.99</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flexbox Context -->
+      <div class="test-section">
+        <h2>2. Flexbox Layout Context</h2>
+        <p>Testing badge behavior within flex containers that try to manipulate flex properties.</p>
+        <div class="flex-container">
+          <span>Item A: $25.99</span>
+          <span>Item B: $45.50</span>
+          <span>Item C: $12.75</span>
+          <span>Item D: $89.00</span>
+        </div>
+      </div>
+
+      <!-- Grid Context -->
+      <div class="test-section">
+        <h2>3. CSS Grid Context</h2>
+        <p>Testing badge behavior within grid containers with grid property manipulation.</p>
+        <div class="grid-container">
+          <div>Product A: $199.99</div>
+          <div>Product B: $299.99</div>
+          <div>Product C: $99.99</div>
+          <div>Product D: $149.99</div>
+        </div>
+      </div>
+
+      <!-- Table Context -->
+      <div class="test-section">
+        <h2>4. Table Context</h2>
+        <p>Testing badge behavior within table cells with table-specific CSS interference.</p>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Category</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Gaming Console</td>
+                <td>$499.99</td>
+                <td>Electronics</td>
+              </tr>
+              <tr>
+                <td>Wireless Headphones</td>
+                <td>$199.99</td>
+                <td>Audio</td>
+              </tr>
+              <tr>
+                <td>Smart Watch</td>
+                <td>$299.99</td>
+                <td>Wearables</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Extreme Specificity Test -->
+      <div class="test-section">
+        <h2>5. Extreme CSS Specificity</h2>
+        <p>Testing against CSS with very high specificity and multiple selectors.</p>
+        <div class="price-examples">
+          <div class="price-item">
+            <h3>High-Specificity Attack Zone</h3>
+            <div class="price">Premium Item: $1,299.99</div>
+            <div class="price">Luxury Item: $2,499.99</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Protected Area Test -->
+      <div class="test-section">
+        <h2>6. CSS Reset Area</h2>
+        <p>Testing in an area with CSS reset applied (all: unset).</p>
+        <div class="protected-area">
+          <div class="price-examples">
+            <div class="price-item">
+              <h3>Reset Zone</h3>
+              <div class="price">Reset Item A: $59.99</div>
+              <div class="price">Reset Item B: $39.99</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Manual Test Cases -->
+      <div class="test-section">
+        <h2>7. Manual Test Elements</h2>
+        <p>Direct test elements for specific conflict scenarios.</p>
+        <div id="manual-test-area">
+          <!-- Test elements will be injected here by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Expected Results -->
+      <div class="test-section">
+        <h2>8. Expected Results</h2>
+        <div class="test-result test-pass">
+          <strong>✓ PASS:</strong> Badges maintain professional appearance with proper colors,
+          fonts, and layout
+        </div>
+        <div class="test-result test-pass">
+          <strong>✓ PASS:</strong> Badges stay inline and don't float or break layout
+        </div>
+        <div class="test-result test-pass">
+          <strong>✓ PASS:</strong> Badge text remains readable (not rotated, skewed, or hidden)
+        </div>
+        <div class="test-result test-pass">
+          <strong>✓ PASS:</strong> Badge icons scale correctly and maintain positioning
+        </div>
+        <div class="test-result test-warning">
+          <strong>⚠ ACCEPTABLE:</strong> Some visual integration with host site (font family
+          inheritance)
+        </div>
+        <div class="test-result test-fail">
+          <strong>✗ FAIL:</strong> Badges completely broken, unreadable, or visually destroyed
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      let hostileStylesEnabled = true;
+      const hostileStylesheet = document.querySelector('style');
+
+      function toggleHostileStyles() {
+        const button = document.getElementById('hostileToggle');
+
+        if (hostileStylesEnabled) {
+          // Disable hostile styles
+          hostileStylesheet.disabled = true;
+          button.textContent = 'Enable Hostile CSS';
+          button.classList.add('active');
+          hostileStylesEnabled = false;
+        } else {
+          // Enable hostile styles
+          hostileStylesheet.disabled = false;
+          button.textContent = 'Disable Hostile CSS';
+          button.classList.remove('active');
+          hostileStylesEnabled = true;
+        }
+      }
+
+      function runProtectionTests() {
+        const results = document.getElementById('test-results');
+        const tests = [];
+
+        // Test 1: Badge existence and basic properties
+        const badges = document.querySelectorAll('.tim-converted-price');
+        tests.push({
+          name: 'Badge Elements Present',
+          pass: badges.length > 0,
+          details: `Found ${badges.length} badge(s)`,
+        });
+
+        if (badges.length > 0) {
+          const firstBadge = badges[0];
+          const computedStyle = window.getComputedStyle(firstBadge);
+
+          // Test 2: Display property protection
+          tests.push({
+            name: 'Display Property Protection',
+            pass: computedStyle.display.includes('flex') || computedStyle.display === 'inline-flex',
+            details: `Display: ${computedStyle.display}`,
+          });
+
+          // Test 3: Color protection (should not be red from hostile CSS)
+          tests.push({
+            name: 'Color Protection',
+            pass: computedStyle.color !== 'rgb(255, 0, 0)', // Not red
+            details: `Color: ${computedStyle.color}`,
+          });
+
+          // Test 4: Font size protection (should not be 10px from hostile CSS)
+          tests.push({
+            name: 'Font Size Protection',
+            pass: parseFloat(computedStyle.fontSize) > 10,
+            details: `Font size: ${computedStyle.fontSize}`,
+          });
+
+          // Test 5: Position/layout protection
+          tests.push({
+            name: 'Layout Protection',
+            pass: computedStyle.float === 'none',
+            details: `Float: ${computedStyle.float}`,
+          });
+
+          // Test 6: Transform protection
+          tests.push({
+            name: 'Transform Protection',
+            pass: !computedStyle.transform.includes('rotate') || computedStyle.transform === 'none',
+            details: `Transform: ${computedStyle.transform}`,
+          });
+
+          // Test 7: Opacity protection
+          tests.push({
+            name: 'Opacity Protection',
+            pass: parseFloat(computedStyle.opacity) > 0.5,
+            details: `Opacity: ${computedStyle.opacity}`,
+          });
+
+          // Test 8: Background protection (should not be yellow)
+          tests.push({
+            name: 'Background Protection',
+            pass: computedStyle.backgroundColor !== 'rgb(255, 255, 0)', // Not yellow
+            details: `Background: ${computedStyle.backgroundColor}`,
+          });
+        }
+
+        // Display results
+        let resultsHTML = '<div class="test-section"><h2>Protection Test Results</h2>';
+        let passCount = 0;
+
+        tests.forEach((test) => {
+          const passClass = test.pass ? 'test-pass' : 'test-fail';
+          const passIcon = test.pass ? '✓' : '✗';
+          resultsHTML += `
+                    <div class="test-result ${passClass}">
+                        <strong>${passIcon} ${test.name}:</strong> ${test.details}
+                    </div>
+                `;
+          if (test.pass) passCount++;
+        });
+
+        resultsHTML += `
+                <div class="test-result ${passCount === tests.length ? 'test-pass' : 'test-warning'}">
+                    <strong>Overall: ${passCount}/${tests.length} tests passed</strong>
+                </div>
+            </div>`;
+
+        results.innerHTML = resultsHTML;
+      }
+
+      function clearTestResults() {
+        document.getElementById('test-results').innerHTML = '';
+      }
+
+      // Global functions for buttons
+      window.toggleHostileStyles = toggleHostileStyles;
+      window.runProtectionTests = runProtectionTests;
+      window.clearTestResults = clearTestResults;
+
+      // Auto-run tests when page loads
+      setTimeout(() => {
+        runProtectionTests();
+      }, 1000);
+
+      // Log hostile CSS status
+      console.log('='.repeat(60));
+      console.log('STYLE CONFLICT PREVENTION DEMO - S2.5');
+      console.log('='.repeat(60));
+      console.log('This page contains hostile CSS designed to break badge styling.');
+      console.log('Features being tested:');
+      console.log('✓ !important protection on critical properties');
+      console.log('✓ Defensive CSS resets');
+      console.log('✓ Unique class name prefixing');
+      console.log('✓ Inline style specificity');
+      console.log('✓ Layout context isolation');
+      console.log('');
+      console.log('Instructions:');
+      console.log('1. Load the TimeIsMoney extension');
+      console.log('2. Observe badge appearance with hostile CSS enabled');
+      console.log('3. Click "Run Protection Tests" to verify badge integrity');
+      console.log('4. Toggle hostile CSS on/off to see the difference');
+      console.log('5. Check that badges remain professional and readable');
+      console.log('='.repeat(60));
+    </script>
+  </body>
+</html>

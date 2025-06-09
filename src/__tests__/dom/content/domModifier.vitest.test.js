@@ -75,6 +75,8 @@ describe('DOM Modifier Module', () => {
       expect(span.textContent).not.toContain('$30.00');
       // Clock icon should be present as SVG element
       expect(span.querySelector('svg')).toBeTruthy();
+      // Tooltip should show original price
+      expect(span.title).toBe('Originally $30.00');
     });
 
     // Add integration test for end-to-end conversion flow
@@ -131,6 +133,8 @@ describe('DOM Modifier Module', () => {
       expect(span.textContent).not.toContain('$30.00');
       // Clock icon should be present as SVG element
       expect(span.querySelector('svg')).toBeTruthy();
+      // Tooltip should show original price
+      expect(span.title).toBe('Originally $30.00');
     });
   });
 

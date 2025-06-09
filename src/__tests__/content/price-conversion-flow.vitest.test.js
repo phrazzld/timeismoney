@@ -78,8 +78,10 @@ describe('Price Conversion Integration Flow', () => {
     expect(span.getAttribute('data-original-price')).toContain('$30.00');
 
     // 30 dollars at 10 dollars per hour should be 3 hours
-    expect(span.textContent).toContain('$30.00');
+    // With replace-only strategy, original price is only in tooltip, not text content
     expect(span.textContent).toContain('3h 0m');
+    expect(span.textContent).not.toContain('$30.00'); // Should NOT contain original price
+    expect(span.title).toBe('Originally $30.00'); // Should have tooltip with original price
   });
 
   test('complex page with multiple prices properly converts all prices', () => {
@@ -145,13 +147,19 @@ describe('Price Conversion Integration Flow', () => {
     const convertedElements = document.querySelectorAll(`.${CONVERTED_PRICE_CLASS}`);
     expect(convertedElements.length).toBe(3);
 
-    // Let's make the test more flexible to handle implementation differences
-    expect(convertedElements[0].textContent).toContain('$10.99');
+    // With replace-only strategy, original prices are only in tooltips, not text content
+    expect(convertedElements[0].textContent).not.toContain('$10.99');
+    expect(convertedElements[0].title).toBe('Originally $10.99');
+    expect(convertedElements[0].textContent).toMatch(/\d+[hm]/); // Should contain time format
 
-    // Check that the price values are there even if time calculations differ
-    expect(convertedElements[1].textContent).toContain('$24.50');
+    // Check that the price values are in tooltips
+    expect(convertedElements[1].textContent).not.toContain('$24.50');
+    expect(convertedElements[1].title).toBe('Originally $24.50');
+    expect(convertedElements[1].textContent).toMatch(/\d+[hm]/); // Should contain time format
 
-    // Check that the price values are there even if time calculations differ
-    expect(convertedElements[2].textContent).toContain('$35.49');
+    // Check that the price values are in tooltips
+    expect(convertedElements[2].textContent).not.toContain('$35.49');
+    expect(convertedElements[2].title).toBe('Originally $35.49');
+    expect(convertedElements[2].textContent).toMatch(/\d+[hm]/); // Should contain time format
   });
 });

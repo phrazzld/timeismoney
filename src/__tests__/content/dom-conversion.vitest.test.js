@@ -5,6 +5,7 @@
 
 import { describe, it, test, expect, beforeEach, afterEach, vi } from '../setup/vitest-imports.js';
 import { applyConversion, revertAll } from '../../content/domModifier';
+import { CONVERTED_PRICE_CLASS } from '../../utils/constants.js';
 
 // Simple regex pattern for testing
 const testPricePattern = /\$\d+(\.\d+)?/g;
@@ -60,15 +61,23 @@ describe('DOM Conversion Integration', () => {
     // Verify the number of converted elements
     expect(prices.length).toBe(3);
 
-    // Check conversions by examining text content
-    expect(prices[0].textContent).toContain('$199.99');
-    expect(prices[0].textContent).toContain('8.0h');
+    // Check conversions - with replace-only strategy, original prices are in tooltips
+    // Find the actual converted price elements
+    const convertedElements = document.querySelectorAll(`.${CONVERTED_PRICE_CLASS}`);
+    expect(convertedElements.length).toBeGreaterThanOrEqual(3);
 
-    expect(prices[1].textContent).toContain('$24.50');
-    expect(prices[1].textContent).toContain('1.0h');
+    // Check that time is shown and original price is in tooltip
+    expect(convertedElements[0].textContent).toContain('8.0h');
+    expect(convertedElements[0].textContent).not.toContain('$199.99');
+    expect(convertedElements[0].title).toBe('Originally $199.99');
 
-    expect(prices[2].textContent).toContain('$49.99');
-    expect(prices[2].textContent).toContain('2.0h');
+    expect(convertedElements[1].textContent).toContain('1.0h');
+    expect(convertedElements[1].textContent).not.toContain('$24.50');
+    expect(convertedElements[1].title).toBe('Originally $24.50');
+
+    expect(convertedElements[2].textContent).toContain('2.0h');
+    expect(convertedElements[2].textContent).not.toContain('$49.99');
+    expect(convertedElements[2].title).toBe('Originally $49.99');
   });
 
   test('revertAll restores original price elements', () => {
@@ -136,11 +145,12 @@ describe('DOM Conversion Integration', () => {
     const initialPriceElement = document.querySelector('.price');
     applyConversion(initialPriceElement.firstChild, testPricePattern, mockConvertFn);
 
-    // Verify initial conversion by checking text content
-    const initialPriceParent = container.querySelector('p');
-    expect(initialPriceParent).not.toBeNull();
-    expect(initialPriceParent.textContent).toContain('$99.99');
-    expect(initialPriceParent.textContent).toContain('4.0h');
+    // Verify initial conversion by checking converted element
+    const convertedElement = container.querySelector(`.${CONVERTED_PRICE_CLASS}`);
+    expect(convertedElement).not.toBeNull();
+    expect(convertedElement.textContent).toContain('4.0h');
+    expect(convertedElement.textContent).not.toContain('$99.99'); // Should NOT contain original price
+    expect(convertedElement.title).toBe('Originally $99.99'); // Should have tooltip
 
     // Simulate dynamic DOM update
     container.innerHTML += `
@@ -156,13 +166,19 @@ describe('DOM Conversion Integration', () => {
     const paragraphs = container.querySelectorAll('p');
     expect(paragraphs.length).toBe(2);
 
-    // Verify first paragraph still shows conversion
-    expect(paragraphs[0].textContent).toContain('$99.99');
-    expect(paragraphs[0].textContent).toContain('4.0h');
+    // Verify conversions exist by checking converted elements
+    const allConvertedElements = container.querySelectorAll(`.${CONVERTED_PRICE_CLASS}`);
+    expect(allConvertedElements.length).toBe(2);
 
-    // Verify second paragraph shows conversion
-    expect(paragraphs[1].textContent).toContain('$149.99');
-    expect(paragraphs[1].textContent).toContain('6.0h');
+    // Verify first conversion
+    expect(allConvertedElements[0].textContent).toContain('4.0h');
+    expect(allConvertedElements[0].textContent).not.toContain('$99.99');
+    expect(allConvertedElements[0].title).toBe('Originally $99.99');
+
+    // Verify second conversion
+    expect(allConvertedElements[1].textContent).toContain('6.0h');
+    expect(allConvertedElements[1].textContent).not.toContain('$149.99');
+    expect(allConvertedElements[1].title).toBe('Originally $149.99');
 
     // Revert all
     revertAll(container);
