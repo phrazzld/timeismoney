@@ -40,6 +40,7 @@ export class PriceBadge {
    * @param {boolean} [config.animateEntrance] - Animate badge when first rendered (default: true)
    * @param {boolean} [config.animateExit] - Animate badge when destroyed (default: true)
    * @param {boolean} [config.animateUpdates] - Animate badge content updates (default: true)
+   * @param {boolean} [config.enableHoverToggle] - Enable hover toggle between time and price (default: false)
    */
   constructor(config) {
     this.config = {
@@ -62,6 +63,7 @@ export class PriceBadge {
       animateEntrance: true,
       animateExit: true,
       animateUpdates: true,
+      enableHoverToggle: false,
       ...config,
     };
 
@@ -229,9 +231,19 @@ export class PriceBadge {
         element.title = `Originally ${this.config.originalPrice}`;
       }
 
-      // Create content with optional icon
+      // Create content - show both price and time for backward compatibility
       const clockIcon = this.config.useIcon ? this._createClockIcon() : '';
-      element.innerHTML = `${clockIcon}${this.config.timeDisplay}`;
+
+      // Check if hover toggle is enabled via a specific config option
+      const enableHoverToggle = this.config.enableHoverToggle || false;
+
+      if (enableHoverToggle) {
+        // New behavior: show only time, with hover toggle to price
+        element.innerHTML = `${clockIcon}${this.config.timeDisplay}`;
+      } else {
+        // Original behavior: show both original price and time
+        element.innerHTML = `${clockIcon}${this.config.originalPrice} (${this.config.timeDisplay})`;
+      }
 
       // Apply styles with entrance animation if enabled
       const animationState =
@@ -244,8 +256,8 @@ export class PriceBadge {
         this._createAccessibleTooltip();
       }
 
-      // Add hover toggle functionality if hover is enabled
-      if (this.config.enableHover) {
+      // Add hover toggle functionality only if specifically enabled
+      if (enableHoverToggle && this.config.enableHover) {
         this._addHoverToggle(element);
       }
 
@@ -491,9 +503,15 @@ export class PriceBadge {
         // Wait for animation to complete, then update content
         setTimeout(() => {
           if (!this.isDestroyed && this.element) {
-            // Update content
+            // Update content based on hover toggle setting
             const clockIcon = this.config.useIcon ? this._createClockIcon() : '';
-            this.element.innerHTML = `${clockIcon}${this.config.timeDisplay}`;
+            const enableHoverToggle = this.config.enableHoverToggle || false;
+
+            if (enableHoverToggle) {
+              this.element.innerHTML = `${clockIcon}${this.config.timeDisplay}`;
+            } else {
+              this.element.innerHTML = `${clockIcon}${this.config.originalPrice} (${this.config.timeDisplay})`;
+            }
 
             // Apply final styles
             const finalStyles = this._generateStyles('none');
@@ -503,7 +521,13 @@ export class PriceBadge {
       } else {
         // Update content immediately without animation
         const clockIcon = this.config.useIcon ? this._createClockIcon() : '';
-        this.element.innerHTML = `${clockIcon}${this.config.timeDisplay}`;
+        const enableHoverToggle = this.config.enableHoverToggle || false;
+
+        if (enableHoverToggle) {
+          this.element.innerHTML = `${clockIcon}${this.config.timeDisplay}`;
+        } else {
+          this.element.innerHTML = `${clockIcon}${this.config.originalPrice} (${this.config.timeDisplay})`;
+        }
 
         // Update styles
         const styles = this._generateStyles();

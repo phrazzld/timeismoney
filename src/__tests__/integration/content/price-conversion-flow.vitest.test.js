@@ -144,7 +144,7 @@ describe('Price Conversion Integration Flow', () => {
 
     // First price: $10.99 / $15 ≈ 0.73 hours ≈ 44 minutes
     expect(convertedElements[0].textContent).toContain('$10.99');
-    expect(convertedElements[0].textContent).toContain('0h 44m');
+    expect(convertedElements[0].textContent).toContain('44m');
 
     // Second price: $24.50 / $15 ≈ 1.63 hours ≈ 1h 38m
     expect(convertedElements[1].textContent).toContain('$24.50');

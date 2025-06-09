@@ -46,9 +46,14 @@
       <ol>
         <li>Make sure the Time is Money extension is enabled</li>
         <li>Set your hourly wage in the extension settings</li>
-        <li>Prices below should convert to time equivalents</li>
-        <li><strong>Hover over the converted times to see the original price</strong></li>
-        <li>When you move your mouse away, it should transition back to time</li>
+        <li>Prices below should convert to show both price and time (backward compatible mode)</li>
+        <li>
+          <strong>Note:</strong> The hover toggle feature is disabled by default for backward
+          compatibility
+        </li>
+        <li>
+          To enable hover toggle, add <code>enableHoverToggle: true</code> to PriceBadge config
+        </li>
       </ol>
     </div>
 

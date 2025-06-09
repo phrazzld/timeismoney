@@ -102,7 +102,7 @@ describe('PriceBadge Core Functionality', () => {
       });
     });
 
-    test('creates multiple badges independently', () => {
+    test('creates multiple badges independently', async () => {
       const badges = [
         new PriceBadge({ originalPrice: '$10.00', timeDisplay: '1h 0m' }),
         new PriceBadge({ originalPrice: '$20.00', timeDisplay: '2h 0m' }),
@@ -118,9 +118,12 @@ describe('PriceBadge Core Functionality', () => {
       });
 
       // Cleanup should work for all
-      badges.forEach((badge) => {
-        expect(badge.destroy()).toBe(true);
-      });
+      await Promise.all(
+        badges.map(async (badge) => {
+          const result = await badge.destroy();
+          expect(result).toBe(true);
+        })
+      );
     });
   });
 
@@ -284,7 +287,7 @@ describe('PriceBadge Core Functionality', () => {
   });
 
   describe('Cleanup Operations', () => {
-    test('complete cleanup removes all traces', () => {
+    test('complete cleanup removes all traces', async () => {
       const badge = new PriceBadge({
         originalPrice: '$45.00',
         timeDisplay: '4h 30m',
@@ -300,7 +303,7 @@ describe('PriceBadge Core Functionality', () => {
       expect(badge.isDestroyedState()).toBe(false);
 
       // Clean up
-      const cleanupResult = badge.destroy();
+      const cleanupResult = await badge.destroy();
 
       // Verify complete cleanup
       expect(cleanupResult).toBe(true);
@@ -310,7 +313,7 @@ describe('PriceBadge Core Functionality', () => {
       expect(badge.isDestroyedState()).toBe(true);
     });
 
-    test('handles cleanup of badges with tooltips', () => {
+    test('handles cleanup of badges with tooltips', async () => {
       const badge = new PriceBadge({
         originalPrice: '$35.00',
         timeDisplay: '3h 30m',
@@ -326,13 +329,13 @@ describe('PriceBadge Core Functionality', () => {
       expect(tooltips.length).toBeGreaterThan(0);
 
       // Cleanup should remove tooltips too
-      badge.destroy();
+      await badge.destroy();
 
       const remainingTooltips = document.querySelectorAll('.tim-accessible-tooltip');
       expect(remainingTooltips.length).toBe(0);
     });
 
-    test('multiple cleanup calls are safe', () => {
+    test('multiple cleanup calls are safe', async () => {
       const badge = new PriceBadge({
         originalPrice: '$25.00',
         timeDisplay: '2h 30m',
@@ -341,9 +344,9 @@ describe('PriceBadge Core Functionality', () => {
       badge.render();
 
       // Multiple destroy calls should be safe
-      expect(badge.destroy()).toBe(true);
-      expect(badge.destroy()).toBe(true); // Second call should not error
-      expect(badge.destroy()).toBe(true); // Third call should not error
+      expect(await badge.destroy()).toBe(true);
+      expect(await badge.destroy()).toBe(true); // Second call should not error
+      expect(await badge.destroy()).toBe(true); // Third call should not error
 
       expect(badge.isDestroyedState()).toBe(true);
     });
@@ -504,7 +507,7 @@ describe('PriceBadge Core Functionality', () => {
       expect(element.style.cssText).toContain('width: 1000px');
     });
 
-    test('handles concurrent badge creation safely', () => {
+    test('handles concurrent badge creation safely', async () => {
       // Test that concurrent badge creation doesn't cause issues
       const badges = Array.from(
         { length: 10 },
@@ -525,9 +528,12 @@ describe('PriceBadge Core Functionality', () => {
       });
 
       // Cleanup should work for all
-      badges.forEach((badge) => {
-        expect(badge.destroy()).toBe(true);
-      });
+      await Promise.all(
+        badges.map(async (badge) => {
+          const result = await badge.destroy();
+          expect(result).toBe(true);
+        })
+      );
     });
   });
 });
