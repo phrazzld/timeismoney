@@ -121,6 +121,8 @@ export const DEFAULT_SETTINGS = {
   debounceIntervalMs: DEFAULT_DEBOUNCE_INTERVAL_MS,
   enableDynamicScanning: true, // Whether to monitor DOM changes in real-time
   debugMode: false, // Whether debug mode is enabled for price detection
+  badgeDisplayMode: 'modern', // Badge display style: 'modern' (new badges) or 'legacy' (old style)
+  useShadowDOM: false, // Whether to use Shadow DOM for perfect style isolation (experimental)
 };
 
 /**

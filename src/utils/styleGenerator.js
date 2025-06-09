@@ -304,6 +304,166 @@ export const detectBackgroundThemeAsync = async (element) => {
 };
 
 /**
+ * Generates CSS keyframes for badge animations
+ * Respects prefers-reduced-motion accessibility setting
+ *
+ * @returns {string} CSS keyframes as string
+ */
+export const generateAnimationKeyframes = () => {
+  try {
+    const keyframeStyles = Object.values(ANIMATION.keyframes).join('\n');
+
+    // Wrap keyframes in media query to respect prefers-reduced-motion
+    return `
+      @media (prefers-reduced-motion: no-preference) {
+        ${keyframeStyles}
+      }
+    `;
+  } catch (error) {
+    logger.debug('Error generating animation keyframes:', error.message);
+    return '';
+  }
+};
+
+/**
+ * Generates animation-related CSS properties for badge states
+ *
+ * @param {object} options - Animation options
+ * @param {'entrance'|'exit'|'update'|'hover'|'focus'|'none'} [options.animationState] - Animation state
+ * @param {boolean} [options.respectReducedMotion] - Whether to respect prefers-reduced-motion (default: true)
+ * @param {boolean} [options.enableHoverEffects] - Whether to include hover state styles (default: true)
+ * @param {boolean} [options.enableFocusEffects] - Whether to include focus state styles (default: true)
+ * @returns {object} CSS properties object for animations
+ */
+export const generateAnimationStyles = (options = {}) => {
+  try {
+    const {
+      animationState = 'none',
+      enableHoverEffects = true,
+      enableFocusEffects = true,
+    } = options;
+
+    const styles = {};
+
+    // Base animation properties
+    if (animationState !== 'none' && ANIMATION.microInteractions[animationState]) {
+      const config = ANIMATION.microInteractions[animationState];
+      styles.animationName = config.keyframes;
+      styles.animationDuration = config.duration;
+      styles.animationTimingFunction = config.easing;
+      styles.animationFillMode = 'forwards';
+    }
+
+    // Transition properties for hover/focus states
+    const transitionProperties = [];
+    if (enableHoverEffects) {
+      transitionProperties.push(
+        `opacity ${ANIMATION.microInteractions.hover.duration} ${ANIMATION.microInteractions.hover.easing}`,
+        `transform ${ANIMATION.microInteractions.hover.duration} ${ANIMATION.microInteractions.hover.easing}`
+      );
+    }
+    if (enableFocusEffects) {
+      transitionProperties.push(
+        `box-shadow ${ANIMATION.microInteractions.focus.duration} ${ANIMATION.microInteractions.focus.easing}`,
+        `outline ${ANIMATION.microInteractions.focus.duration} ${ANIMATION.microInteractions.focus.easing}`
+      );
+    }
+
+    if (transitionProperties.length > 0) {
+      styles.transition = transitionProperties.join(', ');
+    }
+
+    // Add will-change for performance optimization
+    if (animationState !== 'none') {
+      styles.willChange = 'opacity, transform';
+    }
+
+    return styles;
+  } catch (error) {
+    logger.debug('Error generating animation styles:', error.message);
+    return {};
+  }
+};
+
+/**
+ * Generates hover and focus state styles for badges
+ *
+ * @param {object} options - State styling options
+ * @param {boolean} [options.enableHover] - Whether to include hover styles (default: true)
+ * @param {boolean} [options.enableFocus] - Whether to include focus styles (default: true)
+ * @returns {string} CSS pseudo-selector styles
+ */
+export const generateInteractionStyles = (options = {}) => {
+  try {
+    const { enableHover = true, enableFocus = true } = options;
+
+    const styles = [];
+
+    if (enableHover) {
+      // Subtle hover effect that works with any theme
+      styles.push(`
+        &:hover {
+          opacity: 1 !important;
+          transform: translateY(-1px);
+        }
+      `);
+    }
+
+    if (enableFocus) {
+      // Accessible focus indicator
+      styles.push(`
+        &:focus-visible {
+          outline: 2px solid currentColor;
+          outline-offset: 2px;
+          opacity: 1 !important;
+        }
+      `);
+    }
+
+    // Wrap in prefers-reduced-motion query
+    if (styles.length > 0) {
+      return `
+        @media (prefers-reduced-motion: no-preference) {
+          ${styles.join('\n')}
+        }
+      `;
+    }
+
+    return '';
+  } catch (error) {
+    logger.debug('Error generating interaction styles:', error.message);
+    return '';
+  }
+};
+
+/**
+ * Injects animation keyframes into the document head if not already present
+ * This ensures keyframes are available for badge animations
+ */
+export const injectAnimationKeyframes = () => {
+  try {
+    const keyframeId = 'tim-badge-keyframes';
+
+    // Check if keyframes are already injected
+    if (document.getElementById(keyframeId)) {
+      return;
+    }
+
+    const style = document.createElement('style');
+    style.id = keyframeId;
+    style.textContent = generateAnimationKeyframes();
+
+    // Insert at the beginning of head to allow overrides
+    const head = document.head || document.getElementsByTagName('head')[0];
+    head.insertBefore(style, head.firstChild);
+
+    logger.debug('Animation keyframes injected into document head');
+  } catch (error) {
+    logger.debug('Error injecting animation keyframes:', error.message);
+  }
+};
+
+/**
  * Generates CSS string for badge styling based on context
  *
  * @param {object} options - Styling options
@@ -315,6 +475,10 @@ export const detectBackgroundThemeAsync = async (element) => {
  * @param {boolean} [options.conflictProtection] - Enable style conflict protection (default: true)
  * @param {boolean} [options.defensiveStyles] - Enable defensive styling (default: true)
  * @param {boolean} [options.minimalDefensive] - Use minimal defensive styling (default: false)
+ * @param {'entrance'|'exit'|'update'|'none'} [options.animationState] - Animation state for the badge
+ * @param {boolean} [options.enableAnimations] - Whether to enable micro-interactions (default: true)
+ * @param {boolean} [options.enableHover] - Whether to enable hover effects (default: true)
+ * @param {boolean} [options.enableFocus] - Whether to enable focus effects (default: true)
  * @returns {string} CSS string ready for cssText assignment
  */
 export const generateBadgeStyles = (options = {}) => {
@@ -328,6 +492,10 @@ export const generateBadgeStyles = (options = {}) => {
       conflictProtection = true,
       defensiveStyles = true,
       minimalDefensive = false,
+      animationState = 'none',
+      enableAnimations = true,
+      enableHover = true,
+      enableFocus = true,
     } = options;
 
     // Check cache first
@@ -356,10 +524,24 @@ export const generateBadgeStyles = (options = {}) => {
       };
     }
 
+    // Generate animation styles if enabled
+    let animationStyles = {};
+    if (enableAnimations) {
+      // Inject keyframes into document head if needed
+      injectAnimationKeyframes();
+
+      animationStyles = generateAnimationStyles({
+        animationState,
+        enableHoverEffects: enableHover,
+        enableFocusEffects: enableFocus,
+      });
+    }
+
     // Merge with overrides
     const finalStyles = {
       ...baseStyles,
       ...responsiveStyles,
+      ...animationStyles,
       ...overrides,
       // Always include these for cross-browser compatibility
       boxSizing: 'border-box',
@@ -369,7 +551,11 @@ export const generateBadgeStyles = (options = {}) => {
       verticalAlign: 'baseline',
       textDecoration: 'none',
       userSelect: 'none',
-      transition: `opacity ${ANIMATION.duration.normal} ${ANIMATION.easing.easeOut}`,
+      cursor: 'default',
+      // Use the more sophisticated animation transition if animations are enabled
+      ...(enableAnimations
+        ? {}
+        : { transition: `opacity ${ANIMATION.duration.normal} ${ANIMATION.easing.easeOut}` }),
     };
 
     // Generate conflict-resistant CSS string

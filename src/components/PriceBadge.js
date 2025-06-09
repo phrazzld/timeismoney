@@ -34,6 +34,12 @@ export class PriceBadge {
    * @param {boolean} [config.enableAccessibility] - Enable accessibility features (default: true)
    * @param {boolean} [config.verboseAccessibility] - Use verbose accessibility descriptions (default: false)
    * @param {boolean} [config.announceChanges] - Announce badge updates to screen readers (default: false)
+   * @param {boolean} [config.enableAnimations] - Enable micro-interactions and animations (default: true)
+   * @param {boolean} [config.enableHover] - Enable hover effects (default: true)
+   * @param {boolean} [config.enableFocus] - Enable focus effects (default: true)
+   * @param {boolean} [config.animateEntrance] - Animate badge when first rendered (default: true)
+   * @param {boolean} [config.animateExit] - Animate badge when destroyed (default: true)
+   * @param {boolean} [config.animateUpdates] - Animate badge content updates (default: true)
    */
   constructor(config) {
     this.config = {
@@ -50,6 +56,12 @@ export class PriceBadge {
       enableAccessibility: true,
       verboseAccessibility: false,
       announceChanges: false,
+      enableAnimations: true,
+      enableHover: true,
+      enableFocus: true,
+      animateEntrance: true,
+      animateExit: true,
+      animateUpdates: true,
       ...config,
     };
 
@@ -117,9 +129,10 @@ export class PriceBadge {
    * Generates the badge styles using the style system
    *
    * @private
+   * @param {'entrance'|'exit'|'update'|'none'} [animationState] - Current animation state
    * @returns {string} CSS string for badge styling
    */
-  _generateStyles() {
+  _generateStyles(animationState = 'none') {
     try {
       const defaultOverrides = {
         // Maintain host site integration but allow theme colors to take precedence
@@ -135,6 +148,10 @@ export class PriceBadge {
         conflictProtection: this.config.conflictProtection,
         defensiveStyles: this.config.defensiveStyles,
         minimalDefensive: this.config.minimalDefensive,
+        animationState,
+        enableAnimations: this.config.enableAnimations,
+        enableHover: this.config.enableHover,
+        enableFocus: this.config.enableFocus,
         overrides: {
           ...defaultOverrides,
           ...this.config.styleOverrides,
@@ -210,8 +227,10 @@ export class PriceBadge {
       const clockIcon = this.config.useIcon ? this._createClockIcon() : '';
       element.innerHTML = `${clockIcon}${this.config.timeDisplay}`;
 
-      // Apply styles
-      const styles = this._generateStyles();
+      // Apply styles with entrance animation if enabled
+      const animationState =
+        this.config.enableAnimations && this.config.animateEntrance ? 'entrance' : 'none';
+      const styles = this._generateStyles(animationState);
       element.style.cssText = styles;
 
       // Create accessible tooltip if needed
@@ -385,13 +404,33 @@ export class PriceBadge {
         this.element.title = `Originally ${this.config.originalPrice}`;
       }
 
-      // Update content
-      const clockIcon = this.config.useIcon ? this._createClockIcon() : '';
-      this.element.innerHTML = `${clockIcon}${this.config.timeDisplay}`;
+      // Apply update animation if enabled
+      if (this.config.enableAnimations && this.config.animateUpdates) {
+        // Apply update animation first
+        const updateStyles = this._generateStyles('update');
+        this.element.style.cssText = updateStyles;
 
-      // Update styles
-      const styles = this._generateStyles();
-      this.element.style.cssText = styles;
+        // Wait for animation to complete, then update content
+        setTimeout(() => {
+          if (!this.isDestroyed && this.element) {
+            // Update content
+            const clockIcon = this.config.useIcon ? this._createClockIcon() : '';
+            this.element.innerHTML = `${clockIcon}${this.config.timeDisplay}`;
+
+            // Apply final styles
+            const finalStyles = this._generateStyles('none');
+            this.element.style.cssText = finalStyles;
+          }
+        }, 150); // Half of update animation duration for smoother effect
+      } else {
+        // Update content immediately without animation
+        const clockIcon = this.config.useIcon ? this._createClockIcon() : '';
+        this.element.innerHTML = `${clockIcon}${this.config.timeDisplay}`;
+
+        // Update styles
+        const styles = this._generateStyles();
+        this.element.style.cssText = styles;
+      }
 
       logger.debug('PriceBadge updated successfully', {
         originalPrice: this.config.originalPrice,
@@ -406,13 +445,32 @@ export class PriceBadge {
   /**
    * Destroys the badge, removing it from the DOM and cleaning up resources
    *
-   * @returns {boolean} True if destruction was successful
+   * @returns {Promise<boolean>} Promise that resolves when destruction is complete
    */
-  destroy() {
+  async destroy() {
     try {
       if (this.isDestroyed) {
         logger.debug('PriceBadge already destroyed');
         return true;
+      }
+
+      // Apply exit animation if enabled
+      if (
+        this.config.enableAnimations &&
+        this.config.animateExit &&
+        this.element &&
+        this.element.parentNode
+      ) {
+        // Apply exit animation
+        const exitStyles = this._generateStyles('exit');
+        this.element.style.cssText = exitStyles;
+
+        // Wait for animation to complete before removing
+        await new Promise((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, 200); // Exit animation duration
+        });
       }
 
       // Remove from DOM if it has a parent

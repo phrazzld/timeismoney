@@ -80,3 +80,7 @@ codemod-report-*.md
 migration-report-*.md
 *-plan.md
 *-task.md
+
+# Visual regression test outputs
+src/__tests__/visual/fixtures/actual-images/
+src/__tests__/visual/fixtures/diff-images/
