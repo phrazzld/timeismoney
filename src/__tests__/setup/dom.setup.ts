@@ -1,0 +1,64 @@
+/**
+ * DOM-specific setup for JSDOM environment tests
+ * This file is loaded only for tests running in JSDOM environment
+ */
+
+import { beforeEach } from 'vitest';
+
+// Ensure the window and document are properly configured
+if (typeof window !== 'undefined') {
+  // Set up window location if needed
+  if (!window.location) {
+    (window as any).location = new URL('http://localhost');
+  }
+
+  // Set up document title if needed
+  if (typeof document !== 'undefined' && !document.title) {
+    document.title = 'Time Is Money Test Environment';
+  }
+}
+
+// Set up fake timers for DOM tests if needed
+// This helps with predictable timing for animations, observers, etc.
+beforeEach(() => {
+  // Clean up any DOM modifications from previous tests
+  if (document && document.body) {
+    document.body.innerHTML = '';
+  }
+
+  // Reset any attached event listeners
+  // (Will be implemented if needed by specific tests)
+});
+
+// Set up any DOM-specific global helpers
+
+/**
+ * Helper function to simulate DOM events
+ */
+globalThis.simulateEvent = (
+  element: Element,
+  eventType: string,
+  options: EventInit = {}
+): void => {
+  const event = new Event(eventType, {
+    bubbles: true,
+    cancelable: true,
+    ...options,
+  });
+
+  element.dispatchEvent(event);
+};
+
+/**
+ * Helper function to wait for DOM mutations to complete
+ * Useful for tests that involve MutationObserver
+ */
+globalThis.waitForMutations = (ms = 0): Promise<void> => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+// Extend globalThis type to include our helpers
+declare global {
+  function simulateEvent(element: Element, eventType: string, options?: EventInit): void;
+  function waitForMutations(ms?: number): Promise<void>;
+}

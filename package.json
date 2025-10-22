@@ -15,7 +15,7 @@
     "preinstall": "node ./scripts/preinstall.js",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write \"**/*.{js,json,css,html}\"",
+    "format": "prettier --write \"**/*.{js,ts,json,css,html}\"",
     "test": "vitest run",
     "test:all": "vitest run",
     "test:watch": "vitest watch",
@@ -29,8 +29,10 @@
     "ci": "pnpm run lint && pnpm run test",
     "validate:node-version": "node scripts/validate-node-version.js",
     "build": "./scripts/build-extension.sh",
-    "build:content": "esbuild src/content/index.js --bundle --outfile=dist/content/content.bundle.js --format=iife --sourcemap --target=chrome90",
-    "build:background": "esbuild src/background/background.js --bundle --outfile=dist/background/background.bundle.js --format=esm --sourcemap --target=chrome90",
+    "build:content": "esbuild src/content/index.ts --bundle --outfile=dist/content/content.bundle.js --format=iife --sourcemap --target=chrome90",
+    "build:background": "esbuild src/background/background.ts --bundle --outfile=dist/background/background.bundle.js --format=esm --sourcemap --target=chrome90",
+    "build:popup": "esbuild src/popup/popup.ts --bundle --outfile=dist/popup/popup.js --format=iife --sourcemap --target=chrome90",
+    "build:options": "esbuild src/options/index.ts --bundle --outfile=dist/options/index.js --format=iife --sourcemap --target=chrome90",
     "smoke-test": "node scripts/smoke-test.js",
     "start": "./scripts/load-extension.sh",
     "prepare": "husky",
@@ -42,7 +44,7 @@
     "release:beta": "node scripts/version-sync.js && standard-version --prerelease beta"
   },
   "lint-staged": {
-    "*.{js,jsx}": [
+    "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "prettier --write"
     ],

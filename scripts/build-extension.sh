@@ -35,7 +35,7 @@ fi
 
 # Create required subdirectories
 echo "Creating directory structure..."
-mkdir -p "${DIST_DIR}/utils" "${DIST_DIR}/content" "${DIST_DIR}/background" "${DIST_DIR}/popup/css" "${DIST_DIR}/options/css"
+mkdir -p "${DIST_DIR}/content" "${DIST_DIR}/background" "${DIST_DIR}/popup/css" "${DIST_DIR}/options/css"
 
 # Bundle scripts
 echo "Bundling content script with esbuild..."
@@ -44,18 +44,24 @@ pnpm run build:content
 echo "Bundling background script with esbuild..."
 pnpm run build:background
 
+echo "Bundling popup script with esbuild..."
+pnpm run build:popup
+
+echo "Bundling options script with esbuild..."
+pnpm run build:options
+
 # Copy manifest and other root files
 echo "Copying manifest.json..."
 cp "${SRC_DIR}/manifest.json" "${DIST_DIR}/"
 
-# Copy JS files from each directory (except content/background which are now bundled)
-echo "Copying utility files..."
-cp "${SRC_DIR}/utils/"*.js "${DIST_DIR}/utils/"
+# Copy HTML and CSS files from popup and options (JS is now bundled)
+echo "Copying popup HTML and CSS files..."
+cp "${SRC_DIR}/popup/"*.html "${DIST_DIR}/popup/" 2>/dev/null || true
+cp "${SRC_DIR}/popup/css/"*.css "${DIST_DIR}/popup/css/" 2>/dev/null || true
 
-# Recursively copy all popup and options files (including JS, CSS, and HTML)
-echo "Copying popup and options files..."
-cp -R "${SRC_DIR}/popup/"* "${DIST_DIR}/popup/"
-cp -R "${SRC_DIR}/options/"* "${DIST_DIR}/options/"
+echo "Copying options HTML and CSS files..."
+cp "${SRC_DIR}/options/"*.html "${DIST_DIR}/options/" 2>/dev/null || true
+cp "${SRC_DIR}/options/css/"*.css "${DIST_DIR}/options/css/" 2>/dev/null || true
 
 # Remove test files if they exist (with improved error handling)
 echo "Cleaning up test files..."
