@@ -57,7 +57,7 @@
     "@vitest/ui": "^3.1.2",
     "commander": "^13.1.0",
     "esbuild": "^0.25.3",
-    "eslint": "^8.57.0",
+    "eslint": "^9.39.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jsdoc": "^50.6.11",
