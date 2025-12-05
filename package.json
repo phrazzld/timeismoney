@@ -68,7 +68,7 @@
     "jscodeshift": "^17.3.0",
     "lint-staged": "^15.5.1",
     "prettier": "^3.2.5",
-    "puppeteer": "^22.3.0",
+    "puppeteer": "^24.32.0",
     "standard-version": "^9.5.0",
     "vitest": "^3.1.2"
   },
