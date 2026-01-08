@@ -15,6 +15,9 @@ jobs:
     if: github.actor == 'dependabot[bot]'
     
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Check update type and enable auto-merge
         run: |
           echo "🤖 Dependabot PR detected"
