@@ -65,7 +65,11 @@
         "startLines": 1
       }
     ],
-    "import/no-commonjs": "error"
+    "import/no-commonjs": "error",
+    "jsdoc/reject-function-type": "off",
+    "jsdoc/reject-any-type": "off",
+    "jsdoc/require-throws-type": "off",
+    "jsdoc/no-undefined-types": "off"
   },
   "ignorePatterns": ["node_modules/", "dist/", "babel.config.js", "test-files/", "temp/"],
   "overrides": [
