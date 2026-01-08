@@ -8,7 +8,7 @@
  *   node scripts/performance-test.js
  */
 
-import puppeteer from 'puppeteer';
+import { launch } from 'puppeteer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -60,7 +60,7 @@ async function runPerformanceTests() {
 
   try {
     // Launch browser with extension loaded
-    const browser = await puppeteer.launch({
+    const browser = await launch({
       headless: false, // Headless doesn't work well with extensions
       args: [
         `--disable-extensions-except=${distDir}`,
