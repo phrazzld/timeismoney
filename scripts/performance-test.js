@@ -184,7 +184,7 @@ async function runPageTest(browser, testPage, extensionId) {
   await page.goto(fileUrl, { waitUntil: 'networkidle0' });
 
   // Wait to ensure extension has time to process the page
-  await page.waitForTimeout(2000);
+  await new Promise((resolve) => setTimeout(resolve, 2000));
 
   // Collect JavaScript coverage
   const jsCoverage = await page.coverage.stopJSCoverage();
