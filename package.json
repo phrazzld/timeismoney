@@ -62,7 +62,7 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsdoc": "^50.6.11",
     "eslint-plugin-prettier": "^5.5.5",
-    "glob": "^13.0.4",
+    "glob": "^13.0.5",
     "husky": "^9.1.7",
     "jsdom": "^28.1.0",
     "jscodeshift": "^17.3.0",
