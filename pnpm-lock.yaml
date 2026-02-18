@@ -47,8 +47,8 @@ devDependencies:
     specifier: ^5.5.5
     version: 5.5.5(eslint-config-prettier@10.1.8)(eslint@8.57.1)(prettier@3.8.1)
   glob:
-    specifier: ^13.0.4
-    version: 13.0.4
+    specifier: ^13.0.5
+    version: 13.0.5
   husky:
     specifier: ^9.1.7
     version: 9.1.7
@@ -3644,8 +3644,8 @@ packages:
       path-scurry: 1.11.1
     dev: true
 
-  /glob@13.0.4:
-    resolution: {integrity: sha512-KACie1EOs9BIOMtenFaxwmYODWA3/fTfGSUnLhMJpXRntu1g+uL/Xvub5f8SCTppvo9q62Qy4LeOoUiaL54G5A==}
+  /glob@13.0.5:
+    resolution: {integrity: sha512-BzXxZg24Ibra1pbQ/zE7Kys4Ua1ks7Bn6pKLkVPZ9FZe4JQS6/Q7ef3LG1H+k7lUf5l4T3PLSyYyYJVYUvfgTw==}
     engines: {node: 20 || >=22}
     dependencies:
       minimatch: 10.2.1
