@@ -43,9 +43,6 @@ Desktop.ini
 # Test and coverage
 coverage/
 .nyc_output/
-audit-results.json
-critical-vulnerabilities.json
-security-report.md
 
 # Project specific
 # Allow docs/development but ignore other docs
