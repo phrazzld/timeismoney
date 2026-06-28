@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `pnpm run test:coverage` - Generate test coverage report
 - `pnpm run build` - Build Chrome extension bundles using esbuild
 - `pnpm run start` - Load extension for development testing
-- `pnpm run ci` - Run full CI pipeline (lint + test)
+- `pnpm run ci` - Run full CI pipeline (node-version validation, lint, security audit, categorized tests, build)
 
 ## Architecture Overview
 

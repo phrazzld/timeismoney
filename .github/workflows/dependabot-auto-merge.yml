@@ -16,22 +16,27 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Check update type and enable auto-merge
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ', ') }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           echo "🤖 Dependabot PR detected"
-          echo "Title: ${{ github.event.pull_request.title }}"
-          echo "Labels: ${{ join(github.event.pull_request.labels.*.name, ', ') }}"
+          echo "Title: $PR_TITLE"
+          echo "Labels: $PR_LABELS"
           
           # Check if this is a patch/minor update (auto-merge eligible)
           # Dependabot groups patch/minor updates with "minor-and-patch" in the title
-          if [[ "${{ github.event.pull_request.title }}" == *"minor-and-patch"* ]]; then
+          if [[ "$PR_TITLE" == *minor-and-patch* ]]; then
             echo "✅ Detected patch/minor update - enabling auto-merge"
             echo "Enabling auto-merge with squash strategy..."
             
             # Enable auto-merge - GitHub will automatically merge when all required checks pass
-            gh pr merge --auto --squash "${{ github.event.pull_request.number }}"
+            gh pr merge --auto --squash "$PR_NUMBER"
             
             echo "✅ Auto-merge enabled successfully"
           else
@@ -39,14 +44,16 @@ jobs:
             echo "Adding requires-review label..."
             gh pr edit "${{ github.event.pull_request.number }}" --add-label "requires-review"
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Add PR comment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           # Add different comments based on update type
-          if [[ "${{ github.event.pull_request.title }}" == *"minor-and-patch"* ]]; then
-            gh pr comment "${{ github.event.pull_request.number }}" --body \
+          if [[ "$PR_TITLE" == *minor-and-patch* ]]; then
+            gh pr comment "$PR_NUMBER" --body \
               "🤖 **Auto-merge enabled** for this patch/minor dependabot PR.
 
               This PR will be automatically merged when:
@@ -56,7 +63,7 @@ jobs:
 
               If CI fails, auto-merge will be cancelled and manual review will be required."
           else
-            gh pr comment "${{ github.event.pull_request.number }}" --body \
+            gh pr comment "$PR_NUMBER" --body \
               "⚠️ **Manual review required** for this major version dependabot PR.
 
               Major version updates require security team review because:
@@ -66,5 +73,3 @@ jobs:
 
               Please review the changelog and test thoroughly before merging."
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

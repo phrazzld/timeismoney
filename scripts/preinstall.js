@@ -11,11 +11,19 @@ if (isCI) {
   process.exit(0); // Exit successfully
 }
 
-const usedManager = process.env.npm_execpath || '';
-const isNpm = usedManager.includes('npm');
-const isYarn = usedManager.includes('yarn');
+const usedManager = (process.env.npm_execpath || '').replace(/\\/g, '/').toLowerCase();
+const userAgent = (process.env.npm_config_user_agent || '').toLowerCase();
+const executable = usedManager.split('/').pop() || '';
 
-if (isNpm || isYarn) {
+const isPnpm = userAgent.startsWith('pnpm/') || executable === 'pnpm' || executable === 'pnpm.cjs';
+const isNpm =
+  userAgent.startsWith('npm/') ||
+  executable === 'npm' ||
+  executable === 'npm.js' ||
+  executable === 'npm-cli.js';
+const isYarn = userAgent.startsWith('yarn/') || executable === 'yarn' || executable === 'yarn.js';
+
+if (!isPnpm && (isNpm || isYarn)) {
   console.error(
     '\n\n⚠️  This project uses pnpm for package management. Please use pnpm instead of npm or yarn.\n'
   );
