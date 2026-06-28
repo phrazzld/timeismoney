@@ -32,7 +32,7 @@ jobs:
         run: pnpm install
       
       - name: Validate Node.js version configuration
-        run: node scripts/validate-node-version.js
+        run: pnpm run validate:node-version
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -111,9 +111,7 @@ jobs:
         run: pnpm install --no-frozen-lockfile
       
       - name: Run security audit
-        run: |
-          pnpm audit --audit-level=high --json > audit-results.json || true
-          node scripts/security-audit.js
+        run: pnpm run security:audit
         continue-on-error: false
       
       - name: Upload security report
@@ -174,18 +172,14 @@ jobs:
       
       - name: Run Unit Tests
         if: matrix.test_type == 'unit'
-        run: pnpm run test:unit
-        env:
-          VITEST_ENV_TYPE: node
+        run: VITEST_ENV_TYPE=node pnpm run test:unit
       
       - name: Run Integration/DOM Tests
         if: matrix.test_type == 'integration_dom'
         run: |
           echo "Running integration tests with JSDOM environment"
-          pnpm run test:integration
-          pnpm run test:dom
-        env:
-          VITEST_ENV_TYPE: jsdom
+          VITEST_ENV_TYPE=jsdom pnpm run test:integration
+          VITEST_ENV_TYPE=jsdom pnpm run test:dom
       
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
